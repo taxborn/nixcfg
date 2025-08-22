@@ -9,7 +9,7 @@
   # link the configuration file in current directory to the specified location in home directory
   #home.file.".gnupg/i3/wallpaper.jpg".source = ./wallpaper.jpg;
   home.file.".gnupg" = {
-    source = ./gnupg;
+    source = ./gpg;
     recursive = true;
   };
 
