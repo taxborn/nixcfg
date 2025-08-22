@@ -34,7 +34,7 @@
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
 
-  home-manager.users.taxborn = import ./home/taxborn.nix;
+  home-manager.users.taxborn = import ../../home/taxborn.nix;
 
   services.openssh = {
     enable = true;
@@ -66,6 +66,7 @@
     neovim
     wget
     git
+    tmux
     ghostty
     kitty
   ];
