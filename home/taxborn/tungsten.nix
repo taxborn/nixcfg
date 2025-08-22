@@ -1,6 +1,11 @@
 { config, pkgs, ... }:
 
 {
+  imports = [
+    inputs.zen-browser.homeModules
+  ];
+
+  programs.zen-browser.enable = true;
   home.username = "taxborn";
   home.homeDirectory = "/home/taxborn";
 
