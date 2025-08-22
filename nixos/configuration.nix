@@ -20,14 +20,6 @@
   time.timeZone = "America/Chicago";
   i18n.defaultLocale = "en_US.UTF-8";
 
-  # Enable touchpad support (enabled default in most desktopManager).
-  services.libinput.enable = true;
-
-  services.udev = {
-    packages = [ pkgs.yubikey-personalization ];
-  };
-  services.pcscd.enable = true;
-
   users.users.taxborn = {
     isNormalUser = true;
     initialHashedPassword = "$y$j9T$VyMfknbgYNTja6wNOlXnW.$YkQdA0gJh1VgkFmp185FbsXTvXsKM8/9J1isezUg.37"; # mkpasswd
@@ -52,6 +44,16 @@
     };
     openFirewall = true;
   };
+  services.udev = {
+    packages = [ pkgs.yubikey-personalization ];
+  };
+  services.pcscd.enable = true;
+  services.libinput.enable = true;
+
+  programs.gnupg.agent = {
+    enable = true;
+    enableSSHSupport = true;
+  };
 
   programs.hyprland.enable = true;
   programs.firefox.enable = true; # TODO: Zen
@@ -68,11 +70,5 @@
   nixpkgs.config.allowUnfree = true;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  programs.gnupg.agent = {
-    enable = true;
-    enableSSHSupport = true;
-  };
-
   system.stateVersion = "25.05";
 }
-
