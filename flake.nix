@@ -20,7 +20,7 @@
   outputs = inputs@{ self, nixpkgs, disko, home-manager, nixos-hardware, ... }: {
     nixosConfigurations.tungsten = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      specialArgs = { inherit inputs; }
+      specialArgs = { inherit inputs; };
 
       modules = [
         disko.nixosModules.disko
