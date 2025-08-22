@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 
 {
   users.users.taxborn = {
@@ -12,5 +12,5 @@
   home-manager.useGlobalPkgs = true;
   home-manager.useUserPackages = true;
 
-  home-manager.users.taxborn = import ../../home/taxborn.nix;
+  home-manager.users.taxborn = import ../../home/taxborn/${config.networking.hostName}.nix;
 }

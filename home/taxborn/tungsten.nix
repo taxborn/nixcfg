@@ -5,7 +5,7 @@
   home.homeDirectory = "/home/taxborn";
 
   home.file.".gnupg" = {
-    source = ./gpg;
+    source = ../gpg;
     recursive = true;
   };
 
