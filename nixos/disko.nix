@@ -68,12 +68,9 @@ in {
                       mountpoint = "/nix";
                       mountOptions = defaultBtrfsOpts;
                     };
-                    # "/home" = {
-                    #   mountpoint = "/home";
-                    #   mountOptions = defaultBtrfsOpts;
-                    # };
                     "/swap" = {
                       mountpoint = "/.swapvol";
+                      # 32 GB of RAM + some space
                       swap.swapfile.size = "34G";
                     };
                   };
@@ -87,7 +84,6 @@ in {
       home-disk = {
         device = nvme1;
         type = "disk";
-
         content = {
           type = "gpt";
           partitions = {
@@ -95,7 +91,7 @@ in {
               size =  "100%";
               content = {
                 type = "luks";
-                name = "home";
+                name = "crypthome";
                 settings.allowDiscards = true;
                 extraFormatArgs = defaultExtraFormatArgs;
                 content = {

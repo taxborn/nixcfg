@@ -22,6 +22,7 @@
 
   users.users.taxborn = {
     isNormalUser = true;
+    # TODO: sops
     initialHashedPassword = "$y$j9T$VyMfknbgYNTja6wNOlXnW.$YkQdA0gJh1VgkFmp185FbsXTvXsKM8/9J1isezUg.37"; # mkpasswd
     openssh.authorizedKeys.keys = [
         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOf8rn+JzRmVc6/4xKOJ4MrmId4xxpYPEgvbCrK18U+N yubikey"
@@ -64,6 +65,7 @@
     wget
     git
     ghostty
+    kitty
   ];
   environment.variables.EDITOR = "neovim";
 
