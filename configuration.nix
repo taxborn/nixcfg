@@ -51,6 +51,8 @@
   services.pcscd.enable = true;
   services.libinput.enable = true;
 
+  services.tailscale.enable = true;
+
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
