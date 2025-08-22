@@ -49,7 +49,6 @@ in {
                 mountOptions = [ "umask=0077" ];
               };
             };
-            # LUKS root partiton
             luks-root = {
               size =  "100%";
               content = {
@@ -69,10 +68,10 @@ in {
                       mountpoint = "/nix";
                       mountOptions = defaultBtrfsOpts;
                     };
-                    "/home" = {
-                      mountpoint = "/home";
-                      mountOptions = defaultBtrfsOpts;
-                    };
+                    # "/home" = {
+                    #   mountpoint = "/home";
+                    #   mountOptions = defaultBtrfsOpts;
+                    # };
                     "/swap" = {
                       mountpoint = "/.swapvol";
                       swap.swapfile.size = "34G";
@@ -85,38 +84,34 @@ in {
         };
       };
 
-      # TODO: Eventually I want a multi-disk setup, but this is too complicated
-      # at the moment so I will just use a single disk for now.
-      #
-      # home-disk = {
-      #   device = "/dev/nvme1n1";
-      #   type = "disk";
+      home-disk = {
+        device = "/dev/nvme1n1";
+        type = "disk";
 
-      #   content = {
-      #     type = "gpt";
-      #     partitions = {
-      #       luks-home = {
-      #         size =  "100%";
-      #         content = {
-      #           type = "luks";
-      #           name = "home";
-      #           settings.allowDiscards = true;
-      #           content = {
-      #             type = "btrfs";
-      #             extraArgs = [ "-f" ];
-      #             subVolumes = {
-      #               "/home" = {
-      #                 mountpoint = "/home";
-      #                 mountOptions = [ "compress=zstd" "noatime" ];
-      #               };
-      #             };
-      #           };
-      #         };
-      #       };
-      #     };
-      #   };
-      # };
+        content = {
+          type = "gpt";
+          partitions = {
+            luks-home = {
+              size =  "100%";
+              content = {
+                type = "luks";
+                name = "home";
+                settings.allowDiscards = true;
+                content = {
+                  type = "btrfs";
+                  extraArgs = [ "-f" ];
+                  subVolumes = {
+                    "/home" = {
+                      mountpoint = "/home";
+                      mountOptions = [ "compress=zstd" "noatime" ];
+                    };
+                  };
+                };
+              };
+            };
+          };
+        };
+      };
     };
   };
 }
-
