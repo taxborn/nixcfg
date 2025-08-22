@@ -9,10 +9,11 @@
     packages = with pkgs; [ ];
   };
 
-  home-manager.useGlobalPkgs = true;
-  home-manager.useUserPackages = true;
+  home-manager = {
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    extraSpecialArgs = { inherit inputs; };
 
-  home-manager.extraSpecialArgs = { inherit inputs; };
-
-  home-manager.users.taxborn = import ../../home/taxborn/${config.networking.hostName}.nix;
+    users.taxborn = import ../../home/taxborn/${config.networking.hostName}.nix;
+  };
 }
