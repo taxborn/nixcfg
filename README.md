@@ -20,7 +20,7 @@ Using tungsten as an example, follow these steps:
    ```
 4. Format the disk using disko:
    ```bash
-   sudo nix --extra-experimental-features "nix-command flakes" run github:nix-community/disko -- --mode disko disko.nix
+   sudo nix --extra-experimental-features "nix-command flakes" run github:nix-community/disko -- --mode disko dotfiles/hosts/tungsten/disks.nix
    ```
 5. Install NixOS:
    ```bash

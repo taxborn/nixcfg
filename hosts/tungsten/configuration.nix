@@ -4,7 +4,7 @@
   imports =
     [
       ./hardware-configuration.nix
-      ./disko.nix
+      ./disks.nix
     ];
 
   boot.loader.efi.canTouchEfiVariables = true;

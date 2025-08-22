@@ -4,40 +4,20 @@
   home.username = "taxborn";
   home.homeDirectory = "/home/taxborn";
 
-  programs.gpg.scdaemonSettings.disable-ccid = true;
 
-  # link the configuration file in current directory to the specified location in home directory
-  #home.file.".gnupg/i3/wallpaper.jpg".source = ./wallpaper.jpg;
+  #home.file.".config/i3/wallpaper.jpg".source = ./wallpaper.jpg;
   home.file.".gnupg" = {
     source = ./gpg;
     recursive = true;
   };
 
-  # link all files in `./scripts` to `~/.config/i3/scripts`
-  # home.file.".config/i3/scripts" = {
-  #   source = ./scripts;
-  #   recursive = true;   # link recursively
-  #   executable = true;  # make all files executable
-  # };
-
-  # encode the file content in nix configuration file directly
-  # home.file.".xxx".text = ''
-  #     xxx
-  # '';
-
-  # set cursor size and dpi for 4k monitor
   xresources.properties = {
     "Xcursor.size" = 16;
     "Xft.dpi" = 172;
   };
 
-  # Packages that should be installed to the user profile.
   home.packages = with pkgs; [
-    # here is some command line tools I use frequently
-    # feel free to add your own or remove some of them
-
     neofetch
-    nnn # terminal file manager
 
     # archives
     zip
@@ -114,22 +94,21 @@
   programs.bash = {
     enable = true;
     enableCompletion = true;
-    # TODO add your custom bashrc here
     bashrcExtra = ''
       export PATH="$PATH:$HOME/bin:$HOME/.local/bin"
+
       export GPG_TTY=$(tty)
       export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
       gpgconf --launch gpg-agent
       gpg-connect-agent updatestartuptty /bye > /dev/null
     '';
-
-    # set some aliases, feel free to add more or remove some
     shellAliases = {
       nix-rb = "sudo nixos-rebuild switch --flake /home/taxborn/dotfiles"; # TODO: I think there is an env variable to set the dir
-      #urldecode = "python3 -c 'import sys, urllib.parse as ul; print(ul.unquote_plus(sys.stdin.read()))'";
-      #urlencode = "python3 -c 'import sys, urllib.parse as ul; print(ul.quote_plus(sys.stdin.read()))'";
+      yk-restart = "gpg-connect-agent killagent /bye && gpg-connect-agent \"scd serialno\" \"learn --force\" /bye && gpg --card-status";
     };
   };
+
+  programs.gpg.scdaemonSettings.disable-ccid = true;
 
   home.stateVersion = "25.05";
 }

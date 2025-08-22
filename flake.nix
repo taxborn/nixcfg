@@ -14,11 +14,12 @@
   outputs = inputs@{ self, nixpkgs, disko, home-manager, nixos-hardware, ... }: {
     nixosConfigurations.tungsten = nixpkgs.lib.nixosSystem {
       system = "x86_64-linux";
-      modules = [ 
-	nixos-hardware.nixosModules.dell-xps-15-9520-nvidia
-        ./configuration.nix
+      modules = [
         disko.nixosModules.disko
-	home-manager.nixosModules.home-manager
+       	nixos-hardware.nixosModules.dell-xps-15-9520-nvidia
+       	home-manager.nixosModules.home-manager
+
+        ./hosts/tungsten/configuration.nix
       ];
     };
   };
