@@ -104,6 +104,14 @@
     signing.signByDefault = true;
   };
 
+  programs.gpg = {
+    enable = true;
+    scdaemonSettings.disable-ccid = true;
+    publicKeys = [
+      { source = ../gpg/pub.asc; }
+    ];
+  };
+
   programs.bash = {
     enable = true;
     enableCompletion = true;
@@ -120,8 +128,6 @@
       yk-restart = "gpg-connect-agent killagent /bye && gpg-connect-agent \"scd serialno\" \"learn --force\" /bye && gpg --card-status";
     };
   };
-
-  programs.gpg.scdaemonSettings.disable-ccid = true;
 
   home.stateVersion = "25.05";
 }

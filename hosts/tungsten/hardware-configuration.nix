@@ -22,6 +22,28 @@
     "sd_mod"
     "rtsx_pci_sdmmc"
   ];
+  boot.initrd.luks = {
+    devices."cryptroot" = {
+      crypttabExtraOpts = [
+        "fido2-device=auto"
+        "token-timeout=30"
+      ];
+    };
+    devices."crypthome" = {
+      crypttabExtraOpts = [
+        "fido2-device=auto"
+        "token-timeout=30"
+      ];
+    };
+    fido2Support = false;
+  };
+  boot.initrd = {
+    # Enable support for the Btrfs filesystem.
+    supportedFilesystems = [ "btrfs" ];
+    # Use the systemd-based initrd, which is required for modern
+    # LUKS unlocking features like FIDO2.
+    systemd.enable = true;
+  };
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
