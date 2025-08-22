@@ -117,7 +117,7 @@
 
     # set some aliases, feel free to add more or remove some
     shellAliases = {
-      nix-rb = "sudo nixos-rebuild switch --flake /home/taxborn/nixos"; # TODO: I think there is an env variable to set the dir
+      nix-rb = "sudo nixos-rebuild switch --flake /home/taxborn/dotfiles"; # TODO: I think there is an env variable to set the dir
       #urldecode = "python3 -c 'import sys, urllib.parse as ul; print(ul.unquote_plus(sys.stdin.read()))'";
       #urlencode = "python3 -c 'import sys, urllib.parse as ul; print(ul.quote_plus(sys.stdin.read()))'";
     };
