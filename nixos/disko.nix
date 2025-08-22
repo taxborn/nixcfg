@@ -85,7 +85,7 @@ in {
       };
 
       home-disk = {
-        device = "/dev/nvme1n1";
+        device = nvme1;
         type = "disk";
 
         content = {
