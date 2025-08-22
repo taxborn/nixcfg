@@ -4,8 +4,6 @@
   home.username = "taxborn";
   home.homeDirectory = "/home/taxborn";
 
-
-  #home.file.".config/i3/wallpaper.jpg".source = ./wallpaper.jpg;
   home.file.".gnupg" = {
     source = ./gpg;
     recursive = true;

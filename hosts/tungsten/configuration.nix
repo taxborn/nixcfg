@@ -3,6 +3,8 @@
 {
   imports =
     [
+      ../common
+
       ./hardware-configuration.nix
       ./disks.nix
     ];
@@ -18,45 +20,10 @@
   networking.hostName = "tungsten";
   networking.networkmanager.enable = true;
   time.timeZone = "America/Chicago";
-  i18n.defaultLocale = "en_US.UTF-8";
 
-  users.users.taxborn = {
-    isNormalUser = true;
-    # TODO: sops
-    initialHashedPassword = "$y$j9T$VyMfknbgYNTja6wNOlXnW.$YkQdA0gJh1VgkFmp185FbsXTvXsKM8/9J1isezUg.37"; # mkpasswd
-    openssh.authorizedKeys.keys = [
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOf8rn+JzRmVc6/4xKOJ4MrmId4xxpYPEgvbCrK18U+N yubikey"
-    ];
-    extraGroups = [ "wheel" "networkmanager" ];
-    packages = with pkgs; [ ];
-  };
-
-  home-manager.useGlobalPkgs = true;
-  home-manager.useUserPackages = true;
-
-  home-manager.users.taxborn = import ../../home/taxborn.nix;
-
-  services.openssh = {
-    enable = true;
-    settings = {
-      X11Forwarding = true;
-      PermitRootLogin = "no";
-      PasswordAuthentication = false;
-    };
-    openFirewall = true;
-  };
-  services.udev = {
-    packages = [ pkgs.yubikey-personalization ];
-  };
-  services.pcscd.enable = true;
   services.libinput.enable = true;
 
   services.tailscale.enable = true;
-
-  programs.gnupg.agent = {
-    enable = true;
-    enableSSHSupport = true;
-  };
 
   programs.hyprland.enable = true;
   programs.firefox.enable = true; # TODO: Zen
@@ -70,10 +37,7 @@
     ghostty
     kitty
   ];
-  environment.variables.EDITOR = "neovim";
-
-  nixpkgs.config.allowUnfree = true;
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  environment.variables.EDITOR = "nvim";
 
   system.stateVersion = "25.05";
 }
