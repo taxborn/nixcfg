@@ -22,18 +22,27 @@
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, disko, home-manager, nixos-hardware, ... }: {
-    nixosConfigurations.tungsten = nixpkgs.lib.nixosSystem {
-      system = "x86_64-linux";
-      specialArgs = { inherit inputs; };
+  outputs =
+    inputs@{
+      self,
+      nixpkgs,
+      disko,
+      home-manager,
+      nixos-hardware,
+      ...
+    }:
+    {
+      nixosConfigurations.tungsten = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = { inherit inputs; };
 
-      modules = [
-        disko.nixosModules.disko
-       	nixos-hardware.nixosModules.dell-xps-15-9520-nvidia
-       	home-manager.nixosModules.home-manager
+        modules = [
+          disko.nixosModules.disko
+          nixos-hardware.nixosModules.dell-xps-15-9520-nvidia
+          home-manager.nixosModules.home-manager
 
-        ./hosts/tungsten/configuration.nix
-      ];
+          ./hosts/tungsten/configuration.nix
+        ];
+      };
     };
-  };
 }

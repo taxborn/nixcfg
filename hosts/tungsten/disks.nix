@@ -28,7 +28,8 @@ let
     "--pbkdf-memory=1048576"
     "--sector-size=4096"
   ];
-in {
+in
+{
   disko.devices = {
     disk = {
       root-disk = {
@@ -50,7 +51,7 @@ in {
               };
             };
             luks-root = {
-              size =  "100%";
+              size = "100%";
               content = {
                 type = "luks";
                 name = "cryptroot";
@@ -88,7 +89,7 @@ in {
           type = "gpt";
           partitions = {
             luks-home = {
-              size =  "100%";
+              size = "100%";
               content = {
                 type = "luks";
                 name = "crypthome";

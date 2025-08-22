@@ -1,13 +1,17 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
-  imports =
-    [
-      ../common
+  imports = [
+    ../common
 
-      ./hardware-configuration.nix
-      ./disks.nix
-    ];
+    ./hardware-configuration.nix
+    ./disks.nix
+  ];
 
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.grub = {
@@ -21,13 +25,12 @@
   time.timeZone = "America/Chicago";
 
   services.libinput.enable = true;
-
   programs.hyprland.enable = true;
-  programs.firefox.enable = true; # TODO: Zen
 
   environment.systemPackages = with pkgs; [
     ghostty
     kitty
+    nixfmt-rfc-style
   ];
 
   system.stateVersion = "25.05";
