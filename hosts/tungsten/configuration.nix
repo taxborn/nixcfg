@@ -28,6 +28,7 @@
   programs.hyprland.enable = true;
 
   environment.systemPackages = with pkgs; [
+    brightnessctl
     ghostty
     kitty
     nixfmt-rfc-style
