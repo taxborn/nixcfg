@@ -97,6 +97,7 @@ in {
                 type = "luks";
                 name = "home";
                 settings.allowDiscards = true;
+                extraFormatArgs = defaultExtraFormatArgs;
                 content = {
                   type = "btrfs";
                   extraArgs = [ "-f" ];
