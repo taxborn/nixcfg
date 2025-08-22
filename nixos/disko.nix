@@ -101,7 +101,7 @@ in {
                 content = {
                   type = "btrfs";
                   extraArgs = [ "-f" ];
-                  subVolumes = {
+                  subvolumes = {
                     "/home" = {
                       mountpoint = "/home";
                       mountOptions = defaultBtrfsOpts;
