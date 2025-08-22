@@ -10,7 +10,7 @@ Using tungsten as an example, follow these steps:
     sudo systemctl start wpa_supplicant.service
     wpa_cli
     # > add_network
-    # > set_network 0 ssid "myhomenetwork"
+    # > set_network 0 ssid "mynetwork"
     # > set_network 0 psk "mypassword"
     # > enable_network 0
     ```
