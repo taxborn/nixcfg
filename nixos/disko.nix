@@ -104,7 +104,7 @@ in {
                   subVolumes = {
                     "/home" = {
                       mountpoint = "/home";
-                      mountOptions = [ "compress=zstd" "noatime" ];
+                      mountOptions = defaultBtrfsOpts;
                     };
                   };
                 };
