@@ -10,6 +10,7 @@
     inputs.zen-browser.homeModules.beta
 
     ./gpg
+    ./ghostty
   ];
 
   programs.zen-browser.enable = true;
@@ -41,12 +42,10 @@
       mainBar = {
         layer = "top";
         position = "top";
-        modules-left = ["hyprland/workspaces"];
-        modules-center = ["clock"];
+        modules-left = [ "hyprland/workspaces" ];
+        modules-center = [ "clock" ];
         modules-right = [
           "pulseaudio"
-          # "backlight"
-          # "battery"
           "network"
           "cpu"
           "memory"
@@ -56,24 +55,9 @@
         "hyprland/workspaces" = {
           format = "{name}: {icon}";
           format-icons = {
-            active = "";
-            default = "";
+            active = "";
+            default = "";
           };
-        };
-
-        tray = {
-          icon-size = 16;
-          spacing = 10;
-        };
-
-        "custom/music" = {
-          format = "  {}";
-          escape = true;
-          interval = 5;
-          tooltip = false;
-          exec = "playerctl metadata --format='{{ artist }} - {{ title }}'";
-          on-click = "playerctl play-pause";
-          max-length = 50;
         };
 
         clock = {
@@ -81,6 +65,19 @@
           tooltip-format = "{:%Y-%m-%dT%H:%M:%S%z}";
           format = "{:%Y/%m/%d - %H:%M:%S}";
           interval = 1;
+        };
+
+        pulseaudio = {
+          format = "{icon} {volume}%";
+          format-muted = "";
+          format-icons = {
+            default = [
+              ""
+              ""
+              " "
+            ];
+          };
+          on-click = "pavucontrol";
         };
 
         network = {
@@ -94,27 +91,99 @@
         cpu = {
           interval = 1;
           format = "  {icon0}{icon1}{icon2}{icon3} {usage:>2}%";
-          format-icons = ["▁" "▂" "▃" "▄" "▅" "▆" "▇" "█"];
+          format-icons = [
+            "▁"
+            "▂"
+            "▃"
+            "▄"
+            "▅"
+            "▆"
+            "▇"
+            "█"
+          ];
         };
 
         memory = {
           interval = 30;
-          format = "  {used:0.1f}G/{total:0.1f}G";
+          format = "  {used:0.1f}G/{total:0.1f}G";
         };
 
-        pulseaudio = {
-          format = "{icon} {volume}%";
-          format-muted = "";
-          format-icons = {
-            default = ["" "" " "];
-          };
-          on-click = "pavucontrol";
+        tray = {
+          icon-size = 16;
+          spacing = 10;
         };
+
       };
     };
   };
 
+  programs.tmux = {
+    enable = true;
+    mouse = true;
+    prefix = "C-a";
+    baseIndex = 1;
+    escapeTime = 0;
+    keyMode = "vi";
+
+    extraConfig = ''
+      # C-b is used by vim, C-a is free!
+      unbind C-b
+      bind C-a send-prefix
+
+      # Vim style pane selection
+      bind h select-pane -L
+      bind j select-pane -D
+      bind k select-pane -U
+      bind l select-pane -R
+
+      # Start windows and panes at 1, not 0
+      set -g pane-base-index 1
+      set-window-option -g pane-base-index 1
+      set-option -g renumber-windows on
+
+      bind '"' split-window -v -c "#{pane_current_path}"
+      bind % split-window -h -c "#{pane_current_path}"
+
+      # Smart pane switching with awareness of Vim splits.
+      # See: https://github.com/christoomey/vim-tmux-navigator
+      vim_pattern='(\S+/)?g?\.?(view|l?n?vim?x?|fzf)(diff)?(-wrapped)?'
+      is_vim="ps -o state= -o comm= -t '#{pane_tty}' \
+          | grep -iqE '^[^TXZ ]+ +''${vim_pattern}$'"
+      bind-key -n 'C-h' if-shell "$is_vim" 'send-keys C-h'  'select-pane -L'
+      bind-key -n 'C-j' if-shell "$is_vim" 'send-keys C-j'  'select-pane -D'
+      bind-key -n 'C-k' if-shell "$is_vim" 'send-keys C-k'  'select-pane -U'
+      bind-key -n 'C-l' if-shell "$is_vim" 'send-keys C-l'  'select-pane -R'
+      tmux_version='$(tmux -V | sed -En "s/^tmux ([0-9]+(.[0-9]+)?).*/\1/p")'
+      if-shell -b '[ "$(echo "$tmux_version < 3.0" | bc)" = 1 ]' \
+          "bind-key -n 'C-\\' if-shell \"$is_vim\" 'send-keys C-\\'  'select-pane -l'"
+      if-shell -b '[ "$(echo "$tmux_version >= 3.0" | bc)" = 1 ]' \
+          "bind-key -n 'C-\\' if-shell \"$is_vim\" 'send-keys C-\\\\'  'select-pane -l'"
+
+      bind-key -T copy-mode-vi 'C-h' select-pane -L
+      bind-key -T copy-mode-vi 'C-j' select-pane -D
+      bind-key -T copy-mode-vi 'C-k' select-pane -U
+      bind-key -T copy-mode-vi 'C-l' select-pane -R
+      bind-key -T copy-mode-vi 'C-\' select-pane -l
+    '';
+
+    plugins = with pkgs.tmuxPlugins; [
+      sensible
+      {
+        plugin = catppuccin;
+        extraConfig = ''
+          run '~/.config/tmux/plugins/catppuccin/tmux/catppuccin.tmux'
+        '';
+      }
+    ];
+  };
+
+  fonts.fontconfig.enable = true;
+
   home.packages = with pkgs; [
+    # fonts
+    nerd-fonts.jetbrains-mono
+    atkinson-hyperlegible
+
     neofetch
 
     # archives
@@ -127,7 +196,7 @@
     ripgrep # recursively searches directories for a regex pattern
     jq # A lightweight and flexible command-line JSON processor
     yq-go # yaml processor https://github.com/mikefarah/yq
-    eza # A modern replacement for ‘ls’
+    eza # A modern replacement for 'ls'
     fzf # A command-line fuzzy finder
 
     # networking tools
@@ -189,14 +258,13 @@
     signing.signByDefault = true;
   };
 
-  programs.bash = {
+  programs.fish = {
     enable = true;
-    enableCompletion = true;
-    bashrcExtra = ''
-      export PATH="$PATH:$HOME/bin:$HOME/.local/bin"
+    interactiveShellInit = ''
+      set -gx PATH $PATH $HOME/bin $HOME/.local/bin
 
-      export GPG_TTY=$(tty)
-      export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+      set -gx GPG_TTY (tty)
+      set -gx SSH_AUTH_SOCK (gpgconf --list-dirs agent-ssh-socket)
       gpgconf --launch gpg-agent
       gpg-connect-agent updatestartuptty /bye > /dev/null
     '';

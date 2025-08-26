@@ -24,7 +24,6 @@
     enable = true;
   };
 
-
   boot = {
     # Enable "Silent boot"
     consoleLogLevel = 3;
@@ -58,7 +57,6 @@
 
   environment.systemPackages = with pkgs; [
     brightnessctl
-    ghostty
     wofi
     nixfmt-rfc-style
   ];
