@@ -8,15 +8,19 @@
 {
   imports = [
     inputs.zen-browser.homeModules.beta
+
+    ../gpg
   ];
 
   programs.zen-browser.enable = true;
   home.username = "taxborn";
   home.homeDirectory = "/home/taxborn";
-
-  home.file.".gnupg" = {
-    source = ../gpg;
-    recursive = true;
+  services.hyprpaper = {
+    enable = true;
+    settings = {
+      preload = [ "/home/taxborn/Media/Photos/Wallpapers/mandelbrot_gap_magenta.png" ];
+      wallpaper = [ ",/home/taxborn/Media/Photos/Wallpapers/mandelbrot_gap_magenta.png" ];
+    };
   };
 
   xresources.properties = {
@@ -27,6 +31,87 @@
   programs.zed-editor = {
     enable = true;
     extensions = [ "nix" ];
+  };
+
+  programs.waybar = {
+    enable = true;
+    systemd.enable = true;
+    style = ./waybar.css;
+    settings = {
+      mainBar = {
+        layer = "top";
+        position = "top";
+        modules-left = ["hyprland/workspaces"];
+        modules-center = ["clock"];
+        modules-right = [
+          "pulseaudio"
+          # "backlight"
+          # "battery"
+          "network"
+          "cpu"
+          "memory"
+          "tray"
+        ];
+
+        "hyprland/workspaces" = {
+          format = "{name}: {icon}";
+          format-icons = {
+            active = "";
+            default = "";
+          };
+        };
+
+        tray = {
+          icon-size = 16;
+          spacing = 10;
+        };
+
+        "custom/music" = {
+          format = "  {}";
+          escape = true;
+          interval = 5;
+          tooltip = false;
+          exec = "playerctl metadata --format='{{ artist }} - {{ title }}'";
+          on-click = "playerctl play-pause";
+          max-length = 50;
+        };
+
+        clock = {
+          timezone = "America/Chicago";
+          tooltip-format = "{:%Y-%m-%dT%H:%M:%S%z}";
+          format = "{:%Y/%m/%d - %H:%M:%S}";
+          interval = 1;
+        };
+
+        network = {
+          format-wifi = "󰤢";
+          format-ethernet = "󰈀";
+          format-disconnected = "󰤠";
+          interval = 5;
+          tooltip = false;
+        };
+
+        cpu = {
+          interval = 1;
+          format = "  {icon0}{icon1}{icon2}{icon3} {usage:>2}%";
+          format-icons = ["▁" "▂" "▃" "▄" "▅" "▆" "▇" "█"];
+        };
+
+        memory = {
+          interval = 30;
+          format = "  {used:0.1f}G/{total:0.1f}G";
+        };
+
+        pulseaudio = {
+          format = "{icon} {volume}%";
+          format-muted = "";
+          format-icons = {
+            default = ["" "" " "];
+          };
+          on-click = "pavucontrol";
+        };
+      };
+    };
   };
 
   home.packages = with pkgs; [
@@ -102,14 +187,6 @@
 
     signing.key = "F22AFD6CFD66B874";
     signing.signByDefault = true;
-  };
-
-  programs.gpg = {
-    enable = true;
-    scdaemonSettings.disable-ccid = true;
-    publicKeys = [
-      { source = ../gpg/pub.asc; }
-    ];
   };
 
   programs.bash = {
