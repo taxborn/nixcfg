@@ -9,7 +9,7 @@
   imports = [
     inputs.zen-browser.homeModules.beta
 
-    ../gpg
+    ./gpg
   ];
 
   programs.zen-browser.enable = true;
