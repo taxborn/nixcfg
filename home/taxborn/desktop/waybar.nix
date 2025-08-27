@@ -22,8 +22,8 @@
         "hyprland/workspaces" = {
           format = "{name}: {icon}";
           format-icons = {
-            active = "";
-            default = "";
+            active = "";
+            default = "";
           };
         };
 
@@ -36,13 +36,9 @@
 
         pulseaudio = {
           format = "{icon} {volume}%";
-          format-muted = "";
+          format-muted = "";
           format-icons = {
-            default = [
-              ""
-              ""
-              " "
-            ];
+            default = ["" "" " " ];
           };
           on-click = "pavucontrol";
         };

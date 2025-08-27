@@ -13,18 +13,8 @@
     ./disks.nix
   ];
 
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.grub = {
-    enable = true;
-    efiSupport = true;
-    device = "nodev";
-  };
-  boot.kernelPackages = pkgs.linuxPackages_latest;
-  boot.plymouth = {
-    enable = true;
-  };
-
   boot = {
+    kernelPackages = pkgs.linuxPackages_latest;
     # Enable "Silent boot"
     consoleLogLevel = 3;
     initrd.verbose = false;
@@ -35,10 +25,18 @@
       "udev.log_priority=3"
       "rd.systemd.show_status=auto"
     ];
-    # Hide the OS choice for bootloaders.
-    # It's still possible to open the bootloader list by pressing any key
-    # It will just not appear on screen unless a key is pressed
-    loader.timeout = 0;
+    loader = {
+      timeout = 0;
+      efi.canTouchEfiVariables = true;
+      grub = {
+        enable = true;
+        efiSupport = true;
+        device = "nodev";
+      };
+    };
+    plymouth = {
+      enable = true;
+    };
   };
 
   services.displayManager.sddm = {
@@ -48,6 +46,9 @@
 
   networking.hostName = "tungsten";
   time.timeZone = "America/Chicago";
+
+  hardware.bluetooth.enable = true;
+  services.blueman.enable = true;
 
   services.libinput.enable = true;
   programs.hyprland = {
