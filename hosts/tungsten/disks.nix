@@ -20,6 +20,11 @@ let
     "ssd"
   ];
 
+  defaultCrypttabExtraOpts = [
+    "--fido2-device=auto"
+    "--timeout=30"
+  ];
+
   defaultExtraFormatArgs = [
     "--cipher=aes-xts-plain64"
     "--hash=sha256"

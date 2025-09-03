@@ -28,11 +28,11 @@
     loader = {
       timeout = 0;
       efi.canTouchEfiVariables = true;
-      grub = {
-        enable = true;
-        efiSupport = true;
-        device = "nodev";
-      };
+      systemd-boot.enable = lib.mkForce false;
+    };
+    lanzaboote = {
+      enable = true;
+      pkiBundle = "/var/lib/sbctl";
     };
     plymouth = {
       enable = true;
@@ -58,6 +58,7 @@
 
   environment.systemPackages = with pkgs; [
     brightnessctl
+    sbctl
     wofi
     nixfmt-rfc-style
   ];

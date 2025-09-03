@@ -11,6 +11,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    lanzaboote = {
+      url = "github:nix-community/lanzaboote/v0.4.2";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     disko = {
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -29,6 +34,7 @@
       disko,
       home-manager,
       nixos-hardware,
+      lanzaboote,
       ...
     }:
     {
@@ -41,6 +47,7 @@
             disko.nixosModules.disko
             nixos-hardware.nixosModules.dell-xps-15-9520-nvidia
             home-manager.nixosModules.home-manager
+            lanzaboote.nixosModules.lanzaboote
 
             ./hosts/tungsten/configuration.nix
           ];
