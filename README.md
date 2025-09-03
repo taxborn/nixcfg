@@ -26,3 +26,6 @@ Using tungsten as an example, follow these steps:
    ```bash
    sudo nixos-install --flake .#tungsten --root /mnt
    ```
+
+### Tungsten Caveat
+With secure boot enabled, I don't think I can immediately install this from scratch. Disable lanzaboote and enable systemd-boot instead.
