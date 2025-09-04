@@ -8,6 +8,7 @@
     nerd-fonts.jetbrains-mono
 
     # Accessible fonts
-    atkinson-hyperlegible
+    atkinson-hyperlegible-next
+    atkinson-hyperlegible-mono
   ];
 }
