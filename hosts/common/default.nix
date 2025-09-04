@@ -16,7 +16,6 @@
     neovim
     wget
     git
-    tmux
   ];
   environment.variables.EDITOR = "nvim";
 }

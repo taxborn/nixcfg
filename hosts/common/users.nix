@@ -17,7 +17,6 @@
       "wheel"
       "networkmanager"
     ];
-    packages = with pkgs; [ ];
   };
 
   home-manager = {

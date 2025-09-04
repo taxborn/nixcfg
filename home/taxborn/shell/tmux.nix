@@ -52,12 +52,7 @@
 
     plugins = with pkgs.tmuxPlugins; [
       sensible
-      {
-        plugin = catppuccin;
-        extraConfig = ''
-          run '~/.config/tmux/plugins/catppuccin/tmux/catppuccin.tmux'
-        '';
-      }
+      catppuccin
     ];
   };
 }

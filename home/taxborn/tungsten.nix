@@ -1,11 +1,4 @@
 {
-  config,
-  pkgs,
-  inputs,
-  ...
-}:
-
-{
   imports = [
     ./applications
     ./desktop
