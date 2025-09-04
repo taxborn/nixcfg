@@ -1,5 +1,6 @@
 {
   imports = [
+    ./hyprland.nix
     ./waybar.nix
     ./hyprpaper.nix
   ];
@@ -9,7 +10,7 @@
 
   # X resources configuration
   xresources.properties = {
-    "Xcursor.size" = 16;
+    "Xcursor.size" = 24;
     "Xft.dpi" = 172;
   };
 }

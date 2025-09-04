@@ -1,9 +1,9 @@
 {
   imports = [
     ./applications
-    ./desktop
     ./development
     ./fonts
+    ./hyprland
     ./packages
     ./shell
     ./system
