@@ -20,11 +20,6 @@ let
     "ssd"
   ];
 
-  defaultCrypttabExtraOpts = [
-    "--fido2-device=auto"
-    "--timeout=30"
-  ];
-
   defaultExtraFormatArgs = [
     "--cipher=aes-xts-plain64"
     "--hash=sha256"
@@ -62,6 +57,9 @@ in
                 name = "cryptroot";
                 settings.allowDiscards = true;
                 extraFormatArgs = defaultExtraFormatArgs;
+                postCreateHook = ''
+                  sudo systemd-cryptenroll ${nvme0}-part2 --fido2-device=auto
+                '';
                 content = {
                   type = "btrfs";
                   extraArgs = [ "-f" ];
@@ -100,6 +98,9 @@ in
                 name = "crypthome";
                 settings.allowDiscards = true;
                 extraFormatArgs = defaultExtraFormatArgs;
+                postCreateHook = ''
+                  sudo systemd-cryptenroll ${nvme1}-part1 --fido2-device=auto
+                '';
                 content = {
                   type = "btrfs";
                   extraArgs = [ "-f" ];
