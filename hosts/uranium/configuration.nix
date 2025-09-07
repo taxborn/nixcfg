@@ -26,11 +26,14 @@
     loader = {
       timeout = 0;
       efi.canTouchEfiVariables = true;
-      grub = {
-        enable = true;
-        efiSupport = true;
-        device = "nodev";
-      };
+      systemd-boot.enable = true;
+      # for some silly reason grub doesn't work on Uranium. maybe can't create
+      # efi variables easily?
+      # grub = {
+      #   enable = true;
+      #   efiSupport = true;
+      #   device = "nodev";
+      # };
     };
     plymouth = {
       enable = true;
