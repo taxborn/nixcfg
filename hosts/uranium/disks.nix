@@ -7,8 +7,13 @@
 #
 # # References
 # FIDO2: https://0pointer.net/blog/unlocking-luks2-volumes-with-tpm2-fido2-pkcs11-security-hardware-on-systemd-248.html
+# Multi-drive: https://github.com/soulcramer/Wimpy-nix-config/blob/main/nixos/maul/disks.nix
 let
   nvme0 = "/dev/disk/by-id/nvme-Samsung_SSD_980_PRO_2TB_S76ENL0X900787H";
+  nvme1 = "/dev/disk/by-id/nvme-Samsung_SSD_980_PRO_2TB_S76ENL0X900698K";
+  # leaving these unused for now
+  _nvme2 = "/dev/disk/by-id/nvme-Patriot_M.2_P300_512GB_P300PBBB240118013691";
+  _ssd0 = "/dev/disk/by-id/ata-Samsung_SSD_850_EVO_250GB_S21NNXAG817864H";
 
   defaultBtrfsOpts = [
     "compress=zstd:1"
@@ -17,6 +22,11 @@ let
     "rw"
     "space_cache=v2"
     "ssd"
+  ];
+
+  defaultCrypttabExtraOpts = [
+    "--fido2-device=auto"
+    "--timeout=30"
   ];
 
   defaultExtraFormatArgs = [
@@ -31,7 +41,7 @@ in
 {
   disko.devices = {
     disk = {
-      root = {
+      root-disk = {
         device = nvme0;
         type = "disk";
 
@@ -40,7 +50,8 @@ in
           partitions = {
             # Boot partition
             ESP = {
-              size = "512M";
+              # Oversize, but I'd rather have too much here.
+              size = "4G";
               type = "EF00";
               content = {
                 type = "filesystem";
@@ -49,7 +60,7 @@ in
                 mountOptions = [ "umask=0077" ];
               };
             };
-            luks = {
+            luks-root = {
               size = "100%";
               content = {
                 type = "luks";
@@ -68,14 +79,39 @@ in
                       mountpoint = "/nix";
                       mountOptions = defaultBtrfsOpts;
                     };
-                    "/home" = {
-                      mountpoint = "/home";
-                      mountOptions = defaultBtrfsOpts;
-                    };
                     "/swap" = {
                       mountpoint = "/.swapvol";
                       # 32 GB of RAM + some space
                       swap.swapfile.size = "34G";
+                    };
+                  };
+                };
+              };
+            };
+          };
+        };
+      };
+
+      home-disk = {
+        device = nvme1;
+        type = "disk";
+        content = {
+          type = "gpt";
+          partitions = {
+            luks-home = {
+              size = "100%";
+              content = {
+                type = "luks";
+                name = "crypthome";
+                settings.allowDiscards = true;
+                extraFormatArgs = defaultExtraFormatArgs;
+                content = {
+                  type = "btrfs";
+                  extraArgs = [ "-f" ];
+                  subvolumes = {
+                    "/home" = {
+                      mountpoint = "/home";
+                      mountOptions = defaultBtrfsOpts;
                     };
                   };
                 };
