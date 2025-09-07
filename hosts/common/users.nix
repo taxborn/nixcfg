@@ -24,6 +24,6 @@
     useUserPackages = true;
     extraSpecialArgs = { inherit inputs; };
 
-    users.taxborn = import ../../home/taxborn/${config.networking.hostName}.nix;
+    users.taxborn = import ../../home/taxborn;
   };
 }

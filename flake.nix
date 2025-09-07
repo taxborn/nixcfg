@@ -52,6 +52,18 @@
             ./hosts/tungsten/configuration.nix
           ];
         };
+
+        uranium = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs; };
+
+          modules = [
+            disko.nixosModules.disko
+            home-manager.nixosModules.home-manager
+
+            ./hosts/uranium/configuration.nix
+          ];
+        };
       };
     };
 }
