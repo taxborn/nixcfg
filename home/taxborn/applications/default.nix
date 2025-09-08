@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ./ghostty
     ./zed.nix
     ./zen.nix
   ];

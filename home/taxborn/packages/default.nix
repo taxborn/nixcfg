@@ -2,7 +2,6 @@
 
 {
   imports = [
-    ./archives.nix
     ./network.nix
     ./system-tools.nix
     ./utilities.nix
@@ -20,6 +19,11 @@
     gnutar
     gawk
     zstd
-    gnupg
+
+    # Archive utilities
+    zip
+    unzip
+    xz
+    p7zip
   ];
 }

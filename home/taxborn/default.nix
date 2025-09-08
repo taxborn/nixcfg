@@ -6,7 +6,6 @@
     ./packages
     ./shell
     ./gpg
-    ./ghostty
 
     ./fonts.nix
   ];
