@@ -1,5 +1,21 @@
-{ pkgs, ... }:
-
+{
+  pkgs,
+  osConfig,
+  ...
+}:
+let
+  hostname = osConfig.networking.hostName;
+  uraniumMonitorConfig = ''
+    monitor = DP-5,2560x1440@165,0x0,1
+    monitor = HDMI-A-5,1920x1080@60,2560x320,1
+  '';
+  tungstenMonitorConfig = ''
+    monitor = eDP-1,3456x2160@60,0x0,2
+  '';
+  defaultMonitorConfig = ''
+    monitor=,preferred,auto,auto
+  '';
+in
 {
   home.packages = with pkgs; [
     hyprpolkitagent
@@ -7,6 +23,14 @@
     brightnessctl
     playerctl
   ];
+
+  wayland.windowManager.hyprland.extraConfig =
+    if hostname == "uranium" then
+      uraniumMonitorConfig
+    else if hostname == "tungsten" then
+      tungstenMonitorConfig
+    else
+      defaultMonitorConfig;
 
   wayland.windowManager.hyprland = {
     enable = true;
@@ -20,9 +44,6 @@
     xwayland.enable = true;
 
     settings = {
-      # Monitor configuration
-      monitor = ",preferred,auto,auto";
-
       # Program variables
       "$terminal" = "ghostty";
       "$fileManager" = "dolphin";

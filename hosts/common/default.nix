@@ -1,4 +1,5 @@
 { pkgs, ... }:
+
 {
   imports = [
     ./users.nix
@@ -14,6 +15,7 @@
   environment.systemPackages = with pkgs; [
     vim
     neovim
+    pavucontrol
     wget
     git
   ];
