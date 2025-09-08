@@ -11,7 +11,6 @@
       "nix"
       "html"
       "toml"
-      "catppuccin icons"
       "sql"
       "make"
       "lua"

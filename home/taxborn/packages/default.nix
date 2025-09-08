@@ -13,7 +13,6 @@
     neofetch
 
     # Miscellaneous
-    cowsay
     file
     which
     tree

@@ -26,7 +26,10 @@
     loader = {
       timeout = 0;
       efi.canTouchEfiVariables = true;
-      systemd-boot.enable = true;
+      systemd-boot = {
+        configurationLimit = 10;
+        enable = true;
+      };
       # for some silly reason grub doesn't work on Uranium. maybe can't create
       # efi variables easily?
       # grub = {
