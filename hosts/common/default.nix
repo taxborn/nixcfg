@@ -2,10 +2,11 @@
 
 {
   imports = [
-    ./users.nix
-    ./ssh.nix
+    ./bluetooth.nix
     ./gpg.nix
     ./nix.nix
+    ./ssh.nix
+    ./users.nix
   ];
 
   i18n.defaultLocale = "en_US.UTF-8";
