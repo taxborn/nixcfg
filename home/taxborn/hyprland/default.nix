@@ -13,4 +13,6 @@
     "Xcursor.size" = 24;
     "Xft.dpi" = 172;
   };
+
+  programs.wofi.enable = true;
 }

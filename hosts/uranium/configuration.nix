@@ -1,6 +1,5 @@
 {
   pkgs,
-  lib,
   ...
 }:
 
@@ -29,12 +28,7 @@
       efi.canTouchEfiVariables = true;
       systemd-boot = {
         configurationLimit = 10;
-        enable = lib.mkForce false;
       };
-    };
-    lanzaboote = {
-      enable = true;
-      pkiBundle = "/var/lib/sbctl";
     };
     plymouth = {
       enable = true;
@@ -58,17 +52,10 @@
   hardware.bluetooth.enable = true;
   services.blueman.enable = true;
 
-  # services.libinput.enable = true;
   programs.hyprland = {
     enable = true;
     withUWSM = true;
   };
-
-  environment.systemPackages = with pkgs; [
-    wofi
-    sbctl
-    nixfmt-rfc-style
-  ];
 
   system.stateVersion = "25.05";
 }

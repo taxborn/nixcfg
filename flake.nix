@@ -51,7 +51,8 @@
             disko.nixosModules.disko
             nixos-hardware.nixosModules.dell-xps-15-9520-nvidia
             home-manager.nixosModules.home-manager
-            lanzaboote.nixosModules.lanzaboote
+
+            ./modules/secure-boot.nix
 
             ./hosts/tungsten/configuration.nix
           ];
@@ -64,7 +65,8 @@
           modules = [
             disko.nixosModules.disko
             home-manager.nixosModules.home-manager
-            lanzaboote.nixosModules.lanzaboote
+
+            ./modules/secure-boot.nix
 
             ./hosts/uranium/configuration.nix
           ];
