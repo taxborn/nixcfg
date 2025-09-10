@@ -34,6 +34,7 @@
       lsp.nil = {
         binary.path = "nil";
         binary.arguments = [ ];
+        settings.nix.flake.autoArchive = true;
       };
 
       # --- Appearance ---
