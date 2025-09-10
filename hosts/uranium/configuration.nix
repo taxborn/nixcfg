@@ -1,5 +1,6 @@
 {
   pkgs,
+  lib,
   ...
 }:
 
@@ -28,15 +29,12 @@
       efi.canTouchEfiVariables = true;
       systemd-boot = {
         configurationLimit = 10;
-        enable = true;
+        enable = lib.mkForce false;
       };
-      # for some silly reason grub doesn't work on Uranium. maybe can't create
-      # efi variables easily?
-      # grub = {
-      #   enable = true;
-      #   efiSupport = true;
-      #   device = "nodev";
-      # };
+    };
+    lanzaboote = {
+      enable = true;
+      pkiBundle = "/var/lib/sbctl";
     };
     plymouth = {
       enable = true;
@@ -68,6 +66,7 @@
 
   environment.systemPackages = with pkgs; [
     wofi
+    sbctl
     nixfmt-rfc-style
   ];
 

@@ -64,6 +64,7 @@
           modules = [
             disko.nixosModules.disko
             home-manager.nixosModules.home-manager
+            lanzaboote.nixosModules.lanzaboote
 
             ./hosts/uranium/configuration.nix
           ];

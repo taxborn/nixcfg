@@ -25,5 +25,8 @@
     unzip
     xz
     p7zip
+
+    # etc
+    prismlauncher
   ];
 }
