@@ -3,6 +3,7 @@
 {
   imports = [
     ./ghostty
+    ./neovim
     ./zed.nix
     ./zen.nix
   ];

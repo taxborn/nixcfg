@@ -17,7 +17,6 @@
 
   environment.systemPackages = with pkgs; [
     vim
-    neovim
     pavucontrol
     wget
     git
