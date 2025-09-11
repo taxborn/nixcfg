@@ -3,10 +3,12 @@
 {
   imports = [
     ./bluetooth.nix
+    ./silent-boot.nix
     ./gpg.nix
     ./nix.nix
     ./ssh.nix
     ./users.nix
+    ./virtualisation.nix
   ];
 
   i18n.defaultLocale = "en_US.UTF-8";
