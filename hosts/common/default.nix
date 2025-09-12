@@ -9,6 +9,7 @@
     ./ssh.nix
     ./users.nix
     ./virtualisation.nix
+    ../../modules/sops.nix
   ];
 
   i18n.defaultLocale = "en_US.UTF-8";
