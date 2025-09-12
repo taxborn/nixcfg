@@ -24,6 +24,8 @@ in
     playerctl
   ];
 
+  programs.hyprlock.enable = true;
+
   wayland.windowManager.hyprland.extraConfig =
     if hostname == "uranium" then
       uraniumMonitorConfig
