@@ -8,5 +8,9 @@
 
     signing.key = "F22AFD6CFD66B874";
     signing.signByDefault = true;
+
+    extraConfig = {
+      push.autoSetupRemote = true;
+    };
   };
 }
