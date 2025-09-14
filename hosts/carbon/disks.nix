@@ -42,33 +42,28 @@ in
                 type = "filesystem";
                 format = "vfat";
                 mountpoint = "/boot";
+                mountOptions = [ "umask=0077" ];
               };
             };
 
-            luks-root = {
+            root = {
               size = "100%";
               content = {
-                type = "luks";
-                name = "cryptroot";
-                settings.allowDiscards = true;
-                extraFormatArgs = defaultExtraFormatArgs;
-                content = {
-                  type = "btrfs";
-                  extraArgs = [ "-f" ];
-                  subvolumes = {
-                    "/root" = {
-                      mountpoint = "/";
-                      mountOptions = defaultBtrfsOpts;
-                    };
-                    "/nix" = {
-                      mountpoint = "/nix";
-                      mountOptions = defaultBtrfsOpts;
-                    };
-                    "/swap" = {
-                      mountpoint = "/.swapvol";
-                      # 16 GB of RAM + some space
-                      swap.swapfile.size = "18G";
-                    };
+                type = "btrfs";
+                extraArgs = [ "-f" ];
+                subvolumes = {
+                  "/root" = {
+                    mountpoint = "/";
+                    mountOptions = defaultBtrfsOpts;
+                  };
+                  "/nix" = {
+                    mountpoint = "/nix";
+                    mountOptions = defaultBtrfsOpts;
+                  };
+                  "/swap" = {
+                    mountpoint = "/.swapvol";
+                    # 16 GB of RAM + some space
+                    swap.swapfile.size = "18G";
                   };
                 };
               };

@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   imports = [
@@ -24,6 +24,10 @@
   time.timeZone = "America/Chicago";
 
   services.openssh.enable = true;
+
+  environment.systemPackages = with pkgs; [
+    screenfetch
+  ];
 
   system.stateVersion = "25.05";
 }

@@ -1,7 +1,9 @@
+{ lib, ... }:
+
 {
   boot = {
     # Enable "Silent boot"
-    consoleLogLevel = 3;
+    consoleLogLevel = lib.mkDefault 3;
     initrd.verbose = false;
     kernelParams = [
       "quiet"
@@ -12,7 +14,7 @@
     ];
     loader = {
       timeout = 0;
-      efi.canTouchEfiVariables = true;
+      # efi.canTouchEfiVariables = true;
     };
   };
 }
