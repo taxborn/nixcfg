@@ -29,3 +29,20 @@ Using tungsten as an example, follow these steps:
 
 ### Tungsten Caveat
 With secure boot enabled, I don't think I can immediately install this from scratch. Disable lanzaboote and enable systemd-boot instead.
+
+# TODO
+- [ ] Install on Helium (both)
+- [ ] Slim down `taxborn` user configuration on headless machines
+- [ ] borg/borgmatic backup
+- [ ] Hyprland configuration
+  - [ ] Kinda figure the feel I want here
+  - [ ] Simplify waybar configuration
+  - [ ] `wofi` configuration and personalization
+  - [ ] Figure out everything I can customize
+  - [ ] Ensure things look good on different screens
+- [ ] Figure out gpg-agent forwarding? maybe only SSH forwarding?
+  I think I want to be able to code on my headless machines (carbon/helium). For that I currently need to
+  forward my GPG agent since I sign code with my PGP key. If I switch to signing with my SSH key, I can probably
+  just forward my SSH agent instead.
+- [ ] Add more documentation about everything
+  - [ ] `nixos-anywhere` steps on OVH (might be worth a leafpub/blog post?)
