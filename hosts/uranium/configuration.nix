@@ -7,6 +7,7 @@
   imports = [
     ../common
     ../common/hyprland.nix
+    ../common/bluetooth.nix
 
     ./hardware-configuration.nix
     ./disks.nix

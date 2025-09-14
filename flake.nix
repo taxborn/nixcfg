@@ -76,6 +76,18 @@
             ./hosts/uranium/configuration.nix
           ];
         };
+
+        carbon = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs; };
+
+          modules = [
+            disko.nixosModules.disko
+            home-manager.nixosModules.home-manager
+
+            ./hosts/carbon/configuration.nix
+          ];
+        };
       };
     };
 }

@@ -2,7 +2,6 @@
 
 {
   imports = [
-    ./bluetooth.nix
     ./silent-boot.nix
     ./gpg.nix
     ./nix.nix
