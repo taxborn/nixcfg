@@ -6,6 +6,8 @@
 
 {
   programs.fish.enable = true;
+  # this step takes a whileeeee so i disable it for now.
+  documentation.man.generateCaches = false;
 
   users.users.taxborn = {
     isNormalUser = true;
