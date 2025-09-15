@@ -150,10 +150,10 @@ in
         };
       };
 
-      # Gestures
-      gestures = {
-        workspace_swipe = true;
-      };
+      # Gestures - TODO this was updated in 0.51.0 to be much better, need to figure those options
+      # gestures = {
+      #   workspace_swipe = true;
+      # };
 
       # Key bindings
       bind = [
