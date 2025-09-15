@@ -27,9 +27,6 @@ Using tungsten as an example, follow these steps:
    sudo nixos-install --flake .#tungsten --root /mnt
    ```
 
-### Tungsten Caveat
-With secure boot enabled, I don't think I can immediately install this from scratch. Disable lanzaboote and enable systemd-boot instead.
-
 # TODO
 - [ ] Install on Helium (both)
 - [ ] Slim down `taxborn` user configuration on headless machines
@@ -46,3 +43,7 @@ With secure boot enabled, I don't think I can immediately install this from scra
   just forward my SSH agent instead.
 - [ ] Add more documentation about everything
   - [ ] `nixos-anywhere` steps on OVH (might be worth a leafpub/blog post?)
+- [ ] Spend a bit of time to figure good config values
+    - [ ] SSH
+    - [ ] Boot
+    - [ ] Kernel

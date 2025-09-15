@@ -20,7 +20,6 @@ in
   home.packages = with pkgs; [
     hyprpolkitagent
     wofi
-    brightnessctl
     playerctl
   ];
 
