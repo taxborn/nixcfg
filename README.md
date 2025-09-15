@@ -37,6 +37,7 @@ Using tungsten as an example, follow these steps:
   - [ ] `wofi` configuration and personalization
   - [ ] Figure out everything I can customize
   - [ ] Ensure things look good on different screens
+- [ ] Screenshots
 - [ ] Figure out gpg-agent forwarding? maybe only SSH forwarding?
   I think I want to be able to code on my headless machines (carbon/helium). For that I currently need to
   forward my GPG agent since I sign code with my PGP key. If I switch to signing with my SSH key, I can probably

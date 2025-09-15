@@ -1,11 +1,11 @@
 {
   imports = [
+    ./dunst.nix
     ./hyprland.nix
-    ./waybar.nix
     ./hyprpaper.nix
+    ./waybar.nix
   ];
 
-  services.dunst.enable = true;
   services.gnome-keyring.enable = true;
 
   # X resources configuration
