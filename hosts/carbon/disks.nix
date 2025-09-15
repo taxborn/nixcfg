@@ -8,15 +8,6 @@ let
     "space_cache=v2"
     "ssd"
   ];
-
-  defaultExtraFormatArgs = [
-    "--cipher=aes-xts-plain64"
-    "--hash=sha256"
-    "--iter-time=1000"
-    "--key-size=256"
-    "--pbkdf-memory=1048576"
-    "--sector-size=4096"
-  ];
 in
 {
   disko.devices = {

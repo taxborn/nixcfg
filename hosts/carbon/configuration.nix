@@ -2,7 +2,9 @@
 
 {
   imports = [
-    ../common
+    ../common/nix.nix
+    ../common/ssh.nix
+    ../common/users.nix
 
     ./hardware-configuration.nix
     ./disks.nix
@@ -20,14 +22,25 @@
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOf8rn+JzRmVc6/4xKOJ4MrmId4xxpYPEgvbCrK18U+N yubikey"
   ];
 
+  services.caddy = {
+    enable = true;
+    virtualHosts."taxborn.com".extraConfig = ''
+      respond "Hello, World!"
+    '';
+    virtualHosts."ticker.blue".extraConfig = ''
+      respond "Hello, World!"
+    '';
+  };
+
+  networking.firewall.allowedTCPPorts = [
+    80
+    443
+    22 # might already be allowed? just to be safe.
+  ];
   networking.hostName = "carbon";
   time.timeZone = "America/Chicago";
 
   services.openssh.enable = true;
-
-  environment.systemPackages = with pkgs; [
-    screenfetch
-  ];
 
   system.stateVersion = "25.05";
 }
