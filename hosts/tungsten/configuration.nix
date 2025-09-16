@@ -18,10 +18,17 @@
     loader.efi.canTouchEfiVariables = true;
   };
 
-  hardware.bluetooth.enable = true;
-  services.blueman.enable = true;
+  networking.hostName = "tungsten";
+  time.timeZone = "America/Chicago";
+
+  programs.hyprland = {
+    enable = true;
+    withUWSM = true;
+  };
 
   services.displayManager.sddm = {
+    enable = true;
+    wayland.enable = true;
     settings = {
       General = {
         GreeterEnvironment = "QT_SCREEN_SCALE_FACTORS=2,QT_FONT_DPI=192";
@@ -34,8 +41,8 @@
     secure-boot.enable = true;
   };
 
-  networking.hostName = "tungsten";
-  time.timeZone = "America/Chicago";
+  hardware.bluetooth.enable = true;
+  services.blueman.enable = true;
 
   services.libinput.enable = true;
 

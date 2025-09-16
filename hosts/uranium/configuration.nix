@@ -18,6 +18,24 @@
     loader.efi.canTouchEfiVariables = true;
   };
 
+  networking.hostName = "uranium";
+  time.timeZone = "America/Chicago";
+
+  programs.hyprland = {
+    enable = true;
+    withUWSM = true;
+  };
+
+  services.displayManager.sddm = {
+    enable = true;
+    wayland.enable = true;
+  };
+
+  extraServices = {
+    virtualisation.enable = true;
+    secure-boot.enable = true;
+  };
+
   hardware.bluetooth.enable = true;
   services.blueman.enable = true;
 
@@ -27,18 +45,9 @@
     dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
   };
 
-  extraServices = {
-    virtualisation.enable = true;
-    secure-boot.enable = true;
-  };
-
   environment.systemPackages = with pkgs; [
-    brightnessctl
     pavucontrol
   ];
-
-  networking.hostName = "uranium";
-  time.timeZone = "America/Chicago";
 
   system.stateVersion = "25.05";
 }
