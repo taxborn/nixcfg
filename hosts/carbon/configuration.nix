@@ -2,9 +2,7 @@
 
 {
   imports = [
-    ../common/nix.nix
-    ../common/ssh.nix
-    ../common/users.nix
+    ../common
 
     ./hardware-configuration.nix
     ./disks.nix
