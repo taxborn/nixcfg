@@ -7,6 +7,7 @@
 
     ../features/desktop/ghostty
     ../features/desktop/hyprland
+    ../features/desktop/etc.nix
     ../features/desktop/fonts.nix
     ../features/desktop/zen.nix
 

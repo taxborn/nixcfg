@@ -8,6 +8,7 @@
     ../features/desktop/ghostty
     ../features/desktop/hyprland
     ../features/desktop/fonts.nix
+    ../features/desktop/etc.nix
     ../features/desktop/minecraft.nix
     ../features/desktop/obs.nix
     ../features/desktop/zen.nix
