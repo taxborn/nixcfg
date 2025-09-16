@@ -13,6 +13,7 @@
       "rd.systemd.show_status=auto"
     ];
     loader = {
+      systemd-boot.configurationLimit = 10;
       timeout = 0;
       # efi.canTouchEfiVariables = true;
     };
