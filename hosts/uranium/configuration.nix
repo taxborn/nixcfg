@@ -7,7 +7,6 @@
   imports = [
     ../common
     ../common/hyprland.nix
-    ../common/secure-boot.nix
 
     ./hardware-configuration.nix
     ./disks.nix
@@ -19,6 +18,9 @@
     loader.efi.canTouchEfiVariables = true;
   };
 
+  hardware.bluetooth.enable = true;
+  services.blueman.enable = true;
+
   programs.steam = {
     enable = true;
     remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
@@ -27,7 +29,13 @@
 
   extraServices = {
     virtualisation.enable = true;
+    secure-boot.enable = true;
   };
+
+  environment.systemPackages = with pkgs; [
+    brightnessctl
+    pavucontrol
+  ];
 
   networking.hostName = "uranium";
   time.timeZone = "America/Chicago";

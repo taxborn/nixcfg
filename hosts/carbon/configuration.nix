@@ -3,6 +3,7 @@
 {
   imports = [
     ../common
+    ./caddy.nix
 
     ./hardware-configuration.nix
     ./disks.nix
@@ -25,31 +26,11 @@
   systemd.services.NetworkManager-wait-online.enable = false;
   systemd.services.tailscaled.after = [ "systemd-networkd-wait-online.service" ];
 
-  services.caddy = {
-    enable = true;
-    virtualHosts."taxborn.com".extraConfig = ''
-      redir https://www.taxborn.com{uri} permanent
-    '';
-    virtualHosts."www.taxborn.com".extraConfig = ''
-      respond "Hello, World!"
-    '';
-    virtualHosts."ticker.blue".extraConfig = ''
-      redir https://www.ticker.blue{uri} permanent
-    '';
-    virtualHosts."www.ticker.blue".extraConfig = ''
-      respond "Hello, World!"
-    '';
-  };
-
-  networking.firewall.allowedTCPPorts = [
-    80
-    443
-    22 # might already be allowed? just to be safe.
-  ];
   networking.hostName = "carbon";
   time.timeZone = "America/Chicago";
 
   services.openssh.enable = true;
+  networking.firewall.allowedTCPPorts = [ 22 ]; # might already be allowed? just to be safe.
 
   system.stateVersion = "25.05";
 }
