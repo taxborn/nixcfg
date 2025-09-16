@@ -21,8 +21,9 @@
   ];
 
   services.tailscale.enable = true;
-  systemd.network.wait-online.enable = false;
-  boot.initrd.systemd.network.wait-online.enable = false;
+  # https://github.com/NixOS/nixpkgs/issues/180175
+  systemd.services.NetworkManager-wait-online.enable = false;
+  systemd.services.tailscaled.after = [ "systemd-networkd-wait-online.service" ];
 
   services.caddy = {
     enable = true;
