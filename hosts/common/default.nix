@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ inputs, pkgs, ... }:
 
 {
   imports = [
@@ -9,7 +9,8 @@
     ./users.nix
     ./virtualisation.nix
     ../../modules/sops.nix
-    # ./stylix.nix
+
+    inputs.home-manager.nixosModules.home-manager
   ];
 
   i18n.defaultLocale = "en_US.UTF-8";
@@ -17,6 +18,8 @@
 
   services.tailscale.enable = true;
 
+  hardware.bluetooth.enable = true;
+  services.blueman.enable = true;
   environment.systemPackages = with pkgs; [
     vim
     pavucontrol

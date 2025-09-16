@@ -34,11 +34,6 @@
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    stylix = {
-      url = "github:nix-community/stylix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
@@ -46,9 +41,7 @@
       self,
       nixpkgs,
       disko,
-      home-manager,
       nixos-hardware,
-      lanzaboote,
       ...
     }:
     {
@@ -60,9 +53,6 @@
           modules = [
             disko.nixosModules.disko
             nixos-hardware.nixosModules.dell-xps-15-9520-nvidia
-            home-manager.nixosModules.home-manager
-
-            ./modules/secure-boot.nix
 
             ./hosts/tungsten/configuration.nix
           ];
@@ -74,9 +64,6 @@
 
           modules = [
             disko.nixosModules.disko
-            home-manager.nixosModules.home-manager
-
-            ./modules/secure-boot.nix
 
             ./hosts/uranium/configuration.nix
           ];
@@ -88,7 +75,6 @@
 
           modules = [
             disko.nixosModules.disko
-            home-manager.nixosModules.home-manager
 
             ./hosts/carbon/configuration.nix
           ];
