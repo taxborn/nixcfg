@@ -45,13 +45,6 @@
     unzip
     xz
     p7zip
-
-    # etc
-    prismlauncher
-
-    discord
-    obsidian
-    spotify
   ];
 
   home.username = "taxborn";
@@ -80,7 +73,6 @@
   };
 
   programs.yazi.enable = true;
-  programs.obs-studio.enable = true;
   programs.lazygit.enable = true;
   programs.bat.enable = true;
 
