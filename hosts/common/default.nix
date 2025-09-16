@@ -9,6 +9,7 @@
     ./users.nix
     ./virtualisation.nix
     ../../modules/sops.nix
+    # ./stylix.nix
   ];
 
   i18n.defaultLocale = "en_US.UTF-8";
