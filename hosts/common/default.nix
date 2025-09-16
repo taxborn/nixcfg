@@ -2,16 +2,22 @@
 
 {
   imports = [
+    ./extraServices
+    ./users
+
     ./silent-boot.nix
     ./gpg.nix
     ./nix.nix
     ./ssh.nix
-    ./users.nix
-    ./virtualisation.nix
-    ../../modules/sops.nix
 
     inputs.home-manager.nixosModules.home-manager
   ];
+
+  home-manager = {
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    extraSpecialArgs = { inherit inputs; };
+  };
 
   i18n.defaultLocale = "en_US.UTF-8";
   networking.networkmanager.enable = true;

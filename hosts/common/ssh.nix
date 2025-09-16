@@ -13,6 +13,4 @@ in
     };
     openFirewall = true;
   };
-
-  users.users.taxborn.openssh.authorizedKeys.keys = sshKeys;
 }

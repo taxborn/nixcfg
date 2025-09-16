@@ -6,11 +6,6 @@
     nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-25.05";
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
 
-    sops-nix = {
-      url = "github:Mic92/sops-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # current browser of choice; firefox backend
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
@@ -37,22 +32,23 @@
   };
 
   outputs =
-    inputs@{
+    {
       self,
       nixpkgs,
-      disko,
-      nixos-hardware,
       ...
-    }:
+    }@inputs:
+    let
+      inherit (self) outputs;
+    in
     {
       nixosConfigurations = {
         tungsten = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = { inherit inputs; };
+          specialArgs = { inherit inputs outputs; };
 
           modules = [
-            disko.nixosModules.disko
-            nixos-hardware.nixosModules.dell-xps-15-9520-nvidia
+            inputs.disko.nixosModules.disko
+            inputs.nixos-hardware.nixosModules.dell-xps-15-9520-nvidia
 
             ./hosts/tungsten/configuration.nix
           ];
@@ -60,10 +56,10 @@
 
         uranium = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = { inherit inputs; };
+          specialArgs = { inherit inputs outputs; };
 
           modules = [
-            disko.nixosModules.disko
+            inputs.disko.nixosModules.disko
 
             ./hosts/uranium/configuration.nix
           ];
@@ -71,10 +67,10 @@
 
         carbon = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
-          specialArgs = { inherit inputs; };
+          specialArgs = { inherit inputs outputs; };
 
           modules = [
-            disko.nixosModules.disko
+            inputs.disko.nixosModules.disko
 
             ./hosts/carbon/configuration.nix
           ];

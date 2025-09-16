@@ -25,6 +25,10 @@
     dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
   };
 
+  extraServices = {
+    virtualisation.enable = true;
+  };
+
   networking.hostName = "uranium";
   time.timeZone = "America/Chicago";
 
