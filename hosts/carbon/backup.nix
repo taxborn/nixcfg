@@ -8,4 +8,6 @@
 #  - /home/taxborn
 #  - websites and data
 #  - database backups?
+#
+# ssh is managed by a local ssh key
 { }
