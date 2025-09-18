@@ -6,7 +6,6 @@
 {
   imports = [
     ../common
-    ../common/hyprland.nix
 
     ./hardware-configuration.nix
     ./disks.nix
