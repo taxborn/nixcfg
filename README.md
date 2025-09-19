@@ -30,7 +30,7 @@ Using tungsten as an example, follow these steps:
 # TODO
 - [ ] Install on Helium (both)
 - [X] Slim down `taxborn` user configuration on headless machines
-- [ ] borg/borgmatic backup
+- [X] borg/borgmatic backup
 - [ ] Hyprland configuration
   - [ ] Kinda figure the feel I want here
   - [ ] Simplify waybar configuration
