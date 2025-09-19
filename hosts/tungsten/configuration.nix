@@ -9,6 +9,7 @@
 
     ./hardware-configuration.nix
     ./disks.nix
+    ./backup.nix
   ];
 
   boot = {
