@@ -7,9 +7,6 @@
 # include
 #  - /home/taxborn/Documents
 #  - /home/taxborn/Media
-#
-# ssh is managed by the yubikey, /run/user/1000/gnupg/S.gpg-agent.ssh
-# > ssh -o IdentityFile=/run/user/1000/gnupg/S.gpg-agent.ssh
 let
   commonExcludes = [
     "/home/taxborn/Documents/Notes" # managed by Obsidian
