@@ -1,4 +1,8 @@
 {
+  imports = [
+    ./mischief.nix
+  ];
+
   services.caddy = {
     enable = true;
 
