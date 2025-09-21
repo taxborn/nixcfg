@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 
 {
   imports = [
@@ -50,6 +50,16 @@
   home.username = "taxborn";
   home.homeDirectory = "/home/taxborn";
   home.stateVersion = "25.05";
+
+  sops = {
+    age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt"; # must have no password!
+
+    defaultSopsFile = ../../secrets.yaml;
+    defaultSymlinkPath = "/run/user/1000/secrets";
+    defaultSecretsMountPoint = "/run/user/1000/secrets.d";
+
+    # secrets.cloudflare_api_key.path = "${config.sops.defaultSymlinkPath}/cloudflare_api_key";
+  };
 
   programs.git = {
     enable = true;

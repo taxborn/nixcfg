@@ -1,6 +1,7 @@
 {
   inputs,
   pkgs,
+  config,
   ...
 }:
 
@@ -23,4 +24,9 @@
       generateKey = true;
     };
   };
+
+  sops.secrets."cloudflare-api-key" = { };
+  environment.variables.CLOUDFLARE_API_KEY = "$(cat ${
+    config.sops.secrets."cloudflare-api-key".path
+  })";
 }

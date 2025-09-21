@@ -24,11 +24,11 @@
       respond "Hello, World!"
     '';
 
-    extraConfig = ''
-      tls {
-        dns cloudflare ${config.sops.secrets."cloudflare-api-key".value}
-      }
-    '';
+    # extraConfig = ''
+    #   tls {
+    #     dns cloudflare ${config.sops.secrets."cloudflare-api-key".value}
+    #   }
+    # '';
   };
 
   networking.firewall.allowedTCPPorts = [

@@ -23,6 +23,9 @@
     useGlobalPkgs = true;
     useUserPackages = true;
     extraSpecialArgs = { inherit inputs; };
+    sharedModules = [
+      inputs.sops-nix.homeManagerModules.sops
+    ];
   };
 
   i18n.defaultLocale = "en_US.UTF-8";
@@ -36,5 +39,5 @@
     git
   ];
   environment.variables.EDITOR = "nvim";
-	# environment.variables.CLOUDFLARE_API_KEY = "$(cat ${config.sops.secrets.cloudflare-api-key.path})";
+  # environment.variables.CLOUDFLARE_API_KEY = "$(cat ${config.sops.secrets.cloudflare-api-key.path})";
 }
