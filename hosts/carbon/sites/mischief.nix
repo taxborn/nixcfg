@@ -9,7 +9,6 @@
     '';
     virtualHosts."www.mischief.town".extraConfig = ''
       reverse_proxy localhost:${config.services.glance.settings.server.port}
-      respond "Hello, World!"
     '';
   };
 
