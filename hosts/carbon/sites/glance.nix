@@ -21,6 +21,16 @@
                 }
               ];
             }
+            {
+              size = "full";
+              widgets = [
+                {
+                  type = "hacker-news";
+                  limit = 15;
+                  collapse-after = 5;
+                }
+              ];
+            }
           ];
         }
       ];
