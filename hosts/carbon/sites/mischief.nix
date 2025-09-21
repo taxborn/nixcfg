@@ -8,7 +8,7 @@
       redir https://www.mischief.town{uri} permanent
     '';
     virtualHosts."www.mischief.town".extraConfig = ''
-      reverse_proxy localhost:${config.services.glance.settings.server.port}
+      reverse_proxy localhost:${toString config.services.glance.settings.server.port}
     '';
   };
 
