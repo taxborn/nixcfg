@@ -1,4 +1,9 @@
-{ inputs, pkgs, ... }:
+{
+  inputs,
+  pkgs,
+  config,
+  ...
+}:
 
 {
   imports = [
@@ -9,6 +14,7 @@
     ./gpg.nix
     ./nix.nix
     ./ssh.nix
+    ./sops.nix
 
     inputs.home-manager.nixosModules.home-manager
   ];
@@ -30,4 +36,5 @@
     git
   ];
   environment.variables.EDITOR = "nvim";
+	# environment.variables.CLOUDFLARE_API_KEY = "$(cat ${config.sops.secrets.cloudflare-api-key.path})";
 }
