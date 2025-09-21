@@ -17,7 +17,7 @@
                 }
                 {
                   type = "weather";
-                  location = "St. Paul, Minnesota"
+                  location = "St. Paul, Minnesota";
                 }
               ];
             }
