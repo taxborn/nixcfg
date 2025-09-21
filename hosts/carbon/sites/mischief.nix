@@ -9,4 +9,6 @@
       respond "Hello, World!"
     '';
   };
+
+  services.glance.enable = true;
 }
