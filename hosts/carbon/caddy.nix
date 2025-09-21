@@ -2,6 +2,7 @@
   imports = [
     ./sites/mischief.nix
     ./sites/taxborn.nix
+    ./sites/vaultwarden.nix
   ];
 
   services.caddy = {
