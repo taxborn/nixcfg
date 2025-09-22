@@ -14,18 +14,15 @@
     ./gpg.nix
     ./nix.nix
     ./ssh.nix
-    ./sops.nix
 
     inputs.home-manager.nixosModules.home-manager
+    inputs.agenix.nixosModules.default
   ];
 
   home-manager = {
     useGlobalPkgs = true;
     useUserPackages = true;
     extraSpecialArgs = { inherit inputs; };
-    sharedModules = [
-      inputs.sops-nix.homeManagerModules.sops
-    ];
   };
 
   i18n.defaultLocale = "en_US.UTF-8";
