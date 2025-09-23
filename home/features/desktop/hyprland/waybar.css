@@ -62,7 +62,7 @@ button {
 }
 
 #workspaces button:hover {
-    background: #1e1e1e;
+    background: @base;
     border: 0px solid transparent;
 }
 
@@ -81,7 +81,7 @@ button {
 #custom-uptime,
 #custom-docker {
     background-color: @crust;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 0.75rem;
     margin: 5px 0;
 }
 
@@ -90,8 +90,13 @@ button {
     border-radius: 5px;
 }
 
+#tray {
+    border-radius: 0px 5px 5px 0px;
+}
+
 #battery {
     color: @text;
+    border-radius: 0;
 }
 
 #battery.charging {
@@ -106,8 +111,7 @@ button {
     color: @yellow;
 }
 
-#backlight,
-#battery {
+#backlight {
     border-radius: 0;
 }
 

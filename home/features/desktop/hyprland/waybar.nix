@@ -13,6 +13,7 @@
           "pulseaudio"
           "cpu"
           "memory"
+          "battery"
           "tray"
         ];
 
