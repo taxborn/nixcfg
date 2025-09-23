@@ -34,7 +34,7 @@ Using tungsten as an example, follow these steps:
 - [ ] Hyprland configuration
   - [ ] Kinda figure the feel I want here
   - [ ] Simplify waybar configuration
-  - [ ] `wofi` configuration and personalization
+  - [X] `wofi` configuration and personalization
   - [ ] Figure out everything I can customize
   - [ ] Ensure things look good on different screens
 - [ ] Screenshots
