@@ -1,8 +1,9 @@
-{ pkgs, config, ... }:
+{ pkgs, ... }:
 
 {
   imports = [
     ./gpg
+    ../cli/git.nix
   ];
 
   home.packages = with pkgs; [
@@ -10,7 +11,6 @@
     neofetch
 
     dnsutils # `dig` + `nslookup`
-    nmap
 
     ripgrep
     jq
@@ -18,14 +18,7 @@
 
     eza
     btop
-    iotop # io monitoring
-    iftop # network monitoring
 
-    strace # system call monitoring
-    ltrace # library call monitoring
-    lsof # list open files
-
-    sysstat
     lm_sensors # for `sensors` command
     ethtool
     pciutils # lspci
@@ -44,28 +37,7 @@
     zip
     unzip
     xz
-    p7zip
   ];
-
-  home.username = "taxborn";
-  home.homeDirectory = "/home/taxborn";
-  home.stateVersion = "25.05";
-
-  programs.git = {
-    enable = true;
-    userName = "Braxton Fair";
-    userEmail = "hello@taxborn.com";
-
-    lfs.enable = true;
-
-    signing.key = "F22AFD6CFD66B874";
-    signing.signByDefault = true;
-
-    extraConfig = {
-      push.autoSetupRemote = true;
-      init.defaultBranch = "main";
-    };
-  };
 
   programs.zoxide = {
     enable = true;
@@ -76,8 +48,7 @@
   programs.lazygit.enable = true;
   programs.bat.enable = true;
 
-  home.sessionVariables = {
-    ELECTRON_OZONE_PLATFORM_HINT = "wayland";
-    NIXOS_OZONE_WL = 1; # fixed electron apps blurriness
-  };
+  home.username = "taxborn";
+  home.homeDirectory = "/home/taxborn";
+  home.stateVersion = "25.05";
 }
