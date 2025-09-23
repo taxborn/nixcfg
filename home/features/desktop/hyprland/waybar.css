@@ -1,3 +1,29 @@
+@define-color flamingo  #f2cdcd;
+@define-color pink  #f5c2e7;
+@define-color mauve  #cba6f7;
+@define-color red  #f38ba8;
+@define-color maroon  #eba0ac;
+@define-color peach  #fab387;
+@define-color yellow  #f9e2af;
+@define-color green  #a6e3a1;
+@define-color teal  #94e2d5;
+@define-color sky  #89dceb;
+@define-color sapphire  #74c7ec;
+@define-color blue  #89b4fa;
+@define-color lavender  #b4befe;
+@define-color text  #cdd6f4;
+@define-color subtext1  #bac2de;
+@define-color subtext0  #a6adc8;
+@define-color overlay2  #9399b2;
+@define-color overlay1  #7f849c;
+@define-color overlay0  #6c7086;
+@define-color surface2  #585b70;
+@define-color surface1  #45475a;
+@define-color surface0  #313244;
+@define-color base  #1e1e2e;
+@define-color mantle  #181825;
+@define-color crust  #11111b;
+
 * {
     font-family: Atkinson Hyperlegible Mono;
     font-size: 10px;
@@ -9,25 +35,25 @@
 
 #waybar {
     background: transparent;
-    color: #c6d0f5;
+    color: @text;
     margin: 2px 2px;
 }
 
 #workspaces {
     border-radius: 5px;
     margin: 5px;
-    background: #101010;
+    background: @crust;
     margin-left: 2px;
 }
 
 #workspaces button {
-    color: #babbf1;
+    color: @text;
     border-radius: 5px;
     padding: 0.4rem;
 }
 
 #workspaces button.active {
-    color: #99d1db;
+    color: @mauve;
     border-radius: 5px;
 }
 
@@ -54,36 +80,30 @@ button {
 #custom-weather,
 #custom-uptime,
 #custom-docker {
-    background-color: #101010;
+    background-color: @crust;
     padding: 0.5rem 1rem;
     margin: 5px 0;
 }
 
 #clock {
-    color: #8caaee;
-    border-radius: 5px;
-}
-
-#custom-weather {
-    color: #8caaee;
-    margin-left: 0.5rem;
+    color: @sky;
     border-radius: 5px;
 }
 
 #battery {
-    color: #a6d189;
+    color: @text;
 }
 
 #battery.charging {
-    color: #a6d189;
+    color: @green;
 }
 
 #battery.warning:not(.charging) {
-    color: #e78284;
+    color: @red;
 }
 
 #backlight {
-    color: #e5c890;
+    color: @yellow;
 }
 
 #backlight,
@@ -92,65 +112,10 @@ button {
 }
 
 #pulseaudio {
-    color: #ea999c;
+    color: @red;
     border-radius: 5px 0px 0px 5px;
-}
-
-#custom-docker {
-    color: #85c1dc;
-}
-
-#custom-music {
-    color: #ca9ee6;
-    border-radius: 5px;
 }
 
 #custom-lock {
     color: #babbf1;
-}
-
-#custom-power {
-    margin-right: 1rem;
-    border-radius: 0px 5px 5px 0px;
-    color: #e78284;
-}
-
-#custom-docker.docker {
-    color: #85c1dc;
-}
-
-#custom-docker.docker-none {
-    color: #737994;
-}
-
-#custom-docker.docker-error {
-    color: #e78284;
-}
-
-#custom-weather.clear {
-    color: #e5c890; /* Sunny yellow */
-}
-
-#custom-weather.cloud {
-    color: #99d1db; /* Light blue */
-}
-
-#custom-weather.rain {
-    color: #8caaee; /* Blue */
-}
-
-#custom-weather.snow {
-    color: #c6d0f5; /* White-ish */
-}
-
-#custom-weather.thunder {
-    color: #ca9ee6; /* Purple */
-}
-
-#custom-weather.fog {
-    color: #b0b4bc; /* Gray */
-}
-
-#custom-weather.error {
-    color: #e78284; /* Red */
 }

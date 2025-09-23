@@ -11,7 +11,6 @@
         modules-center = [ "clock" ];
         modules-right = [
           "pulseaudio"
-          "network"
           "cpu"
           "memory"
           "tray"
@@ -45,32 +44,14 @@
           on-click = "pavucontrol";
         };
 
-        network = {
-          format-wifi = "󰤢";
-          format-ethernet = "󰈀";
-          format-disconnected = "󰤠";
-          interval = 5;
-          tooltip = false;
-        };
-
         cpu = {
-          interval = 1;
-          format = "  {icon0}{icon1}{icon2}{icon3} {usage:>2}%";
-          format-icons = [
-            "▁"
-            "▂"
-            "▃"
-            "▄"
-            "▅"
-            "▆"
-            "▇"
-            "█"
-          ];
+          interval = 5;
+          format = "CPU: {usage:>2}%";
         };
 
         memory = {
-          interval = 30;
-          format = "  {used:0.1f}G/{total:0.1f}G";
+          interval = 5;
+          format = "MEM: {used:0.1f}G";
         };
 
         tray = {

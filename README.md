@@ -32,11 +32,8 @@ Using tungsten as an example, follow these steps:
 - [X] Slim down `taxborn` user configuration on headless machines
 - [X] borg/borgmatic backup
 - [ ] Hyprland configuration
-  - [ ] Kinda figure the feel I want here
   - [ ] Simplify waybar configuration
   - [X] `wofi` configuration and personalization
-  - [ ] Figure out everything I can customize
-  - [ ] Ensure things look good on different screens
 - [ ] Screenshots
 - [ ] Figure out gpg-agent forwarding? maybe only SSH forwarding?
   I think I want to be able to code on my headless machines (carbon/helium). For that I currently need to
