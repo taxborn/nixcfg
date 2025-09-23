@@ -1,19 +1,26 @@
 {
   imports = [
     ./default.nix
-
-    ../features/cli/fish.nix
-    ../features/cli/tmux.nix
-
-    ../features/desktop/ghostty
-    ../features/desktop/hyprland
-    ../features/desktop/etc.nix
-    ../features/desktop/fonts.nix
-    ../features/desktop/zen.nix
-
-    ../features/development/neovim
-    ../features/development/zed.nix
   ];
+
+  features = {
+    cli = {
+      fish.enable = true;
+      tmux.enable = true;
+      git.enable = true;
+    };
+    desktop = {
+      ghostty.enable = true;
+      hyprland.enable = true;
+      etc.enable = true;
+      fonts.enable = true;
+      zen.enable = true;
+    };
+    development = {
+      neovim.enable = true;
+      zed.enable = true;
+    };
+  };
 
   home.sessionVariables = {
     ELECTRON_OZONE_PLATFORM_HINT = "wayland";

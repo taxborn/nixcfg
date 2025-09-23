@@ -1,21 +1,26 @@
 {
   imports = [
     ./default.nix
-
-    ../features/cli/fish.nix
-    ../features/cli/tmux.nix
-
-    ../features/desktop/ghostty
-    ../features/desktop/hyprland
-    ../features/desktop/fonts.nix
-    ../features/desktop/etc.nix
-    ../features/desktop/minecraft.nix
-    ../features/desktop/obs.nix
-    ../features/desktop/zen.nix
-
-    ../features/development/neovim
-    ../features/development/zed.nix
   ];
+
+  features = {
+    cli = {
+      fish.enable = true;
+      tmux.enable = true;
+      git.enable = true;
+    };
+    desktop = {
+      ghostty.enable = true;
+      hyprland.enable = true;
+      etc.enable = true;
+      fonts.enable = true;
+      zen.enable = true;
+    };
+    development = {
+      neovim.enable = true;
+      zed.enable = true;
+    };
+  };
 
   # TODO: Is this necessary on an AMDGPU? test when home
   # or whenever I remember...

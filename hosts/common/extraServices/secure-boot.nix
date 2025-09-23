@@ -27,7 +27,6 @@ in
   ];
 
   config = mkIf cfg.enable {
-
     # doesn't have too much of a use after initial install,
     # but might be good to keep around.
     environment.systemPackages = with pkgs; [

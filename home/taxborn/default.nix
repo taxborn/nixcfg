@@ -3,7 +3,10 @@
 {
   imports = [
     ./gpg
-    ../cli/git.nix
+
+    ../features/cli
+    ../features/desktop
+    ../features/development
   ];
 
   home.packages = with pkgs; [

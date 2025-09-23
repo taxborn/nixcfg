@@ -1,14 +1,26 @@
-{ pkgs, ... }:
-
 {
-  fonts.fontconfig.enable = true;
+  pkgs,
+  lib,
+  config,
+  ...
+}:
+with lib;
+let
+  cfg = config.features.desktop.fonts;
+in
+{
+  options.features.desktop.fonts.enable = mkEnableOption "enable my fonts";
 
-  home.packages = with pkgs; [
-    # Nerd fonts
-    nerd-fonts.jetbrains-mono
+  config = mkIf cfg.enable {
+    fonts.fontconfig.enable = true;
 
-    # Accessible fonts
-    atkinson-hyperlegible-next
-    atkinson-hyperlegible-mono
-  ];
+    home.packages = with pkgs; [
+      # Nerd fonts
+      nerd-fonts.jetbrains-mono
+
+      # Accessible fonts
+      atkinson-hyperlegible-next
+      atkinson-hyperlegible-mono
+    ];
+  };
 }
