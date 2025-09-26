@@ -80,6 +80,17 @@
             ./hosts/carbon/configuration.nix
           ];
         };
+
+        helium-01 = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs outputs; };
+
+          modules = [
+            inputs.disko.nixosModules.disko
+
+            ./hosts/helium-01/configuration.nix
+          ];
+        };
       };
     };
 }
