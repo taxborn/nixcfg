@@ -16,11 +16,11 @@ Using tungsten as an example, follow these steps:
     ```
 3. Clone this repository into your home directory:
    ```bash
-   git clone https://github.com/taxborn/dotfiles.git ~/dotfiles
+   git clone https://github.com/taxborn/nixcfg.git && cd nixcfg
    ```
 4. Format the disk using disko:
    ```bash
-   sudo nix --extra-experimental-features "nix-command flakes" run github:nix-community/disko -- --mode disko dotfiles/hosts/tungsten/disks.nix
+   sudo nix --extra-experimental-features "nix-command flakes" run github:nix-community/disko -- --mode disko hosts/tungsten/disks.nix
    ```
 5. Install NixOS:
    ```bash
@@ -28,19 +28,13 @@ Using tungsten as an example, follow these steps:
    ```
 
 # TODO
-- [ ] Install on Helium (both)
-- [X] Slim down `taxborn` user configuration on headless machines
-- [X] borg/borgmatic backup
-- [ ] Hyprland configuration
-  - [X] Simplify waybar configuration
-  - [X] `wofi` configuration and personalization
+- [ ] More Hyprland configuration
 - [ ] Screenshots
 - [ ] Figure out gpg-agent forwarding? maybe only SSH forwarding?
   I think I want to be able to code on my headless machines (carbon/helium). For that I currently need to
   forward my GPG agent since I sign code with my PGP key. If I switch to signing with my SSH key, I can probably
   just forward my SSH agent instead.
 - [ ] Add more documentation about everything
-  - [ ] `nixos-anywhere` steps on OVH (might be worth a leafpub/blog post?)
 - [ ] Spend a bit of time to figure good config values
     - [ ] SSH
     - [ ] Boot
