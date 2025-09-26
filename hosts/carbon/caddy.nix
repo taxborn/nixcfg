@@ -7,7 +7,6 @@
 
   services.caddy = {
     enable = true;
-
     virtualHosts."ticker.blue".extraConfig = ''
       redir https://www.ticker.blue{uri} permanent
     '';

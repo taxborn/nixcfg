@@ -16,7 +16,9 @@
 
   services.caddy = {
     virtualHosts."vw.taxborn.com".extraConfig = ''
-      reverse_proxy localhost:${toString config.services.vaultwarden.config.ROCKET_PORT}
+      http://vw.taxborn.com {
+        reverse_proxy localhost:${toString config.services.vaultwarden.config.ROCKET_PORT}
+      }
     '';
   };
 }

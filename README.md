@@ -32,7 +32,7 @@ Using tungsten as an example, follow these steps:
 - [X] Slim down `taxborn` user configuration on headless machines
 - [X] borg/borgmatic backup
 - [ ] Hyprland configuration
-  - [ ] Simplify waybar configuration
+  - [X] Simplify waybar configuration
   - [X] `wofi` configuration and personalization
 - [ ] Screenshots
 - [ ] Figure out gpg-agent forwarding? maybe only SSH forwarding?
