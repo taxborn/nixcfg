@@ -10,4 +10,10 @@
       git.enable = true;
     };
   };
+
+  services.minecraft-server = {
+    enable = true;
+    eula = true;
+    openFirewall = true;
+  };
 }

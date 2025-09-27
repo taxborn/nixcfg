@@ -35,6 +35,7 @@ Using tungsten as an example, follow these steps:
   forward my GPG agent since I sign code with my PGP key. If I switch to signing with my SSH key, I can probably
   just forward my SSH agent instead.
 - [ ] Add more documentation about everything
+- [ ] Keychron VIA config on Uranium
 - [ ] Spend a bit of time to figure good config values
     - [ ] SSH
     - [ ] Boot
