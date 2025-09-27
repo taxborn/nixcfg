@@ -3,7 +3,7 @@
 {
   imports = [
     ../common
-    # ./caddy.nix # TODO: Caddy on helium
+    ./caddy.nix
 
     ./hardware-configuration.nix
     ./disks.nix
