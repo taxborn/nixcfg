@@ -10,8 +10,8 @@
       redir https://www.mischief.town{uri} permanent
     '';
 
-    virtualHosts."micknb.mischief.town".extraConfig = ''
-      reverse_proxy http://100.64.1.0:25565
-    '';
+    # virtualHosts."micknb.mischief.town".extraConfig = ''
+    #   reverse_proxy http://100.64.1.0:25565
+    # '';
   };
 }
