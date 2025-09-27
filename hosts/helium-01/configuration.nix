@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   imports = [
@@ -10,7 +10,6 @@
     # ./backup.nix # TODO: Backup on helium
   ];
 
-  # TODO: Secure boot
   boot.loader.systemd-boot.enable = true;
 
   networking.hostName = "helium-01";
@@ -24,6 +23,10 @@
   # https://github.com/NixOS/nixpkgs/issues/180175
   systemd.services.NetworkManager-wait-online.enable = false;
   systemd.services.tailscaled.after = [ "systemd-networkd-wait-online.service" ];
+
+  environment.systemPackages = with pkgs; [
+    jdk21_headless
+  ];
 
   services.openssh.enable = true;
   networking.firewall.allowedTCPPorts = [ 22 ]; # might already be allowed? just to be safe.
