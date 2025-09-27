@@ -4,6 +4,13 @@
   services.glance = {
     enable = true;
     settings = {
+      theme = {
+        background-color = "240 21 15";
+        contrast-multiplier =  1.2;
+        primary-color = "217 92 83";
+        positive-color: 115 54 76
+        negative-color: 347 70 65
+      };
       pages = [
         {
           name = "Home";
@@ -13,44 +20,14 @@
               widgets = [
                 {
                   type = "calendar";
-                  first-day-of-week = "monday";
-                }
-                {
-                  type = "rss";
-                  limit = 10;
-                  collapse-after = 3;
-                  cache = "12h";
-                  feeds = [
-                    {
-                      url = "https://selfh.st/rss/";
-                      title = "selfh.st";
-                      limit = 4;
-                    }
-                    {
-                      url = "https://ciechanow.ski/atom.xml";
-                    }
-                    {
-                      url = "https://www.joshwcomeau.com/rss.xml";
-                      title = "Josh Comeau";
-                    }
-                    {
-                      url = "https://samwho.dev/rss.xml";
-                    }
-                    {
-                      url = "https://ishadeed.com/feed.xml";
-                      title = "Ahmad Shadeed";
-                    }
-                  ];
+                  first-day-of-week = "sunday";
                 }
                 {
                   type = "twitch-channels";
                   channels = [
+                    "sphaerophoria"
+                    "andrewrok"
                     "theprimeagen"
-                    "j_blow"
-                    "piratesoftware"
-                    "cohhcarnage"
-                    "christitustech"
-                    "EJ_SA"
                   ];
                 }
               ];
@@ -69,31 +46,6 @@
                     }
                   ];
                 }
-                {
-                  type = "videos";
-                  channels = [
-                    "UCXuqSBlHAE6Xw-yeJA0Tunw" # Linus Tech Tips
-                    "UCR-DXc1voovS8nhAvccRZhg" # Jeff Geerling
-                    "UCsBjURrPoezykLs9EqgamOA" # Fireship
-                    "UCBJycsmduvYEL83R_U4JriQ" # Marques Brownlee
-                    "UCHnyfMqiRRG1u-2MsSQLbXA" # Veritasium
-                  ];
-                }
-                {
-                  type = "group";
-                  widgets = [
-                    {
-                      type = "reddit";
-                      subreddit = "technology";
-                      show-thumbnails = true;
-                    }
-                    {
-                      type = "reddit";
-                      subreddit = "selfhosted";
-                      show-thumbnails = true;
-                    }
-                  ];
-                }
               ];
             }
             {
@@ -101,9 +53,9 @@
               widgets = [
                 {
                   type = "weather";
-                  location = "Saint Paul, Minnesota";
+                  location = "City of Eagan";
                   units = "metric";
-                  hour-format = "12h";
+                  hour-format = "24h";
                 }
                 {
                   type = "markets";
@@ -113,20 +65,8 @@
                       name = "S&P 500";
                     }
                     {
-                      symbol = "BTC-USD";
-                      name = "Bitcoin";
-                    }
-                    {
-                      symbol = "NVDA";
-                      name = "NVIDIA";
-                    }
-                    {
-                      symbol = "AAPL";
-                      name = "Apple";
-                    }
-                    {
-                      symbol = "MSFT";
-                      name = "Microsoft";
+                      symbol = "TRI";
+                      name = "Thomson Reuters";
                     }
                   ];
                 }
@@ -135,9 +75,8 @@
                   cache = "1d";
                   repositories = [
                     "glanceapp/glance"
-                    "go-gitea/gitea"
                     "immich-app/immich"
-                    "syncthing/syncthing"
+                    "codeburg:immich-app/immich"
                   ];
                 }
               ];
