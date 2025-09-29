@@ -40,7 +40,7 @@ in
 
   services.caddy = {
     virtualHosts."code.taxborn.com".extraConfig = ''
-      reverse_proxy localhost:${toString config.services.forgejo.settings.server.HTTP_PORT}
+      reverse_proxy localhost:${toString cfg.settings.server.HTTP_PORT}
     '';
   };
 }
