@@ -1,7 +1,6 @@
 { config, pkgs, ... }:
 let
   domain = "code.taxborn.com";
-  sshDomain = "taxborn.com";
   sshPort = 2222;
   sshUser = "git";
   cfg = config.services.forgejo;
@@ -16,7 +15,7 @@ in
       server = {
         DOMAIN = domain;
         ROOT_URL = "https://${domain}";
-        SSH_DOMAIN = sshDomain;
+        SSH_DOMAIN = domain;
         SSH_PORT = sshPort;
         SSH_USER = sshUser;
         SSH_LISTEN_PORT = sshPort;
