@@ -3,6 +3,7 @@
     ./sites/mischief.nix
     ./sites/taxborn.nix
     ./sites/vaultwarden.nix
+    ./sites/forgejo.nix
   ];
 
   services.caddy = {
