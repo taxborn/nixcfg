@@ -5,7 +5,7 @@
     enable = true;
     passwordFile = "/etc/paperless-admin-pass";
     consumptionDirIsPublic = true;
-    address = "0.0.0.0"; # Listen on all interfaces for Tailscale access
+    address = "0.0.0.0";
     settings = {
       PAPERLESS_CONSUMER_IGNORE_PATTERN = [
         ".DS_STORE/*"
