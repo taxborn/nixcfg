@@ -10,6 +10,6 @@
       redir https://www.mischief.town{uri} permanent
     '';
 
-    virtualHosts."docs.mischief.town".extraConfig = ''reverse_proxy http://100.64.0.0:21594'';
+    virtualHosts."docs.mischief.town".extraConfig = ''reverse_proxy http://100.64.1.0:21594'';
   };
 }
