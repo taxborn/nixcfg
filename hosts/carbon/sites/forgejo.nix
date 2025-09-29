@@ -3,7 +3,7 @@
 {
   services.forgejo = {
     enable = true;
-    database.type = "postgresql";
+    database.type = "postgres";
     lfs.enable = true;
     settings = {
       server = {
