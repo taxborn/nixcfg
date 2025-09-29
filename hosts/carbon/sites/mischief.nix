@@ -14,8 +14,12 @@
     # Only accessible from Tailscale network (100.64.0.0/10)
     virtualHosts."docs.mischief.town".extraConfig = ''
       # Define matcher for Tailscale IP range
+      # Check both remote_ip and CF-Connecting-IP header from Cloudflare
       @tailscale {
-        remote_ip 100.64.0.0/10
+        any {
+          remote_ip 100.64.0.0/10
+          header CF-Connecting-IP 100.64.0.0/10
+        }
       }
 
       # Only allow Tailscale clients
