@@ -1,5 +1,3 @@
-{ config, ... }:
-
 {
   # temp
   environment.etc."paperless-admin-pass".text = "admin";
@@ -7,6 +5,7 @@
     enable = true;
     passwordFile = "/etc/paperless-admin-pass";
     consumptionDirIsPublic = true;
+    address = "0.0.0.0"; # Listen on all interfaces for Tailscale access
     settings = {
       PAPERLESS_CONSUMER_IGNORE_PATTERN = [
         ".DS_STORE/*"
@@ -21,11 +20,5 @@
     };
     domain = "docs.mischief.town";
     port = 21594;
-  };
-
-  services.caddy = {
-    virtualHosts."docs.mischief.town".extraConfig = ''
-      reverse_proxy localhost:${toString config.services.paperless.port}
-    '';
   };
 }
