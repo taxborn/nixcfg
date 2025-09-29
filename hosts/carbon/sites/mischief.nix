@@ -16,14 +16,24 @@
       # Define matcher for Tailscale IP range
       # Check both remote_ip and CF-Connecting-IP header from Cloudflare
       @tailscale {
-        any {
-          remote_ip 100.64.0.0/10
-          header CF-Connecting-IP 100.64.0.0/10
+        remote_ip 100.64.0.0/10
+      }
+      @tailscale_cf {
+        header CF-Connecting-IP 100.64.0.0/10
+      }
+
+      # Only allow Tailscale clients (direct connection)
+      handle @tailscale {
+        reverse_proxy http://100.64.0.0:21594 {
+          header_up Host {upstream_hostport}
+          header_up X-Real-IP {remote_host}
+          header_up X-Forwarded-For {remote_host}
+          header_up X-Forwarded-Proto {scheme}
         }
       }
 
-      # Only allow Tailscale clients
-      handle @tailscale {
+      # Only allow Tailscale clients (via Cloudflare)
+      handle @tailscale_cf {
         reverse_proxy http://100.64.0.0:21594 {
           header_up Host {upstream_hostport}
           header_up X-Real-IP {remote_host}
