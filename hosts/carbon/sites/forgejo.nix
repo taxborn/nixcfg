@@ -23,4 +23,6 @@
       reverse_proxy localhost:${toString config.services.forgejo.settings.server.HTTP_PORT}
     '';
   };
+
+  networking.firewall.allowedTCPPorts = [ 222 ];
 }
