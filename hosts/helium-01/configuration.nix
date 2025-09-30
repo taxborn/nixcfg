@@ -20,11 +20,7 @@
   environment.systemPackages = with pkgs; [
     jdk21_headless
     borgbackup
-    ntfs3g
   ];
-
-  # services.openssh.enable = true;
-  # networking.firewall.allowedTCPPorts = [ 22 ]; # might already be allowed? just to be safe.
 
   system.stateVersion = "25.05";
 }

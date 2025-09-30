@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   modulesPath,
   ...
 }:
@@ -38,6 +39,9 @@
       "locale=en_US.utf8"
     ];
   };
+  environment.systemPackages = with pkgs; [
+    ntfs-3g
+  ];
 
   # Ensure the mount point directory exists
   systemd.tmpfiles.rules = [
