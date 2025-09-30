@@ -25,7 +25,7 @@
   systemd.services.tailscaled.after = [ "systemd-networkd-wait-online.service" ];
 
   fileSystems."/mnt/hdd" = {
-    device = "/dev/disk/by-uuid/usb-WD_My_Book_25ED_575835324443304A30443532-0:0-part1";
+    device = "/dev/disk/by-id/usb-WD_My_Book_25ED_575835324443304A30443532-0:0-part1";
     fsType = "ntfs-3g";
     options = [
       "defaults"
