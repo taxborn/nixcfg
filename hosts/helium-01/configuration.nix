@@ -26,6 +26,7 @@
 
   environment.systemPackages = with pkgs; [
     jdk21_headless
+    borgbackup
   ];
 
   services.openssh.enable = true;
