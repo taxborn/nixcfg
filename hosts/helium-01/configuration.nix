@@ -24,9 +24,30 @@
   systemd.services.NetworkManager-wait-online.enable = false;
   systemd.services.tailscaled.after = [ "systemd-networkd-wait-online.service" ];
 
+  fileSystems."/mnt/hdd" = {
+    device = "/dev/disk/by-uuid/usb-WD_My_Book_25ED_575835324443304A30443532-0:0-part1";
+    fsType = "ntfs-3g";
+    options = [
+      "defaults"
+      "nofail"
+      "user"
+      "exec"
+      "uid=1000"
+      "gid=100"
+      "umask=0022"
+      "locale=en_US.utf8"
+    ];
+  };
+
+  # Ensure the mount point directory exists
+  systemd.tmpfiles.rules = [
+    "d /mnt/hdd 0755 root root -"
+  ];
+
   environment.systemPackages = with pkgs; [
     jdk21_headless
     borgbackup
+    ntfs3g
   ];
 
   services.openssh.enable = true;
