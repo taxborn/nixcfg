@@ -16,7 +16,7 @@ Using tungsten as an example, follow these steps:
     ```
 3. Clone this repository into your home directory:
    ```bash
-   git clone https://github.com/taxborn/nixcfg.git && cd nixcfg
+   git clone https://code.taxborn.com/taxborn/nixcfg && cd nixcfg
    ```
 4. Format the disk using disko:
    ```bash
