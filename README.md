@@ -27,6 +27,9 @@ Using tungsten as an example, follow these steps:
    sudo nixos-install --flake .#tungsten --root /mnt
    ```
 
+# Building for another machine
+`nixos-rebuild switch --flake .#helium-01 --target-host taxborn@100.64.1.0 --sudo --ask-sudo-password --no-reexec`
+
 # TODO
 - [ ] More Hyprland configuration
 - [ ] Screenshots
