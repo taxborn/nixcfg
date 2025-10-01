@@ -40,7 +40,7 @@
     ];
   };
   environment.systemPackages = with pkgs; [
-    ntfs-3g
+    ntfs3g
   ];
 
   # Ensure the mount point directory exists

@@ -15,7 +15,6 @@
 
   environment.systemPackages = with pkgs; [
     jdk21_headless
-    borgbackup
   ];
 
   system.stateVersion = "25.05";
