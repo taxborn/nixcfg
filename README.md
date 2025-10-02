@@ -1,6 +1,11 @@
 # Braxton's NixOS setup and dotfiles
 This repository serves as the documentation for my NixOS setup, dotfiles, and homelab configuration.
 
+> [!NOTE]
+> This nix configuration is really only designed to work on my personal machines, so there is no guarantee that
+> it will work for you. Feel free to use it as a starting point for your own configuration! Though, if you are
+> running NixOS, I assume you know what you're doing :)
+
 ## Installing on a clean machine
 Using tungsten as an example, follow these steps:
 
