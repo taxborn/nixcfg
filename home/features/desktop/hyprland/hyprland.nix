@@ -163,10 +163,13 @@ in
         "$mainMod, M, exit,"
         "$mainMod, V, togglefloating,"
         "$mainMod, R, exec, $menu"
-        "$mainMod, P, pseudo,"
         "$mainMod, V, togglesplit,"
         "$mainMod, Z, exec, zeditor"
         "$mainMod, F, exec, zen-beta"
+
+        # Screenshots
+        "$mainMod, P, exec, ~/.local/bin/screenshot-full"
+        "$mainMod SHIFT, P, exec, ~/.local/bin/screenshot-region"
 
         # Movement
         "$mainMod, H, movefocus, l"

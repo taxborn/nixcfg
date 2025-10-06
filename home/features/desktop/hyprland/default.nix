@@ -14,6 +14,7 @@ in
     ./dunst.nix
     ./hyprland.nix
     ./hyprpaper.nix
+    ./screenshots.nix
     ./waybar.nix
     ./wofi.nix
   ];

@@ -40,8 +40,6 @@ Using tungsten as an example, follow these steps:
 `nixos-rebuild switch --flake .#helium-01 --target-host taxborn@100.64.1.0 --sudo --ask-sudo-password --no-reexec`
 
 # TODO
-- [ ] More Hyprland configuration
-- [ ] Screenshots
 - [ ] Figure out gpg-agent forwarding? maybe only SSH forwarding?
   I think I want to be able to code on my headless machines (carbon/helium). For that I currently need to
   forward my GPG agent since I sign code with my PGP key. If I switch to signing with my SSH key, I can probably
