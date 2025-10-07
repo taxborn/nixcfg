@@ -6,7 +6,7 @@
     ./default.nix
   ];
 
-  home.programs = with pkgs; [
+  home.packages = with pkgs; [
     vlc
     feh
   ];
