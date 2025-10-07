@@ -2,8 +2,6 @@
 
 {
   imports = [
-    ./gpg
-
     ../features/cli
     ../features/desktop
     ../features/development
