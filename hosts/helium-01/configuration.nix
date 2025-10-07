@@ -17,5 +17,7 @@
     jdk21_headless
   ];
 
+  services.openssh.extraConfig = "StreamLocalBindUnlink yes";
+
   system.stateVersion = "25.05";
 }
