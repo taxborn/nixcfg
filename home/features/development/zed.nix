@@ -30,6 +30,7 @@ in
         "csv"
         "env"
         "catppuccin"
+        "catppuccin-icons"
       ];
       userSettings = {
         languages = {

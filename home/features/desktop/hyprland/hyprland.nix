@@ -47,7 +47,6 @@ in
     settings = {
       # Program variables
       "$terminal" = "ghostty";
-      "$fileManager" = "dolphin";
       "$menu" = "wofi --show drun";
       "$mainMod" = "SUPER";
 

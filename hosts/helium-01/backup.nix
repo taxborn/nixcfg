@@ -3,7 +3,6 @@ let
     # very large paths
     "/var/lib/docker"
     "/var/lib/systemd"
-    "/var/lib/libvirt"
 
     # temporary files created by cargo and others
     "**/target"

@@ -1,22 +1,33 @@
 {
+  pkgs,
+  ...
+}:
+
+{
   imports = [
     ./gpg
     ./default.nix
   ];
 
+  home.programs = with pkgs; [
+    vlc
+    feh
+  ];
+
   features = {
     cli = {
       fish.enable = true;
-      tmux.enable = true;
       git.enable = true;
+      tmux.enable = true;
     };
     desktop = {
-      ghostty.enable = true;
-      hyprland.enable = true;
       etc.enable = true;
       fonts.enable = true;
-      zen.enable = true;
+      ghostty.enable = true;
+      hyprland.enable = true;
       minecraft.enable = true;
+      obs.enable = true;
+      zen.enable = true;
     };
     development = {
       neovim.enable = true;
