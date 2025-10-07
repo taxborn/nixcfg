@@ -67,6 +67,6 @@
     defaultCacheTtl = 60;
     maxCacheTtl = 120;
 
-    pinentry.package = pkgs.pinentry-tty;
+    pinentry.package = pkgs.pinentry-qt;
   };
 }
