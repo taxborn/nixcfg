@@ -33,6 +33,9 @@ in
         "catppuccin-icons"
       ];
       userSettings = {
+        disable_ai = true;
+        icon_theme = "Catppuccin Mocha";
+
         languages = {
           Nix = {
             language_servers = [ "nil" ];
