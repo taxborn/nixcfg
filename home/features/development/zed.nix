@@ -35,6 +35,7 @@ in
       userSettings = {
         disable_ai = true;
         icon_theme = "Catppuccin Mocha";
+        autosave = "on_focus_change";
 
         languages = {
           Nix = {
