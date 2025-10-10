@@ -165,6 +165,7 @@ in
         "$mainMod, V, togglesplit,"
         "$mainMod, Z, exec, zeditor"
         "$mainMod, F, exec, zen-beta"
+        "$mainMod, Period, exec, wofi-emoji"
 
         # Screenshots
         "$mainMod, P, exec, ~/.local/bin/screenshot-full"

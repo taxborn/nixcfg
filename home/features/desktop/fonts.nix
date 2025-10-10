@@ -18,6 +18,10 @@ in
       # Nerd fonts
       nerd-fonts.jetbrains-mono
 
+      # noto
+      noto-fonts
+      noto-fonts-color-emoji
+
       # Accessible fonts
       atkinson-hyperlegible-next
       atkinson-hyperlegible-mono
