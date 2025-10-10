@@ -27,6 +27,7 @@
   networking.networkmanager.enable = true;
 
   services.tailscale.enable = true;
+  environment.localBinInPath = true;
 
   environment.systemPackages = with pkgs; [
     vim
