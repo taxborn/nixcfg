@@ -27,6 +27,10 @@
     development = {
       neovim.enable = true;
       zed.enable = true;
+
+      python.enable = true;
+      rust.enable = true;
+      zig.enable = true;
     };
   };
 
