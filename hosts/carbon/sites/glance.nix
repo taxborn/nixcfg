@@ -14,6 +14,42 @@
       pages = [
         {
           name = "Home";
+          width = "slim";
+          hide-desktop-navigation = true;
+          center-vertically = true;
+          columns = [
+            {
+              size = "full";
+              widgets = [
+                {
+                  type = "search";
+                  autofocus = true;
+                }
+                {
+                  type = "monitor";
+                  cache = "1m";
+                  title = "Services";
+                  sites = [
+                    {
+                      title = "Vaultwarden";
+                      url = "https://vw.taxborn.com";
+                    }
+                    {
+                      title = "Forgejo";
+                      url = "https://code.taxborn.com";
+                    }
+                    {
+                      title = "Paperless";
+                      url = "https://docs.mischief.town";
+                    }
+                  ];
+                }
+              ];
+            }
+          ];
+        }
+        {
+          name = "Info";
           columns = [
             {
               size = "small";
