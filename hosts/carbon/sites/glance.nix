@@ -15,7 +15,6 @@
         {
           name = "Home";
           width = "slim";
-          hide-desktop-navigation = true;
           center-vertically = true;
           columns = [
             {
