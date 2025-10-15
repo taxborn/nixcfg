@@ -1,4 +1,4 @@
-{ ... }:
+{ pkgs, ... }:
 
 {
   imports = [
@@ -12,6 +12,11 @@
 
   networking.hostName = "carbon";
   time.timeZone = "America/Chicago";
+
+  environment.systemPackages = with pkgs; [
+    jdk21_headless
+  ];
+  networking.firewall.allowedTCPPorts = [ 25566 ];
 
   services.openssh.extraConfig = "StreamLocalBindUnlink yes";
 
