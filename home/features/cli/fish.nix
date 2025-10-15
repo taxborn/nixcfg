@@ -10,7 +10,8 @@ in
     programs.fish = {
       enable = true;
       interactiveShellInit = ''
-        set -gx PATH $PATH $HOME/bin $HOME/.local/bin
+        set fish_greeting # Disable greeting
+        set -gx PATH $PATH $HOME/bin $HOME/.local/bin $HOME/.zvm/bin
 
         set -gx GPG_TTY (tty)
         set -gx SSH_AUTH_SOCK (gpgconf --list-dirs agent-ssh-socket)
