@@ -23,6 +23,7 @@
       ghostty.enable = true;
       hyprland.enable = true;
       zen.enable = true;
+      minecraft.enable = true;
     };
     development = {
       neovim.enable = true;
