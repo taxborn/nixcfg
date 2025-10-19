@@ -9,18 +9,17 @@ in
   config = mkIf cfg.enable {
     programs.git = {
       enable = true;
-      userName = "Braxton Fair";
-      userEmail = "hello@taxborn.com";
+      settings = {
+        user.name = "Braxton Fair";
+        user.email = "hello@taxborn.com";
+        push.autoSetupRemote = true;
+        init.defaultBranch = "main";
+      };
 
       lfs.enable = true;
 
       signing.key = "F22AFD6CFD66B874";
       signing.signByDefault = true;
-
-      extraConfig = {
-        push.autoSetupRemote = true;
-        init.defaultBranch = "main";
-      };
     };
   };
 }
