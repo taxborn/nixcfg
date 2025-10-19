@@ -33,7 +33,7 @@ in
         "catppuccin-icons"
       ];
       userSettings = {
-        disable_ai = false;
+        disable_ai = true;
         icon_theme = "Catppuccin Mocha";
         autosave = "on_focus_change";
 
