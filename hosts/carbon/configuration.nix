@@ -17,7 +17,10 @@
     jdk21_headless
     forgejo-actions-runner
   ];
-  networking.firewall.allowedTCPPorts = [ 25566 ];
+  networking.firewall.allowedTCPPorts = [
+    25565
+    25566
+  ];
 
   services.openssh.extraConfig = "StreamLocalBindUnlink yes";
 
