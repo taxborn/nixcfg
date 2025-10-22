@@ -34,7 +34,7 @@
                     }
                     {
                       title = "Forgejo";
-                      url = "https://code.taxborn.com";
+                      url = "https://git.mischief.town";
                     }
                     {
                       title = "Paperless";
