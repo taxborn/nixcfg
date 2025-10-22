@@ -39,7 +39,7 @@ in
   networking.firewall.allowedTCPPorts = [ sshPort ];
 
   services.caddy = {
-    virtualHosts."code.taxborn.com".extraConfig = ''
+    virtualHosts.${domain}.extraConfig = ''
       reverse_proxy localhost:${toString cfg.settings.server.HTTP_PORT}
     '';
   };

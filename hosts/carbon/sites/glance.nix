@@ -14,7 +14,6 @@
       pages = [
         {
           name = "Home";
-          width = "slim";
           center-vertically = true;
           columns = [
             {
