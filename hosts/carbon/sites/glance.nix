@@ -30,7 +30,7 @@
                   sites = [
                     {
                       title = "Vaultwarden";
-                      url = "https://vw.taxborn.com";
+                      url = "https://vw.mischief.town";
                     }
                     {
                       title = "Forgejo";
