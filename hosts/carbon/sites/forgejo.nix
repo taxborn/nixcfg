@@ -1,6 +1,6 @@
 { config, pkgs, ... }:
 let
-  domain = "code.taxborn.com";
+  domain = "git.mischief.town";
   sshPort = 2222;
   sshUser = "git";
   cfg = config.services.forgejo;
