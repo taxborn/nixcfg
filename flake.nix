@@ -29,6 +29,8 @@
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    agenix.url = "github:ryantm/agenix";
   };
 
   outputs =
@@ -60,6 +62,7 @@
 
           modules = [
             inputs.disko.nixosModules.disko
+            inputs.agenix.nixosModules.default
 
             ./hosts/uranium/configuration.nix
           ];
