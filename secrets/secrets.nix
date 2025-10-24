@@ -15,5 +15,5 @@ let
   ];
 in
 {
-  "environment.age".publicKeys = users ++ systems;
+  "forgejo-token.age".publicKeys = users ++ systems;
 }
