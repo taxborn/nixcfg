@@ -16,6 +16,7 @@
   environment.systemPackages = with pkgs; [
     jdk21_headless
     forgejo-actions-runner
+    inputs.agenix.packages."${system}".default
   ];
   networking.firewall.allowedTCPPorts = [
     25565
