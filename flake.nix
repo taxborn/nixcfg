@@ -12,10 +12,18 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    rust-overlay = {
+      url = "github:oxalica/rust-overlay";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # secure boot
     lanzaboote = {
       url = "github:nix-community/lanzaboote/v0.4.2";
       inputs.nixpkgs.follows = "nixpkgs";
+      # currently something is broken with rust 1.78 that lanzaboote uses, so
+      # i gotta force the rust-overlay used by lanzaboote to a newer one.
+      inputs.rust-overlay.follows = "rust-overlay";
     };
 
     # declarative disk management
