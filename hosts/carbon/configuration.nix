@@ -1,6 +1,5 @@
 {
   pkgs,
-  config,
   inputs,
   ...
 }:
@@ -28,32 +27,10 @@
     25566
   ];
 
-  services.openssh.extraConfig = "StreamLocalBindUnlink yes";
-
   environment.pathsToLink = [
     "/share/applications"
     "/share/xdg-desktop-portal"
   ];
-
-  age.secrets.forgejo-key = {
-    file = ../../secrets/forgejo-token.age;
-  };
-
-  services.gitea-actions-runner = {
-    package = pkgs.forgejo-runner;
-    instances.mischief-town = {
-      enable = true;
-      name = "carbon";
-      tokenFile = config.age.secrets.forgejo-key.path;
-      url = "https://git.mischief.town/";
-      labels = [
-        "node-22:docker://node:22-bookworm"
-        "nixos-latest:docker://nixos/nix"
-      ];
-    };
-  };
-
-  virtualisation.docker.enable = true;
 
   system.stateVersion = "25.05";
 }

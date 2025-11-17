@@ -15,7 +15,6 @@
 
   environment.systemPackages = with pkgs; [
     jdk21_headless
-    forgejo-runner
     inputs.agenix.packages."${system}".default
   ];
 
@@ -23,8 +22,6 @@
     "/share/applications"
     "/share/xdg-desktop-portal"
   ];
-
-  services.openssh.extraConfig = "StreamLocalBindUnlink yes";
 
   system.stateVersion = "25.05";
 }
