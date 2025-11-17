@@ -30,6 +30,11 @@
 
   services.openssh.extraConfig = "StreamLocalBindUnlink yes";
 
+  environment.pathsToLink = [
+    "/share/applications"
+    "/share/xdg-desktop-portal"
+  ];
+
   age.secrets.forgejo-key = {
     file = ../../secrets/forgejo-token.age;
   };
