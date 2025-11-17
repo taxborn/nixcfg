@@ -19,6 +19,11 @@
     inputs.agenix.packages."${system}".default
   ];
 
+  environment.pathsToLink = [
+    "/share/applications"
+    "/share/xdg-desktop-portal"
+  ];
+
   services.openssh.extraConfig = "StreamLocalBindUnlink yes";
 
   system.stateVersion = "25.05";
