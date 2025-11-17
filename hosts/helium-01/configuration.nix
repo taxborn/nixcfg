@@ -15,7 +15,7 @@
 
   environment.systemPackages = with pkgs; [
     jdk21_headless
-    forgejo-actions-runner
+    forgejo-runner
     inputs.agenix.packages."${system}".default
   ];
 
