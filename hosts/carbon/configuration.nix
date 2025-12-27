@@ -19,6 +19,7 @@
 
   environment.systemPackages = with pkgs; [
     jdk21_headless
+    inputs.agenix.packages.x86_64-linux.default
   ];
   networking.firewall.allowedTCPPorts = [
     25565
