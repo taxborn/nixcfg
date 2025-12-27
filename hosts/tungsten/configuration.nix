@@ -56,7 +56,6 @@
   environment.systemPackages = with pkgs; [
     brightnessctl
     pavucontrol
-    inputs.agenix.packages."${system}".default
   ];
 
   system.stateVersion = "25.05";

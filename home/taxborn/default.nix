@@ -5,8 +5,6 @@
     ../features/cli
     ../features/desktop
     ../features/development
-
-    inputs.agenix.homeManagerModules.default
   ];
 
   home.packages = with pkgs; [

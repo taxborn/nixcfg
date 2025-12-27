@@ -15,7 +15,6 @@
 
   environment.systemPackages = with pkgs; [
     jdk21_headless
-    inputs.agenix.packages."${system}".default
   ];
 
   environment.pathsToLink = [

@@ -48,7 +48,6 @@
 
   environment.systemPackages = with pkgs; [
     pavucontrol
-    inputs.agenix.packages."${system}".default
   ];
 
   system.stateVersion = "25.05";

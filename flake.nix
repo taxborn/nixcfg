@@ -30,8 +30,6 @@
       url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    agenix.url = "github:ryantm/agenix";
   };
 
   outputs =
@@ -52,7 +50,6 @@
           modules = [
             inputs.disko.nixosModules.disko
             inputs.nixos-hardware.nixosModules.dell-xps-15-9520-nvidia
-            inputs.agenix.nixosModules.default
 
             ./hosts/tungsten/configuration.nix
           ];
@@ -64,7 +61,6 @@
 
           modules = [
             inputs.disko.nixosModules.disko
-            inputs.agenix.nixosModules.default
 
             ./hosts/uranium/configuration.nix
           ];
@@ -76,7 +72,6 @@
 
           modules = [
             inputs.disko.nixosModules.disko
-            inputs.agenix.nixosModules.default
 
             ./hosts/carbon/configuration.nix
           ];
@@ -88,7 +83,6 @@
 
           modules = [
             inputs.disko.nixosModules.disko
-            inputs.agenix.nixosModules.default
 
             ./hosts/helium-01/configuration.nix
           ];
