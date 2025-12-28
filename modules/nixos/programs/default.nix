@@ -1,0 +1,6 @@
+{
+  imports = [
+    ./lanzaboote
+    ./systemd-boot
+  ];
+}

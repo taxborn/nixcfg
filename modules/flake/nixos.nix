@@ -1,6 +1,10 @@
 { self, inputs, ... }:
 {
   flake = {
+    diskoConfigurations = {
+      luks-btrfs-tungsten = ../disko/luks-btrfs-tungsten;
+    };
+
     nixosModules = {
       locale-en-us = ../locale/en-us;
       nixos = ../nixos;
@@ -24,7 +28,9 @@
             modules = [
               ../../hosts/${host}
               inputs.agenix.nixosModules.default
+              inputs.disko.nixosModules.disko
               inputs.home-manager.nixosModules.home-manager
+              inputs.lanzaboote.nixosModules.lanzaboote
 
               modules.nixos
               modules.users
