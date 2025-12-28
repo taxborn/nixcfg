@@ -13,16 +13,16 @@
   config = {
     home = {
       username = "taxborn";
-      homeDirectory = "/home/taxborn";
+      homeDirectory = lib.mkForce "/home/taxborn"; # TODO: i dont wanna force this
       stateVersion = "25.11";
+
+      packages = with pkgs; [
+        obsidian
+      ];
     };
 
     programs = {
       home-manager.enable = true;
     };
-
-    packages = with pkgs; [
-      obsidian
-    ];
   };
 }

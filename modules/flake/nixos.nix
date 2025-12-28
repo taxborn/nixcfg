@@ -13,10 +13,10 @@
       in
       inputs.nixpkgs.lib.genAttrs
         [
-          "carbon"
-          "helium-01"
+          # "carbon"
+          # "helium-01"
           "tungsten"
-          "uranium"
+          # "uranium"
         ]
         (
           host:
@@ -24,7 +24,6 @@
             modules = [
               ../../hosts/${host}
               inputs.agenix.nixosModules.default
-              inputs.disko.nixosModules.disko
               inputs.home-manager.nixosModules.home-manager
 
               modules.nixos
