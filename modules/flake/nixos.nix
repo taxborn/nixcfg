@@ -6,6 +6,7 @@
     };
 
     nixosModules = {
+      hardware = ../hardware;
       locale-en-us = ../locale/en-us;
       nixos = ../nixos;
       users = ../users;
@@ -32,6 +33,7 @@
               inputs.home-manager.nixosModules.home-manager
               inputs.lanzaboote.nixosModules.lanzaboote
 
+              modules.hardware
               modules.nixos
               modules.users
 

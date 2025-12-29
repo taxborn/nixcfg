@@ -45,7 +45,7 @@
       profiles = {
         bluetooth.enable = true;
         performance.enable = true;
-        swap.enable = true;
+        # swap.enable = true; # TODO:
       };
 
       services.openssh.enable = true;

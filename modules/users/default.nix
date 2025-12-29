@@ -12,7 +12,8 @@
   ];
 
   config =
-    lib.mkIf (config.myUsers.root.enable or config.myUsers.aly.enable or config.myUsers.dustin.enable)
+    lib.mkIf
+      (config.myUsers.root.enable or config.myUsers.taxborn.enable)
       {
         programs.fish.enable = true;
 
