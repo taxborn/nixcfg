@@ -11,6 +11,26 @@
   ];
 
   config = {
+      nix = {
+        # inherit (config.mySnippets.nix) settings;
+        gc = {
+          automatic = true;
+          options = "--delete-older-than 3d";
+          persistent = true;
+          randomizedDelaySec = "60min";
+        };
+
+        settings = {
+          experimental-features = [
+            "fetch-closure"
+            "flakes"
+            "nix-command"
+          ];
+
+          trusted-users = [ "taxborn" "@admin" "@wheel" ];
+        };
+      };
+
     xdg.enable = true;
 
     home = {

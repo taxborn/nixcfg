@@ -1,7 +1,5 @@
 {
-  config,
   lib,
-  modulesPath,
   ...
 }:
 let
@@ -11,32 +9,22 @@ let
   ];
 in
 {
-  imports = [
-    (modulesPath + "/installer/scan/not-detected.nix")
-  ];
+  hardware.enableRedistributableFirmware = lib.mkDefault true;
 
-  boot.initrd.availableKernelModules = [
-    "xhci_pci"
-    "thunderbolt"
-    "nvme"
-    "usb_storage"
-    "sd_mod"
-    "rtsx_pci_sdmmc"
-  ];
-  boot.initrd.luks = {
-    devices."cryptroot".crypttabExtraOpts = defaultCrypttabOptions;
-    devices."crypthome".crypttabExtraOpts = defaultCrypttabOptions;
-    fido2Support = false;
-  };
   boot.initrd = {
-    supportedFilesystems = [ "btrfs" ];
+    luks = {
+      devices."cryptroot".crypttabExtraOpts = defaultCrypttabOptions;
+      devices."crypthome".crypttabExtraOpts = defaultCrypttabOptions;
+      fido2Support = false;
+    };
     systemd.enable = true;
+    availableKernelModules = [
+        "xhci_pci"
+        "thunderbolt"
+        "nvme"
+        "usb_storage"
+        "sd_mod"
+        "rtsx_pci_sdmmc"
+      ];
   };
-  boot.kernelModules = [ "kvm-intel" ];
-
-  # TODO: is this needed?
-  networking.useDHCP = lib.mkDefault true;
-
-  nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }

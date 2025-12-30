@@ -17,7 +17,6 @@
 
   networking.hostName = "tungsten";
   time.timeZone = "America/Chicago";
-  nixpkgs.hostPlatform = "x86_64-linux";
   system.stateVersion = "25.11";
 
   myHardware = {
