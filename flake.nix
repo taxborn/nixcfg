@@ -26,6 +26,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    snippets = {
+      url = "git+https://git.mischief.town/nix-infra/snippets";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     secrets = {
       url = "git+https://git.mischief.town/nix-infra/secrets";
       flake = false;

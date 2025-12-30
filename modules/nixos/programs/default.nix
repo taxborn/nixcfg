@@ -4,5 +4,6 @@
     ./lanzaboote
     ./nix
     ./systemd-boot
+    ./yubikey
   ];
 }

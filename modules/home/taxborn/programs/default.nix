@@ -4,6 +4,7 @@
     ./git
     ./gpg
     ./ssh
+    ./yubikey
     ./zed-editor
     ./zen
   ];

@@ -25,13 +25,6 @@
     profiles.ssd.enable = true;
   };
 
-  # TODO: move to yubikey module
-  services.udev = {
-    packages = [ pkgs.yubikey-personalization ];
-  };
-
-  services.pcscd.enable = true;
-
   myNixOS = {
     base.enable = true;
     desktop = {
@@ -48,6 +41,7 @@
       firefox.enable = true;
       nix.enable = true;
       lanzaboote.enable = true;
+      yubikey.enable = true;
     };
     services = {
       sddm.enable = true;
