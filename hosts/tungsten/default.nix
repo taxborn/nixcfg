@@ -44,7 +44,10 @@
       yubikey.enable = true;
     };
     services = {
-      sddm.enable = true;
+      sddm = {
+        enable = true;
+        autoLogin = "taxborn";
+      };
       tailscale = {
         enable = true;
         operator = "taxborn";
