@@ -48,34 +48,39 @@ in
   };
 
   bind = [
+    "$mod,Return,exec,${defaultApps.terminal}"
+    "$mod,B,exec,${defaultApps.webBrowser}"
+    "$mod,E,exec,${defaultApps.editor}"
+    "$mod,F,exec,${defaultApps.fileManager}"
+
     ",PRINT,exec,${lib.getExe helpers.screenshot}"
-    "$mod CTRL,L,exec,${lib.getExe' pkgs.systemd "loginctl"} lock-session"
+    "CTRL,F12,exec,${lib.getExe helpers.screenshot}"
+    "$mod, L,exec,${lib.getExe' pkgs.systemd "loginctl"} lock-session"
     "$mod SHIFT,backslash,togglesplit"
-    "$mod SHIFT,comma,exec,${lib.getExe pkgs.hyprnome} --previous --move"
     "$mod SHIFT,G,togglegroup"
     "$mod SHIFT,M,layoutmsg,swapwithmaster master"
+
+    "$mod SHIFT,comma,exec,${lib.getExe pkgs.hyprnome} --previous --move"
     "$mod SHIFT,period,exec,${lib.getExe pkgs.hyprnome} --move"
+    "$mod,comma,exec,${lib.getExe pkgs.hyprnome} --previous"
+    "$mod,period,exec,${lib.getExe pkgs.hyprnome}"
+
     "$mod SHIFT,S,movetoworkspace,special:magic"
     "$mod SHIFT,V,togglefloating"
     "$mod SHIFT,W,fullscreen"
-    "$mod,B,exec,${defaultApps.webBrowser}"
-    "$mod,C,killactive"
-    "$mod,comma,exec,${lib.getExe pkgs.hyprnome} --previous"
-    "$mod,E,exec,${defaultApps.editor}"
-    "$mod,F,exec,${defaultApps.fileManager}"
+    "$mod,Q,killactive"
+
+    "$mod,R,exec,${lib.getExe config.programs.rofi.package} -show drun"
+    "ALT,space,exec,${lib.getExe config.programs.rofi.package} -show window"
+
     "$mod,F11,exec,pkill -SIGUSR1 waybar"
     "$mod,H,changegroupactive,b"
     "$mod,L,changegroupactive,f"
     "$mod,Left,changegroupactive,b"
     "$mod,mouse_down,workspace,+1"
     "$mod,mouse_up,workspace,-1"
-    "$mod,period,exec,${lib.getExe pkgs.hyprnome}"
-    "$mod,R,exec,${lib.getExe config.programs.rofi.package} -show drun"
     "$mod,Right,changegroupactive,f"
     "$mod,S,togglespecialworkspace,magic"
-    "$mod,T,exec,${defaultApps.terminal}"
-    "ALT,space,exec,${lib.getExe config.programs.rofi.package} toggle"
-    "CTRL,F12,exec,${lib.getExe helpers.screenshot}"
   ]
   ++ builtins.map (x: "$mod SHIFT,${toString x},movetoworkspace,${toString x}") [
     1
@@ -142,38 +147,15 @@ in
 
   decoration = {
     blur = {
-      enabled = true;
-      passes = 2;
-      popups = true;
-      size = 8;
+      enabled = false;
     };
 
     dim_special = 0.5;
 
-    layerrule = [
-      "blur,gtk-layer-shell"
-      "blur,launcher"
-      "blur,logout_dialog"
-      "blur,notifications"
-      "blur,nwg-drawer"
-      "blur,rofi"
-      "blur,swayosd"
-      "blur,waybar"
-      "blur,zen-beta"
-      "ignorezero,gtk-layer-shell"
-      "ignorezero,notifications"
-      "ignorezero,nwg-drawer"
-      "ignorezero,rofi"
-      "ignorezero,swayosd"
-      "ignorezero,waybar"
-    ];
-
-    rounding = 10;
+    rounding = 6;
 
     shadow = {
-      enabled = true;
-      range = 4;
-      render_power = 3;
+      enabled = false;
     };
   };
 
@@ -195,7 +177,7 @@ in
 
   general = {
     allow_tearing = false;
-    border_size = 4;
+    border_size = 2;
     gaps_in = 5;
     gaps_out = 6;
     layout = "dwindle";
