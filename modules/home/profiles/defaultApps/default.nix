@@ -30,7 +30,8 @@ in
     editor = {
       package = lib.mkOption {
         type = lib.types.package;
-        default = pkgs.gnome-text-editor;
+        # TODO: Turn on if home.programs.zed is enabled
+        default = pkgs.zed-editor;
         description = "The default text editor package.";
       };
 
