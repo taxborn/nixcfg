@@ -161,7 +161,7 @@ in
         terminal.package
         terminalEditor.package
         videoPlayer.package
-        webBrowser.package
+        # webBrowser.package
       ];
 
       sessionVariables = {

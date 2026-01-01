@@ -65,6 +65,7 @@
         gpg.enable = true;
         yubikey.enable = true;
       };
+      profiles.defaultApps.enable = true;
       programs.ghostty.enable = true;
     };
   };
