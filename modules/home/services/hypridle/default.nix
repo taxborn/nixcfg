@@ -93,7 +93,7 @@ in
             on-resume = "${pkgs.brightnessctl}/bin/brightnessctl -rd *::kbd_backlight";
           }
           {
-            timeout = 60;
+            timeout = 120;
             on-timeout = "${pkgs.brightnessctl}/bin/brightnessctl -s set 10";
             on-resume = "${pkgs.brightnessctl}/bin/brightnessctl -r";
           }
@@ -126,7 +126,7 @@ in
               lib.makeBinPath (
                 (with pkgs; [
                   bash
-                  brightnessctl # Not working as of 2025-01-25, needs nixpkgs interpolation to work.
+                  brightnessctl
                   hyprlock
                   systemd
                   uutils-coreutils-noprefix

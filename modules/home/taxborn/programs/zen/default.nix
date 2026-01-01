@@ -3,16 +3,17 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   engines = import ../firefox/engines.nix;
-in {
-  options.myHome.aly.programs.zen.enable = lib.mkEnableOption "zen web browser";
+in
+{
+  options.myHome.taxborn.programs.zen.enable = lib.mkEnableOption "zen web browser";
 
-  config = lib.mkIf config.myHome.aly.programs.zen.enable {
+  config = lib.mkIf config.myHome.taxborn.programs.zen.enable {
     programs.zen-browser = {
       enable = true;
-      nativeMessagingHosts = lib.optionals pkgs.stdenv.isLinux [pkgs.bitwarden-desktop];
-      package = lib.mkIf pkgs.stdenv.isDarwin (lib.mkForce null);
+      nativeMessagingHosts = [ pkgs.bitwarden-desktop ];
 
       profiles = {
         default = {
@@ -40,14 +41,6 @@ in {
               name = "Atolls";
             };
           };
-
-          extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
-            augmented-steam
-            bitwarden
-            consent-o-matic
-            karakeep
-            ublock-origin
-          ];
 
           id = 0;
 

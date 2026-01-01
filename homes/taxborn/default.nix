@@ -1,7 +1,6 @@
 {
   config,
   pkgs,
-  lib,
   self,
   ...
 }:
@@ -11,16 +10,16 @@
   ];
 
   config = {
-      nix = {
-        inherit (config.mySnippets.nix) settings;
+    nix = {
+      inherit (config.mySnippets.nix) settings;
 
-        gc = {
-          automatic = true;
-          options = "--delete-older-than 3d";
-          persistent = true;
-          randomizedDelaySec = "60min";
-        };
+      gc = {
+        automatic = true;
+        options = "--delete-older-than 3d";
+        persistent = true;
+        randomizedDelaySec = "60min";
       };
+    };
 
     xdg.enable = true;
 

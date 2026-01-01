@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 {
@@ -30,21 +29,11 @@
         auto_update = false;
         autosave.after_delay.milliseconds = 1000;
 
-        # buffer_font_family = "CaskaydiaCove Nerd Font";
-        # buffer_font_size = 16;
-
         features.edit_prediction_provider = "copilot";
         minimap.show = "auto";
         preferred_line_length = 80;
         soft_wrap = "preferred_line_length";
 
-        # theme = {
-        #   mode = "system";
-        #   light = "One Light";
-        #   dark = "One Dark";
-        # };
-
-        # ui_font_size = 16;
         use_on_type_format = true;
         wrap_guides = [ 80 ];
       };

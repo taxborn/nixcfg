@@ -1,4 +1,3 @@
-{ self, ... }:
 {
   flake = {
     homeModules = {

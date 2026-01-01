@@ -11,10 +11,7 @@
       enable = true;
 
       settings = {
-        # gtk-single-instance = true;
-        # quit-after-last-window-closed = false;
         theme = "Adwaita Dark";
-        # gtk-titlebar = false;
         window-padding-x = 6;
         window-padding-y = 4;
       };

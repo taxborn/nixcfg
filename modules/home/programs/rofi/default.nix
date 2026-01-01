@@ -3,10 +3,12 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   cfg = config.myHome;
   defaultApps.terminal = cfg.profiles.defaultApps.terminal.exec or (lib.getExe pkgs.ghostty);
-in {
+in
+{
   options.myHome.programs.rofi.enable = lib.mkEnableOption "rofi application launcher";
 
   config = lib.mkIf config.myHome.programs.rofi.enable {
@@ -17,7 +19,6 @@ in {
 
     programs.rofi = {
       enable = true;
-      # font = "${config.stylix.fonts.monospace.name} ${toString config.stylix.fonts.sizes.popups}";
       location = "center";
       package = pkgs.rofi;
 

@@ -3,12 +3,14 @@
   lib,
   pkgs,
   ...
-}: let
+}:
+let
   engines = import ./engines.nix;
-in {
-  options.myHome.aly.programs.firefox.enable = lib.mkEnableOption "firefox web browser";
+in
+{
+  options.myHome.taxborn.programs.firefox.enable = lib.mkEnableOption "firefox web browser";
 
-  config = lib.mkIf config.myHome.aly.programs.firefox.enable {
+  config = lib.mkIf config.myHome.taxborn.programs.firefox.enable {
     programs.firefox = {
       enable = true;
       package = lib.mkIf pkgs.stdenv.isDarwin null;
