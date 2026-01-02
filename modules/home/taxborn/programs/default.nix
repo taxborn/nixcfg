@@ -5,6 +5,7 @@
     ./gpg
     ./minecraft
     ./ssh
+    ./tmux
     ./yubikey
     ./zed-editor
     ./zen

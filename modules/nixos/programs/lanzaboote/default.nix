@@ -15,7 +15,6 @@
         enable = true;
         configurationLimit = 10;
         pkiBundle = lib.mkDefault "/var/lib/sbctl";
-        settings.timeout = 0;
       };
 
       loader.systemd-boot.enable = lib.mkForce false;

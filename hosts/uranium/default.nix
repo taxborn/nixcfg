@@ -1,7 +1,5 @@
 {
-  lib,
   self,
-  pkgs,
   ...
 }:
 let

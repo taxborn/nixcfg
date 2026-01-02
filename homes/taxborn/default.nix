@@ -64,6 +64,7 @@
         git.enable = true;
         gpg.enable = true;
         minecraft.enable = true;
+        tmux.enable = true;
         yubikey.enable = true;
         zed-editor.enable = true;
       };

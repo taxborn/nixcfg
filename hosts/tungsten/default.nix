@@ -1,7 +1,5 @@
 {
-  lib,
   self,
-  pkgs,
   ...
 }:
 let
@@ -32,9 +30,7 @@ in
         laptopMonitor = "eDP-1,3456x2160@60,0x0,2";
       };
     };
-    profiles = {
-      btrfs.enable = true;
-    };
+    profiles.btrfs.enable = true;
     programs = {
       firefox.enable = true;
       nix.enable = true;
