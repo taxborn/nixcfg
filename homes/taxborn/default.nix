@@ -29,7 +29,9 @@
       stateVersion = "25.11";
 
       packages = with pkgs; [
+        discord
         obsidian
+        spotify
       ];
     };
 
@@ -59,13 +61,17 @@
 
     myHome = {
       taxborn.programs = {
-        zed-editor.enable = true;
         git.enable = true;
         gpg.enable = true;
+        minecraft.enable = true;
         yubikey.enable = true;
+        zed-editor.enable = true;
       };
       profiles.defaultApps.enable = true;
-      programs.ghostty.enable = true;
+      programs = {
+        ghostty.enable = true;
+        obs.enable = true;
+      };
     };
   };
 }

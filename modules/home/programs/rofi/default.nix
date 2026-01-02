@@ -5,8 +5,7 @@
   ...
 }:
 let
-  cfg = config.myHome;
-  defaultApps.terminal = cfg.profiles.defaultApps.terminal.exec or (lib.getExe pkgs.ghostty);
+  defaultApps.terminal = config.myHome.profiles.defaultApps.terminal.exec or (lib.getExe pkgs.ghostty);
 in
 {
   options.myHome.programs.rofi.enable = lib.mkEnableOption "rofi application launcher";
