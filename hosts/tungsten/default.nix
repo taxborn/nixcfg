@@ -70,8 +70,8 @@ in
 
   hardware.enableRedistributableFirmware = lib.mkDefault true;
   hardware.nvidia.prime = {
-    nvidiaBusId = "PCI:0:2:0";
-    intelBusId = "PCI:1:0:0";
+    nvidiaBusId = "PCI:1:0:0";
+    intelBusId = "PCI:0:2:0";
   };
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
