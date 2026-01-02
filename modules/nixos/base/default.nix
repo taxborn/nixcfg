@@ -29,6 +29,7 @@
     hardware = {
       keyboard.qmk.enable = true;
       logitech.wireless.enable = true;
+      enableRedistributableFirmware = lib.mkDefault true;
     };
 
     programs = {

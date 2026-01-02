@@ -1,4 +1,4 @@
-{ lib, config, ... }:
+{ lib, config, pkgs, ... }:
 {
   imports = [
     ./hyprland
@@ -9,6 +9,7 @@
   config = lib.mkIf config.myNixOS.desktop.enable {
     environment.sessionVariables.NIXOS_OZONE_WL = "1";
     hardware.logitech.wireless.enableGraphical = true;
+    boot.kernelPackages = pkgs.linuxPackages_latest;
 
     home-manager.sharedModules = [
       {

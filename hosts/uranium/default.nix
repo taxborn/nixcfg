@@ -13,7 +13,6 @@ in
 {
   imports = [
     ./backup.nix
-    ./hardware.nix
     ./home.nix
     ./secrets.nix
     self.diskoConfigurations.luks-btrfs-uranium
@@ -36,9 +35,7 @@ in
         ];
       };
     };
-    profiles = {
-      btrfs.enable = true;
-    };
+    profiles.btrfs.enable = true;
     programs = {
       firefox.enable = true;
       nix.enable = true;
@@ -71,27 +68,19 @@ in
     };
   };
 
-  hardware.enableRedistributableFirmware = lib.mkDefault true;
-  hardware.nvidia.prime = {
-    nvidiaBusId = "PCI:0:2:0";
-    intelBusId = "PCI:1:0:0";
-  };
-
-  boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.initrd = {
     luks = {
       devices."cryptroot".crypttabExtraOpts = defaultCrypttabOptions;
       devices."crypthome".crypttabExtraOpts = defaultCrypttabOptions;
       fido2Support = false;
     };
-    systemd.enable = true;
     availableKernelModules = [
       "xhci_pci"
-      "thunderbolt"
+      "ahci"
       "nvme"
+      "usbhid"
       "usb_storage"
       "sd_mod"
-      "rtsx_pci_sdmmc"
     ];
   };
 

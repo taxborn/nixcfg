@@ -68,20 +68,17 @@ in
     };
   };
 
-  hardware.enableRedistributableFirmware = lib.mkDefault true;
   hardware.nvidia.prime = {
     nvidiaBusId = "PCI:1:0:0";
     intelBusId = "PCI:0:2:0";
   };
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.initrd = {
     luks = {
       devices."cryptroot".crypttabExtraOpts = defaultCrypttabOptions;
       devices."crypthome".crypttabExtraOpts = defaultCrypttabOptions;
       fido2Support = false;
     };
-    systemd.enable = true;
     availableKernelModules = [
       "xhci_pci"
       "thunderbolt"
