@@ -13,6 +13,9 @@
       powerOnBoot = true;
     };
 
+    # TODO: Move to desktop config
+    services.blueman.enable = true;
+
     services.pulseaudio = {
       package = pkgs.pulseaudioFull;
 

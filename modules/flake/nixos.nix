@@ -3,6 +3,7 @@
   flake = {
     diskoConfigurations = {
       luks-btrfs-tungsten = ../disko/luks-btrfs-tungsten;
+      luks-btrfs-uranium = ../disko/luks-btrfs-uranium;
     };
 
     nixosModules = {
@@ -21,7 +22,7 @@
           # "carbon"
           # "helium-01"
           "tungsten"
-          # "uranium"
+          "uranium"
         ]
         (
           host:

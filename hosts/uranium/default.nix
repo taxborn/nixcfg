@@ -13,13 +13,14 @@ in
 {
   imports = [
     ./backup.nix
+    ./hardware.nix
     ./home.nix
     ./secrets.nix
-    self.diskoConfigurations.luks-btrfs-tungsten
+    self.diskoConfigurations.luks-btrfs-uranium
     self.nixosModules.locale-en-us
   ];
 
-  networking.hostName = "tungsten";
+  networking.hostName = "uranium";
   time.timeZone = "America/Chicago";
   system.stateVersion = "25.11";
 
@@ -29,7 +30,10 @@ in
       enable = true;
       hyprland = {
         enable = true;
-        laptopMonitor = "eDP-1,3456x2160@60,0x0,2";
+        monitors = [
+          "DP-5,2560x1440@165,0x0,1"
+          "HDMI-A-5,1920x1080@60,2560x320,1"
+        ];
       };
     };
     profiles = {
@@ -61,10 +65,9 @@ in
 
   myHardware = {
     intel.cpu.enable = true;
-    nvidia.gpu.enable = true;
+    amd.gpu.enable = true;
     profiles = {
       ssd.enable = true;
-      laptop.enable = true;
     };
   };
 
