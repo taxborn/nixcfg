@@ -10,7 +10,6 @@ let
 in
 {
   imports = [
-    ./backup.nix
     ./home.nix
     ./secrets.nix
     self.diskoConfigurations.luks-btrfs-uranium
@@ -48,6 +47,10 @@ in
       tailscale = {
         enable = true;
         operator = "taxborn";
+      };
+      backups = {
+        enable = true;
+        repository = "ssh://de4388@de4388.rsync.net/./borg-repos/uranium";
       };
     };
   };

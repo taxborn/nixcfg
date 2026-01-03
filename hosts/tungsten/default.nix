@@ -10,7 +10,7 @@ let
 in
 {
   imports = [
-    ./backup.nix
+    # ./backup.nix
     ./home.nix
     ./secrets.nix
     self.diskoConfigurations.luks-btrfs-tungsten
@@ -45,6 +45,10 @@ in
       tailscale = {
         enable = true;
         operator = "taxborn";
+      };
+      backups = {
+        enable = true;
+        repository = "ssh://de4388@de4388.rsync.net/./borg-repos/tungsten";
       };
     };
   };
