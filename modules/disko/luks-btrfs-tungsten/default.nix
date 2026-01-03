@@ -1,8 +1,3 @@
-{
-  config,
-  lib,
-  ...
-}:
 let
   nvme0 = "/dev/disk/by-id/nvme-PC801_NVMe_SK_hynix_1TB__SSB6N580011606E0S";
   nvme1 = "/dev/disk/by-id/nvme-WDC_WDS100T2B0C-00PXH0_203040806179";
@@ -26,20 +21,7 @@ let
   ];
 in
 {
-  options.myDisko.installDrive = lib.mkOption {
-    description = "Disk to install NixOS to.";
-    default = "/dev/nvme0n1";
-    type = lib.types.str;
-  };
-
   config = {
-    assertions = [
-      {
-        assertion = config.myDisko.installDrive != "";
-        message = "config.myDisko.installDrive cannot be empty.";
-      }
-    ];
-
     disko.devices = {
       disk = {
         root-disk = {
