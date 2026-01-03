@@ -152,7 +152,7 @@ in
 
     dim_special = 0.5;
 
-    rounding = 6;
+    rounding = 0;
 
     shadow = {
       enabled = false;

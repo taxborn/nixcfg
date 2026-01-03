@@ -1,6 +1,7 @@
 {
   imports = [
     ./hypridle
+    ./mako
     ./waybar
   ];
 }

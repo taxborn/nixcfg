@@ -69,6 +69,7 @@
         zed-editor.enable = true;
       };
       profiles.defaultApps.enable = true;
+      desktop.hyprland.enable = true;
       programs = {
         ghostty.enable = true;
         obs.enable = true;
