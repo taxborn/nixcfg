@@ -42,17 +42,14 @@
     xdg.userDirs = {
       enable = true;
       createDirectories = true;
-      desktop = lib.mkDefault "${config.home.homeDirectory}/Desktop";
-      documents = lib.mkDefault "${config.home.homeDirectory}/Documents";
-      download = lib.mkDefault "${config.home.homeDirectory}/Downloads";
-      extraConfig = {
-        XDG_SRC_DIR = "${config.home.homeDirectory}/src";
-      };
-      music = lib.mkDefault "${config.home.homeDirectory}/Music";
-      pictures = lib.mkDefault "${config.home.homeDirectory}/pics";
-      publicShare = lib.mkDefault "${config.home.homeDirectory}/pub";
-      templates = lib.mkDefault "${config.home.homeDirectory}/tmplts";
-      videos = lib.mkDefault "${config.home.homeDirectory}/vids";
+      desktop = lib.mkDefault "${config.home.homeDirectory}/desktop";
+      documents = lib.mkDefault "${config.home.homeDirectory}/documents";
+      download = lib.mkDefault "${config.home.homeDirectory}/downloads";
+      music = lib.mkDefault "${config.home.homeDirectory}/media/music";
+      pictures = lib.mkDefault "${config.home.homeDirectory}/media/photos";
+      videos = lib.mkDefault "${config.home.homeDirectory}/media/video";
+      templates = lib.mkDefault "${config.home.homeDirectory}/templates";
+      publicShare = lib.mkDefault "${config.home.homeDirectory}/public";
     };
   };
 }
