@@ -4,7 +4,7 @@
     ./hardware.nix
     ./home.nix
     ./secrets.nix
-    self.diskoConfigurations.luks-btrfs-tungsten
+    self.diskoConfigurations.btrfs-helium-01
     self.nixosModules.locale-en-us
   ];
 
