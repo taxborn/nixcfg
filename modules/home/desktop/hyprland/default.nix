@@ -76,6 +76,7 @@
       services = {
         hypridle.enable = true;
         mako.enable = true;
+        swayosd.enable = true;
         waybar.enable = true;
       };
     };

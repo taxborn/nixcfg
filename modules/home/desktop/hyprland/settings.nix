@@ -57,8 +57,6 @@ in
     "CTRL,F12,exec,${lib.getExe helpers.screenshot}"
     "$mod, L,exec,${lib.getExe' pkgs.systemd "loginctl"} lock-session"
     "$mod SHIFT,backslash,togglesplit"
-    "$mod SHIFT,G,togglegroup"
-    "$mod SHIFT,M,layoutmsg,swapwithmaster master"
 
     "$mod SHIFT,comma,exec,${lib.getExe pkgs.hyprnome} --previous --move"
     "$mod SHIFT,period,exec,${lib.getExe pkgs.hyprnome} --move"
@@ -74,11 +72,7 @@ in
     "ALT,space,exec,${lib.getExe config.programs.rofi.package} -show window"
 
     "$mod,F11,exec,pkill -SIGUSR1 waybar"
-    "$mod,H,changegroupactive,b"
-    "$mod,L,changegroupactive,f"
     "$mod,Left,changegroupactive,b"
-    "$mod,mouse_down,workspace,+1"
-    "$mod,mouse_up,workspace,-1"
     "$mod,Right,changegroupactive,f"
     "$mod,S,togglespecialworkspace,magic"
   ]
