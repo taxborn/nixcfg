@@ -43,12 +43,20 @@
       enable = true;
       inherit (config.myNixOS.services.tailscale) authKeyFile;
 
+      # extraUpFlags = [
+      #   "--ssh"
+      # ]
+      # ++ lib.optional (
+      #   config.myNixOS.services.tailscale.operator != null
+      # ) "--operator ${config.myNixOS.services.tailscale.operator}";
+
       extraUpFlags = [
         "--ssh"
       ]
-      ++ lib.optional (
-        config.myNixOS.services.tailscale.operator != null
-      ) "--operator ${config.myNixOS.services.tailscale.operator}";
+      ++ lib.optionals (config.myNixOS.services.tailscale.operator != null) [
+        "--operator"
+        "${config.myNixOS.services.tailscale.operator}"
+      ];
 
       openFirewall = true;
       useRoutingFeatures = "both";
