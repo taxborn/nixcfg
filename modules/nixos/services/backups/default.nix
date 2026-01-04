@@ -5,7 +5,7 @@
 }:
 let
   commonExcludes = [
-    "/home/taxborn/Documents/Notes" # managed by Obsidian
+    "/home/taxborn/documents/notes" # managed by Obsidian
 
     # very large paths
     "/var/lib/docker"
