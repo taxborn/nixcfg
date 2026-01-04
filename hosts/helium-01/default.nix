@@ -1,7 +1,6 @@
 { self, pkgs, ... }:
 {
   imports = [
-    ./hardware.nix
     ./home.nix
     ./secrets.nix
     self.diskoConfigurations.btrfs-helium-01
@@ -37,6 +36,7 @@
   };
 
   environment.systemPackages = with pkgs; [
+    ntfs3g
     jdk21_headless
   ];
 
@@ -55,7 +55,7 @@
     profiles.btrfs.enable = true;
     programs = {
       nix.enable = true;
-      # lanzaboote.enable = true;
+      systemd-boot.enable = true;
       yubikey.enable = true;
     };
     services = {
@@ -79,4 +79,33 @@
     enable = true;
     password = "$y$j9T$23GUNNxavO/S4n8DLkfs71$ShByJUJ9XCvIs2PLYmlAjenOtpcFvnSgshjbClEKB18";
   };
+
+  boot.initrd.availableKernelModules = [
+    "xhci_pci"
+    "ahci"
+    "nvme"
+    "usb_storage"
+    "sd_mod"
+    "rtsx_pci_sdmmc"
+  ];
+
+  fileSystems."/mnt/hdd" = {
+    device = "/dev/disk/by-id/usb-WD_My_Book_25ED_575835324443304A30443532-0:0-part1";
+    fsType = "ntfs-3g";
+    options = [
+      "defaults"
+      "nofail"
+      "user"
+      "exec"
+      "uid=1000"
+      "gid=100"
+      "umask=0022"
+      "locale=en_US.utf8"
+    ];
+  };
+
+  # Ensure the mount point directory exists
+  systemd.tmpfiles.rules = [
+    "d /mnt/hdd 0755 root root -"
+  ];
 }
