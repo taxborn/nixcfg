@@ -59,6 +59,7 @@
       };
     };
 
+    # TODO: Most of these should probably move to the per-host home config.
     myHome = {
       taxborn.programs = {
         git.enable = true;

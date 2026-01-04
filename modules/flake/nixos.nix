@@ -4,6 +4,7 @@
     diskoConfigurations = {
       luks-btrfs-tungsten = ../disko/luks-btrfs-tungsten;
       luks-btrfs-uranium = ../disko/luks-btrfs-uranium;
+      btrfs-helium-01 = ../disko/btrfs-helium-01;
     };
 
     nixosModules = {
@@ -20,7 +21,7 @@
       inputs.nixpkgs.lib.genAttrs
         [
           # "carbon"
-          # "helium-01"
+          "helium-01"
           "tungsten"
           "uranium"
         ]
