@@ -11,38 +11,9 @@
   time.timeZone = "America/Chicago";
   system.stateVersion = "25.11";
 
-  services.caddy = {
-    enable = true;
-  };
-
-  services.paperless = {
-    enable = true;
-    consumptionDirIsPublic = true;
-    address = "0.0.0.0";
-    settings = {
-      PAPERLESS_CONSUMER_IGNORE_PATTERN = [
-        ".DS_STORE/*"
-        "desktop.ini"
-      ];
-      PAPERLESS_OCR_LANGUAGE = "deu+eng";
-      PAPERLESS_OCR_USER_ARGS = {
-        optimize = 1;
-        pdfa_image_compression = "lossless";
-      };
-      PAPERLESS_URL = "https://docs.mischief.town";
-    };
-    domain = "docs.mischief.town";
-    port = 21594;
-  };
-
   environment.systemPackages = with pkgs; [
     ntfs3g
     jdk21_headless
-  ];
-
-  networking.firewall.allowedTCPPorts = [
-    80
-    443
   ];
 
   environment.pathsToLink = [
@@ -67,6 +38,8 @@
         enable = true;
         repository = "ssh://de4388@de4388.rsync.net/./borg-repos/helium-01";
       };
+      caddy.enable = true;
+      paperless-ngx.enable = true;
     };
   };
 

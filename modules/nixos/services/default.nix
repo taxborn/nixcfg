@@ -5,6 +5,7 @@
     ./caddy
     ./forgejo
     ./openssh
+    ./paperless
     ./sddm
     ./tailscale
   ];

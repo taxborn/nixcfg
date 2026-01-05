@@ -1,7 +1,11 @@
-{ self, pkgs, ... }:
+{
+  self,
+  pkgs,
+  modulesPath,
+  ...
+}:
 {
   imports = [
-    ./hardware.nix
     ./home.nix
     ./secrets.nix
 
@@ -11,7 +15,15 @@
 
     self.diskoConfigurations.btrfs-carbon
     self.nixosModules.locale-en-us
+
+    (modulesPath + "/profiles/qemu-guest.nix")
   ];
+
+  boot.loader.grub = {
+    enable = true;
+    efiSupport = true;
+    efiInstallAsRemovable = true;
+  };
 
   networking.hostName = "carbon";
   time.timeZone = "America/Chicago";
@@ -56,12 +68,10 @@
   };
 
   boot.initrd.availableKernelModules = [
-    "xhci_pci"
-    "ahci"
-    "nvme"
-    "usb_storage"
-    "sd_mod"
-    "rtsx_pci_sdmmc"
+    "ata_piix"
+    "uhci_hcd"
+    "virtio_pci"
+    "virtio_scsi"
   ];
 
   fileSystems."/mnt/hdd" = {
