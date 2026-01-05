@@ -5,7 +5,7 @@
     ./home.nix
     ./secrets.nix
 
-    ./sites/forgejo.nix
+    # ./sites/forgejo.nix
     ./sites/mischief.nix
     ./sites/taxborn.nix
     ./sites/vaultwarden.nix
@@ -26,17 +26,11 @@
     jdk21_headless
   ];
 
-  networking.firewall.allowedTCPPorts = [
-    80
-    443
-  ];
-
   myNixOS = {
     base.enable = true;
     profiles.btrfs.enable = true;
     programs = {
       nix.enable = true;
-      # systemd-boot.enable = true;
     };
     services = {
       tailscale = {
@@ -47,6 +41,8 @@
         enable = true;
         repository = "ssh://de4388@de4388.rsync.net/./borg-repos/carbon";
       };
+      forgejo.enable = true;
+      caddy.enable = true;
     };
   };
 
