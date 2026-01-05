@@ -5,7 +5,6 @@
     ./home.nix
     ./secrets.nix
 
-    # ./sites/forgejo.nix
     ./sites/mischief.nix
     ./sites/taxborn.nix
     ./sites/vaultwarden.nix
