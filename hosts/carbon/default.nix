@@ -36,7 +36,7 @@
     profiles.btrfs.enable = true;
     programs = {
       nix.enable = true;
-      systemd-boot.enable = true;
+      # systemd-boot.enable = true;
     };
     services = {
       tailscale = {
