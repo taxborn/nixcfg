@@ -5,6 +5,7 @@
       luks-btrfs-tungsten = ../disko/luks-btrfs-tungsten;
       luks-btrfs-uranium = ../disko/luks-btrfs-uranium;
       btrfs-helium-01 = ../disko/btrfs-helium-01;
+      btrfs-carbon = ../disko/btrfs-carbon;
     };
 
     nixosModules = {
@@ -20,7 +21,7 @@
       in
       inputs.nixpkgs.lib.genAttrs
         [
-          # "carbon"
+          "carbon"
           "helium-01"
           "tungsten"
           "uranium"
