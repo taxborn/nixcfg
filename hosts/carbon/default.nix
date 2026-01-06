@@ -9,10 +9,6 @@
     ./home.nix
     ./secrets.nix
 
-    ./sites/mischief.nix
-    ./sites/taxborn.nix
-    ./sites/vaultwarden.nix
-
     self.diskoConfigurations.btrfs-carbon
     self.nixosModules.locale-en-us
 
@@ -23,6 +19,26 @@
     enable = true;
     efiSupport = true;
     efiInstallAsRemovable = true;
+  };
+  services.caddy = {
+    virtualHosts."mischief.town".extraConfig = ''
+      redir https://www.mischief.town{uri} permanent
+    '';
+  };
+  services.caddy = {
+    virtualHosts."taxborn.com".extraConfig = ''
+      redir https://www.taxborn.com{uri} permanent
+    '';
+    virtualHosts."www.taxborn.com".extraConfig = ''
+      respond "Hello, World!"
+    '';
+
+    virtualHosts."braxtonfair.com".extraConfig = ''
+      redir https://www.braxtonfair.com{uri} permanent
+    '';
+    virtualHosts."www.braxtonfair.com".extraConfig = ''
+      redir https://www.taxborn.com{uri} permanent
+    '';
   };
 
   networking.hostName = "carbon";
@@ -52,7 +68,9 @@
         enable = true;
         repository = "ssh://de4388@de4388.rsync.net/./borg-repos/carbon";
       };
+      glance.enable = true;
       forgejo.enable = true;
+      vaultwarden.enable = true;
       caddy.enable = true;
     };
   };

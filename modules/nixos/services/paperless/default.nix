@@ -17,6 +17,8 @@
           ".DS_STORE/*"
           "desktop.ini"
         ];
+        # TODO: this seems like german and english, figure out what it should
+        # be for just english
         PAPERLESS_OCR_LANGUAGE = "deu+eng";
         PAPERLESS_OCR_USER_ARGS = {
           optimize = 1;
@@ -26,6 +28,10 @@
       };
       domain = "docs.mischief.town";
       port = 21594;
+    };
+
+    services.caddy = {
+      virtualHosts."docs.mischief.town".extraConfig = ''reverse_proxy http://100.64.1.0:21594'';
     };
   };
 }
