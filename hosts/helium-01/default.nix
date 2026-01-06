@@ -30,16 +30,16 @@
       yubikey.enable = true;
     };
     services = {
-      tailscale = {
-        enable = true;
-        operator = "taxborn";
-      };
       backups = {
         enable = true;
         repository = "ssh://de4388@de4388.rsync.net/./borg-repos/helium-01";
       };
       caddy.enable = true;
       paperless-ngx.enable = true;
+      tailscale = {
+        enable = true;
+        operator = "taxborn";
+      };
     };
   };
 

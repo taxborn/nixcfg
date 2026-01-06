@@ -35,11 +35,15 @@ in
     profiles.btrfs.enable = true;
     programs = {
       firefox.enable = true;
-      nix.enable = true;
       lanzaboote.enable = true;
+      nix.enable = true;
       yubikey.enable = true;
     };
     services = {
+      backups = {
+        enable = true;
+        repository = "ssh://de4388@de4388.rsync.net/./borg-repos/uranium";
+      };
       sddm = {
         enable = true;
         autoLogin = "taxborn";
@@ -47,10 +51,6 @@ in
       tailscale = {
         enable = true;
         operator = "taxborn";
-      };
-      backups = {
-        enable = true;
-        repository = "ssh://de4388@de4388.rsync.net/./borg-repos/uranium";
       };
     };
   };
@@ -64,9 +64,7 @@ in
   myHardware = {
     intel.cpu.enable = true;
     amd.gpu.enable = true;
-    profiles = {
-      ssd.enable = true;
-    };
+    profiles.ssd.enable = true;
   };
 
   boot.initrd = {
