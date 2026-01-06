@@ -89,7 +89,7 @@
                 runner.capacity = config.myNixOS.services.forgejo-runner.nativeRunners;
               };
 
-              url = "http://${config.mySnippets.mischief-town.networkMap.forgejo.hostName}:${toString config.mySnippets.mischief-town.networkMap.forgejo.port}";
+              url = "http://${config.mySnippets.mischief-town.networkMap.forgejo.hostname}:${toString config.mySnippets.mischief-town.networkMap.forgejo.port}";
             };
           };
       };
