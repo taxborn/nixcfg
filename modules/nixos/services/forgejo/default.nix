@@ -6,10 +6,8 @@
   ...
 }:
 let
-  domain = "git.mischief.town";
   sshPort = 2222;
   sshUser = "git";
-  cfg = config.services.forgejo;
 in
 {
   options.myNixOS.services.forgejo.enable = lib.mkEnableOption "forgejo git forge";
@@ -91,12 +89,12 @@ in
           security.PASSWORD_CHECK_PWN = true;
 
           server = {
-            DOMAIN = domain;
-            HTTP_PORT = 8193;
+            DOMAIN = config.mySnippets.mischief-town.networkMap.forgejo.vHost;
+            HTTP_PORT = config.mySnippets.mischief-town.networkMap.forgejo.port;
             LANDING_PAGE = "explore";
             LFS_START_SERVER = true;
-            ROOT_URL = "https://${domain}";
-            SSH_DOMAIN = domain;
+            ROOT_URL = "https://${config.mySnippets.mischief-town.networkMap.forgejo.vHost}";
+            SSH_DOMAIN = config.mySnippets.mischief-town.networkMap.forgejo.vHost;
             SSH_LISTEN_PORT = sshPort;
             SSH_PORT = sshPort;
             SSH_USER = sshUser;

@@ -17,13 +17,14 @@
 
     # mischief.town proxies
     "mischief.town".extraConfig = ''
-      redir https://www.mischief.town{uri} permanent
+      redir https://${config.mySnippets.mischief-town.networkMap.glance.vHost}{uri} permanent
     '';
-    "www.mischief.town".extraConfig = ''
-      reverse_proxy localhost:${toString config.services.glance.settings.server.port}
+    ${config.mySnippets.mischief-town.networkMap.glance.vHost}.extraConfig = ''
+      reverse_proxy localhost:${config.mySnippets.mischief-town.networkMap.glance.port}
     '';
-    "docs.mischief.town".extraConfig = ''reverse_proxy http://100.64.1.0:21594'';
-    "git.mischief.town".extraConfig = ''
+    ${config.mySnippets.mischief-town.networkMap.paperless.vHost}.extraConfig =
+      ''reverse_proxy http://100.64.1.0:${config.mySnippets.mischief-town.networkMap.paperless.port}'';
+    ${config.mySnippets.mischief-town.networkMap.forgejo.vHost}.extraConfig = ''
       encode zstd gzip
 
       @uploads method POST PUT
@@ -31,13 +32,13 @@
         request_body { max_size 2GB }
       }
 
-      reverse_proxy localhost:8193  {
+      reverse_proxy localhost:${config.mySnippets.mischief-town.networkMap.forgejo.port}  {
         header_up X-Real-Ip {remote_host}
       }
     '';
-    "vw.mischief.town".extraConfig = ''
+    ${config.mySnippets.mischief-town.networkMap.vaultwarden.vHost}.extraConfig = ''
       encode zstd gzip
-      reverse_proxy localhost:${toString config.services.vaultwarden.config.ROCKET_PORT}  {
+      reverse_proxy localhost:${config.mySnippets.mischief-town.networkMap.vaultwarden.port}  {
         header_up X-Real-IP {remote_host}
         header_up X-Forwarded-For {remote_host}
         header_up X-Forwarded-Proto {scheme}}
