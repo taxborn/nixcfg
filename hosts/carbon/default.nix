@@ -111,4 +111,9 @@
   systemd.tmpfiles.rules = [
     "d /mnt/hdd 0755 root root -"
   ];
+
+  # TODO: Figure out a way to not have this have to be defined on carbon?
+  # Move to tailnet
+  services.caddy.virtualHosts."docs.mischief.town".extraConfig =
+    ''reverse_proxy http://100.64.1.0:21594'';
 }
