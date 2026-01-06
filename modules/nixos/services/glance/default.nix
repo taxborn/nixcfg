@@ -4,12 +4,15 @@
   ...
 }:
 {
-  options.myNixOS.services.glance.enable = lib.mkEnableOption "vaultwarden";
+  options.myNixOS.services.glance.enable = lib.mkEnableOption "glance";
 
   config = lib.mkIf config.myNixOS.services.glance.enable {
     services.glance = {
       enable = true;
       settings = {
+        server = {
+          port = config.mySnippets.mischief-town.networkMap.glance.port;
+        };
         theme = {
           background-color = "240 21 15";
           contrast-multiplier = 1.2;
@@ -118,7 +121,6 @@
                       "glanceapp/glance"
                       "immich-app/immich"
                       "codeberg:Forgejo/forgejo"
-                      "codeberg:ziglang/zig"
                     ];
                   }
                 ];
