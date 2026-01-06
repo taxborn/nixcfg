@@ -129,11 +129,5 @@ in
     };
 
     networking.firewall.allowedTCPPorts = [ sshPort ];
-
-    services.caddy = {
-      virtualHosts.${domain}.extraConfig = ''
-        reverse_proxy localhost:${toString cfg.settings.server.HTTP_PORT}
-      '';
-    };
   };
 }

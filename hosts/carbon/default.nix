@@ -7,6 +7,7 @@
 {
   imports = [
     ./home.nix
+    ./proxy.nix
     ./secrets.nix
 
     self.diskoConfigurations.btrfs-carbon
@@ -19,26 +20,6 @@
     enable = true;
     efiSupport = true;
     efiInstallAsRemovable = true;
-  };
-  services.caddy = {
-    virtualHosts."mischief.town".extraConfig = ''
-      redir https://www.mischief.town{uri} permanent
-    '';
-  };
-  services.caddy = {
-    virtualHosts."taxborn.com".extraConfig = ''
-      redir https://www.taxborn.com{uri} permanent
-    '';
-    virtualHosts."www.taxborn.com".extraConfig = ''
-      respond "Hello, World!"
-    '';
-
-    virtualHosts."braxtonfair.com".extraConfig = ''
-      redir https://www.braxtonfair.com{uri} permanent
-    '';
-    virtualHosts."www.braxtonfair.com".extraConfig = ''
-      redir https://www.taxborn.com{uri} permanent
-    '';
   };
 
   networking.hostName = "carbon";
@@ -94,6 +75,4 @@
 
   # TODO: Figure out a way to not have this have to be defined on carbon?
   # Move to tailnet
-  services.caddy.virtualHosts."docs.mischief.town".extraConfig =
-    ''reverse_proxy http://100.64.1.0:21594'';
 }

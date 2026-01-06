@@ -118,6 +118,7 @@
                       "glanceapp/glance"
                       "immich-app/immich"
                       "codeberg:Forgejo/forgejo"
+                      "codeberg:ziglang/zig"
                     ];
                   }
                 ];
@@ -126,12 +127,6 @@
           }
         ];
       };
-    };
-
-    services.caddy = {
-      virtualHosts."www.mischief.town".extraConfig = ''
-        reverse_proxy localhost:${toString config.services.glance.settings.server.port}
-      '';
     };
   };
 }
