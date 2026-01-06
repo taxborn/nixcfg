@@ -23,7 +23,7 @@
     "www.mischief.town".extraConfig = ''
       reverse_proxy localhost:${toString config.services.glance.settings.server.port}
     '';
-    virtualHosts."vw.mischief.town".extraConfig = ''
+    "vw.mischief.town".extraConfig = ''
       reverse_proxy localhost:${toString config.services.vaultwarden.config.ROCKET_PORT}
     '';
   };
