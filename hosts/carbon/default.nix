@@ -92,26 +92,6 @@
     "virtio_scsi"
   ];
 
-  fileSystems."/mnt/hdd" = {
-    device = "/dev/disk/by-id/usb-WD_My_Book_25ED_575835324443304A30443532-0:0-part1";
-    fsType = "ntfs-3g";
-    options = [
-      "defaults"
-      "nofail"
-      "user"
-      "exec"
-      "uid=1000"
-      "gid=100"
-      "umask=0022"
-      "locale=en_US.utf8"
-    ];
-  };
-
-  # Ensure the mount point directory exists
-  systemd.tmpfiles.rules = [
-    "d /mnt/hdd 0755 root root -"
-  ];
-
   # TODO: Figure out a way to not have this have to be defined on carbon?
   # Move to tailnet
   services.caddy.virtualHosts."docs.mischief.town".extraConfig =
