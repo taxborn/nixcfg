@@ -20,10 +20,10 @@
       redir https://${config.mySnippets.mischief-town.networkMap.glance.vHost}{uri} permanent
     '';
     ${config.mySnippets.mischief-town.networkMap.glance.vHost}.extraConfig = ''
-      reverse_proxy localhost:${config.mySnippets.mischief-town.networkMap.glance.port}
+      reverse_proxy localhost:${toString config.mySnippets.mischief-town.networkMap.glance.port}
     '';
     ${config.mySnippets.mischief-town.networkMap.paperless.vHost}.extraConfig =
-      ''reverse_proxy http://100.64.1.0:${config.mySnippets.mischief-town.networkMap.paperless.port}'';
+      ''reverse_proxy http://100.64.1.0:${toString config.mySnippets.mischief-town.networkMap.paperless.port}'';
     ${config.mySnippets.mischief-town.networkMap.forgejo.vHost}.extraConfig = ''
       encode zstd gzip
 
@@ -32,13 +32,13 @@
         request_body { max_size 2GB }
       }
 
-      reverse_proxy localhost:${config.mySnippets.mischief-town.networkMap.forgejo.port}  {
+      reverse_proxy localhost:${toString config.mySnippets.mischief-town.networkMap.forgejo.port}  {
         header_up X-Real-Ip {remote_host}
       }
     '';
     ${config.mySnippets.mischief-town.networkMap.vaultwarden.vHost}.extraConfig = ''
       encode zstd gzip
-      reverse_proxy localhost:${config.mySnippets.mischief-town.networkMap.vaultwarden.port}  {
+      reverse_proxy localhost:${toString config.mySnippets.mischief-town.networkMap.vaultwarden.port}  {
         header_up X-Real-IP {remote_host}
         header_up X-Forwarded-For {remote_host}
         header_up X-Forwarded-Proto {scheme}}
