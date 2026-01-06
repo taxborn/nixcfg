@@ -39,6 +39,7 @@
     profiles.btrfs.enable = true;
     programs = {
       nix.enable = true;
+      podman.enable = true;
     };
     services = {
       tailscale = {
@@ -51,6 +52,11 @@
       };
       glance.enable = true;
       forgejo.enable = true;
+      forgejo-runner = {
+        enable = true;
+        dockerContainers = 3;
+        nativeRunners = 2;
+      };
       vaultwarden.enable = true;
       caddy.enable = true;
     };

@@ -4,6 +4,7 @@
     ./backups
     ./caddy
     ./forgejo
+    ./forgejo-runner
     ./glance
     ./openssh
     ./paperless
