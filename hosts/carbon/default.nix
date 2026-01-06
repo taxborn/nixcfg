@@ -42,23 +42,23 @@
       podman.enable = true;
     };
     services = {
-      tailscale = {
-        enable = true;
-        operator = "taxborn";
-      };
       backups = {
         enable = true;
         repository = "ssh://de4388@de4388.rsync.net/./borg-repos/carbon";
       };
-      glance.enable = true;
+      caddy.enable = true;
       forgejo.enable = true;
       forgejo-runner = {
         enable = true;
         dockerContainers = 3;
         nativeRunners = 2;
       };
+      glance.enable = true;
+      tailscale = {
+        enable = true;
+        operator = "taxborn";
+      };
       vaultwarden.enable = true;
-      caddy.enable = true;
     };
   };
 
