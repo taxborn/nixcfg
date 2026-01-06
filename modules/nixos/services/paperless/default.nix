@@ -10,6 +10,7 @@
     services.paperless = {
       enable = true;
       consumptionDirIsPublic = true;
+      address = "0.0.0.0";
       settings = {
         PAPERLESS_CONSUMER_IGNORE_PATTERN = [
           ".DS_STORE/*"
