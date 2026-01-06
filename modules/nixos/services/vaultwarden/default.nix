@@ -11,10 +11,10 @@
       vaultwarden = {
         enable = true;
         config = {
-          DOMAIN = "https://${config.mySnippets.mischief.town.networkMap.vaultwarden.vHost}";
+          DOMAIN = "https://${config.mySnippets.mischief-town.networkMap.vaultwarden.vHost}";
           SIGNUPS_ALLOWED = true;
           ROCKET_ADDRESS = "127.0.0.1";
-          ROCKET_PORT = config.mySnippets.mischief.town.networkMap.vaultwarden.port;
+          ROCKET_PORT = config.mySnippets.mischief-town.networkMap.vaultwarden.port;
           ROCKET_LOG = "critical";
         };
       };
