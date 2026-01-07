@@ -501,11 +501,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1767743396,
-        "narHash": "sha256-RYF0nAYCoB8nAIa0t1ITjmPlwlHwDAxnhw8u2ts14W8=",
+        "lastModified": 1767747022,
+        "narHash": "sha256-3YsHOwIlzyQJhLMgHSfjlXljudxFlF96PYfm/pyUgQ0=",
         "ref": "refs/heads/main",
-        "rev": "ec6dae0677e8f9c3babe728e66aa97ae43f1be26",
-        "revCount": 8,
+        "rev": "7c2f3b4091215d0d0769c524bb42eea5015d6b46",
+        "revCount": 9,
         "type": "git",
         "url": "https://git.mischief.town/nix-infra/snippets"
       },
