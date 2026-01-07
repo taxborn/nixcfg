@@ -478,11 +478,11 @@
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1767742942,
-        "narHash": "sha256-ZkM35+rXYE1aYJ56jS8tp8wcKdZxiv5F6DpQUV1K0Ns=",
+        "lastModified": 1767744237,
+        "narHash": "sha256-poAcclcsAAqJAQa95omP5dDaFAIebu4Syy1tOiwMKVU=",
         "ref": "refs/heads/main",
-        "rev": "33ef37ecd272bc4628ffe46d83f6b20103509ccf",
-        "revCount": 9,
+        "rev": "12e9db6f542627622e987fce30af9386f27d1bc4",
+        "revCount": 10,
         "type": "git",
         "url": "https://git.mischief.town/nix-infra/secrets"
       },
