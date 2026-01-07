@@ -26,8 +26,8 @@
     profiles.btrfs.enable = true;
     programs = {
       nix.enable = true;
+      podman.enable = true;
       systemd-boot.enable = true;
-      yubikey.enable = true;
     };
     services = {
       backups = {
