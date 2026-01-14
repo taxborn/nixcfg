@@ -86,6 +86,14 @@
 
         use_on_type_format = true;
         wrap_guides = [ 80 ];
+        terminal = {
+          shell = {
+            with_arguments = {
+              program = "fish";
+              args = [ "-C'tmux'" ];
+            };
+          };
+        };
       };
     };
   };
