@@ -10,7 +10,7 @@
   config = lib.mkIf config.myHome.taxborn.programs.zed-editor.enable {
     home.packages = with pkgs; [
       nil
-      nixfmt-rfc-style
+      nixfmt
     ];
 
     programs.zed-editor = {
