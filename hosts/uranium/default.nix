@@ -37,6 +37,7 @@ in
       firefox.enable = true;
       lanzaboote.enable = true;
       nix.enable = true;
+      podman.enable = true;
       yubikey.enable = true;
     };
     services = {

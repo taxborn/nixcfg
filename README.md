@@ -14,7 +14,6 @@
     - [X] Forgejo runners (docker and nixos)
     - [ ] Tangled.sh mirroring
       - [ ] Tangled.sh knot
-      - [ ] Tangled.sh spindle
     - [ ] Github Mirroring
     *Forgejo will be the "source of truth" for my code, and I will mirror that out to Tangled.sh and Github, with tangled also getting a self-hosted actions runner. Github is starting to charge so no CI there.*
   - [X] Glance
