@@ -24,6 +24,7 @@
       settings = {
         i = "0.0.0.0";
         p = config.mySnippets.mischief-town.networkMap.copyparty.port;
+        rproxy = 1;
       };
 
       accounts = {
