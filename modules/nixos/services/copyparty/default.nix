@@ -25,6 +25,8 @@
         i = "0.0.0.0";
         p = config.mySnippets.mischief-town.networkMap.copyparty.port;
         rproxy = 1;
+        xff-hdr = "x-forwarded-for";
+        xff-src = "100.64.2.0";
       };
 
       accounts = {
