@@ -16,12 +16,6 @@
     (modulesPath + "/profiles/qemu-guest.nix")
   ];
 
-  boot.loader.grub = {
-    enable = true;
-    efiSupport = true;
-    efiInstallAsRemovable = true;
-  };
-
   networking.hostName = "carbon";
   time.timeZone = "America/Chicago";
   system.stateVersion = "25.11";
@@ -30,6 +24,7 @@
     "/share/applications"
     "/share/xdg-desktop-portal"
   ];
+
   environment.systemPackages = with pkgs; [
     jdk21_headless
   ];
@@ -38,6 +33,7 @@
     base.enable = true;
     profiles.btrfs.enable = true;
     programs = {
+      grub.enable = true; # grub seems to be the only bootloader that works on ovh
       nix.enable = true;
       podman.enable = true;
     };
@@ -65,21 +61,14 @@
 
   myHardware = {
     intel.cpu.enable = true;
-    profiles.ssd.enable = true;
+    profiles = {
+      ovh.enable = true;
+      ssd.enable = true;
+    };
   };
 
   myUsers.taxborn = {
     enable = true;
     password = "$y$j9T$23GUNNxavO/S4n8DLkfs71$ShByJUJ9XCvIs2PLYmlAjenOtpcFvnSgshjbClEKB18";
   };
-
-  boot.initrd.availableKernelModules = [
-    "ata_piix"
-    "uhci_hcd"
-    "virtio_pci"
-    "virtio_scsi"
-  ];
-
-  # TODO: Figure out a way to not have this have to be defined on carbon?
-  # Move to tailnet
 }

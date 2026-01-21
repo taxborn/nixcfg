@@ -1,6 +1,7 @@
 {
   imports = [
     ./firefox
+    ./grub
     ./lanzaboote
     ./nix
     ./podman
