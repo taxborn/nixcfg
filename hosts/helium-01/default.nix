@@ -16,11 +16,6 @@
     jdk21_headless
   ];
 
-  environment.pathsToLink = [
-    "/share/applications"
-    "/share/xdg-desktop-portal"
-  ];
-
   myNixOS = {
     base.enable = true;
     profiles.btrfs.enable = true;

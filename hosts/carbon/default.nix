@@ -20,11 +20,6 @@
   time.timeZone = "America/Chicago";
   system.stateVersion = "25.11";
 
-  environment.pathsToLink = [
-    "/share/applications"
-    "/share/xdg-desktop-portal"
-  ];
-
   environment.systemPackages = with pkgs; [
     jdk21_headless
   ];

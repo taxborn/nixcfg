@@ -1,6 +1,5 @@
 {
   config,
-  pkgs,
   self,
   ...
 }:
@@ -22,13 +21,10 @@
         };
       };
 
-      xdg.enable = true;
-
       home = {
         username = "taxborn";
         homeDirectory = "/home/taxborn";
         stateVersion = "25.11";
-        packages = [ ];
       };
 
       programs = {

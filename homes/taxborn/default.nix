@@ -27,20 +27,11 @@
       username = "taxborn";
       homeDirectory = "/home/taxborn";
       stateVersion = "25.11";
-
-      packages = with pkgs; [
-        discord
-        obsidian
-        spotify
-      ];
+      packages = [ ];
     };
 
     programs = {
       home-manager.enable = true;
-      zen-browser = {
-        enable = true;
-        nativeMessagingHosts = [ pkgs.bitwarden-desktop ];
-      };
 
       fish = {
         enable = true;
@@ -59,21 +50,12 @@
       };
     };
 
-    # TODO: Most of these should probably move to the per-host home config.
     myHome = {
       taxborn.programs = {
         git.enable = true;
         gpg.enable = true;
-        minecraft.enable = true;
         tmux.enable = true;
         yubikey.enable = true;
-        zed-editor.enable = true;
-      };
-      profiles.defaultApps.enable = true;
-      desktop.hyprland.enable = true;
-      programs = {
-        ghostty.enable = true;
-        obs.enable = true;
       };
     };
   };
