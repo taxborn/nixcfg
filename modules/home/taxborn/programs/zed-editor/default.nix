@@ -33,7 +33,7 @@
       userSettings = {
         auto_indent_on_paste = true;
         auto_update = false;
-        disable_ai = true;
+        disable_ai = false;
         icon_theme = "Catppuccin Mocha";
         autosave = "on_focus_change";
 
