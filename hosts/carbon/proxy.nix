@@ -6,7 +6,7 @@
       redir https://www.taxborn.com{uri} permanent
     '';
     "www.taxborn.com".extraConfig = ''
-      respond "Hello, World!"
+      reverse_proxy localhost:${toString config.mySnippets.mischief-town.networkMap.taxborn-com.port}
     '';
     "braxtonfair.com".extraConfig = ''
       redir https://www.braxtonfair.com{uri} permanent

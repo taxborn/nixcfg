@@ -58,6 +58,7 @@
         enable = true;
         operator = "taxborn";
       };
+      taxborn-com.enable = true;
       vaultwarden.enable = true;
     };
   };

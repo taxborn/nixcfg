@@ -248,11 +248,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768997641,
-        "narHash": "sha256-7vT8oS6ra/dJaZ6ShvZiPtlZ40XI7CTSb2PmuNPMiXE=",
+        "lastModified": 1769015285,
+        "narHash": "sha256-MlqzCJbckJsgwfkRs64H2xaX2Uxl4o6Z9XYfkYS1N/E=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "27b60942b7285824937f8c2c05021370f6fc5904",
+        "rev": "ec0247a7a19f641595c24ac1ea4df6461d1cdb36",
         "type": "github"
       },
       "original": {
@@ -501,11 +501,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1768967295,
-        "narHash": "sha256-0bCb+WYjU4L/PfYeLL2EspcJ80wRwjErj1eNCmi3oLk=",
+        "lastModified": 1769015614,
+        "narHash": "sha256-8momPX2takmudc3p34AbdrdgdD/N9TB52g96Wz8ilTk=",
         "ref": "refs/heads/main",
-        "rev": "3c714e944bbf389ded9908a0beacbf8cfe5095ae",
-        "revCount": 10,
+        "rev": "637da0ab3fe2df606868c2422ee9b5e04e096f90",
+        "revCount": 11,
         "type": "git",
         "url": "https://git.mischief.town/nix-infra/snippets"
       },

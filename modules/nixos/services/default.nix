@@ -11,6 +11,7 @@
     ./paperless
     ./sddm
     ./tailscale
+    ./taxborn-com
     ./vaultwarden
   ];
 }
