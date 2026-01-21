@@ -30,8 +30,8 @@ in
     editor = {
       package = lib.mkOption {
         type = lib.types.package;
-        # TODO: Turn on if home.programs.zed is enabled
-        default = pkgs.zed-editor;
+        default =
+          if config.myHome.taxborn.programs.zed-editor.enable or false then pkgs.zed-editor else pkgs.neovim;
         description = "The default text editor package.";
       };
 

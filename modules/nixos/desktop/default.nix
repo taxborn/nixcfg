@@ -1,4 +1,9 @@
-{ lib, config, pkgs, ... }:
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 {
   imports = [
     ./hyprland
@@ -18,6 +23,7 @@
     ];
 
     services = {
+      blueman.enable = lib.mkIf config.hardware.bluetooth.enable true;
       gnome.gnome-keyring.enable = true;
       gvfs.enable = true; # Mount, trash, etc.
       libinput.enable = true;
