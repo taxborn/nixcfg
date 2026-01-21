@@ -26,5 +26,7 @@
         "4,defaultName:mail,on-created-empty:${lib.getExe config.programs.thunderbird.package}"
       ];
     };
+
+    myHome.services.swaybg.enable = true;
   };
 }

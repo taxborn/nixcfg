@@ -46,7 +46,6 @@ in
         secrets.mailer.PASSWD = config.age.secrets.resend.path;
         settings = {
           actions = {
-            # TODO: What is a good default here?
             ARTIFACT_RETENTION_DAYS = 15;
             ENABLED = true;
             DEFAULT_ACTIONS_URL = "https://github.com";

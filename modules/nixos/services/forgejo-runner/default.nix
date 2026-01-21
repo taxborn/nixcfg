@@ -30,7 +30,6 @@
       }
     ];
 
-    # TODO: Figure out what this should be.
     age.secrets.act-runner.file = "${self.inputs.secrets}/forgejo/act-runner.age";
 
     services.gitea-actions-runner =
