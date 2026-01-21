@@ -40,6 +40,7 @@
         dockerContainers = 3;
         nativeRunners = 2;
       };
+      immich.enable = true;
       paperless-ngx.enable = true;
       tailscale = {
         enable = true;

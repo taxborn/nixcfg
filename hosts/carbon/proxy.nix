@@ -23,7 +23,7 @@
       reverse_proxy localhost:${toString config.mySnippets.mischief-town.networkMap.glance.port}
     '';
     ${config.mySnippets.mischief-town.networkMap.paperless.vHost}.extraConfig =
-      ''reverse_proxy http://100.64.1.0:${toString config.mySnippets.mischief-town.networkMap.paperless.port}'';
+      "reverse_proxy http://100.64.1.0:${toString config.mySnippets.mischief-town.networkMap.paperless.port}";
     ${config.mySnippets.mischief-town.networkMap.forgejo.vHost}.extraConfig = ''
       encode zstd gzip
 
@@ -39,6 +39,14 @@
     ${config.mySnippets.mischief-town.networkMap.vaultwarden.vHost}.extraConfig = ''
       encode zstd gzip
       reverse_proxy localhost:${toString config.mySnippets.mischief-town.networkMap.vaultwarden.port}  {
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}}
+      }
+    '';
+    ${config.mySnippets.mischief-town.networkMap.immich.vHost}.extraConfig = ''
+      encode zstd gzip
+      reverse_proxy http://100.64.1.0:${toString config.mySnippets.mischief-town.networkMap.immich.port}  {
         header_up X-Real-IP {remote_host}
         header_up X-Forwarded-For {remote_host}
         header_up X-Forwarded-Proto {scheme}}

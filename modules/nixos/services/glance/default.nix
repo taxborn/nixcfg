@@ -10,9 +10,7 @@
     services.glance = {
       enable = true;
       settings = {
-        server = {
-          port = config.mySnippets.mischief-town.networkMap.glance.port;
-        };
+        server.port = config.mySnippets.mischief-town.networkMap.glance.port;
         theme = {
           background-color = "240 21 15";
           contrast-multiplier = 1.2;
@@ -39,15 +37,19 @@
                     sites = [
                       {
                         title = "Vaultwarden";
-                        url = "https://vw.mischief.town";
+                        url = "https://${config.mySnippets.mischief-town.networkMap.vaultwarden.vHost}";
+                      }
+                      {
+                        title = "Immich";
+                        url = "https://${config.mySnippets.mischief-town.networkMap.immich.vHost}";
                       }
                       {
                         title = "Forgejo";
-                        url = "https://git.mischief.town";
+                        url = "https://${config.mySnippets.mischief-town.networkMap.immich.vHost}";
                       }
                       {
                         title = "Paperless";
-                        url = "https://docs.mischief.town";
+                        url = "https://${config.mySnippets.mischief-town.networkMap.paperless.vHost}";
                       }
                     ];
                   }

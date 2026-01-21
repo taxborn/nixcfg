@@ -6,6 +6,7 @@
     ./forgejo
     ./forgejo-runner
     ./glance
+    ./immich
     ./openssh
     ./paperless
     ./sddm
