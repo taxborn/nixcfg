@@ -52,5 +52,13 @@
         header_up X-Forwarded-Proto {scheme}}
       }
     '';
+    ${config.mySnippets.mischief-town.networkMap.copyparty.vHost}.extraConfig = ''
+      encode zstd gzip
+      reverse_proxy http://100.64.1.0:${toString config.mySnippets.mischief-town.networkMap.copyparty.port}  {
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+      }
+    '';
   };
 }

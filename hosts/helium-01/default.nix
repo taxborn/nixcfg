@@ -30,6 +30,7 @@
         repository = "ssh://de4388@de4388.rsync.net/./borg-repos/helium-01";
       };
       caddy.enable = true;
+      copyparty.enable = true;
       forgejo-runner = {
         enable = true;
         dockerContainers = 3;

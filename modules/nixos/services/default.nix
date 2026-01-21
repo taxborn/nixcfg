@@ -3,6 +3,7 @@
     ./avahi
     ./backups
     ./caddy
+    ./copyparty
     ./forgejo
     ./forgejo-runner
     ./glance
