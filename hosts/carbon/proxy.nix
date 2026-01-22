@@ -20,7 +20,6 @@
       redir https://${config.mySnippets.mischief-town.networkMap.glance.vHost}{uri} permanent
     '';
     ${config.mySnippets.mischief-town.networkMap.pds.vHost}.extraConfig = ''
-      import common
       reverse_proxy localhost:${toString config.mySnippets.mischief-town.networkMap.pds.port}
 
       handle /xrpc/app.bsky.unspecced.getAgeAssuranceState {
