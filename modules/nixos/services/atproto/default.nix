@@ -32,9 +32,9 @@
           "https://relay3.fr.hose.cam"
           "https://relay.hayescmd.net"
           # "https://relay.xero.systems"
-          "https://relay.upcloud.world"
-          "https://relay.feeds.blue"
-          "https://atproto.africa"
+          # "https://relay.upcloud.world"
+          # "https://relay.feeds.blue"
+          # "https://atproto.africa"
         ];
       };
     };
