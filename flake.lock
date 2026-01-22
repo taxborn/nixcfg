@@ -528,11 +528,11 @@
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1769034557,
-        "narHash": "sha256-2lpMlH7lxHyd6k2qoM21VsuQ0D69ok2qtPUokso85Gg=",
+        "lastModified": 1769048407,
+        "narHash": "sha256-CGoFTmR4wb8p4cajS7XUvMK+DWlMCW//M3C2jcUg0YI=",
         "ref": "refs/heads/main",
-        "rev": "aa45e8d7dab4694397be7ea389032c99e9299204",
-        "revCount": 11,
+        "rev": "3fc13ed2cf8914a8974f7816b3c11b335c3fe42f",
+        "revCount": 13,
         "type": "git",
         "url": "https://git.mischief.town/nix-infra/secrets"
       },
@@ -551,11 +551,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1769034203,
-        "narHash": "sha256-7UjwtmzxmYpxisPRZNTPY9Y7PcrW6KD3zrGNoiCY28c=",
+        "lastModified": 1769048025,
+        "narHash": "sha256-ZZuO+MdN/Co4OJck0tQi5yb4XJxIHpn29DO3Ctn7uBA=",
         "ref": "refs/heads/main",
-        "rev": "4df6552818d770d0eeaec3031c224e8b14589bd6",
-        "revCount": 12,
+        "rev": "b4405ef3fa1619799c4e315a2e149659c81be34e",
+        "revCount": 13,
         "type": "git",
         "url": "https://git.mischief.town/nix-infra/snippets"
       },

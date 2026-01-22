@@ -19,6 +19,30 @@
     "mischief.town".extraConfig = ''
       redir https://${config.mySnippets.mischief-town.networkMap.glance.vHost}{uri} permanent
     '';
+    ${config.mySnippets.mischief-town.networkMap.pds.vHost}.extraConfig = ''
+      import common
+      reverse_proxy localhost:${toString config.mySnippets.mischief-town.networkMap.pds.port}
+
+      handle /xrpc/app.bsky.unspecced.getAgeAssuranceState {
+        header content-type "application/json"
+        header access-control-allow-headers "authorization,dpop,atproto-accept-labelers,atproto-proxy"
+        header access-control-allow-origin "*"
+        respond `{"lastInitiatedAt":"2025-07-14T14:22:43.912Z","status":"assured"}` 200
+      }
+
+      handle /xrpc/app.bsky.ageassurance.getConfig {
+        header content-type "application/json"
+        header access-control-allow-headers "authorization,dpop,atproto-accept-labelers,atproto-proxy"
+        header access-control-allow-origin "*"
+        respond `{"regions":[]}` 200
+      }
+      handle /xrpc/app.bsky.ageassurance.getState {
+        header content-type "application/json"
+        header access-control-allow-headers "authorization,dpop,atproto-accept-labelers,atproto-proxy"
+        header access-control-allow-origin "*"
+        respond `{"state":{"lastInitiatedAt":"2025-07-14T14:22:43.912Z","status":"assured","access":"full"},"metadata":{"accountCreatedAt":"2022-11-17T00:35:16.391Z"}}` 200
+      }
+    '';
     ${config.mySnippets.mischief-town.networkMap.glance.vHost}.extraConfig = ''
       reverse_proxy localhost:${toString config.mySnippets.mischief-town.networkMap.glance.port}
     '';

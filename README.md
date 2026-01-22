@@ -3,7 +3,6 @@
 # TODO
 - [ ] More documentation, screenshots, comments, etc
 - [ ] Unify Tungsten & Uranium disko config (or split into single/dual SSD btrfs luks options)
-- [ ] Copyparty
 - [ ] PDS
 - [ ] Grafana
 - [ ] Tangled.sh mirroring

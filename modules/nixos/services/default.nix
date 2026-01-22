@@ -1,5 +1,6 @@
 {
   imports = [
+    ./atproto
     ./avahi
     ./backups
     ./caddy

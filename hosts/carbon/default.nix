@@ -45,6 +45,7 @@
         nativeRunners = 2;
       };
       glance.enable = true;
+      pds.enable = true;
       tailscale = {
         enable = true;
         operator = "taxborn";
