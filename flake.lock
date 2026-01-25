@@ -67,11 +67,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1769300724,
-        "narHash": "sha256-LmhbVY1s08LYcEtaM6dZ5+KZZLDTMUKK2CJuWKu1M88=",
+        "lastModified": 1769358915,
+        "narHash": "sha256-/SW+J8hDitgpCit6ZsIxWeo32Xog5R1pU1Ha/lqjPu8=",
         "owner": "9001",
         "repo": "copyparty",
-        "rev": "5c4ba376a0356637598397272959d37e6a96e7fb",
+        "rev": "8e046fb6a8118162feb4a365196fff2fba1c00d1",
         "type": "github"
       },
       "original": {
@@ -599,11 +599,11 @@
     },
     "nixpkgs_3": {
       "locked": {
-        "lastModified": 1769018530,
-        "narHash": "sha256-MJ27Cy2NtBEV5tsK+YraYr2g851f3Fl1LpNHDzDX15c=",
+        "lastModified": 1769170682,
+        "narHash": "sha256-oMmN1lVQU0F0W2k6OI3bgdzp2YOHWYUAw79qzDSjenU=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "88d3861acdd3d2f0e361767018218e51810df8a1",
+        "rev": "c5296fdd05cfa2c187990dd909864da9658df755",
         "type": "github"
       },
       "original": {
@@ -701,11 +701,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1769318834,
-        "narHash": "sha256-W67saDVipU5wCdnnum8y++GZrnJMnMXkedgER3zwDEQ=",
+        "lastModified": 1769373947,
+        "narHash": "sha256-ZAaI7nZfH9F/EM4fQMSrjXxdc0VfgfCFWz4L+j3oRvw=",
         "ref": "refs/heads/main",
-        "rev": "b9623506366b76ab8452155983b3b0abbeabe206",
-        "revCount": 14,
+        "rev": "b23c7163d3a31449dfa6a0cc0185bc7a78b11bea",
+        "revCount": 15,
         "type": "git",
         "url": "https://git.mischief.town/nix-infra/snippets"
       },

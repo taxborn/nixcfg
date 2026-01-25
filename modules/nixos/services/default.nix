@@ -14,6 +14,7 @@
     ./sddm
     ./tailscale
     ./tangled-knot
+    ./tangled-spindle
     ./taxborn-com
     ./vaultwarden
   ];
