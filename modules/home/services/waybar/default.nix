@@ -7,8 +7,8 @@
 {
   options.myHome.services.waybar.enable = lib.mkEnableOption "waybar";
 
-
   config = lib.mkIf config.myHome.services.waybar.enable {
+    # TODO: How should I handle fonts for the entire home
     home.packages = with pkgs; [
       # Nerd fonts
       nerd-fonts.jetbrains-mono
@@ -30,14 +30,15 @@
       settings = {
         mainBar = {
           layer = "top";
-          position = "top";
+          position = "bottom";
           modules-left = [ "hyprland/workspaces" ];
-          modules-center = [ "clock" ];
           modules-right = [
             "pulseaudio"
             "cpu"
             "memory"
+            "backlight"
             "battery"
+            "clock"
             "tray"
           ];
 
@@ -52,7 +53,7 @@
           clock = {
             timezone = "America/Chicago";
             tooltip-format = "{:%Y-%m-%dT%H:%M:%S%z}";
-            format = "{:%Y/%m/%d - %H:%M:%S}";
+            format = "{:%H:%M}";
             interval = 1;
           };
 
@@ -71,12 +72,12 @@
 
           cpu = {
             interval = 5;
-            format = "CPU: {usage:>2}%";
+            format = " {usage:>2}%";
           };
 
           memory = {
             interval = 5;
-            format = "MEM: {used:0.1f}G";
+            format = " {used:0.1f}G";
           };
 
           tray = {

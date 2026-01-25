@@ -18,13 +18,6 @@
         "$mod,D,togglespecialworkspace,discord"
         "$mod,N,exec,${lib.getExe' pkgs.obsidian "obsidian"}"
       ];
-
-      workspace = [
-        "1,defaultName:web,on-created-empty:${config.myHome.profiles.defaultApps.webBrowser.exec}"
-        "2,defaultName:note,on-created-empty:${lib.getExe' pkgs.obsidian "obsidian"}"
-        "3,defaultName:code,on-created-empty:${config.myHome.profiles.defaultApps.editor.exec}"
-        "4,defaultName:mail,on-created-empty:${lib.getExe config.programs.thunderbird.package}"
-      ];
     };
 
     myHome.services.swaybg.enable = true;

@@ -140,17 +140,10 @@ in
   ];
 
   decoration = {
-    blur = {
-      enabled = false;
-    };
-
+    blur.enabled = false;
     dim_special = 0.5;
-
     rounding = 0;
-
-    shadow = {
-      enabled = false;
-    };
+    shadow.enabled = false;
   };
 
   dwindle.preserve_split = true;
@@ -171,7 +164,7 @@ in
 
   general = {
     allow_tearing = false;
-    border_size = 2;
+    border_size = 0;
     gaps_in = 5;
     gaps_out = 6;
     layout = "dwindle";
