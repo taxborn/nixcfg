@@ -45,7 +45,7 @@
                       }
                       {
                         title = "Forgejo";
-                        url = "https://${config.mySnippets.mischief-town.networkMap.immich.vHost}";
+                        url = "https://${config.mySnippets.mischief-town.networkMap.forgejo.vHost}";
                       }
                       {
                         title = "Paperless";
