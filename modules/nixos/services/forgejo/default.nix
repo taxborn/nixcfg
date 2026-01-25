@@ -121,7 +121,7 @@ in
     users.groups.git = { };
     users.users.git = {
       isSystemUser = true;
-      createHome = false;
+      createHome = true;
       group = "git";
     };
 
