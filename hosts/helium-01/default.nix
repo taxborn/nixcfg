@@ -16,6 +16,9 @@
     jdk21_headless
   ];
 
+  # homestead server w mickey
+  networking.firewall.allowedTCPPorts = [ 25565 ];
+
   myNixOS = {
     base.enable = true;
     profiles.btrfs.enable = true;
