@@ -45,6 +45,9 @@
     ${config.mySnippets.mischief-town.networkMap.glance.vHost}.extraConfig = ''
       reverse_proxy localhost:${toString config.mySnippets.mischief-town.networkMap.glance.port}
     '';
+    ${config.mySnippets.mischief-town.networkMap.tangled-knot.vHost}.extraConfig = ''
+      reverse_proxy localhost:${toString config.mySnippets.mischief-town.networkMap.tangled-knot.port}
+    '';
     ${config.mySnippets.mischief-town.networkMap.paperless.vHost}.extraConfig =
       "reverse_proxy http://100.64.1.0:${toString config.mySnippets.mischief-town.networkMap.paperless.port}";
     ${config.mySnippets.mischief-town.networkMap.forgejo.vHost}.extraConfig = ''

@@ -39,6 +39,11 @@
       url = "git+https://git.mischief.town/nix-infra/secrets";
       flake = false;
     };
+
+    tangled = {
+      url = "git+https://tangled.org/tangled.org/core";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

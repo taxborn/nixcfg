@@ -50,6 +50,7 @@
         enable = true;
         operator = "taxborn";
       };
+      tangled-knot.enable = true;
       taxborn-com.enable = true;
       vaultwarden.enable = true;
     };

@@ -13,6 +13,7 @@
     ./paperless
     ./sddm
     ./tailscale
+    ./tangled-knot
     ./taxborn-com
     ./vaultwarden
   ];
