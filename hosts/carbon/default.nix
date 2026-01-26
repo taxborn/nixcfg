@@ -51,7 +51,6 @@
         operator = "taxborn";
       };
       tangled-knot.enable = true;
-      tangled-spindle.enable = true;
       taxborn-com.enable = true;
       vaultwarden.enable = true;
     };
