@@ -31,11 +31,24 @@
           "https://relay2.fire.hose.cam"
           "https://relay3.fr.hose.cam"
           "https://relay.hayescmd.net"
-          # "https://relay.xero.systems"
-          # "https://relay.upcloud.world"
-          # "https://relay.feeds.blue"
-          # "https://atproto.africa"
+          "https://relay.xero.systems"
+          "https://relay.upcloud.world"
+          "https://relay.feeds.blue"
+          "https://atproto.africa"
         ];
+      };
+    };
+
+    services.pds-gatekeeper = {
+      enable = true;
+
+      settings = {
+        GATEKEEPER_PORT = config.mySnippets.mischief-town.networkMap.pds.gatekeeperPort;
+
+        PDS_BASE_URL = "http://127.0.0.1:${toString config.mySnippets.mischief-town.networkMap.pds.port}";
+        GATEKEEPER_TRUST_PROXY = "true";
+
+        PDS_ENV_LOCATION = config.age.secrets.pds.path;
       };
     };
   };

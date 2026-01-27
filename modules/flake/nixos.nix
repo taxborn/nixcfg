@@ -37,6 +37,7 @@
               inputs.home-manager.nixosModules.home-manager
               inputs.snippets.nixosModules.snippets
               inputs.lanzaboote.nixosModules.lanzaboote
+              inputs.tgirlpkgs.nixosModules.default
 
               modules.hardware
               modules.nixos

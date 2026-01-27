@@ -67,11 +67,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1769377216,
-        "narHash": "sha256-8of5q8+n9hWWQp7nE+gCquhaCbZ8nsocl5bxxw7BRQ0=",
+        "lastModified": 1769470446,
+        "narHash": "sha256-nze0VZ70K2kbDxjE+BBZLD7juOmnZqNYdOhl9aUNGWg=",
         "owner": "9001",
         "repo": "copyparty",
-        "rev": "b6bf6d5f7a5c10a00d161daff9b82fcfdf3d508e",
+        "rev": "2f57228fd4e62f8cd8e12cb80a3531dc2d4d170a",
         "type": "github"
       },
       "original": {
@@ -352,11 +352,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1769392842,
-        "narHash": "sha256-qw7d9b51TV1sTk14dcQZ+17AzO5Ut8rfkdvcYO5UjVQ=",
+        "lastModified": 1769450270,
+        "narHash": "sha256-pdVm/zJazDUAasTyHFX/Pbrlk9Upjxi0yzgn7GjGe4g=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "e3dc31303276525b867328f75111a23f0aa3674a",
+        "rev": "a10c1e8f5ad2589414407f4851c221cb66270257",
         "type": "github"
       },
       "original": {
@@ -651,6 +651,7 @@
         "secrets": "secrets",
         "snippets": "snippets",
         "tangled": "tangled",
+        "tgirlpkgs": "tgirlpkgs",
         "zen-browser": "zen-browser"
       }
     },
@@ -701,11 +702,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1769373947,
-        "narHash": "sha256-ZAaI7nZfH9F/EM4fQMSrjXxdc0VfgfCFWz4L+j3oRvw=",
+        "lastModified": 1769480623,
+        "narHash": "sha256-vjB1J/LSN9GwbFAzazTwvyqoEqLO6FWdpF2yLMIEaNA=",
         "ref": "refs/heads/main",
-        "rev": "b23c7163d3a31449dfa6a0cc0185bc7a78b11bea",
-        "revCount": 15,
+        "rev": "c1ff90c38c2c85a91193a9cb361982fc496674f0",
+        "revCount": 16,
         "type": "git",
         "url": "https://git.mischief.town/nix-infra/snippets"
       },
@@ -789,17 +790,37 @@
         "sqlite-lib-src": "sqlite-lib-src"
       },
       "locked": {
-        "lastModified": 1769317199,
-        "narHash": "sha256-jOoTIo5JC0okrxrAdmgbepWrivZCTSx4vs9RdEv0a7E=",
+        "lastModified": 1769411216,
+        "narHash": "sha256-aVCrr6mPM0VltY6hOCZEQQgKueSOJx6nG2jt3TUIISs=",
         "ref": "refs/heads/master",
-        "rev": "8fab832af89cb344048a9bb52740044211a5372b",
-        "revCount": 1875,
+        "rev": "d4c067fd49797b6af5d36f7547894627a34ab326",
+        "revCount": 1890,
         "type": "git",
         "url": "https://tangled.org/tangled.org/core"
       },
       "original": {
         "type": "git",
         "url": "https://tangled.org/tangled.org/core"
+      }
+    },
+    "tgirlpkgs": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1769475486,
+        "narHash": "sha256-iFurPgL0x8CSCvnuzbu2wUsv8iJkgxNUwsMhhfJZQJM=",
+        "owner": "tgirlcloud",
+        "repo": "pkgs",
+        "rev": "0a0eadfb62e34f3816c42c47baa0a47df891af61",
+        "type": "github"
+      },
+      "original": {
+        "owner": "tgirlcloud",
+        "repo": "pkgs",
+        "type": "github"
       }
     },
     "zen-browser": {
@@ -810,11 +831,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1769383295,
-        "narHash": "sha256-NPoMjIh57tDuRY6BG/SKwyxHicyICvQRLQgu9jHR46A=",
+        "lastModified": 1769431876,
+        "narHash": "sha256-FnOW+ulwocxfYGVKV2H/7MlSbn52+hfX9oaRR6FClZ4=",
         "owner": "0xc000022070",
         "repo": "zen-browser-flake",
-        "rev": "337d5df89d17caf32d39f3efc9a868beded6933a",
+        "rev": "d5ef79d18dca7617aefe511db8267d47f7cf953f",
         "type": "github"
       },
       "original": {
