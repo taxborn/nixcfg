@@ -14,7 +14,7 @@
         taxborn-com = {
           extraOptions = [ "--pull=always" ];
           image = "git.mischief.town/taxborn/taxborn.com";
-          ports = [ "0.0.0.0:${toString config.mySnippets.mischief-town.networkMap.taxborn-com.port}:80" ];
+          ports = [ "${toString config.mySnippets.mischief-town.networkMap.taxborn-com.port}:80" ];
         };
       };
     };
