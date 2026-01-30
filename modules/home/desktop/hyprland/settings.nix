@@ -202,45 +202,5 @@ in
     cfg.desktop.hyprland.laptopMonitor != null
   ) cfg.desktop.hyprland.laptopMonitor;
 
-  windowrulev2 = [
-    "center(1),class:(.blueman-manager-wrapped)"
-    "center(1),class:(Bitwarden)"
-    "center(1),class:(blueberry.py)"
-    "center(1),class:(com.github.wwmm.easyeffects)"
-    "center(1),class:(com.saivert.pwvucontrol)"
-    "center(1),class:(gcr-prompter)"
-    "center(1),class:(nm-connection-editor)"
-    "center(1),class:(org.keepassxc.KeePassXC)"
-    "center(1),class:(org.pulseaudio.pavucontrol)"
-    "center(1),class:(polkit-gnome-authentication-agent-1)"
-    "center(1),initialTitle:(File Operation Progress)"
-    "float,class:(.blueman-manager-wrapped)"
-    "float,class:(Bitwarden)"
-    "float,class:(blueberry.py)"
-    "float,class:(com.github.wwmm.easyeffects)"
-    "float,class:(com.saivert.pwvucontrol)"
-    "float,class:(nm-connection-editor)"
-    "float,class:(org.keepassxc.KeePassXC)"
-    "float,class:(org.pulseaudio.pavucontrol)"
-    "float,class:^(firefox)$, title:^(Picture-in-Picture)$"
-    "float,initialTitle:(File Operation Progress)"
-    "move 70% 20%, class:^(firefox)$, title:^(Picture-in-Picture)$"
-    "pin,class:(gcr-prompter)"
-    "pin,class:(polkit-gnome-authentication-agent-1)"
-    "pin,class:^(firefox)$, title:^(Picture-in-Picture)$"
-    "size 40% 20%,initialTitle:(File Operation Progress)"
-    "size 40% 60%,class:(.blueman-manager-wrapped)"
-    "size 40% 60%,class:(blueberry.py)"
-    "size 40% 60%,class:(com.github.wwmm.easyeffects)"
-    "size 40% 60%,class:(com.saivert.pwvucontrol)"
-    "size 40% 60%,class:(nm-connection-editor)"
-    "size 40% 60%,class:(org.pulseaudio.pavucontrol)"
-    "size 80% 80%,class:(Bitwarden)"
-    "size 80% 80%,class:(org.keepassxc.KeePassXC)"
-    "stayfocused,class:(gcr-prompter)"
-    "stayfocused,class:(polkit-gnome-authentication-agent-1)"
-    "suppressevent maximize, class:.*"
-  ];
-
   xwayland.force_zero_scaling = true;
 }
