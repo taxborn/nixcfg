@@ -1,5 +1,6 @@
 {
   config,
+  pkgs,
   self,
   ...
 }:
@@ -26,7 +27,7 @@
       username = "taxborn";
       homeDirectory = "/home/taxborn";
       stateVersion = "25.11";
-      packages = [ ];
+      packages = with pkgs; [ zvm ];
     };
 
     programs = {
@@ -35,6 +36,7 @@
       fish = {
         enable = true;
         interactiveShellInit = ''
+          export PATH="$HOME/.local/bin:$HOME/.zvm/bin:$PATH"
           set fish_greeting # Disable greeting
 
           set -gx GPG_TTY (tty)
