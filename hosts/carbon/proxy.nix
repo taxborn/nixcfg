@@ -47,6 +47,8 @@ in
 
     # mischief.town - Bluesky PDS (with age assurance workarounds)
     ${net.pds.vHost}.extraConfig = ''
+      encode zstd gzip
+
       handle /xrpc/app.bsky.unspecced.getAgeAssuranceState {
         header content-type "application/json"
         header access-control-allow-headers "authorization,dpop,atproto-accept-labelers,atproto-proxy"
@@ -68,19 +70,19 @@ in
         respond `{"state":{"lastInitiatedAt":"2025-07-14T14:22:43.912Z","status":"assured","access":"full"},"metadata":{"accountCreatedAt":"2022-11-17T00:35:16.391Z"}}` 200
       }
 
-      @gatekeeper {
-       path /xrpc/com.atproto.server.getSession
-       path /xrpc/com.atproto.server.describeServer
-       path /xrpc/com.atproto.server.updateEmail
-       path /xrpc/com.atproto.server.createSession
-       path /xrpc/com.atproto.server.createAccount
-       path /@atproto/oauth-provider/~api/sign-in
-       path /gate/*
-      }
+      # @gatekeeper {
+      #  path /xrpc/com.atproto.server.getSession
+      #  path /xrpc/com.atproto.server.describeServer
+      #  path /xrpc/com.atproto.server.updateEmail
+      #  path /xrpc/com.atproto.server.createSession
+      #  path /xrpc/com.atproto.server.createAccount
+      #  path /@atproto/oauth-provider/~api/sign-in
+      #  path /gate/*
+      # }
 
-      handle @gatekeeper {
-       reverse_proxy http://localhost:${toString net.pds.gatekeeperPort}
-      }
+      # handle @gatekeeper {
+      #  reverse_proxy http://localhost:${toString net.pds.gatekeeperPort}
+      # }
 
       reverse_proxy localhost:${toString net.pds.port}
     '';
