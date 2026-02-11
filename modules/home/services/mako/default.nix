@@ -14,13 +14,14 @@
 
       settings = {
         actions = "true";
-        anchor = "bottom-right";
+        anchor = "top-right";
         border-radius = "10";
-        border-size = "4";
+        border-size = "2";
 
-        "mode=do-not-disturb" = {
-          invisible = "1";
-        };
+        background-color = "#1e1e2e";
+        text-color = "#cdd6f4";
+        border-color = "#cba6f7";
+        progress-color = "#a6e3a1";
 
         default-timeout = "10000";
         group-by = "app-name";
@@ -28,11 +29,10 @@
         icon-path = "${pkgs.papirus-icon-theme}/share/icons/Papirus/";
         icons = "true";
         layer = "top";
-        margin = "20,0";
-        on-notify = "exec mpv ${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/message.oga";
-        outer-margin = "20";
-        padding = "15";
-        sort = "+time";
+        margin = "10,0";
+        outer-margin = "10";
+        padding = "10";
+        sort = "-time";
         width = "400";
       };
     };
@@ -56,7 +56,7 @@
             ]
           }"
         ];
-        ExecReload = ''${lib.getExe' pkgs.mako "makoctl"} reload'';
+        ExecReload = "${lib.getExe' pkgs.mako "makoctl"} reload";
         ExecStart = "${lib.getExe pkgs.mako}";
         Restart = lib.mkForce "no";
         Type = "dbus";
