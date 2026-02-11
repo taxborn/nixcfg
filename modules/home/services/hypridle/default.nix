@@ -23,53 +23,55 @@ in
       enable = true;
 
       settings = {
-        auth.fingerprint = {
-          enabled = true;
-          present_message = "Scanning fingerprint...";
-          ready_message = "Scan fingerprint to unlock.";
+        general = {
+          no_fade_in = false;
+          no_fade_out = false;
+          hide_cursor = false;
+          grace = 0;
+          disable_loading_bar = false;
+        };
+
+        background = {
+          path = "/home/taxborn/media/photos/all-catppuccin-mandelbrot/mandelbrot_full_magenta.png";
+          blur_passes = 2;
+          contrast = 1;
+          brightness = 0.6;
+          vibrancy = 0.2;
+          vibrancy_darkness = 0.2;
         };
 
         input-field = {
-          rounding = 10;
+          rounding = 32;
+          outline_thickness = 2;
+          size = "250, 50";
+          dots_size = 0.2;
+          dots_spacing = 0.35;
+          outer_color = "rgba(0, 0, 0, 0)";
+          inner_color = "rgba(0, 0, 0, 0.2)";
+          font_color = "rgb(209, 207, 207)";
+          fade_on_empty = false;
+          position = "0, -400";
+          halign = "center";
+          valign = "center";
         };
-
-        shape = [
-          {
-            border_size = 8;
-            halign = "center";
-            position = "-33%, 0";
-            rotate = 0;
-            rounding = 10;
-            shadow_passes = 3;
-            size = "600, 600";
-            valign = "center";
-            xray = false;
-          }
-        ];
 
         label = [
           {
-            font_size = 40;
+            text = "cmd[update:1000] echo \"$(date +\"%A, %B %d\")\"";
+            color = "rgba(209, 207, 207, 0.75)";
+            font_size = 22;
+            font_family = "JetBrains Mono";
+            position = "0, 300";
             halign = "center";
-            position = "-33%, 200";
-            shadow_passes = 0;
-            text = "Hi $DESC 👋";
             valign = "center";
           }
           {
-            font_size = 40;
+            text = "cmd[update:1000] echo \"$(date +\"%-H:%M\")\"";
+            color = "rgba(209, 207, 207, 0.75)";
+            font_size = 95;
+            font_family = "JetBrains Mono Extrabold";
+            position = "0, 200";
             halign = "center";
-            position = "-33%, -200";
-            shadow_passe = 0;
-            text = "It is $TIME12.";
-            valign = "center";
-          }
-          {
-            font_size = 24;
-            halign = "center";
-            position = "-33%, 0";
-            shadow_passes = 0;
-            text = "$FPRINTPROMPT";
             valign = "center";
           }
         ];
