@@ -48,7 +48,7 @@ in
           dots_spacing = 0.35;
           outer_color = "rgba(0, 0, 0, 0)";
           inner_color = "rgba(0, 0, 0, 0.2)";
-          font_color = "rgb(209, 207, 207)";
+          font_color = "rgb(205, 214, 244)";
           fade_on_empty = false;
           position = "0, -400";
           halign = "center";
@@ -58,7 +58,7 @@ in
         label = [
           {
             text = "cmd[update:1000] echo \"$(date +\"%A, %B %d\")\"";
-            color = "rgba(209, 207, 207, 0.75)";
+            color = "rgba(205, 214, 244, 0.75)";
             font_size = 22;
             font_family = "JetBrains Mono";
             position = "0, 300";
@@ -67,7 +67,7 @@ in
           }
           {
             text = "cmd[update:1000] echo \"$(date +\"%-H:%M\")\"";
-            color = "rgba(209, 207, 207, 0.75)";
+            color = "rgba(205, 214, 244, 0.75)";
             font_size = 95;
             font_family = "JetBrains Mono Extrabold";
             position = "0, 200";
