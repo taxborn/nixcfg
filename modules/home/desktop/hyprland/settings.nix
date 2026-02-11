@@ -69,7 +69,6 @@ in
     "$mod,Q,killactive"
 
     "$mod,R,exec,${lib.getExe config.programs.rofi.package} -show drun"
-    "ALT,space,exec,${lib.getExe config.programs.rofi.package} -show window"
 
     "$mod,F11,exec,pkill -SIGUSR1 waybar"
     "$mod,Left,changegroupactive,b"
