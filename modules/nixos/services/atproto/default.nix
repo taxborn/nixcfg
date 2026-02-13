@@ -17,6 +17,7 @@
 
     services.bluesky-pds = {
       enable = true;
+      pdsadmin.enable = true;
 
       environmentFiles = [ config.age.secrets.pds.path ];
 
@@ -24,6 +25,8 @@
         PDS_PORT = config.mySnippets.mischief-town.networkMap.pds.port;
         PDS_HOSTNAME = config.mySnippets.mischief-town.networkMap.pds.vHost;
         PDS_ADMIN_EMAIL = "atproto@mischief.town";
+        # crawlers shamlessly stolen from
+        # <https://compare.hose.cam>
         PDS_CRAWLERS = lib.concatStringsSep "," [
           "https://bsky.network"
           "https://relay.cerulea.blue"
@@ -35,7 +38,10 @@
           "https://relay.upcloud.world"
           "https://relay.feeds.blue"
           "https://atproto.africa"
+          "https://relay.whey.party"
         ];
+
+        PDS_OAUTH_PROVIDER_NAME = "pds.mischief.town";
       };
     };
   };
