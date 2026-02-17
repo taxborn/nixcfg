@@ -20,7 +20,10 @@
   time.timeZone = "America/Chicago";
   system.stateVersion = "25.11";
   # homestead server w mavs
-  networking.firewall.allowedTCPPorts = [ 25565 ];
+  networking.firewall.allowedTCPPorts = [
+    25565
+    24454 # voice chat requirement?
+  ];
 
   environment.systemPackages = with pkgs; [
     jdk21_headless

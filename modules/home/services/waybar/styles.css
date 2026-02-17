@@ -36,7 +36,7 @@
 }
 
 #waybar {
-    background: @base;
+    background: rgba(30, 30, 46, 0.85);
     color: @text;
     margin: 2px 2px;
 }
