@@ -5,9 +5,9 @@
   ...
 }:
 {
-  options.myHome.programs.obs.enable = lib.mkEnableOption "obs studio";
+  options.myHome.programs.ledger.enable = lib.mkEnableOption "ledger live";
 
-  config = lib.mkIf config.myHome.programs.obs.enable {
+  config = lib.mkIf config.myHome.programs.ledger.enable {
     home.packages = [
       pkgs.ledger-live-desktop
     ];

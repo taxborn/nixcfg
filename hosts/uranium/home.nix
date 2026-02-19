@@ -35,6 +35,7 @@
         programs = {
           ghostty.enable = true;
           obs.enable = true;
+          ledger.enable = true;
         };
       };
     };
