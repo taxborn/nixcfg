@@ -31,6 +31,7 @@
 
     services = {
       gnome-keyring.enable = true;
+      blueman-applet.enable = true;
     };
 
     systemd.user.services.polkit-gnome-authentication-agent = {
