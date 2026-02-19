@@ -38,7 +38,14 @@ in
     "taxborn.com".extraConfig = ''
       redir https://www.taxborn.com{uri} permanent
     '';
-    "www.taxborn.com".extraConfig = localProxy net.taxborn-com;
+    "www.taxborn.com".extraConfig = ''
+      header {
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
+      }
+      reverse_proxy localhost:${toString net.taxborn-com.port}
+    '';
 
     # mischief.town - Main redirect
     "mischief.town".extraConfig = ''
