@@ -15,6 +15,7 @@
           extraOptions = [ "--pull=always" ];
           image = "git.mischief.town/taxborn/taxborn.com";
           ports = [ "${toString config.mySnippets.mischief-town.networkMap.taxborn-com.port}:8080" ];
+          environmentFiles = [ config.age.secrets.lastfm.path ];
         };
       };
     };
