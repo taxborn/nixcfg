@@ -40,6 +40,7 @@ in
     '';
     "www.taxborn.com".extraConfig = ''
       header {
+        Strict-Transport-Security "max-age=63072000; includeSubDomains; preload"
         X-Frame-Options "SAMEORIGIN"
         Referrer-Policy "strict-origin-when-cross-origin"
         Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()"
