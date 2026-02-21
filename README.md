@@ -7,4 +7,4 @@
 - [ ] Tangled.sh mirroring
 
 # Acknowledgements
-This is heavily derived from [Aly Ruffauf's configuration](https://github.com/alyraffauf/nixcfg).
+This is heavily derived from [Aly Raffauf's configuration](https://github.com/alyraffauf/nixcfg).
