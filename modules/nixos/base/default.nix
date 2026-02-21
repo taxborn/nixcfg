@@ -17,6 +17,7 @@
       etc."nixos".source = self;
 
       systemPackages = with pkgs; [
+        self.inputs.agenix.packages.${pkgs.system}.default
         wget
       ];
 
