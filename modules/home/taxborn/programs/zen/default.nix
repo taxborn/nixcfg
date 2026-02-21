@@ -13,6 +13,7 @@ in
   config = lib.mkIf config.myHome.taxborn.programs.zen.enable {
     programs.zen-browser = {
       enable = true;
+      suppressXdgMigrationWarning = true;
       nativeMessagingHosts = [ pkgs.bitwarden-desktop ];
 
       profiles = {

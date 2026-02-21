@@ -90,7 +90,10 @@
           shell = {
             with_arguments = {
               program = "fish";
-              args = [ "-C'tmux'" ];
+              args = [
+                "-C"
+                "tmux new-session -A -s zed"
+              ];
             };
           };
         };
