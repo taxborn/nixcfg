@@ -810,11 +810,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1771635763,
-        "narHash": "sha256-L89ec10o9wNPskume+QC6MbB4vqT7Dy0JC7xDe/VYT0=",
+        "lastModified": 1771722384,
+        "narHash": "sha256-dhwrIGkKphsJI9kWwEIv1D/jD+K62xEpJAm9IT4rgg8=",
         "owner": "tgirlcloud",
         "repo": "pkgs",
-        "rev": "c4ccf9e4cf7b2c64b5ed797210814bc779513c75",
+        "rev": "f0b7590c5dc45da384e39e38edd48cc9fb3694ac",
         "type": "github"
       },
       "original": {
@@ -831,11 +831,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1771562861,
-        "narHash": "sha256-6oT3rF68W8HERLXvFfEkpz8xpAVLKZsY1ZuR/BbDTO8=",
+        "lastModified": 1771719171,
+        "narHash": "sha256-ZDE3//9Hg+9X5xXcDJ4k/d6qcOVQ4MrTmvf1zv/omZY=",
         "owner": "0xc000022070",
         "repo": "zen-browser-flake",
-        "rev": "7783a3adf3d5a9599a82c75a44c7482e70398ac2",
+        "rev": "2a71f2e720db962f2522b38704e23e11163e91ae",
         "type": "github"
       },
       "original": {
