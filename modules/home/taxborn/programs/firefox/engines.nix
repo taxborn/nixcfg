@@ -7,7 +7,7 @@
   };
 
   "Brave" = {
-    definedAliases = ["!brave"];
+    definedAliases = [ "!brave" ];
     icon = "https://cdn.search.brave.com/serp/v2/_app/immutable/assets/brave-search-icon.CsIFM2aN.svg";
     updateInterval = 24 * 60 * 60 * 1000; # every day
 
@@ -40,7 +40,7 @@
 
   "Home Manager Options" = {
     icon = "https://home-manager-options.extranix.com/images/favicon.png";
-    definedAliases = ["!hm"];
+    definedAliases = [ "!hm" ];
     metaData.hidden = true;
 
     urls = [
@@ -51,7 +51,7 @@
   };
 
   "Kagi" = {
-    definedAliases = ["!kagi"];
+    definedAliases = [ "!kagi" ];
     icon = "https://kagi.com/favicon.ico";
     updateInterval = 24 * 60 * 60 * 1000; # every day
 
@@ -69,7 +69,10 @@
   };
 
   "NixOS Wiki" = {
-    definedAliases = ["!nw" "!nixwiki"];
+    definedAliases = [
+      "!nw"
+      "!nixwiki"
+    ];
     icon = "https://wiki.nixos.org/favicon.ico";
     updateInterval = 24 * 60 * 60 * 1000; # every day
     metaData.hidden = true;
@@ -82,8 +85,7 @@
   };
 
   "nixpkgs" = {
-    definedAliases = ["!nix"];
-    icon = "${./nix-snowflake.svg}";
+    definedAliases = [ "!nix" ];
 
     urls = [
       {
@@ -103,7 +105,7 @@
   };
 
   "Noogle" = {
-    definedAliases = ["!noogle"];
+    definedAliases = [ "!noogle" ];
     icon = "https://noogle.dev/favicon.png";
     metaData.hidden = true;
 
@@ -115,7 +117,7 @@
   };
 
   "Wiktionary" = {
-    definedAliases = ["!wikt"];
+    definedAliases = [ "!wikt" ];
     icon = "https://en.wiktionary.org/favicon.ico";
     updateInterval = 24 * 60 * 60 * 1000; # every day
 
