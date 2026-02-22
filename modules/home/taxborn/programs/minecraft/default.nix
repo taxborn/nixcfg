@@ -1,6 +1,9 @@
-{ lib, config, pkgs, ... }:
-let
-in
+{
+  lib,
+  config,
+  pkgs,
+  ...
+}:
 {
   options.myHome.taxborn.programs.minecraft.enable = lib.mkEnableOption "minecraft";
 
