@@ -16,8 +16,9 @@
       };
 
       extraOptions = ''
-        min-free = ${toString (1 * 1024 * 1024 * 1024)}   # 1 GiB
-        max-free = ${toString (5 * 1024 * 1024 * 1024)}   # 5 GiB
+        min-free = ${toString (1 * 1024 * 1024 * 1024)}    # 1 GiB
+        max-free = ${toString (5 * 1024 * 1024 * 1024)}    # 5 GiB
+        download-buffer-size = ${toString (256 * 1024 * 1024)}  # 256 MiB
       '';
 
       optimise = {
