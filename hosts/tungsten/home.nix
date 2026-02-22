@@ -42,6 +42,7 @@
           ghostty.enable = true;
           obs.enable = true;
         };
+        services.hypridle.hyprlockScale = 2;
       };
     };
   };

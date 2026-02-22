@@ -6,6 +6,8 @@
 }:
 let
   cfg = config.myHome;
+  scale = cfg.services.hypridle.hyprlockScale;
+  sp = n: toString (n * scale);
 in
 {
   options.myHome.services.hypridle = {
@@ -15,6 +17,12 @@ in
       description = "Whether to autosuspend on idle.";
       default = true;
       type = lib.types.bool;
+    };
+
+    hyprlockScale = lib.mkOption {
+      description = "Scale factor for hyprlock UI elements. Set to 2 for HiDPI displays where hyprlock renders at physical pixels.";
+      default = 1;
+      type = lib.types.int;
     };
   };
 
@@ -41,16 +49,16 @@ in
         };
 
         input-field = {
-          rounding = 32;
-          outline_thickness = 2;
-          size = "250, 50";
+          rounding = 32 * scale;
+          outline_thickness = 2 * scale;
+          size = "${sp 250}, ${sp 50}";
           dots_size = 0.2;
           dots_spacing = 0.35;
           outer_color = "rgba(0, 0, 0, 0)";
           inner_color = "rgba(0, 0, 0, 0.2)";
           font_color = "rgb(205, 214, 244)";
           fade_on_empty = false;
-          position = "0, -400";
+          position = "0, -${sp 400}";
           halign = "center";
           valign = "center";
         };
@@ -59,18 +67,18 @@ in
           {
             text = "cmd[update:1000] echo \"$(date +\"%A, %B %d\")\"";
             color = "rgba(205, 214, 244, 0.75)";
-            font_size = 22;
+            font_size = 22 * scale;
             font_family = "JetBrains Mono";
-            position = "0, 300";
+            position = "0, ${sp 300}";
             halign = "center";
             valign = "center";
           }
           {
             text = "cmd[update:1000] echo \"$(date +\"%-H:%M\")\"";
             color = "rgba(205, 214, 244, 0.75)";
-            font_size = 95;
+            font_size = 95 * scale;
             font_family = "JetBrains Mono Extrabold";
-            position = "0, 200";
+            position = "0, ${sp 200}";
             halign = "center";
             valign = "center";
           }
