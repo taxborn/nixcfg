@@ -8,4 +8,4 @@ deploy-website:
 
 # Deploy to a target host (e.g. `just deploy carbon`)
 deploy host:
-    sudo nixos-rebuild switch --flake .#{{host}} --target-host {{host}} --use-remote-sudo
+    sudo nixos-rebuild switch --flake .#{{host}} --target-host {{host}} --sudo
