@@ -18,6 +18,7 @@
 
       systemPackages = with pkgs; [
         self.inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
+        just
         wget
       ];
 
