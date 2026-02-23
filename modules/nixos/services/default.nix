@@ -10,9 +10,11 @@
     ./glance
     ./grafana
     ./immich
+    ./loki
     ./node-exporter
     ./openssh
     ./paperless
+    ./promtail
     ./sddm
     ./tailscale
     ./tangled-knot

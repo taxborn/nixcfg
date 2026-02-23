@@ -45,6 +45,10 @@
       caddy.enable = true;
       forgejo.enable = true;
       node-exporter.enable = true;
+      promtail = {
+        enable = true;
+        lokiUrl = "http://100.64.1.0:3100";
+      };
       forgejo-runner = {
         enable = true;
         dockerContainers = 3;

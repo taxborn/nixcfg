@@ -43,7 +43,12 @@
           "100.64.2.0:9100"    # carbon
         ];
       };
+      loki.enable = true;
       node-exporter.enable = true;
+      promtail = {
+        enable = true;
+        lokiUrl = "http://localhost:3100";
+      };
       forgejo-runner = {
         enable = true;
         dockerContainers = 3;
