@@ -22,8 +22,7 @@ let
     }
   '';
 
-  # Tailscale IP for services on another machine
-  heliumTailscaleIP = "100.64.1.0";
+  heliumTailscaleIP = net.tailscaleIPs."helium-01";
 in
 {
   services.caddy.virtualHosts = {

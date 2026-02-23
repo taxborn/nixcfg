@@ -1,8 +1,12 @@
 {
   self,
   pkgs,
+  config,
   ...
 }:
+let
+  net = config.mySnippets.mischief-town.networkMap;
+in
 {
   imports = [
     ./home.nix
@@ -68,18 +72,20 @@
       copyparty.enable = true;
       grafana = {
         enable = true;
-        prometheusTargets = [
-          "localhost:9100" # helium-01
-          "100.64.0.0:9100" # uranium
-          "100.64.0.1:9100" # tungsten
-          "100.64.2.0:9100" # carbon
-        ];
+        prometheusTargets = map
+          (ip: "${ip}:${toString net.nodeExporter.port}")
+          [
+            "localhost"
+            net.tailscaleIPs.uranium
+            net.tailscaleIPs.tungsten
+            net.tailscaleIPs.carbon
+          ];
       };
       loki.enable = true;
       node-exporter.enable = true;
       promtail = {
         enable = true;
-        lokiUrl = "http://localhost:3100";
+        lokiUrl = "http://localhost:${toString net.loki.port}";
       };
       forgejo-runner = {
         enable = true;

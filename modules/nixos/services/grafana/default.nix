@@ -44,13 +44,13 @@
           {
             name = "Prometheus";
             type = "prometheus";
-            url = "http://localhost:9090";
+            url = "http://localhost:${toString config.mySnippets.mischief-town.networkMap.prometheus.port}";
             isDefault = true;
           }
           {
             name = "Loki";
             type = "loki";
-            url = "http://localhost:3100";
+            url = "http://localhost:${toString config.mySnippets.mischief-town.networkMap.loki.port}";
           }
         ];
       };
@@ -58,7 +58,7 @@
 
     services.prometheus = {
       enable = true;
-      port = 9090;
+      port = config.mySnippets.mischief-town.networkMap.prometheus.port;
 
       scrapeConfigs = [
         {

@@ -702,11 +702,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1771810717,
-        "narHash": "sha256-lvbhrQtKzTh/ezAsr+7kKUNSqPUG2iOeDBW2x5JqxHk=",
+        "lastModified": 1771871857,
+        "narHash": "sha256-+MvaX0tr/6M/BzeQpbajEk8/Wxs06xgVCPkXnoe4pUw=",
         "ref": "refs/heads/main",
-        "rev": "b59de87eb4ed8fdaae72c896b245777e2654caa0",
-        "revCount": 17,
+        "rev": "213a7c305ee2f5b1bbbe0a8bb6bb29a4deaf79ed",
+        "revCount": 18,
         "type": "git",
         "url": "https://git.mischief.town/nix-infra/snippets"
       },

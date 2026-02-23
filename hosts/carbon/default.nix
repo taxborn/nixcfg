@@ -1,9 +1,13 @@
 {
   self,
   pkgs,
+  config,
   modulesPath,
   ...
 }:
+let
+  net = config.mySnippets.mischief-town.networkMap;
+in
 {
   imports = [
     ./home.nix
@@ -52,7 +56,7 @@
             remotePath = "borg14";
           };
           helium = {
-            path = "ssh://taxborn@100.64.1.0//mnt/hdd/borg-repos/carbon";
+            path = "ssh://taxborn@${net.tailscaleIPs."helium-01"}//mnt/hdd/borg-repos/carbon";
             label = "helium";
           };
         };
@@ -62,7 +66,7 @@
       node-exporter.enable = true;
       promtail = {
         enable = true;
-        lokiUrl = "http://100.64.1.0:3100";
+        lokiUrl = "http://${net.tailscaleIPs."helium-01"}:${toString net.loki.port}";
       };
       forgejo-runner = {
         enable = true;

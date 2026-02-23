@@ -9,7 +9,7 @@
   config = lib.mkIf config.myNixOS.services.node-exporter.enable {
     services.prometheus.exporters.node = {
       enable = true;
-      port = 9100;
+      port = config.mySnippets.mischief-town.networkMap.nodeExporter.port;
       enabledCollectors = [
         "systemd"
         "tcpstat"

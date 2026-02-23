@@ -13,7 +13,7 @@
       configuration = {
         auth_enabled = false;
 
-        server.http_listen_port = 3100;
+        server.http_listen_port = config.mySnippets.mischief-town.networkMap.loki.port;
         server.http_listen_address = "0.0.0.0";
 
         common = {
