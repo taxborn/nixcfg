@@ -57,7 +57,7 @@
                       }
                       {
                         title = "taxborn.com";
-                        url = "https://${config.mySnippets.mischief-town.networkMap.taxborn-com.vHost}";
+                        url = "https://www.taxborn.com";
                         icon = "si:html5";
                       }
                     ];
