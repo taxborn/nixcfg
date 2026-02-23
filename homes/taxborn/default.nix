@@ -44,21 +44,12 @@
           gpgconf --launch gpg-agent
           gpg-connect-agent updatestartuptty /bye > /dev/null
 
-          function nnn-cd
-            set NNN_TMPFILE (mktemp)
-            nnn -e $argv
-            if test -s $NNN_TMPFILE
-              source $NNN_TMPFILE
-              rm $NNN_TMPFILE
-            end
-          end
-
-          bind \co nnn-cd
+          bind \co y
+          bind \cg lazygit
         '';
         shellAliases = {
           nix-rb = "sudo nixos-rebuild switch --flake .";
           yk-restart = "gpg-connect-agent killagent /bye && gpg-connect-agent \"scd serialno\" \"learn --force\" /bye && gpg --card-status";
-          n = "nnn -e";
         };
       };
 
@@ -67,9 +58,20 @@
         enableFishIntegration = true;
       };
 
-      nnn = {
+      yazi = {
         enable = true;
+        enableFishIntegration = true;
+        shellWrapperName = "y";
       };
+
+      zoxide = {
+        enable = true;
+        enableFishIntegration = true;
+      };
+
+      ripgrep.enable = true;
+
+      bat.enable = true;
     };
 
     myHome = {
