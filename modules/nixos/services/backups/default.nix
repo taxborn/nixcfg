@@ -76,6 +76,9 @@ let
 
     # managed by Obsidian
     "/home/taxborn/documents/notes"
+
+    # git history (recoverable from remotes)
+    "**/.git"
   ];
 
   repoOpts = lib.types.submodule {
