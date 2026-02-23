@@ -55,11 +55,6 @@
                         url = "https://${config.mySnippets.mischief-town.networkMap.tangled-knot.vHost}";
                         icon = "si:git";
                       }
-                      {
-                        title = "taxborn.com";
-                        url = "https://www.taxborn.com";
-                        icon = "si:html5";
-                      }
                     ];
                   }
                   {
