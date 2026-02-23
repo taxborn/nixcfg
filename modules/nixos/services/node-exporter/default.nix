@@ -10,7 +10,27 @@
     services.prometheus.exporters.node = {
       enable = true;
       port = 9100;
-      enabledCollectors = [ "systemd" ];
+      enabledCollectors = [
+        "systemd"
+        "tcpstat"
+        "conntrack"
+        "diskstats"
+        "entropy"
+        "filefd"
+        "filesystem"
+        "loadavg"
+        "meminfo"
+        "netdev"
+        "netstat"
+        "stat"
+        "time"
+        "timex"
+        "vmstat"
+        "logind"
+        "interrupts"
+        "ksmd"
+        "processes"
+      ];
     };
   };
 }
