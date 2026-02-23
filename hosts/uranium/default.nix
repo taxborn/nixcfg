@@ -42,10 +42,10 @@ in
       yubikey.enable = true;
     };
     services = {
-      backups = {
-        enable = true;
-        repository = "ssh://de4388@de4388.rsync.net/./borg-repos/uranium";
-      };
+      # backups = {
+      #   enable = true;
+      #   repository = "ssh://de4388@de4388.rsync.net/./borg-repos/uranium";
+      # };
       node-exporter.enable = true;
       sddm = {
         enable = true;

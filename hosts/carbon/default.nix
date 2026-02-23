@@ -38,10 +38,10 @@
       podman.enable = true;
     };
     services = {
-      backups = {
-        enable = true;
-        repository = "ssh://de4388@de4388.rsync.net/./borg-repos/carbon";
-      };
+      # backups = {
+      #   enable = true;
+      #   repository = "ssh://de4388@de4388.rsync.net/./borg-repos/carbon";
+      # };
       caddy.enable = true;
       forgejo.enable = true;
       node-exporter.enable = true;

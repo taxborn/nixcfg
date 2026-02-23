@@ -28,19 +28,19 @@
       systemd-boot.enable = true;
     };
     services = {
-      backups = {
-        enable = true;
-        repository = "ssh://de4388@de4388.rsync.net/./borg-repos/helium-01";
-      };
+      # backups = {
+      #   enable = true;
+      #   repository = "ssh://de4388@de4388.rsync.net/./borg-repos/helium-01";
+      # };
       caddy.enable = true;
       copyparty.enable = true;
       grafana = {
         enable = true;
         prometheusTargets = [
-          "localhost:9100"      # helium-01
-          "100.64.0.0:9100"    # uranium
-          "100.64.0.1:9100"    # tungsten
-          "100.64.2.0:9100"    # carbon
+          "localhost:9100" # helium-01
+          "100.64.0.0:9100" # uranium
+          "100.64.0.1:9100" # tungsten
+          "100.64.2.0:9100" # carbon
         ];
       };
       loki.enable = true;
