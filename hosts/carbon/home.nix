@@ -39,11 +39,32 @@
             set -gx SSH_AUTH_SOCK (gpgconf --list-dirs agent-ssh-socket)
             gpgconf --launch gpg-agent
             gpg-connect-agent updatestartuptty /bye > /dev/null
+
+            function nnn-cd
+              set NNN_TMPFILE (mktemp)
+              nnn -e $argv
+              if test -s $NNN_TMPFILE
+                source $NNN_TMPFILE
+                rm $NNN_TMPFILE
+              end
+            end
+
+            bind \co nnn-cd
           '';
           shellAliases = {
             nix-rb = "sudo nixos-rebuild switch --flake .";
             yk-restart = "gpg-connect-agent killagent /bye && gpg-connect-agent \"scd serialno\" \"learn --force\" /bye && gpg --card-status";
+            n = "nnn -e";
           };
+        };
+
+        fzf = {
+          enable = true;
+          enableFishIntegration = true;
+        };
+
+        nnn = {
+          enable = true;
         };
       };
 

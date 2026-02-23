@@ -18,6 +18,7 @@
 
       systemPackages = with pkgs; [
         self.inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
+        btop
         just
         wget
       ];
@@ -37,7 +38,6 @@
     programs = {
       dconf.enable = true;
       git.enable = true;
-      htop.enable = true;
     };
 
     networking.networkmanager.enable = true;

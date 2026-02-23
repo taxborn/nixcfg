@@ -55,6 +55,9 @@
         bind-key -T copy-mode-vi 'C-k' select-pane -U
         bind-key -T copy-mode-vi 'C-l' select-pane -R
         bind-key -T copy-mode-vi 'C-\' select-pane -l
+
+        set -g set-clipboard on
+        set -g allow-passthrough on
       '';
 
       plugins = with pkgs.tmuxPlugins; [
