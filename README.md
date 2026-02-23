@@ -14,7 +14,6 @@ Commands are run from the `nix-infra` root via [`just`](https://github.com/casey
 # TODO
 - [ ] More documentation, screenshots, comments, etc
 - [ ] Unify Tungsten & Uranium disko config (or split into single/dual SSD btrfs luks options)
-- [ ] Grafana
 - [ ] Tangled.sh mirroring
 
 # Acknowledgements
