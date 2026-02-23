@@ -10,7 +10,6 @@ let
 in
 {
   imports = [
-    # ./backup.nix
     ./home.nix
     ./secrets.nix
     self.diskoConfigurations.luks-btrfs-tungsten
@@ -38,10 +37,21 @@ in
       yubikey.enable = true;
     };
     services = {
-      # backups = {
-      #   enable = true;
-      #   repository = "ssh://de4388@de4388.rsync.net/./borg-repos/tungsten";
-      # };
+      backups.client = {
+        enable = true;
+        desktopExcludes = true;
+        repositories = {
+          rsync = {
+            path = "ssh://de4388@de4388.rsync.net/./borg-repos/tungsten";
+            label = "rsync";
+            remotePath = "borg14";
+          };
+          helium = {
+            path = "ssh://taxborn@100.64.1.0//mnt/hdd/borg-repos/tungsten";
+            label = "helium";
+          };
+        };
+      };
       node-exporter.enable = true;
       sddm = {
         enable = true;

@@ -1,4 +1,8 @@
-{ self, pkgs, ... }:
+{
+  self,
+  pkgs,
+  ...
+}:
 {
   imports = [
     ./home.nix
@@ -28,10 +32,26 @@
       systemd-boot.enable = true;
     };
     services = {
-      # backups = {
-      #   enable = true;
-      #   repository = "ssh://de4388@de4388.rsync.net/./borg-repos/helium-01";
-      # };
+      backups = {
+        client = {
+          enable = true;
+          repositories = {
+            rsync = {
+              path = "ssh://de4388@de4388.rsync.net/./borg-repos/helium-01";
+              label = "rsync";
+              remotePath = "borg14";
+            };
+          };
+        };
+        server = {
+          enable = true;
+          authorizedKeys = {
+            uranium = builtins.readFile "${self.inputs.secrets}/borg/uranium/ssh_key.pub";
+            tungsten = builtins.readFile "${self.inputs.secrets}/borg/tungsten/ssh_key.pub";
+            carbon = builtins.readFile "${self.inputs.secrets}/borg/carbon/ssh_key.pub";
+          };
+        };
+      };
       caddy.enable = true;
       copyparty.enable = true;
       grafana = {

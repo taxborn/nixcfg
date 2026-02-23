@@ -42,10 +42,21 @@ in
       yubikey.enable = true;
     };
     services = {
-      # backups = {
-      #   enable = true;
-      #   repository = "ssh://de4388@de4388.rsync.net/./borg-repos/uranium";
-      # };
+      backups.client = {
+        enable = true;
+        desktopExcludes = true;
+        repositories = {
+          rsync = {
+            path = "ssh://de4388@de4388.rsync.net/./borg-repos/uranium";
+            label = "rsync";
+            remotePath = "borg14";
+          };
+          helium = {
+            path = "ssh://taxborn@100.64.1.0//mnt/hdd/borg-repos/uranium";
+            label = "helium";
+          };
+        };
+      };
       node-exporter.enable = true;
       sddm = {
         enable = true;
