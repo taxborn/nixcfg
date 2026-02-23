@@ -15,6 +15,12 @@ in
       default = false;
       description = "Enable fail2ban jail for Caddy 401/403 responses.";
     };
+
+    enableForgejoJail = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Enable fail2ban jail for Forgejo SSH authentication failures.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -62,6 +68,27 @@ in
       text = ''
         [Definition]
         failregex = .*"remote_ip":"<HOST>".*"status":40[13]
+        ignoreregex =
+      '';
+    };
+
+    services.fail2ban.jails.forgejo-ssh = lib.mkIf cfg.enableForgejoJail {
+      settings = {
+        enabled = true;
+        backend = "systemd";
+        journalmatch = "_SYSTEMD_UNIT=forgejo.service";
+        port = "2222";
+        maxretry = 5;
+        findtime = "10m";
+        bantime = "1h";
+        filter = "forgejo-ssh";
+      };
+    };
+
+    environment.etc."fail2ban/filter.d/forgejo-ssh.conf" = lib.mkIf cfg.enableForgejoJail {
+      text = ''
+        [Definition]
+        failregex = Failed connection from <HOST>:\d+ with error:.*
         ignoreregex =
       '';
     };

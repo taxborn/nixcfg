@@ -79,6 +79,7 @@ in
       fail2ban = {
         enable = true;
         enableCaddyJail = true;
+        enableForgejoJail = true;
       };
       tangled-knot.enable = true;
       taxborn-com.enable = true;
