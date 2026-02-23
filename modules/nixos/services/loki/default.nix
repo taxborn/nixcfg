@@ -4,7 +4,15 @@
   ...
 }:
 {
-  options.myNixOS.services.loki.enable = lib.mkEnableOption "loki log aggregation";
+  options.myNixOS.services.loki = {
+    enable = lib.mkEnableOption "loki log aggregation";
+
+    listenAddress = lib.mkOption {
+      type = lib.types.str;
+      default = "127.0.0.1";
+      description = "Address for Loki to listen on.";
+    };
+  };
 
   config = lib.mkIf config.myNixOS.services.loki.enable {
     services.loki = {

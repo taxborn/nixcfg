@@ -4,13 +4,21 @@
   ...
 }:
 {
-  options.myNixOS.services.paperless-ngx.enable = lib.mkEnableOption "paperless-ngx";
+  options.myNixOS.services.paperless-ngx = {
+    enable = lib.mkEnableOption "paperless-ngx";
+
+    listenAddress = lib.mkOption {
+      type = lib.types.str;
+      default = "127.0.0.1";
+      description = "Address for Paperless-ngx to listen on.";
+    };
+  };
 
   config = lib.mkIf config.myNixOS.services.paperless-ngx.enable {
     services.paperless = {
       enable = true;
       consumptionDirIsPublic = true;
-      address = "0.0.0.0";
+      address = config.myNixOS.services.paperless-ngx.listenAddress;
       settings = {
         PAPERLESS_CONSUMER_IGNORE_PATTERN = [
           ".DS_STORE/*"

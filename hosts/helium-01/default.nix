@@ -70,6 +70,10 @@ in
       };
       caddy.enable = true;
       copyparty.enable = true;
+      fail2ban = {
+        enable = true;
+        enableCaddyJail = true;
+      };
       grafana = {
         enable = true;
         prometheusTargets = map
@@ -81,7 +85,10 @@ in
             net.tailscaleIPs.carbon
           ];
       };
-      loki.enable = true;
+      loki = {
+        enable = true;
+        listenAddress = "100.64.1.0";
+      };
       node-exporter.enable = true;
       promtail = {
         enable = true;
@@ -93,7 +100,10 @@ in
         nativeRunners = 2;
       };
       immich.enable = true;
-      paperless-ngx.enable = true;
+      paperless-ngx = {
+        enable = true;
+        listenAddress = "100.64.1.0";
+      };
       tailscale = {
         enable = true;
         operator = "taxborn";

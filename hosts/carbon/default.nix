@@ -24,10 +24,7 @@ in
   time.timeZone = "America/Chicago";
   system.stateVersion = "25.11";
   # homestead server w mavs
-  networking.firewall.allowedTCPPorts = [
-    25565
-    24454 # voice chat requirement?
-  ];
+  networking.firewall.allowedTCPPorts = [ 25565 ];
 
   environment.systemPackages = with pkgs; [
     jdk21_headless
@@ -78,6 +75,10 @@ in
       tailscale = {
         enable = true;
         operator = "taxborn";
+      };
+      fail2ban = {
+        enable = true;
+        enableCaddyJail = true;
       };
       tangled-knot.enable = true;
       taxborn-com.enable = true;

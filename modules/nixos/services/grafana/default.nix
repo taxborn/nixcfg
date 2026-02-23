@@ -8,6 +8,18 @@
   options.myNixOS.services.grafana = {
     enable = lib.mkEnableOption "grafana monitoring dashboard";
 
+    listenAddress = lib.mkOption {
+      type = lib.types.str;
+      default = "127.0.0.1";
+      description = "Address for Grafana to listen on.";
+    };
+
+    lokiUrl = lib.mkOption {
+      type = lib.types.str;
+      default = "http://localhost:3100";
+      description = "URL of the Loki instance for the Grafana datasource.";
+    };
+
     prometheusTargets = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
@@ -32,7 +44,7 @@
       };
 
       settings.server = {
-        http_addr = "0.0.0.0";
+        http_addr = config.myNixOS.services.grafana.listenAddress;
         http_port = config.mySnippets.mischief-town.networkMap.grafana.port;
         domain = config.mySnippets.mischief-town.networkMap.grafana.vHost;
         root_url = "https://${config.mySnippets.mischief-town.networkMap.grafana.vHost}";
