@@ -68,6 +68,12 @@ let
     "/home/*/.cache"
     "/home/*/.local/share/Trash"
 
+    # browser profile caches
+    "/home/*/.mozilla/firefox/*/cache2"
+    "/home/*/.mozilla/firefox/*/startupCache"
+    "/home/*/.config/zen/*/cache2"
+    "/home/*/.config/zen/*/startupCache"
+
     # managed by Obsidian
     "/home/taxborn/documents/notes"
   ];
