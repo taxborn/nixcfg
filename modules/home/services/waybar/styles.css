@@ -77,6 +77,7 @@ button {
 #network,
 #cpu,
 #memory,
+#idle_inhibitor,
 #custom-lock,
 #custom-power,
 #custom-weather,
@@ -115,6 +116,15 @@ button {
 
 #backlight {
     border-radius: 0;
+}
+
+#idle_inhibitor {
+    color: @overlay1;
+    border-radius: 0;
+}
+
+#idle_inhibitor.activated {
+    color: @peach;
 }
 
 #pulseaudio {

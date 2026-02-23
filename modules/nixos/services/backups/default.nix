@@ -214,6 +214,7 @@ in
             commonExcludes
             ++ (lib.optionals cfg.client.desktopExcludes desktopExcludes)
             ++ cfg.client.extraExcludes;
+          exclude_if_present = [ ".nobackup" ];
           encryption_passcommand = "cat ${config.age.secrets.borgPassphrase.path}";
           ssh_command = "ssh -i ${config.age.secrets.borgSshKey.path}";
           compression = "auto,zstd";

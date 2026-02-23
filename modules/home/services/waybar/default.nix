@@ -38,6 +38,7 @@
             "memory"
             "backlight"
             "battery"
+            "idle_inhibitor"
             "clock"
             "tray"
           ];
@@ -78,6 +79,16 @@
           memory = {
             interval = 5;
             format = " {used:0.1f}G";
+          };
+
+          idle_inhibitor = {
+            format = "{icon}";
+            format-icons = {
+              activated = "󰈈";
+              deactivated = "󰈉";
+            };
+            tooltip-format-activated = "Idle inhibitor: on";
+            tooltip-format-deactivated = "Idle inhibitor: off";
           };
 
           tray = {
