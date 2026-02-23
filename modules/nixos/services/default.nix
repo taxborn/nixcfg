@@ -13,6 +13,7 @@
     ./immich
     ./loki
     ./node-exporter
+    ./smartctl-exporter
     ./openssh
     ./paperless
     ./promtail

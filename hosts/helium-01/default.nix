@@ -91,6 +91,10 @@ in
         listenAddress = "100.64.1.0";
       };
       node-exporter.enable = true;
+      smartctl-exporter = {
+        enable = true;
+        devices = [ "/dev/disk/by-id/usb-WD_My_Book_25ED_575835324443304A30443532-0:0" ];
+      };
       promtail = {
         enable = true;
         lokiUrl = "http://localhost:${toString net.loki.port}";
