@@ -16,15 +16,20 @@
   };
 
   config = lib.mkIf config.myNixOS.services.grafana.enable {
-    age.secrets.grafanaAdminPassword = {
+    age.secrets.grafanaEnv = {
       file = "${self.inputs.secrets}/grafana.age";
       owner = "grafana";
     };
 
-    systemd.services.grafana.serviceConfig.EnvironmentFile = config.age.secrets.grafanaAdminPassword.path;
+    systemd.services.grafana.serviceConfig.EnvironmentFile = config.age.secrets.grafanaEnv.path;
 
     services.grafana = {
       enable = true;
+
+      settings.security = {
+        admin_password = "$__env{GF_SECURITY_ADMIN_PASSWORD}";
+        secret_key = "$__env{GF_SECURITY_SECRET_KEY}";
+      };
 
       settings.server = {
         http_addr = "0.0.0.0";
