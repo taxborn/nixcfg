@@ -76,6 +76,7 @@ in
       };
       grafana = {
         enable = true;
+        listenAddress = net.tailscaleIPs."helium-01";
         prometheusTargets = map
           (ip: "${ip}:${toString net.nodeExporter.port}")
           [
