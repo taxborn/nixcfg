@@ -33,23 +33,59 @@
                   {
                     type = "monitor";
                     cache = "1m";
-                    title = "Services";
+                    title = "Public Services";
                     sites = [
-                      {
-                        title = "Vaultwarden";
-                        url = "https://${config.mySnippets.mischief-town.networkMap.vaultwarden.vHost}";
-                      }
-                      {
-                        title = "Immich";
-                        url = "https://${config.mySnippets.mischief-town.networkMap.immich.vHost}";
-                      }
                       {
                         title = "Forgejo";
                         url = "https://${config.mySnippets.mischief-town.networkMap.forgejo.vHost}";
+                        icon = "si:forgejo";
+                      }
+                      {
+                        title = "Vaultwarden";
+                        url = "https://${config.mySnippets.mischief-town.networkMap.vaultwarden.vHost}";
+                        icon = "si:bitwarden";
+                      }
+                      {
+                        title = "PDS";
+                        url = "https://${config.mySnippets.mischief-town.networkMap.pds.vHost}";
+                        icon = "si:bluesky";
+                      }
+                      {
+                        title = "Tangled Knot";
+                        url = "https://${config.mySnippets.mischief-town.networkMap.tangled-knot.vHost}";
+                        icon = "si:git";
+                      }
+                      {
+                        title = "taxborn.com";
+                        url = "https://${config.mySnippets.mischief-town.networkMap.taxborn-com.vHost}";
+                        icon = "si:html5";
+                      }
+                    ];
+                  }
+                  {
+                    type = "monitor";
+                    cache = "1m";
+                    title = "Internal Services";
+                    sites = [
+                      {
+                        title = "Immich";
+                        url = "https://${config.mySnippets.mischief-town.networkMap.immich.vHost}";
+                        icon = "si:immich";
                       }
                       {
                         title = "Paperless";
                         url = "https://${config.mySnippets.mischief-town.networkMap.paperless.vHost}";
+                        icon = "si:paperlessngx";
+                      }
+                      {
+                        title = "Copyparty";
+                        url = "https://${config.mySnippets.mischief-town.networkMap.copyparty.vHost}";
+                        icon = "si:files";
+                      }
+                      {
+                        title = "Grafana";
+                        url = "https://${config.mySnippets.mischief-town.networkMap.grafana.vHost}";
+                        icon = "si:grafana";
                       }
                     ];
                   }
