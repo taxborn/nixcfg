@@ -36,6 +36,10 @@
         client = {
           enable = true;
           repositories = {
+            helium = {
+              path = "/mnt/hdd/borg-repos/helium-01";
+              label = "helium";
+            };
             rsync = {
               path = "ssh://de4388@de4388.rsync.net/./borg-repos/helium-01";
               label = "rsync";
