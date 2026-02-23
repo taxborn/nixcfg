@@ -40,6 +40,11 @@
     services = {
       backups.client = {
         enable = true;
+        extraExcludes = [
+          "/var/lib/containers"
+          "/var/lib/gitea-actions-runner"
+          "/var/lib/caddy"
+        ];
         repositories = {
           rsync = {
             path = "ssh://de4388@de4388.rsync.net/./borg-repos/carbon";

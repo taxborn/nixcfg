@@ -35,6 +35,14 @@
       backups = {
         client = {
           enable = true;
+          extraExcludes = [
+            "/var/cache/immich"
+            "/var/lib/prometheus"
+            "/var/lib/loki"
+            "/var/lib/gitea-actions-runner"
+            "/var/lib/caddy"
+            "/mnt/hdd/borg-repos"
+          ];
           repositories = {
             helium = {
               path = "/mnt/hdd/borg-repos/helium-01";
