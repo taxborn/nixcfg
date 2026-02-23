@@ -147,11 +147,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1771469470,
-        "narHash": "sha256-GnqdqhrguKNN3HtVfl6z+zbV9R9jhHFm3Z8nu7R6ml0=",
+        "lastModified": 1771881364,
+        "narHash": "sha256-A5uE/hMium5of/QGC6JwF5TGoDAfpNtW00T0s9u/PN8=",
         "owner": "nix-community",
         "repo": "disko",
-        "rev": "4707eec8d1d2db5182ea06ed48c820a86a42dc13",
+        "rev": "a4cb7bf73f264d40560ba527f9280469f1f081c6",
         "type": "github"
       },
       "original": {
@@ -679,11 +679,11 @@
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1771863449,
-        "narHash": "sha256-0lyxZqrp/rzIK0VM1nNFr9TOiYE4imGImPR9G3fZL5I=",
+        "lastModified": 1771890129,
+        "narHash": "sha256-DYbduA6TxyYxS/er9Dn/jV27duQfsIZ/gB1KrpFMGmY=",
         "ref": "refs/heads/main",
-        "rev": "ed72c9fe9711d8142de631496c9d6ace3d01a0fe",
-        "revCount": 20,
+        "rev": "2d2bd6c7fc3b5a3fa070a2ca9c8ec4a0a4705a8f",
+        "revCount": 21,
         "type": "git",
         "url": "https://git.mischief.town/nix-infra/secrets"
       },
@@ -831,11 +831,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1771840410,
-        "narHash": "sha256-fxtvkgQLVhHAjWXPhqahYrVky6KjmS3hwhsb1UX/c/8=",
+        "lastModified": 1771876204,
+        "narHash": "sha256-nTX+Qa3W+xsFxBl+lr4RsWvC4vgZocLt/qDeIvnf4+w=",
         "owner": "0xc000022070",
         "repo": "zen-browser-flake",
-        "rev": "24e003a8ad4ab99cabbba6821bd985bb81dbe656",
+        "rev": "2f951adfab1f5a090fe5ea4c5eaf11efca7f1039",
         "type": "github"
       },
       "original": {

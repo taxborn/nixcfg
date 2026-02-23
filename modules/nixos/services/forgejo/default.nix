@@ -8,6 +8,7 @@
 let
   sshPort = 2222;
   sshUser = "git";
+  signingKeyDir = "/var/lib/forgejo/signing";
 in
 {
   options.myNixOS.services.forgejo.enable = lib.mkEnableOption "forgejo git forge";
@@ -16,7 +17,19 @@ in
     age.secrets = {
       resend.file = "${self.inputs.secrets}/resend.age";
       postgres-forgejo.file = "${self.inputs.secrets}/forgejo/postgres.age";
+      forgejo-signing-key = {
+        file = "${self.inputs.secrets}/forgejo/signing_key.age";
+        path = "${signingKeyDir}/key";
+        owner = "forgejo";
+        group = "forgejo";
+        mode = "0400";
+      };
     };
+
+    systemd.tmpfiles.rules = [
+      "d ${signingKeyDir} 0755 forgejo forgejo -"
+      "L+ ${signingKeyDir}/key.pub - - - - ${self.inputs.secrets}/forgejo/signing_key.pub"
+    ];
 
     services = {
       postgresql = {
@@ -83,6 +96,19 @@ in
             DEFAULT_BRANCH = "main";
             ENABLE_PUSH_CREATE_ORG = true;
             ENABLE_PUSH_CREATE_USER = true;
+          };
+
+          "repository.pull-request".DEFAULT_MERGE_STYLE = "squash";
+
+          "repository.signing" = {
+            FORMAT = "ssh";
+            SIGNING_KEY = "${signingKeyDir}/key.pub";
+            SIGNING_NAME = "Mischief's Forge";
+            SIGNING_EMAIL = "forgejo@git.mischief.town";
+            INITIAL_COMMIT = "always";
+            CRUD_ACTIONS = "always";
+            WIKI = "always";
+            MERGES = "always";
           };
 
           security.PASSWORD_CHECK_PWN = true;
