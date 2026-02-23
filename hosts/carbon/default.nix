@@ -44,6 +44,7 @@
       };
       caddy.enable = true;
       forgejo.enable = true;
+      node-exporter.enable = true;
       forgejo-runner = {
         enable = true;
         dockerContainers = 3;

@@ -42,6 +42,7 @@ in
         enable = true;
         repository = "ssh://de4388@de4388.rsync.net/./borg-repos/tungsten";
       };
+      node-exporter.enable = true;
       sddm = {
         enable = true;
         autoLogin = "taxborn";

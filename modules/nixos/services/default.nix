@@ -8,7 +8,9 @@
     ./forgejo
     ./forgejo-runner
     ./glance
+    ./grafana
     ./immich
+    ./node-exporter
     ./openssh
     ./paperless
     ./sddm

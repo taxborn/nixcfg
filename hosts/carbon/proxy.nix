@@ -121,5 +121,6 @@ in
     # mischief.town - Encoded proxies with headers (Tailscale)
     ${net.immich.vHost}.extraConfig = encodedProxy "http://${heliumTailscaleIP}" net.immich.port;
     ${net.copyparty.vHost}.extraConfig = encodedProxy "http://${heliumTailscaleIP}" net.copyparty.port;
+    ${net.grafana.vHost}.extraConfig = encodedProxy "http://${heliumTailscaleIP}" net.grafana.port;
   };
 }
