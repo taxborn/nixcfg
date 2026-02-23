@@ -29,12 +29,10 @@ in
 {
   services.caddy.virtualHosts = {
     # Personal Website proxies
-    "braxtonfair.com".extraConfig = ''
-      tls off
+    "http://braxtonfair.com".extraConfig = ''
       redir https://www.taxborn.com{uri} permanent
     '';
-    "www.braxtonfair.com".extraConfig = ''
-      tls off
+    "http://www.braxtonfair.com".extraConfig = ''
       redir https://www.taxborn.com{uri} permanent
     '';
     "taxborn.com".extraConfig = ''
