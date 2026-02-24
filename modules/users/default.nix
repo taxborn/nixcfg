@@ -14,7 +14,7 @@
   config = lib.mkIf (config.myUsers.root.enable or config.myUsers.taxborn.enable) {
     programs.fish.enable = true;
     # as of 2026-01-02 this takes a whileeee and haven't needed it yet.
-    documentation.man.generateCaches = false;
+    documentation.man.cache.enable = false;
 
     users = {
       defaultUserShell = pkgs.fish;
