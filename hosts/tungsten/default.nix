@@ -53,6 +53,10 @@ in
         };
       };
       node-exporter.enable = true;
+      promtail = {
+        enable = true;
+        lokiUrl = "http://100.64.1.0:3100";
+      };
       sddm = {
         enable = true;
         autoLogin = "taxborn";
