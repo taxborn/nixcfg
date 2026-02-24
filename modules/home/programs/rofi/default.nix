@@ -19,6 +19,7 @@ in
       package = pkgs.rofi;
 
       plugins = [
+        pkgs.rofi-emoji
         pkgs.rofi-power-menu
       ];
 
