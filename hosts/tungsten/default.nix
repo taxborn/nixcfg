@@ -88,8 +88,6 @@ in
     intelBusId = "PCI:0:2:0";
   };
 
-  boot.loader.timeout = 0;
-
   boot.initrd = {
     luks = {
       devices."cryptroot".crypttabExtraOpts = defaultCrypttabOptions;
