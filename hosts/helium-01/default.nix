@@ -145,7 +145,7 @@ in
       "exec"
       "uid=1000"
       "gid=100"
-      "umask=0022"
+      "umask=0000"
       "locale=en_US.utf8"
     ];
   };
