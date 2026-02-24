@@ -39,6 +39,7 @@
             email = "hello@taxborn.com";
             baseUrl = "https://vw.mischief.town";
           };
+          claude-code.enable = true;
           ghostty.enable = true;
           obs.enable = true;
           ledger.enable = true;
