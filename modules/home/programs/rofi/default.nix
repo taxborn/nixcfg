@@ -13,13 +13,16 @@ in
   options.myHome.programs.rofi.enable = lib.mkEnableOption "rofi application launcher";
 
   config = lib.mkIf config.myHome.programs.rofi.enable {
+    home.packages = [ pkgs.rofimoji ];
+
+    xdg.configFile."rofimoji.rc".text = "action = copy";
+
     programs.rofi = {
       enable = true;
       location = "center";
       package = pkgs.rofi;
 
       plugins = [
-        pkgs.rofi-emoji
         pkgs.rofi-power-menu
       ];
 
