@@ -100,4 +100,27 @@ in
     enable = true;
     password = "$y$j9T$23GUNNxavO/S4n8DLkfs71$ShByJUJ9XCvIs2PLYmlAjenOtpcFvnSgshjbClEKB18";
   };
+
+  systemd.services.minecraft = {
+    description = "Minecraft Server (mavs)";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network.target" ];
+
+    serviceConfig = {
+      Type = "simple";
+      User = "taxborn";
+      WorkingDirectory = "/home/taxborn/public/mavs";
+      Restart = "on-failure";
+      StandardOutput = "journal";
+      StandardError = "journal";
+      RuntimeDirectory = "minecraft";
+    };
+
+    script = ''
+      mkfifo /run/minecraft/stdin 2>/dev/null || true
+      exec 3>/run/minecraft/stdin
+      tail -f /run/minecraft/stdin | /home/taxborn/public/mavs/start.sh
+      exec 3>&-
+    '';
+  };
 }
