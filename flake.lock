@@ -599,11 +599,11 @@
     },
     "nixpkgs_3": {
       "locked": {
-        "lastModified": 1771369470,
-        "narHash": "sha256-0NBlEBKkN3lufyvFegY4TYv5mCNHbi5OmBDrzihbBMQ=",
+        "lastModified": 1771848320,
+        "narHash": "sha256-0MAd+0mun3K/Ns8JATeHT1sX28faLII5hVLq0L3BdZU=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "0182a361324364ae3f436a63005877674cf45efb",
+        "rev": "2fc6539b481e1d2569f25f8799236694180c0993",
         "type": "github"
       },
       "original": {
@@ -790,11 +790,11 @@
         "sqlite-lib-src": "sqlite-lib-src"
       },
       "locked": {
-        "lastModified": 1771771164,
-        "narHash": "sha256-BGs42swuu0P3GFNjwdXW96Zb0QabdCp8o5EEwIXyWaM=",
+        "lastModified": 1771930036,
+        "narHash": "sha256-gj3FhfucP/kIb9ENT3/WOirZtGcGjVOCJ7Bdt0b/QL8=",
         "ref": "refs/heads/master",
-        "rev": "90c5c1af7fbf275a14a769f8b669369ffecc27b1",
-        "revCount": 1978,
+        "rev": "f7ac5765ea4318ea9bb2cddc41c6a4add06e8aae",
+        "revCount": 1982,
         "type": "git",
         "url": "https://tangled.org/tangled.org/core"
       },
@@ -810,11 +810,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1771808847,
-        "narHash": "sha256-0QKLlysfq8GK25LVEUK0HvDWphxov7ZB8YRbcbz4HHA=",
+        "lastModified": 1771894980,
+        "narHash": "sha256-UQSFJpqFw9wEIpvDrl24UBd0EQk+H2AK7nsMoaGjeyk=",
         "owner": "tgirlcloud",
         "repo": "pkgs",
-        "rev": "579d9ecd98868566e4906d714d63a531721b5b9b",
+        "rev": "e53ef476577db5f61ee4ffa52ff0b788145442e2",
         "type": "github"
       },
       "original": {
