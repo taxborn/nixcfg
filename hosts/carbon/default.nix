@@ -24,17 +24,6 @@ in
   time.timeZone = "America/Chicago";
   system.stateVersion = "25.11";
 
-  networking.interfaces."ens3".ipv6.addresses = [
-    {
-      address = "2604:2dc0:101:200::2cc6";
-      prefixLength = 64;
-    }
-  ];
-  networking.defaultGateway6 = {
-    address = "2604:2dc0:101:200::1";
-    interface = "ens3";
-  };
-
   # homestead server w mavs
   networking.firewall.allowedTCPPorts = [ 25565 ];
 
