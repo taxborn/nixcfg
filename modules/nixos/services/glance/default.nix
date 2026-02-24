@@ -154,6 +154,7 @@
                       "glanceapp/glance"
                       "immich-app/immich"
                       "codeberg:Forgejo/forgejo"
+                      "paperless-ngx/paperless-ngx"
                     ];
                   }
                 ];
