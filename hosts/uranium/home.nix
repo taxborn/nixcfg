@@ -34,6 +34,7 @@
         profiles.defaultApps.enable = true;
         desktop.hyprland.enable = true;
         programs = {
+          cheatsheet.enable = true;
           bitwarden = {
             enable = true;
             email = "hello@taxborn.com";
