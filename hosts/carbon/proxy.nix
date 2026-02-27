@@ -71,6 +71,7 @@ in
 
       @gatekeeper {
        path /xrpc/com.atproto.server.getSession
+       path /xrpc/com.atproto.server.describeServer
        path /xrpc/com.atproto.server.updateEmail
        path /xrpc/com.atproto.server.createSession
        path /xrpc/com.atproto.server.createAccount
