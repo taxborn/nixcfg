@@ -702,11 +702,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1771873319,
-        "narHash": "sha256-TRkvK4N9ZEt0ZMss7gIJpOXTquyTAtlJTWf1a1fXxNk=",
+        "lastModified": 1772158545,
+        "narHash": "sha256-P+xkJH98zTQJFf5aYiSAE92vAcmg4uLbDYrec+Oo0YU=",
         "ref": "refs/heads/main",
-        "rev": "54b9805b16f7648cd521d144ba2e858e934521c4",
-        "revCount": 19,
+        "rev": "74805ea069bc3faa6a4a55edce2f56791fbbf8db",
+        "revCount": 20,
         "type": "git",
         "url": "https://git.mischief.town/nix-infra/snippets"
       },
@@ -810,11 +810,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1772067718,
-        "narHash": "sha256-N25UfN7F4jUgkSlj2tefyL47WPSrKS1ju1/bTP1g/o8=",
+        "lastModified": 1772154256,
+        "narHash": "sha256-uHTBySh6kPIg2dxfCOq16X+E2FArOdC0yjUDytfO6bQ=",
         "owner": "tgirlcloud",
         "repo": "pkgs",
-        "rev": "eabc52c6f1831278093076cb20e55d5c7857a87f",
+        "rev": "1c56c24e18b160e087b9ada7768c0126319576d3",
         "type": "github"
       },
       "original": {
@@ -831,11 +831,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1772085492,
-        "narHash": "sha256-1o9qkvOI/ThFDgEbW4Q4GVK7aV+traAIWSqP7gom7/0=",
+        "lastModified": 1772158021,
+        "narHash": "sha256-UX/mZlmDYccOVGDIEFVvXkHRSjjSkOnYO/F4O6XDrKg=",
         "owner": "0xc000022070",
         "repo": "zen-browser-flake",
-        "rev": "6577a70551b52ef35138e5d8b87a35d40b14eeeb",
+        "rev": "0af6863a54e1468ce1ef34bf0bbd073aed5a8b2e",
         "type": "github"
       },
       "original": {

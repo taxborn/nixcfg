@@ -6,6 +6,7 @@
 }:
 let
   net = config.mySnippets.mischief-town.networkMap;
+  tailnet = config.mySnippets.tailnet.name;
 in
 {
   imports = [
@@ -76,7 +77,6 @@ in
       };
       grafana = {
         enable = true;
-        listenAddress = net.tailscaleIPs."helium-01";
         prometheusTargets = map
           (ip: "${ip}:${toString net.nodeExporter.port}")
           [
@@ -105,15 +105,31 @@ in
         nativeRunners = 2;
       };
       immich.enable = true;
-      paperless-ngx = {
-        enable = true;
-        listenAddress = "100.64.1.0";
-      };
+      paperless-ngx.enable = true;
       tailscale = {
         enable = true;
         operator = "taxborn";
       };
     };
+  };
+
+  services.caddy.virtualHosts = {
+    "grafana.${tailnet}".extraConfig = ''
+      bind tailscale/grafana
+      reverse_proxy localhost:${toString net.grafana.port}
+    '';
+    "immich.${tailnet}".extraConfig = ''
+      bind tailscale/immich
+      reverse_proxy localhost:${toString net.immich.port}
+    '';
+    "paperless.${tailnet}".extraConfig = ''
+      bind tailscale/paperless
+      reverse_proxy localhost:${toString net.paperless.port}
+    '';
+    "copyparty.${tailnet}".extraConfig = ''
+      bind tailscale/copyparty
+      reverse_proxy localhost:${toString net.copyparty.port}
+    '';
   };
 
   myHardware = {

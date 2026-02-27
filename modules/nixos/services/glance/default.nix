@@ -64,22 +64,22 @@
                     sites = [
                       {
                         title = "Immich";
-                        url = "https://${config.mySnippets.mischief-town.networkMap.immich.vHost}";
+                        url = "https://immich.${config.mySnippets.tailnet.name}";
                         icon = "si:immich";
                       }
                       {
                         title = "Paperless";
-                        url = "https://${config.mySnippets.mischief-town.networkMap.paperless.vHost}";
+                        url = "https://paperless.${config.mySnippets.tailnet.name}";
                         icon = "si:paperlessngx";
                       }
                       {
                         title = "Copyparty";
-                        url = "https://${config.mySnippets.mischief-town.networkMap.copyparty.vHost}";
+                        url = "https://copyparty.${config.mySnippets.tailnet.name}";
                         icon = "si:files";
                       }
                       {
                         title = "Grafana";
-                        url = "https://${config.mySnippets.mischief-town.networkMap.grafana.vHost}";
+                        url = "https://grafana.${config.mySnippets.tailnet.name}";
                         icon = "si:grafana";
                       }
                     ];

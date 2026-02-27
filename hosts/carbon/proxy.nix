@@ -98,9 +98,6 @@ in
     ${net.tangled-knot.vHost}.extraConfig = localProxy net.tangled-knot;
     ${net.tangled-spindle.vHost}.extraConfig = localProxy net.tangled-spindle;
 
-    # mischief.town - Services on Tailscale network (remote host)
-    ${net.paperless.vHost}.extraConfig = remoteProxy heliumTailscaleIP net.paperless;
-
     ${net.forgejo.vHost}.extraConfig = ''
       encode zstd gzip
 
@@ -116,9 +113,5 @@ in
 
     ${net.vaultwarden.vHost}.extraConfig = encodedProxy "localhost" net.vaultwarden.port;
 
-    # mischief.town - Encoded proxies with headers (Tailscale)
-    ${net.immich.vHost}.extraConfig = encodedProxy "http://${heliumTailscaleIP}" net.immich.port;
-    ${net.copyparty.vHost}.extraConfig = encodedProxy "http://${heliumTailscaleIP}" net.copyparty.port;
-    ${net.grafana.vHost}.extraConfig = encodedProxy "http://${heliumTailscaleIP}" net.grafana.port;
   };
 }

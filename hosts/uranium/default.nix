@@ -1,5 +1,6 @@
 {
   self,
+  config,
   ...
 }:
 let
@@ -7,6 +8,7 @@ let
     "fido2-device=auto"
     "token-timeout=30"
   ];
+  net = config.mySnippets.mischief-town.networkMap;
 in
 {
   imports = [
@@ -52,7 +54,7 @@ in
             remotePath = "borg14";
           };
           helium = {
-            path = "ssh://taxborn@100.64.1.0//mnt/hdd/borg-repos/uranium";
+            path = "ssh://taxborn@${net.tailscaleIPs."helium-01"}//mnt/hdd/borg-repos/uranium";
             label = "helium";
           };
         };
