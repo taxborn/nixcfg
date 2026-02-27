@@ -352,11 +352,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1772164835,
-        "narHash": "sha256-zRcwrZDeBfYipqv/7K7TqsfPb87LFU6b7JhoNUGSnvQ=",
+        "lastModified": 1772218752,
+        "narHash": "sha256-G8nArvOTZXU8DRvrzAdz3Elcj6kA/vMtvY9mrGLATtA=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "2a39b0828bbffce0d73769a61e46e780488d098b",
+        "rev": "f3a30376bb9eb2f6f61816be7d6ed954b6d2a3b9",
         "type": "github"
       },
       "original": {
@@ -702,11 +702,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1772167411,
-        "narHash": "sha256-t9iEnW8AX5sclkF3aAP4mCbVT/WJVckPeEAJEnUccDY=",
+        "lastModified": 1772168021,
+        "narHash": "sha256-To6V1qcYIz8FJSqFFZU5E/BAceOJl54NO43eDGuOrC0=",
         "ref": "refs/heads/main",
-        "rev": "c95fdf94c29bb4c4b8058f0bfd3bad325017c0f8",
-        "revCount": 22,
+        "rev": "0a1c347927b8e06dd50e663ad72f144dfeea8519",
+        "revCount": 24,
         "type": "git",
         "url": "https://git.mischief.town/nix-infra/snippets"
       },
@@ -790,11 +790,11 @@
         "sqlite-lib-src": "sqlite-lib-src"
       },
       "locked": {
-        "lastModified": 1772125463,
-        "narHash": "sha256-b4SyqwSHlwQH7ij1vLuM8l6n5QcQ7cewGdH/qYanxKM=",
+        "lastModified": 1772185310,
+        "narHash": "sha256-5ZTX6rhfVM1BnUMjFf7iTK97fZueAk0p/5f0dfU2ft8=",
         "ref": "refs/heads/master",
-        "rev": "1220020cca3a34298e8da9fc671e47a90e03ef55",
-        "revCount": 1989,
+        "rev": "b24ab0a6aed4a6db39502af25de3b2178c9ff8c7",
+        "revCount": 1991,
         "type": "git",
         "url": "https://tangled.org/tangled.org/core"
       },
