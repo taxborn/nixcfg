@@ -41,9 +41,11 @@
             baseUrl = "https://vw.mischief.town";
           };
           claude-code.enable = true;
+          feh.enable = true;
           ghostty.enable = true;
           obs.enable = true;
           ledger.enable = true;
+          vlc.enable = true;
         };
       };
     };

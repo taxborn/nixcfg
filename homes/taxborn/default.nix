@@ -27,7 +27,7 @@
       username = "taxborn";
       homeDirectory = "/home/taxborn";
       stateVersion = "25.11";
-      packages = [ ];
+      packages = [ pkgs.via ];
     };
 
     programs = {
