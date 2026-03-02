@@ -44,6 +44,7 @@ in
       yubikey.enable = true;
     };
     services = {
+      ollama.enable = true;
       backups.client = {
         enable = true;
         desktopExcludes = true;

@@ -2,6 +2,7 @@
   imports = [
     ./atproto
     ./avahi
+    ./ollama
     ./backups
     ./caddy
     ./fail2ban
