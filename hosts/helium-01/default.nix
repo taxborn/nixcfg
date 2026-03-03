@@ -63,6 +63,7 @@ in
         server = {
           enable = true;
           authorizedKeys = {
+            argon = builtins.readFile "${self.inputs.secrets}/borg/argon/borg_ssh_key.pub";
             uranium = builtins.readFile "${self.inputs.secrets}/borg/uranium/borg_ssh_key.pub";
             tungsten = builtins.readFile "${self.inputs.secrets}/borg/tungsten/borg_ssh_key.pub";
             carbon = builtins.readFile "${self.inputs.secrets}/borg/carbon/borg_ssh_key.pub";
@@ -77,14 +78,12 @@ in
       };
       grafana = {
         enable = true;
-        prometheusTargets = map
-          (ip: "${ip}:${toString net.nodeExporter.port}")
-          [
-            "localhost"
-            net.tailscaleIPs.uranium
-            net.tailscaleIPs.tungsten
-            net.tailscaleIPs.carbon
-          ];
+        prometheusTargets = map (ip: "${ip}:${toString net.nodeExporter.port}") [
+          "localhost"
+          net.tailscaleIPs.uranium
+          net.tailscaleIPs.tungsten
+          net.tailscaleIPs.carbon
+        ];
       };
       loki = {
         enable = true;

@@ -679,11 +679,11 @@
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1772510255,
-        "narHash": "sha256-h5CXCCJDwWDOeLMVn+9ulwjwD0DciZLyVsQt2Q5hVcs=",
+        "lastModified": 1772511637,
+        "narHash": "sha256-xm47I5GVT5o4BbOYzz5ipJefgfWzcHw3UFgH5sH2THM=",
         "ref": "refs/heads/main",
-        "rev": "01326cb2527cce19dc9d3366f56101e30739f031",
-        "revCount": 25,
+        "rev": "e5327a8739095bfec9b3ef705dd970f771a15a4a",
+        "revCount": 26,
         "type": "git",
         "url": "https://git.mischief.town/nix-infra/secrets"
       },
@@ -790,11 +790,11 @@
         "sqlite-lib-src": "sqlite-lib-src"
       },
       "locked": {
-        "lastModified": 1772484508,
-        "narHash": "sha256-s07CZH6BMFHwx1EuIhvJwlNWX2fH/AdfpDi/pQ+qnQQ=",
+        "lastModified": 1772510352,
+        "narHash": "sha256-iBPwpiShhxX0CSaXMaVCcnABm+oaw/D0hAgApWSC6M0=",
         "ref": "refs/heads/master",
-        "rev": "34aca43c773590103fc57f477217fdacffffbff7",
-        "revCount": 2006,
+        "rev": "dff589df8e22bddc129ae051a42ad5ca166e6650",
+        "revCount": 2007,
         "type": "git",
         "url": "https://tangled.org/tangled.org/core"
       },

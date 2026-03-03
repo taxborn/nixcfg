@@ -32,25 +32,24 @@ in
       podman.enable = true;
     };
     services = {
-      # backups.client = {
-      #   enable = true;
-      #   extraExcludes = [
-      #     "/var/lib/containers"
-      #     "/var/lib/gitea-actions-runner"
-      #     "/var/lib/caddy"
-      #   ];
-      #   repositories = {
-      #     rsync = {
-      #       path = "ssh://de4388@de4388.rsync.net/./borg-repos/argon";
-      #       label = "rsync";
-      #       remotePath = "borg14";
-      #     };
-      #     helium = {
-      #       path = "ssh://taxborn@${net.tailscaleIPs."helium-01"}//mnt/hdd/borg-repos/argon";
-      #       label = "helium";
-      #     };
-      #   };
-      # };
+      backups.client = {
+        enable = true;
+        extraExcludes = [
+          "/var/lib/containers"
+          "/var/lib/caddy"
+        ];
+        repositories = {
+          rsync = {
+            path = "ssh://de4388@de4388.rsync.net/./borg-repos/argon";
+            label = "rsync";
+            remotePath = "borg14";
+          };
+          helium = {
+            path = "ssh://taxborn@${net.tailscaleIPs."helium-01"}//mnt/hdd/borg-repos/argon";
+            label = "helium";
+          };
+        };
+      };
       caddy.enable = true;
       node-exporter.enable = true;
       promtail = {
