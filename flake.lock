@@ -679,11 +679,11 @@
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1772164865,
-        "narHash": "sha256-5HzLbob0nwA5Eohvhx52FzPD5VudAaKE9IukOTuz5Hk=",
+        "lastModified": 1772510255,
+        "narHash": "sha256-h5CXCCJDwWDOeLMVn+9ulwjwD0DciZLyVsQt2Q5hVcs=",
         "ref": "refs/heads/main",
-        "rev": "4e2514f065c54151439f414ef1ce963bdfea71e2",
-        "revCount": 23,
+        "rev": "01326cb2527cce19dc9d3366f56101e30739f031",
+        "revCount": 25,
         "type": "git",
         "url": "https://git.mischief.town/nix-infra/secrets"
       },
@@ -810,11 +810,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1772465189,
-        "narHash": "sha256-qjHp05WL/4AzNykddsLb2mwwmEwxW8TUiMhSc+9eeM4=",
+        "lastModified": 1772500108,
+        "narHash": "sha256-AliFjPxYKEMWLr9V6cu7fYCj3N7IklAh367UcyprB7c=",
         "owner": "tgirlcloud",
         "repo": "pkgs",
-        "rev": "256f28570157348e48c5bba4b176d242276daccd",
+        "rev": "f64302eaf45afa97d1fbedb3bf7e0e384e1a8a65",
         "type": "github"
       },
       "original": {
