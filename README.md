@@ -9,6 +9,7 @@ NixOS flake configuration managing 4 hosts across desktop, laptop, and server en
 | **uranium** | desktop | intel cpu, amd gpu | lanzaboote (secure boot) | dual monitor, LUKS+FIDO2, gaming (steam) |
 | **tungsten** | laptop | intel cpu, nvidia gpu (optimus) | lanzaboote (secure boot) | HiDPI (3456x2160), LUKS+FIDO2 |
 | **carbon** | remote server (OVH) | intel cpu | grub | caddy reverse proxy, forgejo, vaultwarden, bluesky PDS, tangled |
+| **argon** | remote server (OVH) | intel cpu | grub | not used yet |
 | **helium-01** | local homestead server | intel cpu | systemd-boot | immich, paperless, copyparty, grafana + prometheus |
 
 all hosts run tailscale, openssh, borg backups (to rsync.net), and node-exporter for monitoring.
