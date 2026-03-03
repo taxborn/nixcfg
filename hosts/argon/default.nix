@@ -29,6 +29,7 @@ in
     programs = {
       grub.enable = true; # grub seems to be the only bootloader that works on ovh
       nix.enable = true;
+      podman.enable = true;
     };
     services = {
       # backups.client = {
