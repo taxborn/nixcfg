@@ -19,6 +19,13 @@ in
     (modulesPath + "/profiles/qemu-guest.nix")
   ];
 
+  # TODO: Make a service for Minecraft servers since I host a few
+  networking.firewall.allowedTCPPorts = [ 25565 ];
+
+  environment.systemPackages = with pkgs; [
+    jdk21_headless
+  ];
+
   networking.hostName = "argon";
   time.timeZone = "America/Chicago";
   system.stateVersion = "25.11";
