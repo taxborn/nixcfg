@@ -83,6 +83,7 @@ in
           net.tailscaleIPs.uranium
           net.tailscaleIPs.tungsten
           net.tailscaleIPs.carbon
+          net.tailscaleIPs.argon
         ];
       };
       loki = {
