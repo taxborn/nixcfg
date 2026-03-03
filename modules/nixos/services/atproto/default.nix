@@ -44,17 +44,5 @@
         PDS_OAUTH_PROVIDER_NAME = "pds.mischief.town";
       };
     };
-
-    services.pds-gatekeeper = {
-      enable = true;
-
-      settings = {
-        GATEKEEPER_PORT = config.mySnippets.mischief-town.networkMap.pds.gatekeeperPort;
-        GATEKEEPER_CREATE_ACCOUNT_CAPTCHA = "true";
-        PDS_BASE_URL = "http://127.0.0.1:${toString config.mySnippets.mischief-town.networkMap.pds.port}";
-        GATEKEEPER_TRUST_PROXY = "true";
-        PDS_ENV_LOCATION = config.age.secrets.pds.path;
-      };
-    };
   };
 }
