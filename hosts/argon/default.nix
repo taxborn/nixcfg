@@ -11,7 +11,7 @@ in
 {
   imports = [
     ./home.nix
-    # ./secrets.nix
+    ./secrets.nix
 
     self.diskoConfigurations.btrfs-argon
     self.nixosModules.locale-en-us
@@ -51,31 +51,24 @@ in
       #   };
       # };
       caddy.enable = true;
-      # forgejo.enable = true;
-      # node-exporter.enable = true;
-      # promtail = {
-      #   enable = true;
-      #   lokiUrl = "http://${net.tailscaleIPs."helium-01"}:${toString net.loki.port}";
-      # };
-      # forgejo-runner = {
-      #   enable = true;
-      #   dockerContainers = 3;
-      #   nativeRunners = 2;
-      # };
-      # glance.enable = true;
-      # pds.enable = true;
-      # tailscale = {
-      #   enable = true;
-      #   operator = "taxborn";
-      # };
+      node-exporter.enable = true;
+      promtail = {
+        enable = true;
+        lokiUrl = "http://${net.tailscaleIPs."helium-01"}:${toString net.loki.port}";
+      };
+      forgejo-runner = {
+        enable = true;
+        dockerContainers = 3;
+        nativeRunners = 2;
+      };
+      tailscale = {
+        enable = true;
+        operator = "taxborn";
+      };
       fail2ban = {
         enable = true;
-        # enableCaddyJail = true;
-        # enableForgejoJail = true;
+        enableCaddyJail = true;
       };
-      # tangled-knot.enable = true;
-      # taxborn-com.enable = true;
-      # vaultwarden.enable = true;
     };
   };
 
