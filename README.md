@@ -102,7 +102,6 @@ desktop hosts (uranium, tungsten) import `homeModules.taxborn` and add host-spec
 | flake-parts | flake output organization |
 | home-manager | user environment management |
 | lanzaboote | UEFI secure boot |
-| tgirlpkgs | additional packages |
 | zen-browser | zen browser flake |
 | snippets | shared config snippets (network map, ssh known hosts, nix settings) |
 | secrets | agenix-encrypted secrets (non-flake input) |
