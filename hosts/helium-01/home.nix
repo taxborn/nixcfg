@@ -58,11 +58,6 @@
           };
         };
 
-        fzf = {
-          enable = true;
-          enableFishIntegration = true;
-        };
-
         nnn = {
           enable = true;
         };

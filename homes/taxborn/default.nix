@@ -53,25 +53,11 @@
         };
       };
 
-      fzf = {
-        enable = true;
-        enableFishIntegration = true;
-      };
-
       yazi = {
         enable = true;
         enableFishIntegration = true;
         shellWrapperName = "y";
       };
-
-      zoxide = {
-        enable = true;
-        enableFishIntegration = true;
-      };
-
-      ripgrep.enable = true;
-
-      bat.enable = true;
     };
 
     myHome = {

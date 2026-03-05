@@ -52,15 +52,9 @@
             bind \co nnn-cd
           '';
           shellAliases = {
-            nix-rb = "sudo nixos-rebuild switch --flake .";
             yk-restart = "gpg-connect-agent killagent /bye && gpg-connect-agent \"scd serialno\" \"learn --force\" /bye && gpg --card-status";
             n = "nnn -e";
           };
-        };
-
-        fzf = {
-          enable = true;
-          enableFishIntegration = true;
         };
 
         nnn = {

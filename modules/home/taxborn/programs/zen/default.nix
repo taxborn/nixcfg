@@ -18,31 +18,6 @@ in
 
       profiles = {
         default = {
-          containersForce = true;
-
-          containers = {
-            personal = {
-              color = "purple";
-              icon = "circle";
-              id = 1;
-              name = "Personal";
-            };
-
-            private = {
-              color = "red";
-              icon = "fingerprint";
-              id = 2;
-              name = "Private";
-            };
-
-            atolls = {
-              color = "blue";
-              icon = "briefcase";
-              id = 3;
-              name = "Atolls";
-            };
-          };
-
           id = 0;
 
           search = {
@@ -66,7 +41,7 @@ in
           };
 
           settings = {
-            "zen.tabs.vertical.right-side" = true;
+            "zen.tabs.vertical.right-side" = false;
             "zen.welcome-screen.seen" = true;
             "zen.workspaces.continue-where-left-off" = true;
           };

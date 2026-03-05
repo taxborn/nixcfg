@@ -37,7 +37,7 @@
           cheatsheet.enable = true;
           bitwarden = {
             enable = true;
-            email = "hello@taxborn.com";
+            email = "hello" + "@" + "taxborn" + ".com";
             baseUrl = "https://vw.mischief.town";
           };
           claude-code.enable = true;
