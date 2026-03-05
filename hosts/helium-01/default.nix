@@ -32,6 +32,7 @@ in
     base.enable = true;
     profiles.btrfs.enable = true;
     programs = {
+      # neovim.enable = true;
       nix.enable = true;
       podman.enable = true;
       systemd-boot.enable = true;

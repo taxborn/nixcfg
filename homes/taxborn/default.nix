@@ -72,6 +72,7 @@
         gpg.enable = true;
         tmux.enable = true;
         yubikey.enable = true;
+        neovim.enable = true;
       };
     };
   };

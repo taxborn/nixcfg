@@ -152,17 +152,19 @@ in
     };
 
     home = {
-      packages = with cfg; [
-        audioPlayer.package
-        editor.package
-        fileManager.package
-        imageViewer.package
-        pdfViewer.package
-        terminal.package
-        terminalEditor.package
-        videoPlayer.package
-        # webBrowser.package
-      ];
+      packages =
+        with cfg;
+        [
+          audioPlayer.package
+          editor.package
+          fileManager.package
+          imageViewer.package
+          pdfViewer.package
+          terminal.package
+          videoPlayer.package
+          # webBrowser.package
+        ]
+        ++ lib.optional (!config.programs.neovim.enable) terminalEditor.package;
 
       sessionVariables = {
         BROWSER = "${builtins.baseNameOf cfg.webBrowser.exec}";

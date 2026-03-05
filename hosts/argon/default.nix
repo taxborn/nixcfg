@@ -35,6 +35,7 @@ in
     profiles.btrfs.enable = true;
     programs = {
       grub.enable = true; # grub seems to be the only bootloader that works on ovh
+      # neovim.enable = true;
       nix.enable = true;
       podman.enable = true;
     };

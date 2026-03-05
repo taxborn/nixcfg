@@ -4,6 +4,7 @@
     ./git
     ./gpg
     ./minecraft
+    ./neovim
     ./ssh
     ./tmux
     ./yubikey
