@@ -79,7 +79,6 @@
         use_auto_surround = true;
         vim_mode = true;
 
-        features.edit_prediction_provider = "copilot";
         minimap.show = "auto";
         preferred_line_length = 80;
         soft_wrap = "preferred_line_length";
