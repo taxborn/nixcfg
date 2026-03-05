@@ -48,7 +48,6 @@
           bind \cg lazygit
         '';
         shellAliases = {
-          nix-rb = "sudo nixos-rebuild switch --flake .";
           yk-restart = "gpg-connect-agent killagent /bye && gpg-connect-agent \"scd serialno\" \"learn --force\" /bye && gpg --card-status";
         };
       };
@@ -61,6 +60,13 @@
     };
 
     myHome = {
+      programs = {
+        bat.enable = true;
+        eza.enable = true;
+        fd.enable = true;
+        fzf.enable = true;
+        zoxide.enable = true;
+      };
       taxborn.programs = {
         git.enable = true;
         gpg.enable = true;
