@@ -6,23 +6,19 @@
 {
   home-manager.users.taxborn = {
     imports = [
-      self.homeModules.taxborn
+      self.homeModules.profile-workstation
     ];
 
     config = {
-      home = {
-        packages = with pkgs; [
-          discord
-          obsidian
-          spotify
-        ];
-      };
+      home.packages = with pkgs; [
+        discord
+        obsidian
+        spotify
+      ];
 
-      programs = {
-        zen-browser = {
-          enable = true;
-          nativeMessagingHosts = [ pkgs.bitwarden-desktop ];
-        };
+      programs.zen-browser = {
+        enable = true;
+        nativeMessagingHosts = [ pkgs.bitwarden-desktop ];
       };
 
       myHome = {

@@ -1,51 +1,26 @@
 {
-  config,
   pkgs,
-  self,
   ...
 }:
 {
   imports = [
-    self.homeModules.default
+    ./default.nix
   ];
 
   config = {
-    nix = {
-      inherit (config.mySnippets.nix) settings;
-
-      gc = {
-        automatic = true;
-        options = "--delete-older-than 3d";
-        persistent = true;
-        randomizedDelaySec = "60min";
-      };
-    };
-
     xdg.enable = true;
 
-    home = {
-      username = "taxborn";
-      homeDirectory = "/home/taxborn";
-      stateVersion = "25.11";
-      packages = [ pkgs.via ];
-    };
+    home.packages = [ pkgs.via ];
 
     programs = {
-      home-manager.enable = true;
-
       fish = {
-        enable = true;
         interactiveShellInit = ''
-          export PATH="$HOME/.local/bin:$PATH"
           set fish_greeting # Disable greeting
 
           set -gx GPG_TTY (tty)
           set -gx SSH_AUTH_SOCK (gpgconf --list-dirs agent-ssh-socket)
           gpgconf --launch gpg-agent
           gpg-connect-agent updatestartuptty /bye > /dev/null
-
-          bind \co y
-          bind \cg lazygit
         '';
         shellAliases = {
           yk-restart = "gpg-connect-agent killagent /bye && gpg-connect-agent \"scd serialno\" \"learn --force\" /bye && gpg --card-status";
@@ -67,13 +42,7 @@
         fzf.enable = true;
         zoxide.enable = true;
       };
-      taxborn.programs = {
-        git.enable = true;
-        gpg.enable = true;
-        tmux.enable = true;
-        yubikey.enable = true;
-        neovim.enable = true;
-      };
+      taxborn.programs.neovim.enable = true;
     };
   };
 }

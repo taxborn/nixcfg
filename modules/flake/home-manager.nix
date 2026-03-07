@@ -2,7 +2,9 @@
   flake = {
     homeModules = {
       default = ../home;
-      taxborn = ../../homes/taxborn;
+      profile-default = ../../homes/profiles/default.nix;
+      profile-server = ../../homes/profiles/server.nix;
+      profile-workstation = ../../homes/profiles/workstation.nix;
     };
   };
 }
