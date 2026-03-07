@@ -45,6 +45,7 @@
           ghostty.enable = true;
           obs.enable = true;
           ledger.enable = true;
+          via.enable = true;
           vlc.enable = true;
         };
       };

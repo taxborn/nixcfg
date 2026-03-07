@@ -12,6 +12,7 @@
     ./ledger
     ./obs
     ./rofi
+    ./via
     ./vlc
     ./zoxide
   ];
