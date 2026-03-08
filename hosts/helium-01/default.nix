@@ -22,11 +22,7 @@ in
 
   environment.systemPackages = with pkgs; [
     ntfs3g
-    jdk21_headless
   ];
-
-  # homestead server w mickey
-  networking.firewall.allowedTCPPorts = [ 25565 ];
 
   myNixOS = {
     base.enable = true;
@@ -107,6 +103,11 @@ in
       };
       immich.enable = true;
       paperless-ngx.enable = true;
+      minecraft.servers.mick-n-b = {
+        enable = true;
+        directory = "/home/taxborn/public/mick-n-b";
+        port = 25565;
+      };
       tailscale = {
         enable = true;
         operator = "taxborn";

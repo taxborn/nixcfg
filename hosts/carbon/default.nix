@@ -1,6 +1,5 @@
 {
   self,
-  pkgs,
   config,
   modulesPath,
   ...
@@ -23,13 +22,6 @@ in
   networking.hostName = "carbon";
   time.timeZone = "America/Chicago";
   system.stateVersion = "25.11";
-
-  # homestead server w mavs
-  networking.firewall.allowedTCPPorts = [ 25565 ];
-
-  environment.systemPackages = with pkgs; [
-    jdk21_headless
-  ];
 
   myNixOS = {
     base.enable = true;
@@ -86,6 +78,11 @@ in
       tangled-knot.enable = true;
       taxborn-com.enable = true;
       vaultwarden.enable = true;
+      minecraft.servers.mavs = {
+        enable = true;
+        directory = "/home/taxborn/public/mavs";
+        port = 25565;
+      };
     };
   };
 

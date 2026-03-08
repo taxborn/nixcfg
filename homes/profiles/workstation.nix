@@ -42,7 +42,6 @@
         fzf.enable = true;
         zoxide.enable = true;
       };
-      taxborn.programs.neovim.enable = true;
     };
   };
 }

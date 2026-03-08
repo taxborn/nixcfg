@@ -1,6 +1,7 @@
 {
   imports = [
     ./atproto
+    ./minecraft
     ./avahi
     ./ollama
     ./backups
