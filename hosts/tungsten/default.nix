@@ -1,5 +1,6 @@
 {
   self,
+  config,
   ...
 }:
 let
@@ -7,6 +8,7 @@ let
     "fido2-device=auto"
     "token-timeout=30"
   ];
+  net = config.mySnippets.mischief-town.networkMap;
 in
 {
   imports = [
@@ -47,7 +49,7 @@ in
             remotePath = "borg14";
           };
           helium = {
-            path = "ssh://taxborn@100.64.1.0//mnt/hdd/borg-repos/tungsten";
+            path = "ssh://taxborn@${net.tailscaleIPs.helium-01}//mnt/hdd/borg-repos/tungsten";
             label = "helium";
           };
         };
@@ -55,7 +57,7 @@ in
       node-exporter.enable = true;
       promtail = {
         enable = true;
-        lokiUrl = "http://100.64.1.0:3100";
+        lokiUrl = "http://${net.tailscaleIPs.helium-01}:${toString net.loki.port}";
       };
       sddm = {
         enable = true;

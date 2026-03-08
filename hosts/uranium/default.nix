@@ -63,7 +63,7 @@ in
       node-exporter.enable = true;
       promtail = {
         enable = true;
-        lokiUrl = "http://100.64.1.0:3100";
+        lokiUrl = "http://${net.tailscaleIPs."helium-01"}:${toString net.loki.port}";
       };
       sddm = {
         enable = true;
