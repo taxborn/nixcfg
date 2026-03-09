@@ -6,11 +6,12 @@
 }:
 {
   imports = [
+    ./dwl
     ./hyprland
   ];
 
   options.myHome.desktop.enable = lib.mkOption {
-    default = config.myHome.desktop.hyprland.enable;
+    default = config.myHome.desktop.hyprland.enable || config.myHome.desktop.dwl.enable;
     description = "Desktop environment configuration.";
     type = lib.types.bool;
   };

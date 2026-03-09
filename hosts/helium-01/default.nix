@@ -85,7 +85,7 @@ in
       };
       loki = {
         enable = true;
-        listenAddress = "100.64.1.0";
+        listenAddress = net.tailscaleIPs."helium-01";
       };
       node-exporter.enable = true;
       smartctl-exporter = {
@@ -103,11 +103,6 @@ in
       };
       immich.enable = true;
       paperless-ngx.enable = true;
-      minecraft.servers.mick-n-b = {
-        enable = true;
-        directory = "/home/taxborn/public/mick-n-b";
-        port = 25565;
-      };
       tailscale = {
         enable = true;
         operator = "taxborn";
