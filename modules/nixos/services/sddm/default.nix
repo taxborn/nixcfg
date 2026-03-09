@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 {
@@ -22,6 +23,8 @@
       kwallet.enable = true;
     };
 
+    environment.systemPackages = [ pkgs.adwaita-icon-theme ];
+
     services.displayManager = {
       autoLogin = lib.mkIf (config.myNixOS.services.sddm.autoLogin != null) {
         enable = true;
@@ -30,6 +33,11 @@
 
       sddm = {
         enable = true;
+
+        settings.Theme = {
+          CursorTheme = "Adwaita";
+          CursorSize = "24";
+        };
 
         wayland = {
           enable = true;
