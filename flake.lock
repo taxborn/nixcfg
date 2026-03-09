@@ -67,11 +67,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1772928715,
-        "narHash": "sha256-Z7qGN/5v7oBc6wjNtSR7YI/JneEzPvCqd+P6RAxMltA=",
+        "lastModified": 1773005383,
+        "narHash": "sha256-Nlln9sKJa1q5lYX4xXS34Lt1oREwgQbT59Aa37nBGkU=",
         "owner": "9001",
         "repo": "copyparty",
-        "rev": "ffe6a9aa6fb7d49a4a1be3007c8d3297f88f4bc8",
+        "rev": "266d6e0ae6a6eecac7bc863bd8f746d16686e61a",
         "type": "github"
       },
       "original": {
@@ -147,17 +147,33 @@
         ]
       },
       "locked": {
-        "lastModified": 1772867152,
-        "narHash": "sha256-RIFgZ4O6Eg+5ysZ8Tqb3YvcqiRaNy440GEY22ltjRrs=",
+        "lastModified": 1773025010,
+        "narHash": "sha256-khlHllTsovXgT2GZ0WxT4+RvuMjNeR5OW0UYeEHPYQo=",
         "owner": "nix-community",
         "repo": "disko",
-        "rev": "eaafb89b56e948661d618eefd4757d9ea8d77514",
+        "rev": "7b9f7f88ab3b339f8142dc246445abb3c370d3d3",
         "type": "github"
       },
       "original": {
         "owner": "nix-community",
         "repo": "disko",
         "type": "github"
+      }
+    },
+    "dwl-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1773015115,
+        "narHash": "sha256-u7zwwPwilMU07fdyOgYMb6OnS031SOvc+7GelJwaUd0=",
+        "ref": "refs/heads/main",
+        "rev": "35a334ca9129d3ca58df8a38d340d68755aa4133",
+        "revCount": 1321,
+        "type": "git",
+        "url": "https://git.mischief.town/taxborn/dwl"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://git.mischief.town/taxborn/dwl"
       }
     },
     "flake-compat": {
@@ -352,11 +368,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1772845525,
-        "narHash": "sha256-Dp5Ir2u4jJDGCgeMRviHvEQDe+U37hMxp6RSNOoMMPc=",
+        "lastModified": 1772985285,
+        "narHash": "sha256-wEEmvfqJcl9J0wyMgMrj1TixOgInBW/6tLPhWGoZE3s=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "27b93804fbef1544cb07718d3f0a451f4c4cd6c0",
+        "rev": "5be5d8245cbc7bc0c09fbb5f38f23f223c543f85",
         "type": "github"
       },
       "original": {
@@ -611,11 +627,11 @@
     },
     "nixpkgs_3": {
       "locked": {
-        "lastModified": 1772704124,
-        "narHash": "sha256-thXluFpTTSJDwkJXInd22dx+h9QyjlkcNlbd4bQf0aE=",
+        "lastModified": 1773048816,
+        "narHash": "sha256-MTcASB9ei76fqVR56zNk8ceI0Lzq7ulFf4Z3AWxN3MM=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "289c8a834fbf87af1f01cb78f479537ef5219a0b",
+        "rev": "8b5693330a8862116a6d635ab76cbbe14eeea16a",
         "type": "github"
       },
       "original": {
@@ -656,6 +672,7 @@
         "agenix": "agenix",
         "copyparty": "copyparty",
         "disko": "disko",
+        "dwl-src": "dwl-src",
         "flake-parts": "flake-parts",
         "home-manager": "home-manager_2",
         "lanzaboote": "lanzaboote",
@@ -802,11 +819,11 @@
         "sqlite-lib-src": "sqlite-lib-src"
       },
       "locked": {
-        "lastModified": 1772710663,
-        "narHash": "sha256-DoiqADcD2Z5NscMHPZ7a/RX1+VTexHN68P4WL6eAG04=",
+        "lastModified": 1773035708,
+        "narHash": "sha256-1jOmdX0jVsJdEktaDSn9aue81AMBCoFyc1Rs3adgtYs=",
         "ref": "refs/heads/master",
-        "rev": "e326cc53ad4e9123552bdf20a192aff6ca1eb135",
-        "revCount": 2019,
+        "rev": "6b3ca47623680d77ed5b43ebac483b26dc373485",
+        "revCount": 2020,
         "type": "git",
         "url": "https://tangled.org/tangled.org/core"
       },

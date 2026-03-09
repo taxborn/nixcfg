@@ -56,6 +56,7 @@ in
     ",PRINT,exec,${lib.getExe helpers.screenshot}"
     "CTRL,F12,exec,${lib.getExe helpers.screenshot}"
     "$mod, L,exec,${lib.getExe' pkgs.systemd "loginctl"} lock-session"
+    "$mod SHIFT,M,exec,${lib.getExe' pkgs.systemd "loginctl"} terminate-session $XDG_SESSION_ID"
     "$mod SHIFT,backslash,togglesplit"
 
     "$mod SHIFT,comma,exec,${lib.getExe pkgs.hyprnome} --previous --move"

@@ -26,6 +26,7 @@ in
     base.enable = true;
     desktop = {
       enable = true;
+      dwl.enable = true;
       hyprland = {
         enable = true;
         monitors = [
@@ -65,10 +66,7 @@ in
         enable = true;
         lokiUrl = "http://${net.tailscaleIPs."helium-01"}:${toString net.loki.port}";
       };
-      sddm = {
-        enable = true;
-        autoLogin = "taxborn";
-      };
+      sddm.enable = true;
       tailscale = {
         enable = true;
         operator = "taxborn";
