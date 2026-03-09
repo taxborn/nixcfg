@@ -55,12 +55,6 @@
                 nixpkgs.config.allowUnfree = true;
                 nixpkgs.overlays = [
                   inputs.copyparty.overlays.default
-                  (final: prev: {
-                    dwlb = final.callPackage ../../packages/dwlb { };
-                    dwl = final.callPackage ../../packages/dwl {
-                      src = inputs.dwl-src;
-                    };
-                  })
                 ];
               }
             ];

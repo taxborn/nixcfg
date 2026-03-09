@@ -6,7 +6,6 @@
 }:
 {
   imports = [
-    ./dwl
     ./hyprland
   ];
 

@@ -35,11 +35,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    dwl-src = {
-      url = "git+https://git.mischief.town/taxborn/dwl";
-      flake = false;
-    };
-
     secrets = {
       url = "git+https://git.mischief.town/nix-infra/secrets";
       flake = false;

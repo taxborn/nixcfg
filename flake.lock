@@ -160,22 +160,6 @@
         "type": "github"
       }
     },
-    "dwl-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1773064942,
-        "narHash": "sha256-oemFCTkPPOxjuQRdlFc7nHvxBmHnlM04cKlxi/QNyeY=",
-        "ref": "refs/heads/main",
-        "rev": "9bbb1de95b78d56615a8963dc35ae9951778626f",
-        "revCount": 1325,
-        "type": "git",
-        "url": "https://git.mischief.town/taxborn/dwl"
-      },
-      "original": {
-        "type": "git",
-        "url": "https://git.mischief.town/taxborn/dwl"
-      }
-    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -672,7 +656,6 @@
         "agenix": "agenix",
         "copyparty": "copyparty",
         "disko": "disko",
-        "dwl-src": "dwl-src",
         "flake-parts": "flake-parts",
         "home-manager": "home-manager_2",
         "lanzaboote": "lanzaboote",

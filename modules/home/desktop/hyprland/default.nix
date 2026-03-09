@@ -57,6 +57,10 @@
       systemd = {
         enable = true;
         variables = [ "--all" ];
+        extraCommands = [
+          "systemctl --user stop 'xdg-desktop-portal*'"
+          "systemctl --user start xdg-desktop-portal-hyprland.service xdg-desktop-portal.service"
+        ];
       };
     };
 

@@ -26,7 +26,6 @@ in
     base.enable = true;
     desktop = {
       enable = true;
-      dwl.enable = true;
       hyprland = {
         enable = true;
         monitors = [

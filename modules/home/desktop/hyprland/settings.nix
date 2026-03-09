@@ -68,6 +68,7 @@ in
     "$mod SHIFT,V,togglefloating"
     "$mod SHIFT,W,fullscreen"
     "$mod,Q,killactive"
+    "$mod SHIFT,C,exec,command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch exit"
 
     "$mod,R,exec,${lib.getExe config.programs.rofi.package} -show drun"
     "$mod SHIFT,E,exec,${lib.getExe config.programs.rofi.package} -modi \"emoji:${lib.getExe pkgs.rofimoji}\" -show emoji"
