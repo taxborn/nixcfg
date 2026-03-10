@@ -63,7 +63,7 @@ in
     "$mod,comma,exec,${lib.getExe pkgs.hyprnome} --previous"
     "$mod,period,exec,${lib.getExe pkgs.hyprnome}"
 
-    "$mod SHIFT,S,movetoworkspace,special:magic"
+    "$mod SHIFT,S,movetoworkspace,special:ghostty"
     "$mod SHIFT,V,togglefloating"
     "$mod SHIFT,W,fullscreen"
     "$mod,Q,killactive"
@@ -76,7 +76,7 @@ in
     "$mod,F11,exec,pkill -SIGUSR1 waybar"
     "$mod,Left,changegroupactive,b"
     "$mod,Right,changegroupactive,f"
-    "$mod,S,togglespecialworkspace,magic"
+    "$mod,S,togglespecialworkspace,ghostty"
   ]
   ++ builtins.map (x: "$mod SHIFT,${toString x},movetoworkspace,${toString x}") [
     1
@@ -199,6 +199,10 @@ in
   ++ lib.lists.optional (
     cfg.desktop.hyprland.laptopMonitor != null
   ) cfg.desktop.hyprland.laptopMonitor;
+
+  exec-once = [
+    "[workspace special:ghostty silent] ${defaultApps.terminal} -e tmux"
+  ];
 
   xwayland.force_zero_scaling = true;
 }

@@ -13,6 +13,14 @@
 
   config = lib.mkIf config.myHome.taxborn.desktop.hyprland.enable {
     wayland.windowManager.hyprland.settings = {
+      exec-once = [
+        "${lib.getExe pkgs.discord}"
+      ];
+
+      windowrule = [
+        "workspace special:discord silent, match:class discord"
+      ];
+
       bind = [
         "$mod SHIFT,D,movetoworkspace,special:discord"
         "$mod,D,togglespecialworkspace,discord"
