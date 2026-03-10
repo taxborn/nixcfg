@@ -37,7 +37,6 @@
         eza.enable = true;
         fd.enable = true;
         fzf.enable = true;
-        yazi.enable = true;
         zoxide.enable = true;
       };
       taxborn.programs = {

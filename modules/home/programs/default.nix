@@ -15,7 +15,6 @@
     ./rofi
     ./via
     ./vlc
-    ./yazi
     ./zoxide
   ];
 }
