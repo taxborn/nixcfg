@@ -25,6 +25,7 @@
     home.packages = with pkgs; [
       libnotify
       networkmanagerapplet
+      wl-clipboard
     ];
 
     programs.firefox.enable = true;

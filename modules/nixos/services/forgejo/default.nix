@@ -6,7 +6,6 @@
   ...
 }:
 let
-  sshPort = 2222;
   sshUser = "git";
   signingKeyDir = "/var/lib/forgejo/signing";
 in
@@ -120,8 +119,8 @@ in
             LFS_START_SERVER = true;
             ROOT_URL = "https://${config.mySnippets.mischief-town.networkMap.forgejo.vHost}";
             SSH_DOMAIN = config.mySnippets.mischief-town.networkMap.forgejo.vHost;
-            SSH_LISTEN_PORT = sshPort;
-            SSH_PORT = sshPort;
+            SSH_LISTEN_PORT = config.mySnippets.mischief-town.networkMap.forgejo.sshPort;
+            SSH_PORT = config.mySnippets.mischief-town.networkMap.forgejo.sshPort;
             SSH_USER = sshUser;
             START_SSH_SERVER = true;
             BUILTIN_SSH_SERVER_USER = sshUser;
@@ -151,6 +150,8 @@ in
       group = "git";
     };
 
-    networking.firewall.allowedTCPPorts = [ sshPort ];
+    networking.firewall.allowedTCPPorts = [
+      config.mySnippets.mischief-town.networkMap.forgejo.sshPort
+    ];
   };
 }
