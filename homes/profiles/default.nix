@@ -31,12 +31,22 @@
       fish.enable = true;
     };
 
-    myHome.taxborn.programs = {
-      git.enable = true;
-      gpg.enable = true;
-      tmux.enable = true;
-      yubikey.enable = true;
-      neovim.enable = true;
+    myHome = {
+      programs = {
+        bat.enable = true;
+        eza.enable = true;
+        fd.enable = true;
+        fzf.enable = true;
+        yazi.enable = true;
+        zoxide.enable = true;
+      };
+      taxborn.programs = {
+        git.enable = true;
+        gpg.enable = true;
+        tmux.enable = true;
+        yubikey.enable = true;
+        neovim.enable = true;
+      };
     };
   };
 }

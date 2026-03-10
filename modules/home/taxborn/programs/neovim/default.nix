@@ -8,7 +8,7 @@
   options.myHome.taxborn.programs.neovim.enable = lib.mkEnableOption "enable neovim";
 
   config = lib.mkIf config.myHome.taxborn.programs.neovim.enable {
-    programs.fish.shellInit = ''
+    programs.fish.shellInit = lib.mkIf config.programs.fish.enable ''
       set -gx MANPAGER "nvim +Man!"
     '';
 
