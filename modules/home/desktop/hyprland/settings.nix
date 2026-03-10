@@ -15,7 +15,6 @@ let
     editor = cfg.profiles.defaultApps.editor.exec or (lib.getExe pkgs.gnome-text-editor);
   };
 
-  scripts = import ./scripts.nix { inherit config lib pkgs; };
   helpers = import ./helpers.nix { inherit config lib pkgs; };
 
   windowManagerBinds = {
@@ -128,10 +127,6 @@ in
     ",xf86audioplay,exec,${helpers.media.play}"
     ",xf86audioprev,exec,${helpers.media.prev}"
     ",xf86audionext,exec,${helpers.media.next}"
-  ]
-  ++ lib.lists.optionals (cfg.desktop.hyprland.laptopMonitor != null) [
-    ",switch:on:Lid Switch,exec,${scripts.clamshell} on"
-    ",switch:off:Lid Switch,exec,${scripts.clamshell} off"
   ];
 
   bindle = [
