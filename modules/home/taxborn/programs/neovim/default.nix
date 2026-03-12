@@ -30,9 +30,9 @@
         stylua
       ];
 
-      initLua = builtins.readFile ./init.lua;
     };
 
-    xdg.configFile."nvim/lua".source = ./lua;
+    xdg.configFile."nvim".source = config.lib.file.mkOutOfStoreSymlink
+      "/home/taxborn/dev/nix-infra/nixcfg/modules/home/taxborn/programs/neovim";
   };
 }
