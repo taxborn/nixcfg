@@ -14,6 +14,7 @@
       discord
       obsidian
       spotify
+      signal-desktop
     ];
 
     programs.zen-browser = {

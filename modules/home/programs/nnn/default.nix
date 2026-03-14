@@ -6,6 +6,10 @@
     programs.nnn.enable = true;
 
     programs.fish = lib.mkIf config.programs.fish.enable {
+      functions.fish_user_key_bindings.body = ''
+        bind \co 'commandline -r n; commandline -f execute'
+      '';
+
       functions.n = {
         wraps = "nnn";
         description = "nnn with cd on quit";

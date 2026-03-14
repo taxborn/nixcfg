@@ -27,12 +27,16 @@ vim.o.softtabstop = 4
 vim.o.ignorecase = true
 vim.o.smartcase = true
 
-vim.o.updatetime = 250
+vim.o.updatetime = 50
 vim.o.timeoutlen = 300
 vim.o.splitright = true
 vim.o.splitbelow = true
 
 vim.o.signcolumn = "yes"
+
+vim.o.colorcolumn = "100"
+vim.o.showmatch = true
+vim.o.showmode = false
 
 vim.o.list = true
 vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
@@ -42,6 +46,8 @@ vim.o.inccommand = "split"
 vim.o.cursorline = true
 vim.o.scrolloff = 10
 vim.o.confirm = true
+
+vim.o.encoding = "utf-8"
 
 -- Highlight when yanking (copying) text
 vim.api.nvim_create_autocmd("TextYankPost", {

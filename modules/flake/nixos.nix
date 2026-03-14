@@ -55,6 +55,7 @@
                 nixpkgs.config.allowUnfree = true;
                 nixpkgs.overlays = [
                   inputs.copyparty.overlays.default
+                  inputs.neovim-nightly-overlay.overlays.default
                 ];
               }
             ];

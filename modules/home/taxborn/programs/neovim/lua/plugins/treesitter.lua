@@ -5,6 +5,7 @@ return {
     branch = "main",
     config = function()
         local parsers = {
+            "astro",
             "bash",
             "c",
             "diff",
@@ -33,8 +34,9 @@ return {
                     return
                 end
                 vim.treesitter.start(buf, language)
-                -- vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
-                -- vim.wo.foldmethod = "expr"
+                vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+                vim.wo.foldmethod = "expr"
+                vim.wo.foldlevel = 99
                 -- enables treesitter based indentation
                 vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
             end,

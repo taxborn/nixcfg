@@ -10,6 +10,7 @@
   };
 
   config = lib.mkIf config.myHome.programs.claude-code.enable {
-    home.packages = [ pkgs.claude-code ];
+        # sox allows use of voice-to-text
+    home.packages = with pkgs; [ claude-code sox ];
   };
 }
