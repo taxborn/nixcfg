@@ -45,6 +45,8 @@
     system.configurationRevision = self.rev or self.dirtyRev or null;
 
     myNixOS = {
+      programs.neovim.enable = true;
+
       profiles = {
         bluetooth.enable = true;
         performance.enable = true;
