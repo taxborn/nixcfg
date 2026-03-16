@@ -22,6 +22,13 @@
   };
 
   config = lib.mkIf config.myHome.desktop.hyprland.enable {
+    home.pointerCursor = {
+      gtk.enable = true;
+      package = pkgs.adwaita-icon-theme;
+      name = "Adwaita";
+      size = 24;
+    };
+
     home.packages = with pkgs; [
       libnotify
       networkmanagerapplet
