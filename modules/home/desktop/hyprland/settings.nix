@@ -50,7 +50,7 @@ in
     "$mod,Return,exec,${defaultApps.terminal}"
     "$mod,B,exec,${defaultApps.webBrowser}"
     "$mod,E,exec,${defaultApps.editor}"
-    "$mod,F,exec,${defaultApps.fileManager}"
+    "$mod,F,exec,${defaultApps.terminal} -e ${lib.getExe pkgs.yazi}"
 
     ",PRINT,exec,${lib.getExe helpers.screenshot}"
     "CTRL,F12,exec,${lib.getExe helpers.screenshot}"
