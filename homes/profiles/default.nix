@@ -1,5 +1,7 @@
 {
   config,
+  lib,
+  pkgs,
   self,
   ...
 }:
@@ -24,11 +26,31 @@
       username = "taxborn";
       homeDirectory = "/home/taxborn";
       stateVersion = "25.11";
+
+      sessionPath = [ "$HOME/.zvm/bin" ];
+
+      packages = with pkgs; [
+        clang
+        go
+        rustc
+        cargo
+        lua
+        bun
+        jdk
+        uv
+        fnm
+        zvm
+      ];
     };
 
     programs = {
       home-manager.enable = true;
-      fish.enable = true;
+      fish = {
+        enable = true;
+        interactiveShellInit = ''
+          fnm env --use-on-cd --shell fish | source
+        '';
+      };
     };
 
     myHome = {
@@ -37,6 +59,8 @@
         eza.enable = true;
         fd.enable = true;
         fzf.enable = true;
+        ripgrep.enable = true;
+        yazi.enable = true;
         zoxide.enable = true;
       };
       taxborn.programs = {

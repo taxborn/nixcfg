@@ -10,11 +10,12 @@
     ./fzf
     ./ghostty
     ./ledger
-    ./nnn
     ./obs
+    ./ripgrep
     ./rofi
     ./via
     ./vlc
+    ./yazi
     ./zoxide
   ];
 }
