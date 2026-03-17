@@ -34,8 +34,6 @@
         go
         rustc
         cargo
-        lua
-        bun
         jdk
         uv
         fnm
