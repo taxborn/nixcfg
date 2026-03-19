@@ -1,5 +1,6 @@
 {
   self,
+  pkgs,
   config,
   ...
 }:
@@ -98,6 +99,16 @@ in
       "usbhid"
       "usb_storage"
       "sd_mod"
+    ];
+  };
+
+  hardware.graphics = {
+    enable = true;
+    extraPackages = with pkgs; [
+      mesa # includes RADV Vulkan driver
+      vulkan-loader
+      vulkan-tools
+      vulkan-validation-layers # optional, useful for debugging
     ];
   };
 

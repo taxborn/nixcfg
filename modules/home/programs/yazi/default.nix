@@ -7,6 +7,10 @@
       enable = true;
       shellWrapperName = "y";
       enableFishIntegration = true;
+      settings = {
+        manager.show_hidden = false;
+        manager.git_show = true;
+      };
     };
 
     programs.fish.interactiveShellInit = ''
