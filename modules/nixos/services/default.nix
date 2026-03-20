@@ -22,6 +22,7 @@
     ./sddm
     ./tailscale
     ./tangled-knot
+    ./hash-haus
     ./taxborn-com
     ./vaultwarden
   ];

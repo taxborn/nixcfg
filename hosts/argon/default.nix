@@ -11,6 +11,7 @@ in
 {
   imports = [
     ./home.nix
+    ./proxy.nix
     ./secrets.nix
 
     self.diskoConfigurations.btrfs-argon
@@ -70,6 +71,7 @@ in
         enable = true;
         enableCaddyJail = true;
       };
+      hash-haus.enable = true;
       minecraft.servers.tbd = {
         enable = true;
         directory = "/home/taxborn/public/tbd";
