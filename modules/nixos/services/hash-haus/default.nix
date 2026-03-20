@@ -22,6 +22,7 @@
           volumes = [ "/var/lib/hash-haus:/data" ];
           environment = {
             DATABASE_PATH = "/data/hash.haus.db";
+            SITE_URL = "https://hash.haus";
           };
         };
       };
