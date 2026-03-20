@@ -24,6 +24,7 @@
             DATABASE_PATH = "/data/hash.haus.db";
             SITE_URL = "https://hash.haus";
           };
+          environmentFiles = [ config.age.secrets.hash-haus.path ];
         };
       };
     };
