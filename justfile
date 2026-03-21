@@ -2,9 +2,8 @@
 update:
     sudo nixos-rebuild switch --flake
 
-# Restart the website on carbon
-deploy-website:
-    ssh carbon sudo systemctl restart podman-taxborn-com.service
+restart-web host website:
+    ssh -t {{host}} sudo systemctl restart podman-{{website}}.service
 
 # Deploy to a target host (e.g. `just deploy carbon`)
 deploy host:

@@ -26,7 +26,7 @@
       homeDirectory = "/home/taxborn";
       stateVersion = "25.11";
 
-      sessionPath = [ "$HOME/.zvm/bin" ];
+      sessionPath = [ "$HOME/.zvm/bin" "$HOME/.local/bin" ];
 
       packages = with pkgs; [
         clang
