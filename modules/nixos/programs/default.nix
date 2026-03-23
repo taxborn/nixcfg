@@ -1,6 +1,5 @@
 {
   imports = [
-    ./firefox
     ./gimp
     ./grub
     ./lanzaboote

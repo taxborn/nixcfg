@@ -33,7 +33,6 @@ in
     };
     profiles.btrfs.enable = true;
     programs = {
-      firefox.enable = true;
       lanzaboote.enable = true;
       nix.enable = true;
       yubikey.enable = true;

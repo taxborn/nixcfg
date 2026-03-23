@@ -8,7 +8,10 @@
   ];
 
   config = {
-    xdg.enable = true;
+    xdg = {
+        enable = true;
+        userDirs.setSessionVariables = true;
+    };
 
     home.packages = with pkgs; [
       discord

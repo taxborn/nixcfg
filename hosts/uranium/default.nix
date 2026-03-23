@@ -37,7 +37,6 @@ in
     };
     profiles.btrfs.enable = true;
     programs = {
-      firefox.enable = true;
       gimp.enable = true;
       lanzaboote.enable = true;
       nix.enable = true;

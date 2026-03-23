@@ -35,8 +35,6 @@
       wl-clipboard
     ];
 
-    programs.firefox.enable = true;
-
     services = {
       gnome-keyring.enable = true;
       blueman-applet.enable = true;
@@ -81,8 +79,8 @@
     myHome = {
       desktop.enable = true;
       programs.rofi.enable = true;
-
       services = {
+        swaybg.enable = true;
         hypridle.enable = true;
         mako.enable = true;
         swayosd.enable = true;

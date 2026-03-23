@@ -46,6 +46,10 @@ in
     ];
   };
 
+  windowrule = [
+    "workspace special:discord silent, match:class discord"
+  ];
+
   bind = [
     "$mod,Return,exec,${defaultApps.terminal}"
     "$mod,B,exec,${defaultApps.webBrowser}"
@@ -72,6 +76,10 @@ in
     "$mod,R,exec,${lib.getExe config.programs.rofi.package} -show drun"
     "$mod SHIFT,E,exec,${lib.getExe config.programs.rofi.package} -modi \"emoji:${lib.getExe pkgs.rofimoji}\" -show emoji"
     "$mod SHIFT,R,exec,${lib.getExe pkgs.rofi-rbw}"
+
+    "$mod SHIFT,D,movetoworkspace,special:discord"
+    "$mod,D,togglespecialworkspace,discord"
+    "$mod,N,exec,${lib.getExe' pkgs.obsidian "obsidian"}"
 
     "$mod,F11,exec,pkill -SIGUSR1 waybar"
     "$mod,Left,changegroupactive,b"
@@ -202,6 +210,7 @@ in
 
   exec-once = [
     "[workspace special:ghostty silent] ${defaultApps.terminal} -e tmux"
+    "${lib.getExe pkgs.discord}"
   ];
 
   xwayland.force_zero_scaling = true;
