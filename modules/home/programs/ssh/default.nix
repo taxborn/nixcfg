@@ -5,9 +5,9 @@
   ...
 }:
 {
-  options.myHome.taxborn.programs.ssh.enable = lib.mkEnableOption "openssh client";
+  options.myHome.programs.ssh.enable = lib.mkEnableOption "openssh client";
 
-  config = lib.mkIf config.myHome.taxborn.programs.ssh.enable {
+  config = lib.mkIf config.myHome.programs.ssh.enable {
     programs.ssh = {
       enable = true;
       enableDefaultConfig = false;

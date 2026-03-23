@@ -6,9 +6,9 @@
 }:
 
 {
-  options.myHome.taxborn.programs.gpg.enable = lib.mkEnableOption "gpg config";
+  options.myHome.programs.gpg.enable = lib.mkEnableOption "gpg config";
 
-  config = lib.mkIf config.myHome.taxborn.programs.gpg.enable {
+  config = lib.mkIf config.myHome.programs.gpg.enable {
     programs.gpg = {
       enable = true;
       scdaemonSettings.disable-ccid = true;

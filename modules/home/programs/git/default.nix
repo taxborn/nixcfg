@@ -3,11 +3,12 @@
   lib,
   pkgs,
   ...
-}: {
-  options.myHome.taxborn.programs.git.enable = lib.mkEnableOption "git version control";
+}:
+{
+  options.myHome.programs.git.enable = lib.mkEnableOption "git version control";
 
-  config = lib.mkIf config.myHome.taxborn.programs.git.enable {
-    home.packages = [pkgs.wl-clipboard];
+  config = lib.mkIf config.myHome.programs.git.enable {
+    home.packages = [ pkgs.wl-clipboard ];
 
     programs = {
       delta = {

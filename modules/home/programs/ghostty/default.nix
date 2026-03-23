@@ -11,7 +11,7 @@
       enable = true;
 
       settings = {
-        font-family = "Atkinson Hyperlegible Mono";
+        font-family = "JetBrainsMono Nerd Font";
         window-padding-x = 4;
         window-padding-y = 4;
         theme = "catppuccin-mocha.conf";

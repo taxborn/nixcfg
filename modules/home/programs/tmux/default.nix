@@ -5,9 +5,9 @@
   ...
 }:
 {
-  options.myHome.taxborn.programs.tmux.enable = lib.mkEnableOption "enable tmux";
+  options.myHome.programs.tmux.enable = lib.mkEnableOption "enable tmux";
 
-  config = lib.mkIf config.myHome.taxborn.programs.tmux.enable {
+  config = lib.mkIf config.myHome.programs.tmux.enable {
     programs.tmux = {
       enable = true;
       mouse = true;

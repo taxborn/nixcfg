@@ -9,8 +9,8 @@
 
   config = {
     xdg = {
-        enable = true;
-        userDirs.setSessionVariables = true;
+      enable = true;
+      userDirs.setSessionVariables = true;
     };
 
     home.packages = with pkgs; [
@@ -40,11 +40,6 @@
     };
 
     myHome = {
-      taxborn.programs = {
-        minecraft.enable = true;
-        zed-editor.enable = true;
-        zen.enable = true;
-      };
       profiles.defaultApps.enable = true;
       desktop.hyprland.enable = true;
       programs = {
@@ -55,10 +50,13 @@
           baseUrl = "https://vw.mischief.town";
         };
         claude-code.enable = true;
+        firefox.enable = true;
         feh.enable = true;
         ghostty.enable = true;
+        minecraft.enable = true;
         obs.enable = true;
         vlc.enable = true;
+        zed-editor.enable = true;
       };
     };
   };

@@ -18,10 +18,6 @@
       noto-fonts-cjk-sans
       noto-fonts-color-emoji
 
-      # Accessible fonts
-      atkinson-hyperlegible-next
-      atkinson-hyperlegible-mono
-
     ];
     programs.waybar = {
       enable = true;

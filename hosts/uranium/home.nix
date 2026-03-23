@@ -10,10 +10,10 @@
 
     config = {
       myHome = {
-        taxborn.programs.minecraft.enable = true;
         programs = {
           obs.enable = true;
           ledger.enable = true;
+          minecraft.enable = true;
           via.enable = true;
         };
       };

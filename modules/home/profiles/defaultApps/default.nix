@@ -129,13 +129,13 @@ in
     webBrowser = {
       package = lib.mkOption {
         type = lib.types.package;
-        default = config.programs.zen-browser.package;
+        default = config.programs.firefox.package;
         description = "The default web browser package.";
       };
 
       exec = lib.mkOption {
         type = lib.types.str;
-        default = lib.getExe config.programs.zen-browser.package;
+        default = lib.getExe config.programs.firefox.package;
         description = "The executable path for the default web browser.";
       };
     };

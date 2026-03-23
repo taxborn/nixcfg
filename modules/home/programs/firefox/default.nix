@@ -1,19 +1,17 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 let
   engines = import ./engines.nix;
 in
 {
-  options.myHome.taxborn.programs.firefox.enable = lib.mkEnableOption "firefox web browser";
+  options.myHome.programs.firefox.enable = lib.mkEnableOption "firefox web browser";
 
-  config = lib.mkIf config.myHome.taxborn.programs.firefox.enable {
+  config = lib.mkIf config.myHome.programs.firefox.enable {
     programs.firefox = {
       enable = true;
-      package = lib.mkIf pkgs.stdenv.isDarwin null;
 
       profiles = {
         default = {
@@ -41,13 +39,6 @@ in
               name = "Atolls";
             };
           };
-
-          extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
-            augmented-steam
-            bitwarden
-            consent-o-matic
-            ublock-origin
-          ];
 
           id = 0;
 

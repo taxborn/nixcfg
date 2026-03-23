@@ -7,15 +7,24 @@
     ./eza
     ./fd
     ./feh
+    ./firefox
     ./fzf
     ./ghostty
+    ./git
+    ./gpg
     ./ledger
+    ./minecraft
+    ./neovim
     ./obs
     ./ripgrep
     ./rofi
+    ./ssh
+    ./tmux
     ./via
     ./vlc
     ./yazi
+    ./yubikey
+    ./zed-editor
     ./zoxide
   ];
 }

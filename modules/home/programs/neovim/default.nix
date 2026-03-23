@@ -5,9 +5,9 @@
   ...
 }:
 {
-  options.myHome.taxborn.programs.neovim.enable = lib.mkEnableOption "enable neovim";
+  options.myHome.programs.neovim.enable = lib.mkEnableOption "enable neovim";
 
-  config = lib.mkIf config.myHome.taxborn.programs.neovim.enable {
+  config = lib.mkIf config.myHome.programs.neovim.enable {
     programs.fish.shellInit = lib.mkIf config.programs.fish.enable ''
       set -gx MANPAGER "nvim +Man!"
     '';
@@ -32,7 +32,7 @@
 
     };
 
-    xdg.configFile."nvim".source = config.lib.file.mkOutOfStoreSymlink
-      "/home/taxborn/dev/nix-infra/nixcfg/modules/home/taxborn/programs/neovim";
+    xdg.configFile."nvim".source =
+      config.lib.file.mkOutOfStoreSymlink "/home/taxborn/dev/nix-infra/nixcfg/modules/home/taxborn/programs/neovim";
   };
 }

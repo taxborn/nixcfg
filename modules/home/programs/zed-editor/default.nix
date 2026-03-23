@@ -5,9 +5,9 @@
   ...
 }:
 {
-  options.myHome.taxborn.programs.zed-editor.enable = lib.mkEnableOption "zed editor";
+  options.myHome.programs.zed-editor.enable = lib.mkEnableOption "zed editor";
 
-  config = lib.mkIf config.myHome.taxborn.programs.zed-editor.enable {
+  config = lib.mkIf config.myHome.programs.zed-editor.enable {
     home.packages = with pkgs; [
       nil
       nixfmt
@@ -54,14 +54,14 @@
         };
 
         # --- Appearance ---
-        buffer_font_family = "Atkinson Hyperlegible Mono";
+        buffer_font_family = "JetBrainsMono Nerd Font";
         buffer_font_size = 15;
         buffer_font_weight = 400;
 
         buffer_line_height = "comfortable";
         current_line_highlight = "all";
         selection_highlight = true;
-        ui_font_family = "Atkinson Hyperlegible Next";
+        ui_font_family = "JetBrainsMono Nerd Font";
         ui_font_size = 15;
         ui_font_weight = 400;
 
