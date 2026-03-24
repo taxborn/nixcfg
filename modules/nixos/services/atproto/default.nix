@@ -4,6 +4,9 @@
   lib,
   ...
 }:
+let
+  net = config.mySnippets.mischief-town.networkMap;
+in
 {
   options.myNixOS.services.pds.enable = lib.mkEnableOption "atproto pds";
 
@@ -22,8 +25,8 @@
       environmentFiles = [ config.age.secrets.pds.path ];
 
       settings = {
-        PDS_PORT = config.mySnippets.mischief-town.networkMap.pds.port;
-        PDS_HOSTNAME = config.mySnippets.mischief-town.networkMap.pds.vHost;
+        PDS_PORT = net.pds.port;
+        PDS_HOSTNAME = net.pds.vHost;
         PDS_ADMIN_EMAIL = "atproto@mischief.town";
         # crawlers shamlessly stolen from
         # <https://compare.hose.cam>
@@ -41,7 +44,7 @@
           "https://relay.whey.party"
         ];
 
-        PDS_OAUTH_PROVIDER_NAME = "pds.mischief.town";
+        PDS_OAUTH_PROVIDER_NAME = net.pds.vHost;
       };
     };
   };

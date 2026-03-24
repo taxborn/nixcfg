@@ -33,6 +33,6 @@
     };
 
     xdg.configFile."nvim".source =
-      config.lib.file.mkOutOfStoreSymlink "/home/taxborn/dev/nix-infra/nixcfg/modules/home/taxborn/programs/neovim";
+      config.lib.file.mkOutOfStoreSymlink "/home/taxborn/dev/nix-infra/nixcfg/modules/home/programs/neovim";
   };
 }

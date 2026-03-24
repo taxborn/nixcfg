@@ -101,15 +101,11 @@ in
     ];
   };
 
-  hardware.graphics = {
-    enable = true;
-    extraPackages = with pkgs; [
-      mesa # includes RADV Vulkan driver
-      vulkan-loader
-      vulkan-tools
-      vulkan-validation-layers # optional, useful for debugging
-    ];
-  };
+  hardware.graphics.extraPackages = with pkgs; [
+    mesa
+    vulkan-loader
+    vulkan-tools
+  ];
 
   myUsers.taxborn = {
     enable = true;
