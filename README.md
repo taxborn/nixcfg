@@ -70,7 +70,6 @@ nixcfg/
       profiles/            #   default apps, MIME types
       programs/            #   ghostty, bitwarden, ledger, obs, rofi
       services/            #   hypridle, mako, swaybg, swayosd, waybar
-      taxborn/             #   user-specific: firefox, git, gpg, minecraft, ssh, zen, zed-editor
     locale/                # locale/timezone
     nixos/                 # NixOS system modules
       base/                #   core system config (networkmanager, git, htop, swap, bluetooth)
