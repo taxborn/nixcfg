@@ -28,6 +28,8 @@
         tree-sitter
         lua-language-server
         stylua
+        astro-language-server
+        typescript
       ];
 
     };

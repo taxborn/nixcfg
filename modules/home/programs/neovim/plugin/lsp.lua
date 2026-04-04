@@ -12,6 +12,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
             vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
         end
 
+        map('<leader>F', vim.lsp.buf.format, '[F]ormat')
         map('grn', vim.lsp.buf.rename, '[R]e[n]ame')
         map('gra', vim.lsp.buf.code_action, '[G]oto Code [A]ction', { 'n', 'x' })
         map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
@@ -54,7 +55,21 @@ local servers = {
     rust_analyzer = {},
     zls = {},
     ts_ls = {},
-    astro = {},
+    tailwindcss = {},
+    astro = {
+        init_options = {
+            typescript = {
+                tsdk = (function()
+                    local tsc = vim.fn.exepath('tsc')
+                    if tsc ~= '' then
+                        -- /nix/store/xxx-typescript/bin/tsc -> /nix/store/xxx-typescript/lib/node_modules/typescript/lib
+                        return tsc:gsub('/bin/tsc$', '/lib/node_modules/typescript/lib')
+                    end
+                    return ''
+                end)(),
+            },
+        },
+    },
 
     lua_ls = {
         on_init = function(client)
