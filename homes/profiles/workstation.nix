@@ -1,7 +1,4 @@
-{
-  pkgs,
-  ...
-}:
+{ pkgs, ... }:
 {
   imports = [
     ./default.nix
@@ -49,7 +46,7 @@
           email = "hello@taxborn.com";
           baseUrl = "https://vw.mischief.town";
         };
-        claude-code.enable = true;
+        claude-code.enable = false;
         firefox.enable = true;
         feh.enable = true;
         ghostty.enable = true;
