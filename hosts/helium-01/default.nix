@@ -91,9 +91,10 @@ in
         enable = true;
         devices = [ "/dev/disk/by-id/usb-WD_My_Book_25ED_575835324443304A30443532-0:0" ];
       };
-      promtail = {
+      fluent-bit = {
         enable = true;
-        lokiUrl = "http://localhost:${toString net.loki.port}";
+        lokiHost = "localhost";
+        lokiPort = net.loki.port;
       };
       forgejo-runner = {
         enable = true;

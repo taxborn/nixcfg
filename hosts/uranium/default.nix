@@ -61,9 +61,10 @@ in
         };
       };
       node-exporter.enable = true;
-      promtail = {
+      fluent-bit = {
         enable = true;
-        lokiUrl = "http://${net.tailscaleIPs."helium-01"}:${toString net.loki.port}";
+        lokiHost = net.tailscaleIPs."helium-01";
+        lokiPort = net.loki.port;
       };
       sddm.enable = true;
       tailscale = {

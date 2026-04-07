@@ -18,7 +18,7 @@
     ./smartctl-exporter
     ./openssh
     ./paperless
-    ./promtail
+    ./fluent-bit
     ./sddm
     ./tailscale
     ./tangled-knot
