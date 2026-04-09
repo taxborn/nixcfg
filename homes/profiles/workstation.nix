@@ -14,7 +14,7 @@
       discord
       obsidian
       spotify
-      signal-desktop
+      nemo
     ];
 
     programs.zen-browser = {
@@ -46,7 +46,6 @@
           email = "hello@taxborn.com";
           baseUrl = "https://vw.mischief.town";
         };
-        claude-code.enable = false;
         firefox.enable = true;
         feh.enable = true;
         ghostty.enable = true;

@@ -3,7 +3,6 @@
     ./bat
     ./bitwarden
     ./cheatsheet
-    ./claude-code
     ./eza
     ./fd
     ./feh

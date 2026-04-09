@@ -16,6 +16,8 @@
       enable = true;
       vimAlias = true;
       defaultEditor = true;
+      withRuby = false;
+      withPython3 = false;
 
       # runtime deps: ripgrep/fd for telescope, gcc+make for telescope-fzf-native, git for lazy.nvim
       extraPackages = with pkgs; [

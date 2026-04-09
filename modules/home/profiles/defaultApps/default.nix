@@ -31,8 +31,11 @@ in
       package = lib.mkOption {
         type = lib.types.package;
         default =
-          if config.myHome.taxborn.programs.zed-editor.enable or false then pkgs.zed-editor else pkgs.neovim;
-        description = "The default text editor package.";
+          if config.myHome.taxborn.programs.zed-editor.enable or false then
+            pkgs.zed-editor
+          else
+            config.programs.neovim.finalPackage;
+        description = "The default text editor package. Must be installed separately.";
       };
 
       exec = lib.mkOption {
@@ -101,8 +104,8 @@ in
     terminalEditor = {
       package = lib.mkOption {
         type = lib.types.package;
-        default = pkgs.neovim;
-        description = "The default terminal text editor package.";
+        default = config.programs.neovim.finalPackage;
+        description = "The default terminal text editor package. Must be installed separately.";
       };
 
       exec = lib.mkOption {
@@ -151,26 +154,15 @@ in
       };
     };
 
-    home = {
-      packages =
-        with cfg;
-        [
-          audioPlayer.package
-          editor.package
-          fileManager.package
-          imageViewer.package
-          pdfViewer.package
-          terminal.package
-          videoPlayer.package
-          # webBrowser.package
-        ]
-        ++ lib.optional (!config.programs.neovim.enable) terminalEditor.package;
-
-      sessionVariables = {
-        BROWSER = "${builtins.baseNameOf cfg.webBrowser.exec}";
-        EDITOR = "${builtins.baseNameOf cfg.terminalEditor.exec}";
-        TERMINAL = "${builtins.baseNameOf cfg.terminal.exec}";
-      };
+    # NOTE: this module only wires up defaults (session vars, dconf, mime,
+    # desktop entries). It does NOT install any packages — installation is the
+    # responsibility of the consumer (via myHome.programs.*.enable or
+    # home.packages). This separation prevents wrapped/unwrapped buildEnv
+    # collisions (see: 2026-04 neovim nightly overlay removal).
+    home.sessionVariables = {
+      BROWSER = "${builtins.baseNameOf cfg.webBrowser.exec}";
+      EDITOR = "${builtins.baseNameOf cfg.terminalEditor.exec}";
+      TERMINAL = "${builtins.baseNameOf cfg.terminal.exec}";
     };
 
     xdg = {
