@@ -19,14 +19,13 @@
         stateDir = "/var/lib/tangled-knot";
         repo.scanPath = "/var/lib/tangled-knot/repos";
         server = {
-          listenAddr = "0.0.0.0:${toString config.mySnippets.mischief-town.networkMap.tangled-knot.port}";
+          # Bind only to loopback; caddy proxies from the outside.
+          listenAddr = "127.0.0.1:${toString config.mySnippets.mischief-town.networkMap.tangled-knot.port}";
           hostname = config.mySnippets.mischief-town.networkMap.tangled-knot.vHost;
           internalListenAddr = "127.0.0.1:${toString config.mySnippets.mischief-town.networkMap.tangled-knot.internalPort}";
           owner = "did:plc:2grdruc2p6fjhksrfpt366yl";
         };
       };
     };
-
-    networking.firewall.allowedTCPPorts = [ 22 ];
   };
 }

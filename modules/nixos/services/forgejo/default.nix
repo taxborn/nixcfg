@@ -74,7 +74,7 @@ in
 
           log = {
             ENABLE_SSH_LOG = true;
-            LEVEL = "Debug";
+            LEVEL = "Info";
           };
 
           mailer = {
