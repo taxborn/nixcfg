@@ -34,22 +34,13 @@ in
     services = {
       backups.client = {
         enable = true;
+        enableRsyncRepo = true;
+        enableHeliumRepo = true;
         extraExcludes = [
           "/var/lib/containers"
           "/var/lib/gitea-actions-runner"
           "/var/lib/caddy"
         ];
-        repositories = {
-          rsync = {
-            path = "ssh://de4388@de4388.rsync.net/./borg-repos/carbon";
-            label = "rsync";
-            remotePath = "borg14";
-          };
-          helium = {
-            path = "ssh://taxborn@${net.tailscaleIPs."helium-01"}//mnt/hdd/borg-repos/carbon";
-            label = "helium";
-          };
-        };
       };
       caddy.enable = true;
       forgejo.enable = true;

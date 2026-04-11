@@ -1,6 +1,5 @@
 {
   self,
-  pkgs,
   config,
   ...
 }:
@@ -47,18 +46,9 @@ in
       ollama.enable = true;
       backups.client = {
         enable = true;
+        enableRsyncRepo = true;
+        enableHeliumRepo = true;
         desktopExcludes = true;
-        repositories = {
-          rsync = {
-            path = "ssh://de4388@de4388.rsync.net/./borg-repos/uranium";
-            label = "rsync";
-            remotePath = "borg14";
-          };
-          helium = {
-            path = "ssh://taxborn@${net.tailscaleIPs."helium-01"}//mnt/hdd/borg-repos/uranium";
-            label = "helium";
-          };
-        };
       };
       node-exporter.enable = true;
       fluent-bit = {
@@ -101,12 +91,6 @@ in
       "sd_mod"
     ];
   };
-
-  hardware.graphics.extraPackages = with pkgs; [
-    mesa
-    vulkan-loader
-    vulkan-tools
-  ];
 
   myUsers.taxborn = {
     enable = true;

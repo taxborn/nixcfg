@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 {
@@ -18,7 +19,14 @@
         opencl.enable = true;
       };
 
-      graphics.enable = true;
+      graphics = {
+        enable = true;
+        extraPackages = with pkgs; [
+          mesa
+          vulkan-loader
+          vulkan-tools
+        ];
+      };
     };
   };
 }

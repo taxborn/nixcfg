@@ -36,6 +36,8 @@ in
       backups = {
         client = {
           enable = true;
+          enableRsyncRepo = true;
+          enableHeliumRepo = true;
           extraExcludes = [
             "/var/cache/immich"
             "/var/lib/prometheus"
@@ -44,17 +46,6 @@ in
             "/var/lib/caddy"
             "/mnt/hdd/borg-repos"
           ];
-          repositories = {
-            helium = {
-              path = "/mnt/hdd/borg-repos/helium-01";
-              label = "helium";
-            };
-            rsync = {
-              path = "ssh://de4388@de4388.rsync.net/./borg-repos/helium-01";
-              label = "rsync";
-              remotePath = "borg14";
-            };
-          };
         };
         server = {
           enable = true;

@@ -28,7 +28,7 @@ hosts.
 
 ## P2
 
-### [ ] apply `mySnippets.nix.settings` at the NixOS level
+### [x] apply `mySnippets.nix.settings` at the NixOS level
 `snippets/modules/snippets/nix/default.nix:2` defines
 `experimental-features = [ "flakes" "nix-command" ]` and `trusted-users`,
 but only the home-manager profile applies it. NixOS currently works
@@ -53,25 +53,27 @@ forge is noisy and can log request internals.
 (see the P1 item above) or delete the file and have hosts import
 `profile-default` directly. Not both.
 
-### [ ] minecraft isolation
+### [x] minecraft isolation
 `modules/nixos/services/minecraft/default.nix:73` runs minecraft
 servers as the `taxborn` user. Minecraft/JVM has a noisy RCE history
 (log4shell, etc). Move to a dedicated `minecraft` system user per
 server instance.
 
-### [ ] dedupe `backups.client.repositories` boilerplate
+### [x] dedupe `backups.client.repositories` boilerplate
 Every host specifies the same `{ rsync, helium }` repositories block
 (~10 lines each, ~40 total). Add a helper in
 `modules/nixos/services/backups/default.nix` that synthesizes both
 repositories from `hostname`, toggled by `enableRsyncRepo` /
 `enableHeliumRepo`.
 
-### [ ] verify `system.stateVersion = "25.11"` per host
+### [x] verify `system.stateVersion = "25.11"` per host
 All 5 hosts set `system.stateVersion = "25.11"`. This should be the
 version each host was **originally installed at** and must never be
 bumped. Confirm per host and document.
+Verified via git blame: all 5 hosts had 25.11 at their initial commit.
+All are on nixos-unstable tracking toward 25.11. Correct.
 
-### [ ] check uranium amd GPU package duplication
+### [x] check uranium amd GPU package duplication
 `hosts/uranium/default.nix:105-109` sets
 `hardware.graphics.extraPackages` explicitly (mesa, vulkan-loader,
 vulkan-tools). Check whether `myHardware.amd.gpu` already sets these.
@@ -89,10 +91,13 @@ comment explaining why so it does not get flipped back on a cleanup.
 endpoints. Add a comment describing the intent so future-me does not
 delete it during a proxy cleanup.
 
-### [ ] helium-01 boot.initrd.availableKernelModules
+### [x] helium-01 boot.initrd.availableKernelModules
 `hosts/helium-01/default.nix:123-130` sets initrd modules at the host
 level. These are usually generated into hardware-configuration.nix.
 Confirm this is not shadowing anything.
+Verified: helium-01 has no hardware-configuration.nix import, and
+the disko config sets no initrd modules. The host-level definition
+is authoritative and not shadowing anything.
 
 ---
 
