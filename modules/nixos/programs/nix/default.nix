@@ -9,6 +9,15 @@
   config = lib.mkIf config.myNixOS.programs.nix.enable {
     nix = {
       settings = {
+        experimental-features = [
+          "flakes"
+          "nix-command"
+        ];
+        trusted-users = [
+          "taxborn"
+          "@admin"
+          "@wheel"
+        ];
         substituters = [
           "https://cache.nixos.org"
           "https://nix-community.cachix.org"

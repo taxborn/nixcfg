@@ -45,6 +45,12 @@ in
     '';
 
     # mischief.town - Bluesky PDS (with age assurance workarounds)
+    # Bluesky's age assurance API was introduced in mid-2025 and gates
+    # certain account capabilities. The three handle blocks below intercept
+    # the moderation endpoints and return stub "assured" responses so that
+    # the PDS continues to function for a single-user instance without
+    # going through Bluesky's age-verification flow. Do not remove these
+    # without first confirming that the PDS account is unaffected upstream.
     ${net.pds.vHost}.extraConfig = ''
       encode zstd gzip
 

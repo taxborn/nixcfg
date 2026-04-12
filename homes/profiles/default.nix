@@ -29,6 +29,7 @@
       sessionPath = [
         "$HOME/.zvm/bin"
         "$HOME/.local/bin"
+        "$HOME/go/bin"
       ];
 
       packages = with pkgs; [

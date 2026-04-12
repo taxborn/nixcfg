@@ -69,15 +69,15 @@ let
       };
 
       user = lib.mkOption {
-        type = lib.types.str;
-        default = "taxborn";
-        description = "User to run the server as.";
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "User to run the server as. Defaults to a dedicated 'minecraft-<name>' system user.";
       };
 
       group = lib.mkOption {
-        type = lib.types.str;
-        default = "users";
-        description = "Group to run the server as.";
+        type = lib.types.nullOr lib.types.str;
+        default = null;
+        description = "Group to run the server as. Defaults to a dedicated 'minecraft-<name>' system group.";
       };
 
       autoStart = lib.mkOption {
@@ -133,6 +133,9 @@ let
     '';
 
   enabledServers = lib.filterAttrs (_: s: s.enable) cfg.servers;
+
+  effectiveUser = name: s: if s.user == null then "minecraft-${name}" else s.user;
+  effectiveGroup = name: s: if s.group == null then "minecraft-${name}" else s.group;
 in
 {
   options.myNixOS.services.minecraft.servers = lib.mkOption {
@@ -171,6 +174,22 @@ in
       lib.filterAttrs (_: s: s.openFirewall) enabledServers
     );
 
+    # Create a dedicated system user/group for each server that uses the default null user.
+    # Note: the server directory must be owned (or group-writable) by the derived user.
+    # Existing directories under /home may need: chown -R minecraft-<name> <dir>
+    users.groups = lib.mapAttrs' (
+      name: s: lib.nameValuePair (effectiveGroup name s) { }
+    ) (lib.filterAttrs (_: s: s.group == null) enabledServers);
+
+    users.users = lib.mapAttrs' (
+      name: s:
+      lib.nameValuePair (effectiveUser name s) {
+        isSystemUser = true;
+        group = effectiveGroup name s;
+        description = "Dedicated system user for minecraft-${name} server.";
+      }
+    ) (lib.filterAttrs (_: s: s.user == null) enabledServers);
+
     systemd.services = lib.mapAttrs' (
       name: s:
       lib.nameValuePair "minecraft-${name}" {
@@ -186,8 +205,8 @@ in
 
         serviceConfig = {
           Type = "simple";
-          User = s.user;
-          Group = s.group;
+          User = effectiveUser name s;
+          Group = effectiveGroup name s;
           WorkingDirectory = s.directory;
 
           ExecStart = "${mkStartScript name s}";

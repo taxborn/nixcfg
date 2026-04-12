@@ -40,18 +40,9 @@ in
     services = {
       backups.client = {
         enable = true;
+        enableRsyncRepo = true;
+        enableHeliumRepo = true;
         desktopExcludes = true;
-        repositories = {
-          rsync = {
-            path = "ssh://de4388@de4388.rsync.net/./borg-repos/tungsten";
-            label = "rsync";
-            remotePath = "borg14";
-          };
-          helium = {
-            path = "ssh://taxborn@${net.tailscaleIPs.helium-01}//mnt/hdd/borg-repos/tungsten";
-            label = "helium";
-          };
-        };
       };
       node-exporter.enable = true;
       fluent-bit = {

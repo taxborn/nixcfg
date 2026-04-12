@@ -18,6 +18,9 @@
     services = {
       caddy = {
         enable = true;
+        # Graceful reload is disabled because the tailscale caddy plugin does not
+        # survive a config reload - it must do a full restart to re-register the
+        # Tailscale node. Do not re-enable this without testing the plugin first.
         enableReload = false;
         environmentFile = config.age.secrets.tailscaleCaddyAuth.path;
 

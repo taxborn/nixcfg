@@ -129,8 +129,12 @@ in
       repositories = lib.mkOption {
         type = lib.types.attrsOf repoOpts;
         default = { };
-        description = "Named borg repositories to back up to.";
+        description = "Named borg repositories to back up to. Merged with any auto-generated repos from enableRsyncRepo/enableHeliumRepo.";
       };
+
+      enableRsyncRepo = lib.mkEnableOption "auto-configure rsync.net borg repository for this host";
+
+      enableHeliumRepo = lib.mkEnableOption "auto-configure helium-01 borg repository for this host";
 
       retention = {
         keepDaily = lib.mkOption {
@@ -179,12 +183,36 @@ in
     };
   };
 
-  config = lib.mkMerge [
+  config =
+    let
+      autoRepos =
+        lib.optionalAttrs cfg.client.enableRsyncRepo {
+          rsync = {
+            path = "ssh://de4388@de4388.rsync.net/./borg-repos/${hostname}";
+            label = "rsync";
+            remotePath = "borg14";
+          };
+        }
+        // lib.optionalAttrs cfg.client.enableHeliumRepo {
+          helium = {
+            path =
+              if hostname == "helium-01" then
+                "/mnt/hdd/borg-repos/${hostname}"
+              else
+                "ssh://taxborn@${config.mySnippets.mischief-town.networkMap.tailscaleIPs."helium-01"}//mnt/hdd/borg-repos/${hostname}";
+            label = "helium";
+            remotePath = null;
+          };
+        };
+      # User-specified repositories take precedence over auto-generated ones.
+      effectiveRepositories = autoRepos // cfg.client.repositories;
+    in
+    lib.mkMerge [
     (lib.mkIf cfg.client.enable {
       assertions = [
         {
-          assertion = cfg.client.repositories != { };
-          message = "myNixOS.services.backups.client.repositories must have at least one repository.";
+          assertion = effectiveRepositories != { };
+          message = "myNixOS.services.backups.client.repositories must have at least one repository (or enable enableRsyncRepo/enableHeliumRepo).";
         }
       ];
 
@@ -235,7 +263,7 @@ in
           ];
         } // lib.optionalAttrs (repo.remotePath != null) {
           remote_path = repo.remotePath;
-        }) cfg.client.repositories;
+        }) effectiveRepositories;
       };
     })
 

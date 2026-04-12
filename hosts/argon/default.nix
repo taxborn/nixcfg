@@ -34,21 +34,12 @@ in
     services = {
       backups.client = {
         enable = true;
+        enableRsyncRepo = true;
+        enableHeliumRepo = true;
         extraExcludes = [
           "/var/lib/containers"
           "/var/lib/caddy"
         ];
-        repositories = {
-          rsync = {
-            path = "ssh://de4388@de4388.rsync.net/./borg-repos/argon";
-            label = "rsync";
-            remotePath = "borg14";
-          };
-          helium = {
-            path = "ssh://taxborn@${net.tailscaleIPs."helium-01"}//mnt/hdd/borg-repos/argon";
-            label = "helium";
-          };
-        };
       };
       caddy.enable = true;
       node-exporter.enable = true;
