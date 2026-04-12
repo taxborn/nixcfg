@@ -17,11 +17,6 @@
       nemo
     ];
 
-    programs.zen-browser = {
-      enable = true;
-      nativeMessagingHosts = [ pkgs.bitwarden-desktop ];
-    };
-
     programs.fish = {
       interactiveShellInit = ''
         set fish_greeting # Disable greeting

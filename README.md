@@ -1,6 +1,8 @@
 # nixcfg
 
-NixOS flake configuration managing 4 hosts across desktop, laptop, and server environments.
+NixOS flake configuration managing 5 hosts across desktop, laptop, and server environments.
+
+see [`docs/design/`](docs/design/README.md) for architectural design decisions (repo layout, host trust zones, secrets, networking, backups, security posture). open code-level issues live in [`docs/backlog.md`](docs/backlog.md).
 
 ## hosts
 
@@ -8,21 +10,21 @@ NixOS flake configuration managing 4 hosts across desktop, laptop, and server en
 |---|---|---|---|---|
 | **uranium** | desktop | intel cpu, amd gpu | lanzaboote (secure boot) | dual monitor, LUKS+FIDO2, gaming (steam) |
 | **tungsten** | laptop | intel cpu, nvidia gpu (optimus) | lanzaboote (secure boot) | HiDPI (3456x2160), LUKS+FIDO2 |
-| **carbon** | remote server (OVH) | intel cpu | grub | caddy reverse proxy, forgejo, vaultwarden, bluesky PDS, tangled |
-| **argon** | remote server (OVH) | intel cpu | grub | not used yet |
-| **helium-01** | local homestead server | intel cpu | systemd-boot | immich, paperless, copyparty, grafana + prometheus |
+| **carbon** | remote server (OVH) | intel cpu | grub | caddy reverse proxy, forgejo, vaultwarden, bluesky PDS, tangled, minecraft |
+| **argon** | remote server (OVH) | intel cpu | grub | caddy, forgejo-runner, hash-haus, minecraft |
+| **helium-01** | local homestead server | intel cpu | systemd-boot | immich, paperless, copyparty, grafana + prometheus + loki |
 
-all hosts run tailscale, openssh, borg backups (to rsync.net), and node-exporter for monitoring.
+all hosts run tailscale, openssh, borg backups (to rsync.net and helium-01), and node-exporter + fluent-bit for monitoring. public-facing hosts (carbon, argon, helium-01) also run fail2ban.
 
 ## architecture
 
-the flake uses [flake-parts](https://github.com/hercules-ci/flake-parts) to organize outputs. host configurations are generated with `nixpkgs.lib.genAttrs` across all 4 hosts (see `modules/flake/nixos.nix`).
+the flake uses [flake-parts](https://github.com/hercules-ci/flake-parts) to organize outputs. host configurations are generated with `nixpkgs.lib.genAttrs` across all 5 hosts (see `modules/flake/nixos.nix`).
 
 ### module namespaces
 
 - `myNixOS.*` - system-level NixOS modules (base config, desktop, programs, services, profiles)
 - `myHome.*` - home-manager modules (desktop, programs, services, profiles)
-- `myHome.taxborn.*` - user-specific home-manager modules (git, gpg, firefox, zen, etc.)
+- `myHome.taxborn.*` - user-specific home-manager modules (git, gpg, firefox, etc.)
 - `myHardware.*` - hardware configuration (cpu, gpu, profiles like laptop/ssd/ovh)
 - `myUsers.*` - user account definitions
 - `mySnippets.*` - shared configuration snippets (from the `snippets` flake input)
@@ -60,7 +62,7 @@ nixcfg/
       secrets.nix          #   agenix secrets (tailscale, lastfm, etc.)
     helium-01/             # homestead server
   homes/
-    taxborn/default.nix    # shared taxborn home base (fish, git, gpg, tmux, yubikey)
+    profiles/              # home-manager profiles: default, workstation, server
   modules/
     disko/                 # disk partitioning (LUKS+btrfs for desktops, btrfs for servers)
     flake/                 # flake output definitions (nixosConfigurations, homeModules)
@@ -83,12 +85,13 @@ nixcfg/
 
 ## home-manager
 
-home-manager runs as a NixOS module (not standalone). two home module paths exist:
+home-manager runs as a NixOS module (not standalone). home configuration is organized as profiles under `homes/profiles/`:
 
-- `homeModules.default` (`modules/home/`) - generic modules available to all users/hosts
-- `homeModules.taxborn` (`homes/taxborn/`) - taxborn's shared base config that imports `homeModules.default` and enables git, gpg, tmux, yubikey, fish
+- `profile-default` - shell, dev tools, git, gpg, tmux, yubikey, fish (the base every user gets)
+- `profile-workstation` - GUI layer on top of default: hyprland, browser, media, bitwarden
+- `profile-server` - headless profile for hosts with no display
 
-desktop hosts (uranium, tungsten) import `homeModules.taxborn` and add host-specific packages and options. server hosts (carbon, helium-01) import `homeModules.default` directly with a minimal config.
+Workstation hosts (uranium, tungsten) import `profile-workstation` and add host-specific packages. Server hosts (carbon, argon, helium-01) import `profile-server`.
 
 ## flake inputs
 
@@ -101,7 +104,6 @@ desktop hosts (uranium, tungsten) import `homeModules.taxborn` and add host-spec
 | flake-parts | flake output organization |
 | home-manager | user environment management |
 | lanzaboote | UEFI secure boot |
-| zen-browser | zen browser flake |
 | snippets | shared config snippets (network map, ssh known hosts, nix settings) |
 | secrets | agenix-encrypted secrets (non-flake input) |
 | tangled | tangled.org knot server |
@@ -135,6 +137,16 @@ each host has a `secrets.nix` that declares which age-encrypted secrets it needs
 | tangled-knot | tangled.org knot server |
 | taxborn-com | personal website (www.taxborn.com) |
 | vaultwarden | password manager (vw.mischief.town) |
+| minecraft | `mavs` server on 25565 |
+
+### argon (remote)
+
+| service | description |
+|---|---|
+| caddy | reverse proxy |
+| forgejo-runner | CI runners (3 docker + 2 native) |
+| hash-haus | hash-haus service |
+| minecraft | `tbd` server on 25565 |
 
 ### helium-01 (homestead)
 
@@ -142,16 +154,19 @@ each host has a `secrets.nix` that declares which age-encrypted secrets it needs
 |---|---|
 | caddy | local reverse proxy |
 | copyparty | file sharing |
-| grafana | monitoring dashboards with prometheus (scrapes all 4 hosts) |
+| grafana | monitoring dashboards with prometheus (scrapes all 5 hosts) |
+| loki | log aggregation (scraped via fluent-bit on every host) |
+| smartctl-exporter | disk health metrics for the backup drive |
 | immich | photo management |
 | paperless | document management |
 | forgejo-runner | CI runners (3 docker + 2 native) |
+| borg server | backup target for every other host |
 
 ### all hosts
 
 | service | description |
 |---|---|
-| borgbackup | daily encrypted backups to rsync.net |
+| borgbackup | daily encrypted backups to rsync.net and helium-01 |
 | tailscale | mesh VPN |
 | node-exporter | prometheus metrics |
 | openssh | remote access |
