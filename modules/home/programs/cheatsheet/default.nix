@@ -83,7 +83,7 @@ let
         description = "Move to special workspace";
       }
       {
-        key = "Super+L";
+        key = "Super+Shift+L";
         description = "Lock session";
       }
       {
