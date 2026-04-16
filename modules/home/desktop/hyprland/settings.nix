@@ -58,7 +58,7 @@ in
 
     ",PRINT,exec,${lib.getExe helpers.screenshot}"
     "CTRL,F12,exec,${lib.getExe helpers.screenshot}"
-    "$mod SHIFT, L,exec,${lib.getExe' pkgs.systemd "loginctl"} lock-session"
+    "ALT, L,exec,${lib.getExe' pkgs.systemd "loginctl"} lock-session"
     "$mod SHIFT,M,exec,${lib.getExe' pkgs.systemd "loginctl"} terminate-session $XDG_SESSION_ID"
     "$mod SHIFT,backslash,togglesplit"
 
