@@ -62,11 +62,11 @@ in
         enableCaddyJail = true;
       };
       hash-haus.enable = true;
-      minecraft.servers.tbd = {
-        enable = true;
-        directory = "/home/taxborn/public/tbd";
-        port = 25565;
-      };
+      # minecraft.servers.tbd = {
+      #   enable = true;
+      #   directory = "/home/taxborn/public/tbd";
+      #   port = 25565;
+      # };
     };
   };
 

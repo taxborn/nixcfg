@@ -69,11 +69,11 @@ in
       tangled-knot.enable = true;
       taxborn-com.enable = true;
       vaultwarden.enable = true;
-      minecraft.servers.mavs = {
-        enable = true;
-        directory = "/home/taxborn/public/mavs";
-        port = 25565;
-      };
+      # minecraft.servers.mavs = {
+      #   enable = true;
+      #   directory = "/home/taxborn/public/mavs";
+      #   port = 25565;
+      # };
     };
   };
 
