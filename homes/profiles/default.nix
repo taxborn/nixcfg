@@ -56,6 +56,7 @@
 
     myHome.programs = {
       bat.enable = true;
+      direnv.enable = true;
       eza.enable = true;
       fd.enable = true;
       fzf.enable = true;

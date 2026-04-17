@@ -3,6 +3,7 @@
     ./bat
     ./bitwarden
     ./cheatsheet
+    ./direnv
     ./eza
     ./fd
     ./feh
