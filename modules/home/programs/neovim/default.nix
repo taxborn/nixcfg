@@ -36,7 +36,16 @@
 
     };
 
-    xdg.configFile."nvim".source =
-      config.lib.file.mkOutOfStoreSymlink "/home/taxborn/dev/nix-infra/nixcfg/modules/home/programs/neovim";
+    xdg.configFile = {
+      "nvim/init.lua" = lib.mkForce {
+        source = config.lib.file.mkOutOfStoreSymlink "/home/taxborn/dev/nix-infra/nixcfg/modules/home/programs/neovim/config/init.lua";
+      };
+      "nvim/lua".source =
+        config.lib.file.mkOutOfStoreSymlink "/home/taxborn/dev/nix-infra/nixcfg/modules/home/programs/neovim/config/lua";
+      "nvim/plugin".source =
+        config.lib.file.mkOutOfStoreSymlink "/home/taxborn/dev/nix-infra/nixcfg/modules/home/programs/neovim/config/plugin";
+      "nvim/nvim-pack-lock.json".source =
+        config.lib.file.mkOutOfStoreSymlink "/home/taxborn/dev/nix-infra/nixcfg/modules/home/programs/neovim/config/nvim-pack-lock.json";
+    };
   };
 }

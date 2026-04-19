@@ -52,6 +52,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
 })
 
 local servers = {
+    clangd = {},
     rust_analyzer = {},
     zls = {},
     ts_ls = {},
