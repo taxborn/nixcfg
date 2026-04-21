@@ -155,7 +155,6 @@ each host has a `secrets.nix` that declares which age-encrypted secrets it needs
 | copyparty | file sharing |
 | grafana | monitoring dashboards with prometheus (scrapes all 5 hosts) |
 | loki | log aggregation (scraped via fluent-bit on every host) |
-| smartctl-exporter | disk health metrics for the backup drive |
 | immich | photo management |
 | paperless | document management |
 | forgejo-runner | CI runners (3 docker + 2 native) |

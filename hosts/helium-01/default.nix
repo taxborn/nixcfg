@@ -78,10 +78,6 @@ in
         listenAddress = net.tailscaleIPs."helium-01";
       };
       node-exporter.enable = true;
-      smartctl-exporter = {
-        enable = true;
-        devices = [ "/dev/disk/by-id/usb-WD_My_Book_25ED_575835324443304A30443532-0:0" ];
-      };
       fluent-bit = {
         enable = true;
         lokiHost = "localhost";

@@ -1,9 +1,7 @@
 {
   imports = [
     ./atproto
-    ./minecraft
     ./avahi
-    ./ollama
     ./backups
     ./caddy
     ./fail2ban
@@ -15,7 +13,6 @@
     ./immich
     ./loki
     ./node-exporter
-    ./smartctl-exporter
     ./openssh
     ./paperless
     ./fluent-bit

@@ -36,14 +36,12 @@ in
     };
     profiles.btrfs.enable = true;
     programs = {
-      gimp.enable = true;
       lanzaboote.enable = true;
       nix.enable = true;
       podman.enable = true;
       yubikey.enable = true;
     };
     services = {
-      ollama.enable = true;
       backups.client = {
         enable = true;
         enableRsyncRepo = true;
