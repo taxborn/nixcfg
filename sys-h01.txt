@@ -1,0 +1,61 @@
+
+[1m[0;36m=== Host ===[0m
+  [0;33mHostname:               [0m helium-01
+  [0;33mOS:                     [0m NixOS 26.05 (Yarara)
+  [0;33mKernel:                 [0m 6.18.22
+  [0;33mArchitecture:           [0m x86_64
+  [0;33mUptime:                 [0m  20:54:48  up 4 days  5:27,  0 users,  load average: 0.14, 0.14, 0.10
+
+[1m[0;36m=== CPU ===[0m
+  [0;33mModel:                  [0m Intel(R) Core(TM) i5-8259U CPU @ 2.30GHz
+  [0;33mSockets:                [0m 1
+  [0;33mCores:                  [0m 8
+  [0;33mThreads:                [0m 8
+  [0;33mL3 cache:               [0m 6144 KB
+  [0;33mFreq (live):            [0m 2500 MHz
+
+[1m[0;36m=== Memory ===[0m
+  [0;33mTotal:                  [0m 15.5 GiB
+  [0;33mUsed:                   [0m 4.2 GiB
+  [0;33mAvailable:              [0m 11.3 GiB
+  [0;33mSwap total:             [0m 18.0 GiB
+  [0;33mSwap free:              [0m 15.7 GiB
+  [0;32m(run as root to see DIMM slot details)[0m
+
+[1m[0;36m=== Storage ===[0m
+NAME         SIZE TYPE ROTA TRAN   MODEL                MOUNTPOINTS
+sda          5.5T disk    1 usb    WDC WD60EDAZ-11U78B0 
+└─sda1       5.5T part    1                             /mnt/hdd
+mmcblk0       58G disk    0 mmc                         
+└─mmcblk0p1 57.9G part    0 mmc                         
+nvme0n1      1.9T disk    0 nvme   SPCC M.2 PCIe SSD    
+├─nvme0n1p1    1G part    0 nvme                        /boot
+└─nvme0n1p2  1.9T part    0 nvme                        /.swapvol
+                                                        /nix/store
+                                                        /nix
+                                                        /
+
+  [1mFilesystem usage:[0m
+  Filesystem                             Size   Used  Avail  Use%  Mounted
+  /dev/nvme0n1p2                         1.9T   304G   1.6T   16%  /
+  /dev/nvme0n1p2                         1.9T   304G   1.6T   16%  /nix
+  /dev/nvme0n1p2                         1.9T   304G   1.6T   16%  /.swapvol
+  /dev/nvme0n1p1                        1022M   107M   916M   11%  /boot
+  /dev/sda1                              5.5T   343G   5.2T    7%  /mnt/hdd
+
+[1m[0;36m=== Network ===[0m
+  eno1             inet         10.0.0.5/24
+  eno1             inet6        2601:441:8401:e540::99d1/128
+  eno1             inet6        2601:441:8401:e540:a53f:3a78:fd1f:6179/64
+  eno1             inet6        2601:441:8401:e540:9ab2:eefd:a942:582d/64
+  eno1             inet6        2601:441:8401:e540:3723:b13c:da5c:a24e/64
+  eno1             inet6        2601:441:8401:e540:2598:351c:b34c:388e/64
+  eno1             inet6        2601:441:8401:e540:bdf6:47c0:42a5:b72f/64
+  eno1             inet6        2601:441:8401:e540:9ffe:4a7f:b11c:7953/64
+  tailscale0       inet         100.64.1.0/32
+  tailscale0       inet6        fd7a:115c:a1e0::1a37:a407/128
+
+  [1mDefault routes:[0m
+  default via 10.0.0.1 dev eno1 proto dhcp src 10.0.0.5 metric 100 
+
+[1m[0;36m=== PCI Devices ===[0m

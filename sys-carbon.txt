@@ -1,0 +1,52 @@
+
+[1m[0;36m=== Host ===[0m
+  [0;33mHostname:               [0m carbon
+  [0;33mOS:                     [0m NixOS 26.05 (Yarara)
+  [0;33mKernel:                 [0m 6.18.22
+  [0;33mArchitecture:           [0m x86_64
+  [0;33mUptime:                 [0m  20:55:51  up 4 days  5:29,  0 users,  load average: 0.05, 0.10, 0.04
+
+[1m[0;36m=== CPU ===[0m
+  [0;33mModel:                  [0m Intel Core Processor (Haswell, no TSX)
+  [0;33mSockets:                [0m 8
+  [0;33mCores:                  [0m 8
+  [0;33mThreads:                [0m 8
+  [0;33mL3 cache:               [0m 16384 KB
+  [0;33mFreq (live):            [0m 2400 MHz
+
+[1m[0;36m=== Memory ===[0m
+  [0;33mTotal:                  [0m 15.3 GiB
+  [0;33mUsed:                   [0m 6.7 GiB
+  [0;33mAvailable:              [0m 8.6 GiB
+  [0;33mSwap total:             [0m 18.0 GiB
+  [0;33mSwap free:              [0m 18.0 GiB
+  [0;32m(run as root to see DIMM slot details)[0m
+
+[1m[0;36m=== Storage ===[0m
+NAME     SIZE TYPE ROTA TRAN MODEL         MOUNTPOINTS
+sda      320G disk    1      QEMU HARDDISK 
+├─sda1     2M part    1                    
+├─sda2   300M part    1                    /boot
+└─sda3 319.7G part    1                    /var/lib/containers/storage/overlay
+                                           /.swapvol
+                                           /nix/store
+                                           /nix
+                                           /
+
+  [1mFilesystem usage:[0m
+  Filesystem                             Size   Used  Avail  Use%  Mounted
+  /dev/sda3                              320G    41G   276G   13%  /
+  /dev/sda3                              320G    41G   276G   13%  /nix
+  /dev/sda3                              320G    41G   276G   13%  /.swapvol
+  /dev/sda2                              300M   176M   125M   59%  /boot
+
+[1m[0;36m=== Network ===[0m
+  ens3             inet         135.148.121.190/32
+  tailscale0       inet         100.64.2.0/32
+  tailscale0       inet6        fd7a:115c:a1e0::a101:1682/128
+  podman0          inet         10.88.0.1/16
+
+  [1mDefault routes:[0m
+  default via 135.148.121.1 dev ens3 proto dhcp src 135.148.121.190 metric 100 
+
+[1m[0;36m=== PCI Devices ===[0m

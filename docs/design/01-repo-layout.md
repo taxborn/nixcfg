@@ -39,8 +39,6 @@ and make intent obvious at call sites:
   profiles, hardware). Defined under `modules/nixos/` and `modules/hardware/`.
 - `myHome.*` - home-manager options (desktop, programs, services, profiles).
   Defined under `modules/home/`.
-- `myHome.taxborn.*` - user-specific options under `modules/home/taxborn/`.
-  Scoping by user name leaves room for a second user without refactoring.
 
 A third namespace, `mySnippets.*`, comes from the snippets flake input
 and is treated as read-only shared library.

@@ -24,7 +24,6 @@ the flake uses [flake-parts](https://github.com/hercules-ci/flake-parts) to orga
 
 - `myNixOS.*` - system-level NixOS modules (base config, desktop, programs, services, profiles)
 - `myHome.*` - home-manager modules (desktop, programs, services, profiles)
-- `myHome.taxborn.*` - user-specific home-manager modules (git, gpg, firefox, etc.)
 - `myHardware.*` - hardware configuration (cpu, gpu, profiles like laptop/ssd/ovh)
 - `myUsers.*` - user account definitions
 - `mySnippets.*` - shared configuration snippets (from the `snippets` flake input)

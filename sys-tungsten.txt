@@ -1,0 +1,100 @@
+
+[1m[0;36m=== Host ===[0m
+  [0;33mHostname:               [0m tungsten
+  [0;33mOS:                     [0m NixOS 26.05 (Yarara)
+  [0;33mKernel:                 [0m 7.0.0
+  [0;33mArchitecture:           [0m x86_64
+  [0;33mUptime:                 [0m  20:58:30  up 1 day 10:39,  1 user,  load average: 0.81, 1.15, 1.37
+
+[1m[0;36m=== CPU ===[0m
+  [0;33mModel:                  [0m 12th Gen Intel(R) Core(TM) i9-12900HK
+  [0;33mSockets:                [0m 1
+  [0;33mCores:                  [0m 20
+  [0;33mThreads:                [0m 20
+  [0;33mL3 cache:               [0m 24576 KB
+  [0;33mFreq (live):            [0m 461 MHz
+
+[1m[0;36m=== Memory ===[0m
+  [0;33mTotal:                  [0m 31.0 GiB
+  [0;33mUsed:                   [0m 8.8 GiB
+  [0;33mAvailable:              [0m 22.2 GiB
+  [0;33mSwap total:             [0m 34.0 GiB
+  [0;33mSwap free:              [0m 34.0 GiB
+  [0;32m(run as root to see DIMM slot details)[0m
+
+[1m[0;36m=== Storage ===[0m
+NAME            SIZE TYPE  ROTA TRAN   MODEL                   MOUNTPOINTS
+nvme1n1       953.9G disk     0 nvme   PC801 NVMe SK hynix 1TB 
+├─nvme1n1p1     512M part     0 nvme                           /boot
+└─nvme1n1p2   953.4G part     0 nvme                           
+  └─cryptroot 953.4G crypt    0                                /.swapvol
+                                                               /nix/store
+                                                               /nix
+                                                               /
+nvme0n1       931.5G disk     0 nvme   WDC WDS100T2B0C-00PXH0  
+└─nvme0n1p1   931.5G part     0 nvme                           
+  └─crypthome 931.5G crypt    0                                /home
+
+  [1mFilesystem usage:[0m
+  Filesystem                             Size   Used  Avail  Use%  Mounted
+  /dev/mapper/cryptroot                  954G    58G   888G    7%  /
+  /dev/mapper/cryptroot                  954G    58G   888G    7%  /nix
+  /dev/mapper/cryptroot                  954G    58G   888G    7%  /.swapvol
+  /dev/mapper/crypthome                  932G    29G   900G    4%  /home
+  /dev/nvme1n1p1                         511M   430M    81M   85%  /boot
+
+[1m[0;36m=== Network ===[0m
+  wlp0s20f3        inet         10.0.0.192/24
+  wlp0s20f3        inet6        2601:441:8401:e540:3f94:5faf:6706:c071/64
+  wlp0s20f3        inet6        2601:441:8401:e540:bd4d:9ea:26b0:ed67/64
+  wlp0s20f3        inet6        2601:441:8401:e540::9d85/128
+  tailscale0       inet         100.64.0.1/32
+  tailscale0       inet6        fd7a:115c:a1e0::6037:a133/128
+
+  [1mDefault routes:[0m
+  default via 10.0.0.1 dev wlp0s20f3 proto dhcp src 10.0.0.192 metric 600 
+
+[1m[0;36m=== PCI Devices ===[0m
+  3D controller                    NVIDIA Corporation -- GA107M [GeForce RTX 3050 Ti Mobile]
+  Audio device                     Intel Corporation -- Alder Lake PCH-P High Definition Audio Controller
+  Communication controller         Intel Corporation -- Alder Lake PCH HECI Controller
+  Host bridge                      Intel Corporation -- 12th Gen Core Processor Host Bridge/DRAM Registers
+  ISA bridge                       Intel Corporation -- Alder Lake PCH eSPI Controller
+  Network controller               Intel Corporation -- Alder Lake-P PCH CNVi WiFi
+  Non-Volatile memory controller   Sandisk Corp -- SanDisk Ultra 3D / WD PC SN530, IX SN530, Blue SN550 NVMe SSD (DRAM-less)
+  Non-Volatile memory controller   SK hynix -- Platinum P41/PC801 NVMe Solid State Drive
+  PCI bridge                       Intel Corporation -- 12th Gen Core Processor PCI Express x16 Controller #1
+  PCI bridge                       Intel Corporation -- 12th Gen Core Processor PCI Express x4 Controller #0
+  PCI bridge                       Intel Corporation -- 12th Gen Core Processor PCI Express x4 Controller #2
+  PCI bridge                       Intel Corporation -- Alder Lake-P PCH PCIe Root Port #4
+  PCI bridge                       Intel Corporation -- Alder Lake-P Thunderbolt 4 PCI Express Root Port #0
+  PCI bridge                       Intel Corporation -- Alder Lake-P Thunderbolt 4 PCI Express Root Port #1
+  RAM memory                       Intel Corporation -- Alder Lake PCH Shared SRAM
+  Serial bus controller            Intel Corporation -- Alder Lake PCH Serial IO I2C Controller #0
+  Serial bus controller            Intel Corporation -- Alder Lake PCH Serial IO I2C Controller #1
+  Serial bus controller            Intel Corporation -- Alder Lake-P PCH SPI Controller
+  Serial controller                Intel Corporation -- Alder Lake-P Integrated Sensor Hub
+  Signal processing controller     Intel Corporation -- Alder Lake Innovation Platform Framework Processor Participant
+  SMBus                            Intel Corporation -- Alder Lake PCH-P SMBus Host Controller
+  System peripheral                Intel Corporation -- 12th Gen Core Processor Gaussian & Neural Accelerator
+  Unassigned class [ff00]          Realtek Semiconductor Co., Ltd. -- RTS5260 PCI Express Card Reader
+  USB controller                   Intel Corporation -- Alder Lake PCH USB 3.2 xHCI Host Controller
+  USB controller                   Intel Corporation -- Alder Lake-P Thunderbolt 4 NHI #0
+  USB controller                   Intel Corporation -- Alder Lake-P Thunderbolt 4 USB Controller
+  VGA compatible controller        Intel Corporation -- Alder Lake-P GT2 [Iris Xe Graphics]
+
+[1m[0;36m=== USB Devices (non-hubs) ===[0m
+
+[1m[0;36m=== NixOS ===[0m
+  [0;33mNixOS version:          [0m 26.05.20260414.4bd9165 (Yarara)
+  [0;33mNix version:            [0m nix (Nix) 2.34.6
+  [0;33m/nix/store size:        [0m 25G
+  [0;33mGenerations:            [0m 2
+
+[1m[0;36m=== Summary ===[0m
+  [0;32mHost:[0m    tungsten
+  [0;32mCPU:[0m     20 cores / 20 threads -- 12th Gen Intel(R) Core(TM) i9-12900HK
+  [0;32mRAM:[0m     31.0 GiB total, 8.8 GiB used
+  [0;32mDisks:[0m
+             nvme1n1 953.9G nvme   PC801 NVMe SK hynix 1TB
+             nvme0n1 931.5G nvme   WDC WDS100T2B0C-00PXH0
