@@ -1,6 +1,7 @@
 {
   self,
   config,
+  lib,
   ...
 }:
 let
@@ -43,7 +44,9 @@ in
       yubikey.enable = true;
     };
     services = {
-      ollama.enable = true;
+      # avahi is pulled in transitively by profiles.audio; disable it here
+      # since there's nothing on the LAN that needs mDNS discovery from this box.
+      avahi.enable = lib.mkForce false;
       backups.client = {
         enable = true;
         enableRsyncRepo = true;
@@ -78,8 +81,17 @@ in
 
   boot.initrd = {
     luks = {
-      devices."cryptroot".crypttabExtraOpts = defaultCrypttabOptions;
-      devices."crypthome".crypttabExtraOpts = defaultCrypttabOptions;
+      # bypassWorkqueues skips dm-crypt's kcryptd read/write kworkers and
+      # runs crypto inline on the submitting CPU. Much lower latency on
+      # fast NVMe; visible kcryptd CPU churn goes away.
+      devices."cryptroot" = {
+        crypttabExtraOpts = defaultCrypttabOptions;
+        bypassWorkqueues = true;
+      };
+      devices."crypthome" = {
+        crypttabExtraOpts = defaultCrypttabOptions;
+        bypassWorkqueues = true;
+      };
       fido2Support = false;
     };
     availableKernelModules = [

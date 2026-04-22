@@ -114,6 +114,10 @@ in
                       mountpoint = "/home";
                       mountOptions = defaultBtrfsOpts;
                     };
+                    "/home/.snapshots" = {
+                      mountpoint = "/home/.snapshots";
+                      mountOptions = defaultBtrfsOpts;
+                    };
                   };
                 };
               };

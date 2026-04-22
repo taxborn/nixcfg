@@ -1,0 +1,90 @@
+
+===== meta =====
+label:        baseline-pre-rebuild
+timestamp:    2026-04-21T22:15:42-05:00
+host:         uranium
+kernel:       7.0.0
+nixos:        26.05.20260418.b12141e (Yarara)
+uptime:       
+
+===== boot =====
+Startup finished in 8.804s (firmware) + 2.368s (loader) + 678ms (kernel) + 13.482s (initrd) + 7.397s (userspace) = 32.731s 
+The time when unit became active or started is printed after the "@" character.
+The time the unit took to start is printed after the "+" character.
+
+graphical.target @7.397s
+└─multi-user.target @7.396s
+  └─plymouth-quit.service @3.222s +24ms
+    └─systemd-user-sessions.service @3.196s +24ms
+      └─home-manager-taxborn.service @1.831s +1.363s
+        └─basic.target @1.825s
+          └─sockets.target @1.825s
+            └─podman.socket @1.800s +23ms
+              └─sysinit.target @1.796s
+                └─systemd-update-utmp.service @1.766s +29ms
+                  └─systemd-tmpfiles-setup.service @1.723s +41ms
+                    └─systemd-journal-flush.service @625ms +70ms
+
+===== load / pressure =====
+loadavg:      3.72 2.87 2.74 1/1295 24486
+cpu psi:      some avg10=0.36 avg60=0.06 avg300=0.01 total=7376143
+mem psi:      some avg10=0.00 avg60=0.00 avg300=0.00 total=2882
+io psi:       some avg10=61.01 avg60=57.85 avg300=60.40 total=2713999324
+
+===== memory =====
+               total        used        free      shared  buff/cache   available
+Mem:            31Gi       6.3Gi       8.6Gi       269Mi        18Gi        24Gi
+Swap:           33Gi          0B        33Gi
+
+===== journal =====
+journal size: Archived and active journals take up 249.5M in the file system.
+
+===== service memory (top 10 by RSS) =====
+  1675010048  user@1000.service
+   100945920  bpftune.service
+    99475456  tailscaled.service
+    56741888  systemd-udevd.service
+    36519936  nix-daemon.service
+    35602432  display-manager.service
+    35344384  prometheus-node-exporter.service
+    25985024  scx.service
+    15839232  NetworkManager.service
+    10690560  dbus.service
+
+===== cpufreq =====
+governor:     powersave
+driver:       intel_pstate
+freq sample:  1100 798 797 1630 2250 800 800 800 800 800 800 897 894 801 800 800 1098 1101 1100 1317 800 800 1440 1225 MHz
+
+===== sysbench cpu (10s, all threads) =====
+    events per second: 64742.26
+    total time:                          10.0003s
+         min:                                    0.24
+         avg:                                    0.37
+         max:                                    4.46
+         95th percentile:                        0.46
+
+===== sysbench memory (seq write, 10s) =====
+Total operations: 52428800 (9884927.60 per second)
+51200.00 MiB transferred (9653.25 MiB/sec)
+
+===== 7z bench (compression, 30s) =====
+p7zip Version 17.05 (locale=en_US.UTF-8,Utf16=on,HugeFiles=on,64 bits,24 CPUs x64)
+CPU Freq: - - - - - - - - -
+RAM size:   31783 MB,  # CPU hardware threads:  24
+         KiB/s     %   MIPS   MIPS  |      KiB/s     %   MIPS   MIPS
+Tot:            2224   4909 108363
+
+===== fio random 4k read+write (crypthome, 10s) =====
+read  iops=142373  bw=569493 KiB/s  lat_us=407.794547
+write iops=61263  bw=245055 KiB/s  lat_us=1132.129822
+
+===== fio seq 1M read (crypthome, 5s) =====
+read  bw=2964706 KiB/s  iops=2895
+
+===== hyperfine: nix eval flake attr =====
+  Time (mean ± σ):     530.6 ms ±   7.8 ms    [User: 446.8 ms, System: 59.4 ms]
+  Range (min … max):   521.8 ms … 536.7 ms    3 runs
+
+===== end =====
+done:         2026-04-21T22:16:45-05:00

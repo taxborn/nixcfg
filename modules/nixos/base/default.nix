@@ -42,6 +42,16 @@
 
     networking.networkmanager.enable = true;
 
+    # Bound persistent journal so boot/log-shippers don't replay months of
+     # history and so disk usage stays predictable. ForwardToWall off to
+     # skip a wall(1) write per emergency-level line.
+    services.journald.extraConfig = ''
+      SystemMaxUse=500M
+      SystemKeepFree=1G
+      MaxRetentionSec=2week
+      ForwardToWall=no
+    '';
+
     system.configurationRevision = self.rev or self.dirtyRev or null;
 
     myNixOS = {
