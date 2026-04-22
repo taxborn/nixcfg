@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 let
   cfg = config.myNixOS.profiles.impermanence;
 
@@ -11,6 +11,23 @@ let
     "/var/log"
     "/home/taxborn"
   ];
+
+  # Full store paths so the binary is available in the initrd closure.
+  # Pure-bash field splitting avoids depending on `cut` in the initrd.
+  rollbackScript = pkgs.writeShellScript "rollback-root" ''
+    mkdir -p /mnt
+    mount -o subvol=/ /dev/disk/by-label/nixos /mnt
+    ${pkgs.btrfs-progs}/bin/btrfs subvolume list -o /mnt/root |
+      while read -r _ _ _ _ _ _ _ _ subvolume; do
+        echo "deleting /$subvolume subvolume..."
+        ${pkgs.btrfs-progs}/bin/btrfs subvolume delete "/mnt/$subvolume"
+      done
+    echo "deleting /root subvolume..."
+    ${pkgs.btrfs-progs}/bin/btrfs subvolume delete /mnt/root
+    echo "restoring blank /root subvolume..."
+    ${pkgs.btrfs-progs}/bin/btrfs subvolume snapshot /mnt/blank /mnt/root
+    umount /mnt
+  '';
 in
 {
   options.myNixOS.profiles.impermanence = {
@@ -31,23 +48,23 @@ in
       files = [ "/etc/machine-id" ];
     };
 
-    # Roll back / to the blank snapshot on every boot.
-    # The btrfs partition must carry label "nixos" (set in the disko config).
+    # btrfs-progs must be present in the initrd for the rollback service.
     boot.initrd.supportedFilesystems = [ "btrfs" ];
-    boot.initrd.postDeviceCommands = lib.mkAfter ''
-      mkdir /mnt
-      mount -o subvol=/ /dev/disk/by-label/nixos /mnt
-      btrfs subvolume list -o /mnt/root |
-        cut -f9 -d' ' |
-        while read subvolume; do
-          echo "deleting /$subvolume subvolume..."
-          btrfs subvolume delete "/mnt/$subvolume"
-        done &&
-      echo "deleting /root subvolume..." &&
-      btrfs subvolume delete /mnt/root &&
-      echo "restoring blank /root subvolume..." &&
-      btrfs subvolume snapshot /mnt/blank /mnt/root
-      umount /mnt
-    '';
+    boot.initrd.systemd.storePaths = [ pkgs.btrfs-progs ];
+
+    # Roll back / to the blank snapshot on every boot.
+    # Runs before sysroot.mount (which mounts the /root subvol as the new root),
+    # so the fresh snapshot is what gets pivoted into.
+    boot.initrd.systemd.services.rollback = {
+      description = "Roll back btrfs root subvolume to blank snapshot";
+      wantedBy = [ "initrd.target" ];
+      before = [ "sysroot.mount" ];
+      after = [ "local-fs-pre.target" ];
+      unitConfig.DefaultDependencies = "no";
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = rollbackScript;
+      };
+    };
   };
 }
