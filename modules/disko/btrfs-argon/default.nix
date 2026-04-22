@@ -41,10 +41,16 @@ in
               size = "100%";
               content = {
                 type = "btrfs";
-                extraArgs = [ "-f" ];
+                extraArgs = [ "-f" "-L nixos" ];
                 subvolumes = {
                   "/root" = {
                     mountpoint = "/";
+                    mountOptions = defaultBtrfsOpts;
+                  };
+                  # blank stays empty forever; initrd snapshots it -> /root on each boot
+                  "/blank" = { };
+                  "/persist" = {
+                    mountpoint = "/persist";
                     mountOptions = defaultBtrfsOpts;
                   };
                   "/nix" = {

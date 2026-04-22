@@ -25,7 +25,17 @@ in
 
   myNixOS = {
     base.enable = true;
-    profiles.btrfs.enable = true;
+    profiles = {
+      btrfs.enable = true;
+      impermanence = {
+        enable = true;
+        extraDirectories = [
+          "/var/lib/caddy"
+          "/var/lib/gitea-actions-runner"
+          "/var/lib/podman"
+        ];
+      };
+    };
     programs = {
       grub.enable = true; # grub seems to be the only bootloader that works on ovh
       nix.enable = true;
