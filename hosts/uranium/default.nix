@@ -37,16 +37,12 @@ in
     };
     profiles.btrfs.enable = true;
     programs = {
-      gimp.enable = true;
       lanzaboote.enable = true;
       nix.enable = true;
       podman.enable = true;
       yubikey.enable = true;
     };
     services = {
-      # avahi is pulled in transitively by profiles.audio; disable it here
-      # since there's nothing on the LAN that needs mDNS discovery from this box.
-      avahi.enable = lib.mkForce false;
       backups.client = {
         enable = true;
         enableRsyncRepo = true;

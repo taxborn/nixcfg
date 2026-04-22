@@ -1,6 +1,5 @@
 {
   imports = [
-    ./gimp
     ./grub
     ./lanzaboote
     ./neovim
