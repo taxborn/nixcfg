@@ -42,7 +42,7 @@ in
             path = "/var/lib/fluent-bit/storage";
             sync = "normal";
             checksum = "off";
-            backlog.mem_limit = "64M";
+            "backlog.mem_limit" = "64M";
           };
         };
 
