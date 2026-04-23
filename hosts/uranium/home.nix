@@ -16,7 +16,15 @@
           minecraft.enable = true;
           via.enable = true;
         };
+        services.hypridle.autoSuspend = false;
       };
+
+      home.file.".curlrc".text = ''
+        ipv4
+        retry 5
+        retry-delay 5
+        retry-connrefused
+      '';
     };
   };
 }
