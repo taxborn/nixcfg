@@ -14,13 +14,10 @@
       discord
       obsidian
       spotify
-      nemo
     ];
 
     programs.fish = {
       interactiveShellInit = ''
-        set fish_greeting # Disable greeting
-
         set -gx GPG_TTY (tty)
         set -gx SSH_AUTH_SOCK (gpgconf --list-dirs agent-ssh-socket)
         gpgconf --launch gpg-agent
@@ -35,7 +32,6 @@
       profiles.defaultApps.enable = true;
       desktop.hyprland.enable = true;
       programs = {
-        cheatsheet.enable = true;
         bitwarden = {
           enable = true;
           email = "hello@taxborn.com";

@@ -2,7 +2,6 @@
   imports = [
     ./bat
     ./bitwarden
-    ./cheatsheet
     ./direnv
     ./eza
     ./fd

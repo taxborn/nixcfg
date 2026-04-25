@@ -1,11 +1,9 @@
 {
   imports = [
     ./atproto
-    ./avahi
     ./backups
     ./caddy
     ./fail2ban
-    ./copyparty
     ./forgejo
     ./forgejo-runner
     ./glance

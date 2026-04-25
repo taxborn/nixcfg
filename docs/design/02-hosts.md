@@ -21,8 +21,7 @@ unattended-unlocked in practice.
 
 ### helium-01 - homestead server
 In-home server on a trusted LAN. Runs the "stuff I want to keep forever
-but do not want on the public internet" pile: immich, paperless,
-copyparty. Also the borg backup target for every other host (see
+but do not want on the public internet" pile: immich, paperless. Also the borg backup target for every other host (see
 [06-backups.md](06-backups.md)).
 
 No public ingress. Services are reachable over tailscale.

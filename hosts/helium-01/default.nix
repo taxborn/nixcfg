@@ -58,7 +58,6 @@ in
         };
       };
       caddy.enable = true;
-      copyparty.enable = true;
       fail2ban = {
         enable = true;
         enableCaddyJail = true;

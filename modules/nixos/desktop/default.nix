@@ -4,6 +4,9 @@
   pkgs,
   ...
 }:
+let
+  bluemanBin = "${pkgs.blueman}/bin/blueman-applet";
+in
 {
   imports = [
     ./hyprland
@@ -29,13 +32,20 @@
       libinput.enable = true;
     };
 
+    # services.blueman generates a drop-in with ExecStart= that conflicts with
+    # the base unit's ExecStart. Clear it first so systemd sees only one.
+    systemd.user.services.blueman-applet.serviceConfig.ExecStart = lib.mkIf config.hardware.bluetooth.enable (
+      lib.mkForce [
+        ""
+        bluemanBin
+      ]
+    );
+
     myNixOS = {
       profiles = {
         audio.enable = true;
         graphical-boot.enable = true;
       };
-
-      services.avahi.enable = true;
     };
   };
 }

@@ -34,7 +34,6 @@
             modules = [
               ../../hosts/${host}
               inputs.agenix.nixosModules.default
-              inputs.copyparty.nixosModules.default
               inputs.disko.nixosModules.disko
               inputs.home-manager.nixosModules.home-manager
               inputs.snippets.nixosModules.snippets
@@ -53,9 +52,6 @@
                 };
 
                 nixpkgs.config.allowUnfree = true;
-                nixpkgs.overlays = [
-                  inputs.copyparty.overlays.default
-                ];
               }
             ];
 

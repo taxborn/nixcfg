@@ -72,11 +72,7 @@
                         url = "https://paperless.${config.mySnippets.tailnet.name}";
                         icon = "si:paperlessngx";
                       }
-                      {
-                        title = "Copyparty";
-                        url = "https://copyparty.${config.mySnippets.tailnet.name}";
-                        icon = "si:files";
-                      }
+
                       {
                         title = "Grafana";
                         url = "https://grafana.${config.mySnippets.tailnet.name}";

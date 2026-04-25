@@ -31,7 +31,6 @@
 
     myNixOS = {
       profiles.bluetooth.enable = true;
-      services.avahi.enable = true;
     };
   };
 }

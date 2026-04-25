@@ -10,7 +10,7 @@ internet. This has a few consequences:
   CGNAT range (`100.64.0.0/10`).
 - fail2ban whitelists the tailnet range so my own traffic cannot get
   me rate-limited.
-- helium-01 serves immich/paperless/copyparty reachable only via
+- helium-01 serves immich/paperless reachable only via
   tailscale hostnames. No public DNS, no caddy vhost for them.
 - forgejo-runner on argon reaches forgejo on carbon over tailscale
   instead of through public caddy, which avoids a hairpin and keeps

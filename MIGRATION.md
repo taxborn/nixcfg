@@ -51,7 +51,7 @@ flake input and a NixOS module.
 | all        | `/persist/home/taxborn` (or full `/home` on workstations -- `/home` already on a separate LUKS disk there)   |
 | argon      | `+ /var/lib/{caddy,gitea-actions-runner,podman}` (taxborn-public hash-haus assets, runner workspaces)        |
 | carbon     | `+ /var/lib/{caddy,forgejo,vaultwarden,pds,tangled-knot,podman}, /var/cache/forgejo`                         |
-| helium-01  | `+ /var/lib/{caddy,immich,paperless,copyparty,prometheus,loki,grafana,gitea-actions-runner,borg-snapshots}`  |
+| helium-01  | `+ /var/lib/{caddy,immich,paperless,prometheus,loki,grafana,gitea-actions-runner,borg-snapshots}`  |
 | helium-01  | `+ /mnt/hdd/borg-repos` (already external, just keep it -- see disk change below)                            |
 | tungsten   | workstation: `/home` and `/persist` are subvols of the new RAID1 btrfs pool (see section F)                  |
 | uranium    | workstation: `/home` and `/persist` are subvols of the new RAID1 btrfs pool (see section F)                  |
@@ -233,7 +233,7 @@ greenfield bootstrap.
    recipients, harden SSH, add restore-test timer, fix
    `enableHeliumRepo` on helium-01. Deploy normally. No reinstalls yet.
 3. **Pre-stage cold dumps.** Before any reinstall: postgres dumps
-   (forgejo, vaultwarden), sqlite copies (pds), copyparty + immich +
+   (forgejo, vaultwarden), sqlite copies (pds), immich +
    paperless data archives, glance config. Push to rsync.net under a
    `pre-reimage-2026-04-XX/` prefix. Verify integrity.
 4. **Reinstall argon** (lowest blast radius). Restore container vols
@@ -247,7 +247,7 @@ greenfield bootstrap.
    (it's its own backup target, but with `enableHeliumRepo = false`
    that's no longer self-referential). Sequence: nixos-anywhere ->
    reformat /mnt/hdd to ext4 -> restore borg-repos from rsync.net ->
-   restore service data (immich, paperless, copyparty, prometheus
+   restore service data (immich, paperless, prometheus
    tsdb, loki chunks, grafana db) -> re-enable other hosts'
    enableHeliumRepo so the helium repo path resumes.
 

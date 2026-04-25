@@ -12,7 +12,7 @@ see [`docs/design/`](docs/design/README.md) for architectural design decisions (
 | **tungsten** | laptop | intel cpu, nvidia gpu (optimus) | lanzaboote (secure boot) | HiDPI (3456x2160), LUKS+FIDO2 |
 | **carbon** | remote server (OVH) | intel cpu | grub | caddy reverse proxy, forgejo, vaultwarden, bluesky PDS, tangled, minecraft |
 | **argon** | remote server (OVH) | intel cpu | grub | caddy, forgejo-runner, hash-haus, minecraft |
-| **helium-01** | local homestead server | intel cpu | systemd-boot | immich, paperless, copyparty, grafana + prometheus + loki |
+| **helium-01** | local homestead server | intel cpu | systemd-boot | immich, paperless, grafana + prometheus + loki |
 
 all hosts run tailscale, openssh, borg backups (to rsync.net and helium-01), and node-exporter + fluent-bit for monitoring. public-facing hosts (carbon, argon, helium-01) also run fail2ban.
 
@@ -98,7 +98,6 @@ Workstation hosts (uranium, tungsten) import `profile-workstation` and add host-
 |---|---|
 | nixpkgs | nixos-unstable channel |
 | agenix | secret management |
-| copyparty | file sharing service |
 | disko | declarative disk partitioning |
 | flake-parts | flake output organization |
 | home-manager | user environment management |
@@ -152,7 +151,6 @@ each host has a `secrets.nix` that declares which age-encrypted secrets it needs
 | service | description |
 |---|---|
 | caddy | local reverse proxy |
-| copyparty | file sharing |
 | grafana | monitoring dashboards with prometheus (scrapes all 5 hosts) |
 | loki | log aggregation (scraped via fluent-bit on every host) |
 | immich | photo management |

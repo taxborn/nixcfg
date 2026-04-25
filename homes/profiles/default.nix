@@ -25,23 +25,6 @@
       username = "taxborn";
       homeDirectory = "/home/taxborn";
       stateVersion = "25.11";
-
-      sessionPath = [
-        "$HOME/.zvm/bin"
-        "$HOME/.local/bin"
-        "$HOME/go/bin"
-      ];
-
-      packages = with pkgs; [
-        clang
-        go
-        rustc
-        cargo
-        jdk
-        uv
-        fnm
-        zvm
-      ];
     };
 
     programs = {
@@ -49,7 +32,7 @@
       fish = {
         enable = true;
         interactiveShellInit = ''
-          fnm env --use-on-cd --shell fish | source
+          set fish_greeting # Disable greeting
         '';
       };
     };

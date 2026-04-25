@@ -141,7 +141,7 @@ doubt, make the repo private and keep `secrets` as-is.
 Replaced the global `keys` default with per-host `hostKeys` calls in
 `secrets/secrets.nix`. New mapping:
 - `hash-haus.age` -> argon
-- `grafana.age`, `copyparty.age` -> helium-01
+- `grafana.age` -> helium-01
 - `pds.age`, `forgejo/postgres.age`, `forgejo/signing_key.age`,
   `resend.age` -> carbon
 - `forgejo/act-runner.age` -> carbon, argon, helium-01

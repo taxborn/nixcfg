@@ -17,9 +17,5 @@ in
       bind tailscale/paperless
       reverse_proxy localhost:${toString net.paperless.port}
     '';
-    "copyparty.${tailnet}".extraConfig = ''
-      bind tailscale/copyparty
-      reverse_proxy localhost:${toString net.copyparty.port}
-    '';
   };
 }
