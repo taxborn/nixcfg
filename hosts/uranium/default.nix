@@ -1,7 +1,6 @@
 {
   self,
   config,
-  lib,
   ...
 }:
 let
@@ -19,12 +18,6 @@ in
     self.nixosModules.locale-en-us
   ];
 
-  # Prefer IPv4 over IPv6 for outbound connections. The ISP's IPv6 path is
-   # unreliable and causes connection resets mid-download.
-   # FIXME: change after I move
-   environment.etc."gai.conf".text = ''
-     precedence ::ffff:0:0/96  100
-   '';
   networking.hostName = "uranium";
   time.timeZone = "America/Chicago";
   system.stateVersion = "25.11";

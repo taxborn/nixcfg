@@ -50,7 +50,7 @@ flake input and a NixOS module.
 | all        | `/persist/{etc/ssh, etc/machine-id, var/lib/{nixos,systemd,tailscale,fail2ban}, var/log}`                    |
 | all        | `/persist/home/taxborn` (or full `/home` on workstations -- `/home` already on a separate LUKS disk there)   |
 | argon      | `+ /var/lib/{caddy,gitea-actions-runner,podman}` (taxborn-public hash-haus assets, runner workspaces)        |
-| carbon     | `+ /var/lib/{caddy,forgejo,vaultwarden,pds,tangled-knot,podman}, /var/cache/forgejo`                         |
+| carbon     | `+ /var/lib/{caddy,forgejo,vaultwarden,pds,podman}, /var/cache/forgejo`                         |
 | helium-01  | `+ /var/lib/{caddy,immich,paperless,prometheus,loki,grafana,gitea-actions-runner,borg-snapshots}`  |
 | helium-01  | `+ /mnt/hdd/borg-repos` (already external, just keep it -- see disk change below)                            |
 | tungsten   | workstation: `/home` and `/persist` are subvols of the new RAID1 btrfs pool (see section F)                  |

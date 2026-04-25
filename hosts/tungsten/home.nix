@@ -8,8 +8,5 @@
       self.homeModules.profile-workstation
     ];
 
-    config = {
-      myHome.services.hypridle.hyprlockScale = 2;
-    };
   };
 }

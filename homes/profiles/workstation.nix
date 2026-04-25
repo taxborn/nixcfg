@@ -38,11 +38,8 @@
           baseUrl = "https://vw.mischief.town";
         };
         firefox.enable = true;
-        feh.enable = true;
         ghostty.enable = true;
         minecraft.enable = true;
-        obs.enable = true;
-        vlc.enable = true;
         zed-editor.enable = true;
       };
     };

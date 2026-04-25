@@ -56,9 +56,9 @@ in
     "$mod,E,exec,${defaultApps.editor}"
     "$mod,F,exec,${defaultApps.terminal} -e ${lib.getExe pkgs.yazi}"
 
-    ",PRINT,exec,${lib.getExe helpers.screenshot}"
-    "CTRL,F12,exec,${lib.getExe helpers.screenshot}"
-    "ALT, L,exec,${lib.getExe' pkgs.systemd "loginctl"} lock-session"
+    # TODO: Screenshot solution
+    # ",PRINT,exec,${lib.getExe helpers.screenshot}"
+    # "CTRL,F12,exec,${lib.getExe helpers.screenshot}"
     "$mod SHIFT,M,exec,${lib.getExe' pkgs.systemd "loginctl"} terminate-session $XDG_SESSION_ID"
     "$mod SHIFT,backslash,togglesplit"
 
@@ -139,8 +139,9 @@ in
 
   bindle = [
     # Display, volume, microphone, and media keys.
-    ",xf86monbrightnessup,exec,${helpers.brightness.up}"
-    ",xf86monbrightnessdown,exec,${helpers.brightness.down}"
+    # TODO: brightnessctl
+    # ",xf86monbrightnessup,exec,${helpers.brightness.up}"
+    # ",xf86monbrightnessdown,exec,${helpers.brightness.down}"
     ",xf86audioraisevolume,exec,${helpers.volume.up}"
     ",xf86audiolowervolume,exec,${helpers.volume.down}"
   ];
@@ -196,7 +197,7 @@ in
     focus_on_activate = true;
     key_press_enables_dpms = true;
     mouse_move_enables_dpms = true;
-    swallow_regex = "^(Alacritty|kitty|footclient|foot|com\.mitchellh\.ghostty|org\.wezfurlong\.wezterm|codium|code)$";
+    swallow_regex = "^(com\.mitchellh\.ghostty)$";
     vfr = true;
   };
 

@@ -40,6 +40,7 @@
       blueman-applet.enable = true;
     };
 
+    # TODO: Why is this here?
     systemd.user.services.polkit-gnome-authentication-agent = {
       Unit = {
         After = "graphical-session.target";
@@ -80,10 +81,7 @@
       desktop.enable = true;
       programs.rofi.enable = true;
       services = {
-        swaybg.enable = true;
-        hypridle.enable = true;
         mako.enable = true;
-        swayosd.enable = true;
         waybar.enable = true;
       };
     };

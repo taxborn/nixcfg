@@ -66,7 +66,6 @@ in
         enableCaddyJail = true;
         enableForgejoJail = true;
       };
-      tangled-knot.enable = true;
       taxborn-com.enable = true;
       vaultwarden.enable = true;
     };

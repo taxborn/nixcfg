@@ -51,7 +51,6 @@ and is treated as read-only shared library.
 - `disko` - declarative disk layout per host, lives under `modules/disko/`.
 - `agenix` - secrets. Marked with a TODO to evaluate ragenix.
 - `lanzaboote` - secure boot on workstations.
-- `tangled` - source of tangled-knot for carbon.
 - `snippets`, `secrets` - see above.
 
 All inputs that touch nixpkgs use `inputs.nixpkgs.follows = "nixpkgs"`

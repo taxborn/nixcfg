@@ -34,7 +34,6 @@ in front of:
 - forgejo (git.mischief.town)
 - vaultwarden (vw.mischief.town)
 - PDS (atproto personal data server)
-- tangled-knot
 - grafana
 - minecraft `mavs`
 

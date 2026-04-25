@@ -50,11 +50,7 @@
                         url = "https://${config.mySnippets.mischief-town.networkMap.pds.vHost}";
                         icon = "si:bluesky";
                       }
-                      {
-                        title = "Tangled Knot";
-                        url = "https://${config.mySnippets.mischief-town.networkMap.tangled-knot.vHost}";
-                        icon = "si:git";
-                      }
+
                     ];
                   }
                   {

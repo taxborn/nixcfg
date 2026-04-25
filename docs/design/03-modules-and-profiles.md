@@ -34,7 +34,7 @@ the same way as a shared one, and promoting it later is free.
 A few modules pull in their dependencies automatically:
 
 - `myHome.desktop.hyprland.enable = true` auto-enables rofi, gnome-keyring,
-  mako, waybar, hypridle. The hyprland module treats itself as a
+  mako, waybar. The hyprland module treats itself as a
   "desktop shell" bundle rather than just the compositor.
 - The amd GPU module sets up mesa/vulkan packages so hosts do not need
   to duplicate `hardware.graphics.extraPackages`.

@@ -1,10 +1,6 @@
 {
   imports = [
-    ./bat
     ./bitwarden
-    ./direnv
-    ./eza
-    ./fd
     ./feh
     ./firefox
     ./fzf
@@ -14,7 +10,6 @@
     ./ledger
     ./minecraft
     ./neovim
-    ./obs
     ./ripgrep
     ./rofi
     ./ssh

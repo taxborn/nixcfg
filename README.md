@@ -70,7 +70,7 @@ nixcfg/
       desktop/hyprland/    #   hyprland window manager config
       profiles/            #   default apps, MIME types
       programs/            #   ghostty, bitwarden, ledger, obs, rofi
-      services/            #   hypridle, mako, swaybg, swayosd, waybar
+      services/            #   mako, waybar
     locale/                # locale/timezone
     nixos/                 # NixOS system modules
       base/                #   core system config (networkmanager, git, htop, swap, bluetooth)
@@ -78,7 +78,7 @@ nixcfg/
       profiles/            #   audio, bluetooth, btrfs, graphical-boot, performance, swap
       programs/            #   firefox, gimp, grub, lanzaboote, neovim, nix, podman, systemd-boot, yubikey
       services/            #   backups, caddy, forgejo, glance, grafana, immich, openssh, paperless,
-                           #   pds, sddm, tailscale, tangled-knot, taxborn-com, vaultwarden, etc.
+                           #   pds, sddm, tailscale, taxborn-com, vaultwarden, etc.
     users/                 # user account definitions and groups
 ```
 
@@ -132,7 +132,6 @@ each host has a `secrets.nix` that declares which age-encrypted secrets it needs
 | forgejo-runner | CI runners (3 docker + 2 native) |
 | glance | dashboard (home.mischief.town) |
 | PDS | bluesky personal data server |
-| tangled-knot | tangled.org knot server |
 | taxborn-com | personal website (www.taxborn.com) |
 | vaultwarden | password manager (vw.mischief.town) |
 | minecraft | `mavs` server on 25565 |

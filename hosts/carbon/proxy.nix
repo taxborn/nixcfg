@@ -44,44 +44,15 @@ in
       redir https://${net.glance.vHost}{uri} permanent
     '';
 
-    # mischief.town - Bluesky PDS (with age assurance workarounds)
-    # Bluesky's age assurance API was introduced in mid-2025 and gates
-    # certain account capabilities. The three handle blocks below intercept
-    # the moderation endpoints and return stub "assured" responses so that
-    # the PDS continues to function for a single-user instance without
-    # going through Bluesky's age-verification flow. Do not remove these
-    # without first confirming that the PDS account is unaffected upstream.
+    # mischief.town - Bluesky PDS
     ${net.pds.vHost}.extraConfig = ''
       encode zstd gzip
-
-      handle /xrpc/app.bsky.unspecced.getAgeAssuranceState {
-        header content-type "application/json"
-        header access-control-allow-headers "authorization,dpop,atproto-accept-labelers,atproto-proxy"
-        header access-control-allow-origin "*"
-        respond `{"lastInitiatedAt":"2025-07-14T14:22:43.912Z","status":"assured"}` 200
-      }
-
-      handle /xrpc/app.bsky.ageassurance.getConfig {
-        header content-type "application/json"
-        header access-control-allow-headers "authorization,dpop,atproto-accept-labelers,atproto-proxy"
-        header access-control-allow-origin "*"
-        respond `{"regions":[]}` 200
-      }
-
-      handle /xrpc/app.bsky.ageassurance.getState {
-        header content-type "application/json"
-        header access-control-allow-headers "authorization,dpop,atproto-accept-labelers,atproto-proxy"
-        header access-control-allow-origin "*"
-        respond `{"state":{"lastInitiatedAt":"2025-07-14T14:22:43.912Z","status":"assured","access":"full"},"metadata":{"accountCreatedAt":"2022-11-17T00:35:16.391Z"}}` 200
-      }
 
       reverse_proxy http://localhost:${toString net.pds.port}
     '';
 
     # mischief.town - Simple local proxies
     ${net.glance.vHost}.extraConfig = localProxy net.glance;
-    ${net.tangled-knot.vHost}.extraConfig = localProxy net.tangled-knot;
-    ${net.tangled-spindle.vHost}.extraConfig = localProxy net.tangled-spindle;
 
     ${net.forgejo.vHost}.extraConfig = ''
       encode zstd gzip

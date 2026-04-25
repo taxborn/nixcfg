@@ -48,7 +48,6 @@
 
     services = {
       dbus.packages = [ pkgs.gcr ];
-      udev.packages = [ pkgs.swayosd ];
     };
 
     system.nixos.tags = [ "hyprland" ];
