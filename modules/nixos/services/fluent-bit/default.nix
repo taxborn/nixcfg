@@ -38,12 +38,10 @@ in
         service = {
           flush = 5;
           log_level = "warn";
-          storage = {
-            path = "/var/lib/fluent-bit/storage";
-            sync = "normal";
-            checksum = "off";
-            "backlog.mem_limit" = "64M";
-          };
+          "storage.path" = "/var/lib/fluent-bit/storage";
+          "storage.sync" = "normal";
+          "storage.checksum" = "off";
+          "storage.backlog.mem_limit" = "64M";
         };
 
         pipeline = {
@@ -56,7 +54,7 @@ in
               # historical records with "timestamp too old" and fluent-bit
               # piling the backlog into RAM forever.
               read_from_tail = "on";
-              storage.type = "filesystem";
+              "storage.type" = "filesystem";
               mem_buf_limit = "32M";
             }
           ];
@@ -71,7 +69,7 @@ in
               label_keys = "$SYSTEMD_UNIT";
               # Drop permanently-failing chunks instead of retrying forever.
               retry_limit = 5;
-              storage.total_limit_size = "512M";
+              "storage.total_limit_size" = "512M";
             }
           ];
         };

@@ -12,7 +12,7 @@ in
   config = lib.mkIf config.myHome.programs.firefox.enable {
     programs.firefox = {
       enable = true;
-
+      configPath = "${config.xdg.configHome}/mozilla/firefox";
       profiles = {
         default = {
           containersForce = true;
