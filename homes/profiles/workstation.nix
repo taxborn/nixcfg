@@ -32,11 +32,7 @@
       profiles.defaultApps.enable = true;
       desktop.hyprland.enable = true;
       programs = {
-        bitwarden = {
-          enable = true;
-          email = "hello@taxborn.com";
-          baseUrl = "https://vw.mischief.town";
-        };
+        bitwarden.enable = true;
         firefox.enable = true;
         ghostty.enable = true;
         minecraft.enable = true;

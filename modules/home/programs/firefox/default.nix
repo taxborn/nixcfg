@@ -3,9 +3,6 @@
   lib,
   ...
 }:
-let
-  engines = import ./engines.nix;
-in
 {
   options.myHome.programs.firefox.enable = lib.mkEnableOption "firefox web browser";
 
@@ -15,52 +12,7 @@ in
       configPath = "${config.xdg.configHome}/mozilla/firefox";
       profiles = {
         default = {
-          containersForce = true;
-
-          containers = {
-            personal = {
-              color = "purple";
-              icon = "circle";
-              id = 1;
-              name = "Personal";
-            };
-
-            private = {
-              color = "red";
-              icon = "fingerprint";
-              id = 2;
-              name = "Private";
-            };
-
-            atolls = {
-              color = "blue";
-              icon = "briefcase";
-              id = 3;
-              name = "Atolls";
-            };
-          };
-
           id = 0;
-
-          search = {
-            inherit engines;
-            default = "Kagi";
-            force = true;
-
-            order = [
-              "bing"
-              "Brave"
-              "ddg"
-              "google"
-              "Home Manager Options"
-              "Kagi"
-              "NixOS Wiki"
-              "nixpkgs"
-              "Noogle"
-              "Wikipedia"
-              "Wiktionary"
-            ];
-          };
 
           settings =
             (import ./betterfox/fastfox.nix)

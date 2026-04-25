@@ -43,7 +43,6 @@
     programs = {
       gnupg.agent.pinentryPackage = pkgs.pinentry-gnome3;
       hyprland.enable = true;
-      hyprlock.enable = true;
     };
 
     services = {

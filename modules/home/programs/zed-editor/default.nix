@@ -22,8 +22,6 @@
           context = "Workspace";
 
           bindings = {
-            cmd-p = "command_palette::Toggle";
-            cmd-shift-p = "file_finder::Toggle";
             ctrl-p = "command_palette::Toggle";
             ctrl-shift-p = "file_finder::Toggle";
           };
@@ -33,7 +31,6 @@
       userSettings = {
         auto_indent_on_paste = true;
         auto_update = false;
-        disable_ai = false;
         icon_theme = "Catppuccin Mocha";
         autosave = "on_focus_change";
 
