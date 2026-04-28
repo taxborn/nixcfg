@@ -4,7 +4,7 @@
   ...
 }:
 {
-  options.myHome.programs.neovim.enable = lib.mkEnableOption "enable neovim";
+  options.myHome.programs.neovim.enable = lib.mkEnableOption "User-level neovim configuration.";
 
   config = lib.mkIf config.myHome.programs.neovim.enable {
     programs.fish.shellInit = lib.mkIf config.programs.fish.enable ''
