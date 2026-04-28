@@ -31,6 +31,7 @@ in
       };
     };
     profiles.btrfs.enable = true;
+    profiles.impermanence.enable = true;
     programs = {
       lanzaboote.enable = true;
       nix.enable = true;
@@ -69,6 +70,8 @@ in
     nvidiaBusId = "PCI:1:0:0";
     intelBusId = "PCI:0:2:0";
   };
+
+  fileSystems."/home".neededForBoot = true;
 
   boot.swraid.mdadmConf = "MAILADDR root";
 

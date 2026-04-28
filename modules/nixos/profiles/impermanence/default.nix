@@ -80,6 +80,12 @@ in
         "/var/lib/nixos"
         "/var/lib/systemd/coredump"
       ]
+      ++ lib.optionals config.networking.networkmanager.enable [
+        "/var/lib/NetworkManager"
+      ]
+      ++ lib.optionals config.hardware.bluetooth.enable [
+        "/var/lib/bluetooth"
+      ]
       ++ lib.optionals config.myNixOS.services.tailscale.enable [
         "/var/lib/tailscale"
       ]

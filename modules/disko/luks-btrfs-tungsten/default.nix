@@ -40,7 +40,7 @@ in
               };
             };
             raid = {
-              size = "100%";
+              size = "930G";
               content = {
                 type = "mdraid";
                 name = "data";
@@ -94,6 +94,10 @@ in
               };
               "/home" = {
                 mountpoint = "/home";
+                mountOptions = defaultBtrfsOpts;
+              };
+              "/persist" = {
+                mountpoint = "/persist";
                 mountOptions = defaultBtrfsOpts;
               };
             };
