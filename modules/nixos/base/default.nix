@@ -18,7 +18,7 @@
 
       systemPackages = with pkgs; [
         self.inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
-        pkgs.age-plugin-yubikey
+        age-plugin-yubikey
         btop
         just
         wget
@@ -49,8 +49,8 @@
     security.sudo.extraConfig = "Defaults lecture = never";
 
     # Bound persistent journal so boot/log-shippers don't replay months of
-     # history and so disk usage stays predictable. ForwardToWall off to
-     # skip a wall(1) write per emergency-level line.
+    # history and so disk usage stays predictable. ForwardToWall off to
+    # skip a wall(1) write per emergency-level line.
     services.journald.extraConfig = ''
       SystemMaxUse=500M
       SystemKeepFree=1G
