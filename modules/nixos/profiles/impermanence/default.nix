@@ -81,7 +81,7 @@ in
         "/var/lib/systemd/coredump"
       ]
       ++ lib.optionals config.networking.networkmanager.enable [
-        "/var/lib/NetworkManager"
+        { directory = "/var/lib/NetworkManager"; mode = "0700"; }
       ]
       ++ lib.optionals config.hardware.bluetooth.enable [
         "/var/lib/bluetooth"
