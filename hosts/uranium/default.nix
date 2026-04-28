@@ -33,8 +33,9 @@ in
       };
     };
     profiles.btrfs.enable = true;
+    profiles.impermanence.enable = true;
     programs = {
-      lanzaboote.enable = true;
+      systemd-boot.enable = true;
       nix.enable = true;
       podman.enable = true;
       yubikey.enable = true;
@@ -60,16 +61,13 @@ in
     profiles.ssd.enable = true;
   };
 
+  fileSystems."/home".neededForBoot = true;
+
+  boot.swraid.mdadmConf = "MAILADDR root";
+
   boot.initrd = {
     luks = {
-      # bypassWorkqueues skips dm-crypt's kcryptd read/write kworkers and
-      # runs crypto inline on the submitting CPU. Much lower latency on
-      # fast NVMe; visible kcryptd CPU churn goes away.
       devices."cryptroot" = {
-        crypttabExtraOpts = defaultCrypttabOptions;
-        bypassWorkqueues = true;
-      };
-      devices."crypthome" = {
         crypttabExtraOpts = defaultCrypttabOptions;
         bypassWorkqueues = true;
       };
@@ -82,6 +80,8 @@ in
       "usbhid"
       "usb_storage"
       "sd_mod"
+      "raid1"
+      "md_mod"
     ];
   };
 
