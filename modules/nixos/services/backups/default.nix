@@ -74,9 +74,6 @@ let
     "/home/*/.config/zen/*/cache2"
     "/home/*/.config/zen/*/startupCache"
 
-    # managed by Obsidian
-    "/home/taxborn/documents/notes"
-
     # git history (recoverable from remotes)
     "**/.git"
   ];

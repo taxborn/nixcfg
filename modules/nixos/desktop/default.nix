@@ -49,6 +49,7 @@ in
     myNixOS.profiles = {
       audio.enable = true;
       graphical-boot.enable = true;
+      bluetooth.enable = true;
     };
   };
 }

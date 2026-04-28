@@ -9,7 +9,7 @@
 
   config = lib.mkIf config.myHardware.amd.gpu.enable {
     environment.variables = {
-      DPAU_DRIVER = "radeonsi";
+      VDPAU_DRIVER = "radeonsi";
       GSK_RENDERER = "ngl";
     };
 

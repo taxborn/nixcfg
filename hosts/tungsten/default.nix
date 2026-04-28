@@ -41,6 +41,8 @@ in
         enableRsyncRepo = true;
         enableHeliumRepo = true;
         desktopExcludes = true;
+        # managed by Obsidian sync, no need to back up
+        extraExcludes = [ "/home/taxborn/documents/notes" ];
       };
       sddm = {
         enable = true;
