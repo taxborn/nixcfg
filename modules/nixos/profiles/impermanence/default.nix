@@ -104,6 +104,7 @@ in
           ".config"
           ".local"
           ".ssh"
+          "dev"
         ];
       };
     };
