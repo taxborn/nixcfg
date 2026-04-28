@@ -1,4 +1,5 @@
 {
+  lib,
   self,
   ...
 }:
@@ -69,10 +70,11 @@ in
     intelBusId = "PCI:0:2:0";
   };
 
+  boot.swraid.mdadmConf = "MAILADDR root";
+
   boot.initrd = {
     luks = {
       devices."cryptroot".crypttabExtraOpts = defaultCrypttabOptions;
-      devices."crypthome".crypttabExtraOpts = defaultCrypttabOptions;
       fido2Support = false;
     };
     availableKernelModules = [
@@ -82,6 +84,8 @@ in
       "usb_storage"
       "sd_mod"
       "rtsx_pci_sdmmc"
+      "raid1"
+      "md_mod"
     ];
   };
 

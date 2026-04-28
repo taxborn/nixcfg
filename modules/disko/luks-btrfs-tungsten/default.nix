@@ -23,16 +23,14 @@ in
 {
   disko.devices = {
     disk = {
-      root-disk = {
+      nvme0 = {
         device = nvme0;
         type = "disk";
-
         content = {
           type = "gpt";
           partitions = {
-            # Boot partition
             ESP = {
-              size = "512M";
+              size = "4G";
               type = "EF00";
               content = {
                 type = "filesystem";
@@ -41,67 +39,62 @@ in
                 mountOptions = [ "umask=0077" ];
               };
             };
-            luks-root = {
+            raid = {
               size = "100%";
               content = {
-                type = "luks";
-                name = "cryptroot";
-                settings.allowDiscards = true;
-                extraFormatArgs = defaultExtraFormatArgs;
-                postCreateHook = ''
-                  sudo systemd-cryptenroll ${nvme0}-part2 --fido2-device=auto
-                '';
-                content = {
-                  type = "btrfs";
-                  extraArgs = [ "-f" ];
-                  subvolumes = {
-                    "/root" = {
-                      mountpoint = "/";
-                      mountOptions = defaultBtrfsOpts;
-                    };
-                    "/nix" = {
-                      mountpoint = "/nix";
-                      mountOptions = defaultBtrfsOpts;
-                    };
-                    "/swap" = {
-                      mountpoint = "/.swapvol";
-                      # 32 GB of RAM + some space
-                      swap.swapfile.size = "34G";
-                    };
-                  };
-                };
+                type = "mdraid";
+                name = "data";
               };
             };
           };
         };
       };
 
-      home-disk = {
+      nvme1 = {
         device = nvme1;
         type = "disk";
         content = {
           type = "gpt";
           partitions = {
-            luks-home = {
+            raid = {
               size = "100%";
               content = {
-                type = "luks";
-                name = "crypthome";
-                settings.allowDiscards = true;
-                extraFormatArgs = defaultExtraFormatArgs;
-                postCreateHook = ''
-                  sudo systemd-cryptenroll ${nvme1}-part1 --fido2-device=auto
-                '';
-                content = {
-                  type = "btrfs";
-                  extraArgs = [ "-f" ];
-                  subvolumes = {
-                    "/home" = {
-                      mountpoint = "/home";
-                      mountOptions = defaultBtrfsOpts;
-                    };
-                  };
-                };
+                type = "mdraid";
+                name = "data";
+              };
+            };
+          };
+        };
+      };
+    };
+
+    mdadm = {
+      data = {
+        type = "mdadm";
+        level = 1;
+        content = {
+          type = "luks";
+          name = "cryptroot";
+          settings.allowDiscards = true;
+          extraFormatArgs = defaultExtraFormatArgs;
+          postCreateHook = ''
+            sudo systemd-cryptenroll /dev/md/data --fido2-device=auto
+          '';
+          content = {
+            type = "btrfs";
+            extraArgs = [ "-f" ];
+            subvolumes = {
+              "/root" = {
+                mountpoint = "/";
+                mountOptions = defaultBtrfsOpts;
+              };
+              "/nix" = {
+                mountpoint = "/nix";
+                mountOptions = defaultBtrfsOpts;
+              };
+              "/home" = {
+                mountpoint = "/home";
+                mountOptions = defaultBtrfsOpts;
               };
             };
           };
