@@ -30,7 +30,7 @@
     services = {
       backups = {
         client = {
-          enable = true;
+          enable = false;
           enableRsyncRepo = true;
           enableHeliumRepo = true;
           extraExcludes = [
