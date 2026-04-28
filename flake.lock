@@ -21,30 +21,6 @@
         "type": "github"
       }
     },
-    "agenix_2": {
-      "inputs": {
-        "darwin": "darwin_2",
-        "home-manager": "home-manager_3",
-        "nixpkgs": [
-          "snippets",
-          "nixpkgs"
-        ],
-        "systems": "systems_2"
-      },
-      "locked": {
-        "lastModified": 1762618334,
-        "narHash": "sha256-wyT7Pl6tMFbFrs8Lk/TlEs81N6L+VSybPfiIgzU8lbQ=",
-        "owner": "ryantm",
-        "repo": "agenix",
-        "rev": "fcdea223397448d35d9b31f798479227e80183f6",
-        "type": "github"
-      },
-      "original": {
-        "owner": "ryantm",
-        "repo": "agenix",
-        "type": "github"
-      }
-    },
     "crane": {
       "locked": {
         "lastModified": 1754269165,
@@ -63,29 +39,6 @@
     "darwin": {
       "inputs": {
         "nixpkgs": [
-          "agenix",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1744478979,
-        "narHash": "sha256-dyN+teG9G82G+m+PX/aSAagkC+vUv0SgUw3XkPhQodQ=",
-        "owner": "lnl7",
-        "repo": "nix-darwin",
-        "rev": "43975d782b418ebf4969e9ccba82466728c2851b",
-        "type": "github"
-      },
-      "original": {
-        "owner": "lnl7",
-        "ref": "master",
-        "repo": "nix-darwin",
-        "type": "github"
-      }
-    },
-    "darwin_2": {
-      "inputs": {
-        "nixpkgs": [
-          "snippets",
           "agenix",
           "nixpkgs"
         ]
@@ -266,28 +219,6 @@
       "inputs": {
         "nixpkgs": [
           "snippets",
-          "agenix",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1745494811,
-        "narHash": "sha256-YZCh2o9Ua1n9uCvrvi5pRxtuVNml8X2a03qIFfRKpFs=",
-        "owner": "nix-community",
-        "repo": "home-manager",
-        "rev": "abfad3d2958c9e6300a883bd443512c55dfeb1be",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "repo": "home-manager",
-        "type": "github"
-      }
-    },
-    "home-manager_4": {
-      "inputs": {
-        "nixpkgs": [
-          "snippets",
           "nixpkgs"
         ]
       },
@@ -456,11 +387,11 @@
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1777338581,
-        "narHash": "sha256-33ioc/TktkyL0alFppd5Z4/i0bvtv15uP6Pd1d2GJSc=",
+        "lastModified": 1777343470,
+        "narHash": "sha256-oS88Pp4Nv/sVl5lUik8BE1MOfGY+PeiWPXr/NwzKW7c=",
         "owner": "taxborn",
         "repo": "secrets",
-        "rev": "b097ba9e20a499a14984481ead4f9507810b616b",
+        "rev": "484d468889f341d6b9a4da90162632efb039781a",
         "type": "github"
       },
       "original": {
@@ -471,19 +402,18 @@
     },
     "snippets": {
       "inputs": {
-        "agenix": "agenix_2",
         "flake-parts": "flake-parts_3",
-        "home-manager": "home-manager_4",
+        "home-manager": "home-manager_3",
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1777338591,
-        "narHash": "sha256-cSjbAG0v3yiLkzQVDbyQOl1P+ALfG388R1GapTQBZw0=",
+        "lastModified": 1777342546,
+        "narHash": "sha256-D77hOzsDSGB/jjgsqn9e/IsM4q7XmK1va3pgP0YuUP0=",
         "owner": "taxborn",
         "repo": "snippets",
-        "rev": "6eb66c84af3ab06a03b6efa5c83a735b2879e5f3",
+        "rev": "6df0b9a6637844863db36e9cfb5b72eb4d5f669f",
         "type": "github"
       },
       "original": {
@@ -493,21 +423,6 @@
       }
     },
     "systems": {
-      "locked": {
-        "lastModified": 1681028828,
-        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
-        "owner": "nix-systems",
-        "repo": "default",
-        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-systems",
-        "repo": "default",
-        "type": "github"
-      }
-    },
-    "systems_2": {
       "locked": {
         "lastModified": 1681028828,
         "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
