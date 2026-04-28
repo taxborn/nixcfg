@@ -17,7 +17,8 @@
       etc."nixos".source = self;
 
       systemPackages = with pkgs; [
-        self.inputs.ragenix.packages.${pkgs.stdenv.hostPlatform.system}.default
+        self.inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
+        pkgs.age-plugin-yubikey
         btop
         just
         wget

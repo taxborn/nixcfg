@@ -33,7 +33,7 @@
           inputs.nixpkgs.lib.nixosSystem {
             modules = [
               ../../hosts/${host}
-              inputs.ragenix.nixosModules.default
+              inputs.agenix.nixosModules.default
               inputs.disko.nixosModules.disko
               inputs.home-manager.nixosModules.home-manager
               inputs.impermanence.nixosModules.impermanence
