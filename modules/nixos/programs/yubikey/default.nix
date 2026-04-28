@@ -12,5 +12,10 @@
       udev.packages = [ pkgs.yubikey-personalization ];
       pcscd.enable = true;
     };
+
+    age.ageBin = lib.getExe (pkgs.writeShellScriptBin "age" ''
+      export PATH="${pkgs.age-plugin-yubikey}/bin:$PATH"
+      exec ${lib.getExe pkgs.age} "$@"
+    '');
   };
 }
