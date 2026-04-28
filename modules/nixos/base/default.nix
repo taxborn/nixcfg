@@ -42,6 +42,8 @@
 
     networking.networkmanager.enable = true;
 
+    security.sudo.extraConfig = "Defaults lecture = never";
+
     # Bound persistent journal so boot/log-shippers don't replay months of
      # history and so disk usage stays predictable. ForwardToWall off to
      # skip a wall(1) write per emergency-level line.
