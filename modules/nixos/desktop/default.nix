@@ -20,9 +20,12 @@ in
       systemPackages = [ pkgs.age-plugin-yubikey ];
     };
     boot.kernelPackages = pkgs.linuxPackages_latest;
-    hardware.logitech.wireless = {
-      enable = true;
-      enableGraphical = true;
+    hardware = {
+      logitech.wireless = {
+        enable = true;
+        enableGraphical = true;
+      };
+      keyboard.qmk.enable = true;
     };
 
     home-manager.sharedModules = [
