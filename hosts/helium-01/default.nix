@@ -39,13 +39,13 @@
           ];
         };
         server = {
-          enable = true;
-          authorizedKeys = {
-            argon = builtins.readFile "${self.inputs.secrets}/borg/argon/borg_ssh_key.pub";
-            uranium = builtins.readFile "${self.inputs.secrets}/borg/uranium/borg_ssh_key.pub";
-            tungsten = builtins.readFile "${self.inputs.secrets}/borg/tungsten/borg_ssh_key.pub";
-            carbon = builtins.readFile "${self.inputs.secrets}/borg/carbon/borg_ssh_key.pub";
-          };
+          enable = false;
+          # authorizedKeys = {
+          #   argon = builtins.readFile "${self.inputs.secrets}/borg/argon/borg_ssh_key.pub";
+          #   uranium = builtins.readFile "${self.inputs.secrets}/borg/uranium/borg_ssh_key.pub";
+          #   tungsten = builtins.readFile "${self.inputs.secrets}/borg/tungsten/borg_ssh_key.pub";
+          #   carbon = builtins.readFile "${self.inputs.secrets}/borg/carbon/borg_ssh_key.pub";
+          # };
         };
       };
       caddy.enable = true;
