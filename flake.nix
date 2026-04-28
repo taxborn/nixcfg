@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
-    agenix.url = "github:ryantm/agenix"; # TODO: ragenix?
+    ragenix.url = "github:yaxitech/ragenix";
 
     disko = {
       url = "github:nix-community/disko";
