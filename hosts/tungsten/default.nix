@@ -1,6 +1,5 @@
 {
   self,
-  config,
   ...
 }:
 let
@@ -8,7 +7,6 @@ let
     "fido2-device=auto"
     "token-timeout=30"
   ];
-  net = config.mySnippets.mischief-town.networkMap;
 in
 {
   imports = [
@@ -43,12 +41,6 @@ in
         enableRsyncRepo = true;
         enableHeliumRepo = true;
         desktopExcludes = true;
-      };
-      node-exporter.enable = true;
-      fluent-bit = {
-        enable = true;
-        lokiHost = net.tailscaleIPs.helium-01;
-        lokiPort = net.loki.port;
       };
       sddm = {
         enable = true;

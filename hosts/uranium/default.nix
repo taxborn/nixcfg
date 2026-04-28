@@ -1,6 +1,5 @@
 {
   self,
-  config,
   ...
 }:
 let
@@ -8,7 +7,6 @@ let
     "fido2-device=auto"
     "token-timeout=30"
   ];
-  net = config.mySnippets.mischief-town.networkMap;
 in
 {
   imports = [
@@ -48,24 +46,12 @@ in
         enableHeliumRepo = true;
         desktopExcludes = true;
       };
-      node-exporter.enable = true;
-      fluent-bit = {
-        enable = true;
-        lokiHost = net.tailscaleIPs."helium-01";
-        lokiPort = net.loki.port;
-      };
       sddm.enable = true;
       tailscale = {
         enable = true;
         operator = "taxborn";
       };
     };
-  };
-
-  programs.steam = {
-    enable = true;
-    remotePlay.openFirewall = true; # Open ports in the firewall for Steam Remote Play
-    dedicatedServer.openFirewall = true; # Open ports in the firewall for Source Dedicated Server
   };
 
   myHardware = {

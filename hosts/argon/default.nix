@@ -1,16 +1,11 @@
 {
   self,
-  config,
   modulesPath,
   ...
 }:
-let
-  net = config.mySnippets.mischief-town.networkMap;
-in
 {
   imports = [
     ./home.nix
-    ./proxy.nix
     ./secrets.nix
 
     self.diskoConfigurations.btrfs-argon
@@ -42,17 +37,6 @@ in
         ];
       };
       caddy.enable = true;
-      node-exporter.enable = true;
-      fluent-bit = {
-        enable = true;
-        lokiHost = net.tailscaleIPs."helium-01";
-        lokiPort = net.loki.port;
-      };
-      forgejo-runner = {
-        enable = true;
-        dockerContainers = 3;
-        nativeRunners = 2;
-      };
       tailscale = {
         enable = true;
         operator = "taxborn";
@@ -61,7 +45,6 @@ in
         enable = true;
         enableCaddyJail = true;
       };
-      hash-haus.enable = true;
     };
   };
 

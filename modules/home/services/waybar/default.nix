@@ -17,7 +17,6 @@
       noto-fonts
       noto-fonts-cjk-sans
       noto-fonts-color-emoji
-
     ];
     programs.waybar = {
       enable = true;

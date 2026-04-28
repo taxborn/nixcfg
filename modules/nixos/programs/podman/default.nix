@@ -11,9 +11,7 @@
     environment.systemPackages = lib.optionals config.services.xserver.enable [ pkgs.pods ];
 
     virtualisation = {
-      oci-containers = {
-        backend = "podman";
-      };
+      oci-containers.backend = "podman";
 
       podman = {
         enable = true;

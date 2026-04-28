@@ -29,8 +29,6 @@
       pavucontrol
     ];
 
-    myNixOS = {
-      profiles.bluetooth.enable = true;
-    };
+    myNixOS.profiles.bluetooth.enable = true;
   };
 }

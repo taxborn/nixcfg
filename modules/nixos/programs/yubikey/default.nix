@@ -8,10 +8,9 @@
   options.myNixOS.programs.yubikey.enable = lib.mkEnableOption "yubikey config";
 
   config = lib.mkIf config.myNixOS.programs.yubikey.enable {
-    services.udev = {
-      packages = [ pkgs.yubikey-personalization ];
+    services = {
+      udev.packages = [ pkgs.yubikey-personalization ];
+      pcscd.enable = true;
     };
-
-    services.pcscd.enable = true;
   };
 }

@@ -340,11 +340,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1777054018,
-        "narHash": "sha256-tTNS7V6xN/LX1KZ0TrdOnj375ZrsUlLoce4qxZwDN9U=",
+        "lastModified": 1777308348,
+        "narHash": "sha256-DJx9wnerjsOqKOo8I7/u5ENRhRWFF2mbYcACF+mn5LU=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "ffbd94a1c9d7d3e1258e51c084ab2109da04f2b1",
+        "rev": "a28e848a01044f47679453aae75f6253bef7903e",
         "type": "github"
       },
       "original": {
@@ -657,17 +657,17 @@
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1777083091,
-        "narHash": "sha256-mkru/tadrQ6NFzt+UOCcTlXAUlp/K4+adNebKPRUXvM=",
-        "ref": "refs/heads/main",
-        "rev": "5460971f4cf88fee26c2360385955ea7550015b5",
-        "revCount": 31,
-        "type": "git",
-        "url": "https://git.mischief.town/nix-infra/secrets"
+        "lastModified": 1777338581,
+        "narHash": "sha256-33ioc/TktkyL0alFppd5Z4/i0bvtv15uP6Pd1d2GJSc=",
+        "owner": "taxborn",
+        "repo": "secrets",
+        "rev": "b097ba9e20a499a14984481ead4f9507810b616b",
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "https://git.mischief.town/nix-infra/secrets"
+        "owner": "taxborn",
+        "repo": "secrets",
+        "type": "github"
       }
     },
     "snippets": {
@@ -680,17 +680,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1777085365,
-        "narHash": "sha256-FzuNuYjxUnfVlo8ZKAtgKwYkaigmh94jSPPT3DcQzmU=",
-        "ref": "refs/heads/main",
-        "rev": "5bfb9f06019d4dc41329753c6a97aa002a8dd119",
-        "revCount": 26,
-        "type": "git",
-        "url": "https://git.mischief.town/nix-infra/snippets"
+        "lastModified": 1777338591,
+        "narHash": "sha256-cSjbAG0v3yiLkzQVDbyQOl1P+ALfG388R1GapTQBZw0=",
+        "owner": "taxborn",
+        "repo": "snippets",
+        "rev": "6eb66c84af3ab06a03b6efa5c83a735b2879e5f3",
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "https://git.mischief.town/nix-infra/snippets"
+        "owner": "taxborn",
+        "repo": "snippets",
+        "type": "github"
       }
     },
     "sqlite-lib-src": {
@@ -770,11 +770,11 @@
         "sqlite-lib-src": "sqlite-lib-src"
       },
       "locked": {
-        "lastModified": 1777013867,
-        "narHash": "sha256-1bBbkWKyauC3oG1Fg5h6K5Rv2use/CUXdjZuvEauIb0=",
+        "lastModified": 1777296150,
+        "narHash": "sha256-lKHXquc1HFRflhLtP6MVgenAyeJ9HmTeIgV2NHF2ExI=",
         "ref": "refs/heads/master",
-        "rev": "ae44f0db1837fb2e26c5a8c8df3a12638a97b180",
-        "revCount": 2272,
+        "rev": "120cf31d890bc7de9e33e9d4e9d652c4c07da1c2",
+        "revCount": 2280,
         "type": "git",
         "url": "https://tangled.org/tangled.org/core"
       },

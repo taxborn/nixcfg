@@ -34,15 +34,6 @@
         in
         machines
         // {
-          forgejo = {
-            # TODO: take vHost from snippets
-            hostname = "git.mischief.town";
-            port = 2222;
-            user = "git";
-            # TODO: seems like I can only access over ipv4, see if I can fix that
-            addressFamily = "inet";
-          };
-
           rsync-backup = {
             hostname = "de4388.rsync.net";
             user = "de4388";

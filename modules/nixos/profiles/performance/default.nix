@@ -71,15 +71,6 @@
       };
     };
 
-    # Defer bpftune post-boot. Its auto-generated cgroupv2 mount
-     # (/run/bpftune/cgroupv2) otherwise lands on the critical chain via
-     # local-fs.target. Auto-tuning doesn't need to start at t=0; 10s
-     # after boot is fine and keeps the graphical path clean.
-    systemd.services.bpftune = {
-      wantedBy = lib.mkForce [ ];
-      before = lib.mkForce [ ];
-    };
-
     systemd.timers.bpftune = {
       wantedBy = [ "timers.target" ];
       timerConfig = {

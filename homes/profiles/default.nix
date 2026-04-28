@@ -17,6 +17,7 @@
       username = "taxborn";
       homeDirectory = "/home/taxborn";
       stateVersion = "25.11";
+      sessionPath = [ "$HOME/.local/bin" ];
     };
 
     programs = {

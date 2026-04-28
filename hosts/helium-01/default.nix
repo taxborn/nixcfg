@@ -1,16 +1,11 @@
 {
   self,
   pkgs,
-  config,
   ...
 }:
-let
-  net = config.mySnippets.mischief-town.networkMap;
-in
 {
   imports = [
     ./home.nix
-    ./proxy.nix
     ./secrets.nix
     self.diskoConfigurations.btrfs-helium-01
     self.nixosModules.locale-en-us
@@ -39,10 +34,6 @@ in
           enableRsyncRepo = true;
           enableHeliumRepo = true;
           extraExcludes = [
-            "/var/cache/immich"
-            "/var/lib/prometheus"
-            "/var/lib/loki"
-            "/var/lib/gitea-actions-runner"
             "/var/lib/caddy"
             "/mnt/hdd/borg-repos"
           ];
@@ -62,33 +53,6 @@ in
         enable = true;
         enableCaddyJail = true;
       };
-      grafana = {
-        enable = true;
-        prometheusTargets = map (ip: "${ip}:${toString net.nodeExporter.port}") [
-          "localhost"
-          net.tailscaleIPs.uranium
-          net.tailscaleIPs.tungsten
-          net.tailscaleIPs.carbon
-          net.tailscaleIPs.argon
-        ];
-      };
-      loki = {
-        enable = true;
-        listenAddress = net.tailscaleIPs."helium-01";
-      };
-      node-exporter.enable = true;
-      fluent-bit = {
-        enable = true;
-        lokiHost = "localhost";
-        lokiPort = net.loki.port;
-      };
-      forgejo-runner = {
-        enable = true;
-        dockerContainers = 3;
-        nativeRunners = 2;
-      };
-      immich.enable = true;
-      paperless-ngx.enable = true;
       tailscale = {
         enable = true;
         operator = "taxborn";

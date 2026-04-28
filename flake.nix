@@ -24,12 +24,12 @@
     };
 
     snippets = {
-      url = "git+https://git.mischief.town/nix-infra/snippets";
+      url = "github:taxborn/snippets";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     secrets = {
-      url = "git+https://git.mischief.town/nix-infra/secrets";
+      url = "github:taxborn/secrets";
       flake = false;
     };
 

@@ -1,23 +1,10 @@
 {
   imports = [
-    ./atproto
     ./backups
     ./caddy
     ./fail2ban
-    ./forgejo
-    ./forgejo-runner
-    ./glance
-    ./grafana
-    ./immich
-    ./loki
-    ./node-exporter
     ./openssh
-    ./paperless
-    ./fluent-bit
     ./sddm
     ./tailscale
-    ./hash-haus
-    ./taxborn-com
-    ./vaultwarden
   ];
 }

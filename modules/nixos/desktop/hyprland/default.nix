@@ -45,9 +45,7 @@
       hyprland.enable = true;
     };
 
-    services = {
-      dbus.packages = [ pkgs.gcr ];
-    };
+    services.dbus.packages = [ pkgs.gcr ];
 
     system.nixos.tags = [ "hyprland" ];
     myNixOS.desktop.enable = true;

@@ -1,16 +1,11 @@
 {
   self,
-  config,
   modulesPath,
   ...
 }:
-let
-  net = config.mySnippets.mischief-town.networkMap;
-in
 {
   imports = [
     ./home.nix
-    ./proxy.nix
     ./secrets.nix
 
     self.diskoConfigurations.btrfs-carbon
@@ -38,25 +33,10 @@ in
         enableHeliumRepo = true;
         extraExcludes = [
           "/var/lib/containers"
-          "/var/lib/gitea-actions-runner"
           "/var/lib/caddy"
         ];
       };
       caddy.enable = true;
-      forgejo.enable = true;
-      node-exporter.enable = true;
-      fluent-bit = {
-        enable = true;
-        lokiHost = net.tailscaleIPs."helium-01";
-        lokiPort = net.loki.port;
-      };
-      forgejo-runner = {
-        enable = true;
-        dockerContainers = 3;
-        nativeRunners = 2;
-      };
-      glance.enable = true;
-      pds.enable = true;
       tailscale = {
         enable = true;
         operator = "taxborn";
@@ -64,10 +44,7 @@ in
       fail2ban = {
         enable = true;
         enableCaddyJail = true;
-        enableForgejoJail = true;
       };
-      taxborn-com.enable = true;
-      vaultwarden.enable = true;
     };
   };
 
