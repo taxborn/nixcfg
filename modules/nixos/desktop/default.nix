@@ -15,7 +15,10 @@ in
   options.myNixOS.desktop.enable = lib.mkEnableOption "minimal graphical desktop configuration";
 
   config = lib.mkIf config.myNixOS.desktop.enable {
-    environment.sessionVariables.NIXOS_OZONE_WL = "1";
+    environment = {
+      sessionVariables.NIXOS_OZONE_WL = "1";
+      systemPackages = [ pkgs.age-plugin-yubikey ];
+    };
     boot.kernelPackages = pkgs.linuxPackages_latest;
     hardware.logitech.wireless = {
       enable = true;
