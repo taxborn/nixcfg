@@ -18,6 +18,12 @@ in
       default = "/persist";
       description = "Directory where persistent state is bind-mounted from.";
     };
+
+    extraUserDirs = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [];
+      description = "Extra home directories to persist for the taxborn user.";
+    };
   };
 
   config = lib.mkIf cfg.enable {
@@ -105,7 +111,7 @@ in
           ".local"
           ".ssh"
           "dev"
-        ];
+        ] ++ cfg.extraUserDirs;
       };
     };
   };
