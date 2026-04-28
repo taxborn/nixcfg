@@ -41,7 +41,10 @@
       git.enable = true;
     };
 
-    networking.networkmanager.enable = true;
+    networking.networkmanager = {
+      enable = true;
+      settings.keyfile.path = "/var/lib/NetworkManager/system-connections";
+    };
 
     security.sudo.extraConfig = "Defaults lecture = never";
 
