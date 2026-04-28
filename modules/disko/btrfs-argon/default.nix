@@ -47,13 +47,14 @@ in
                     mountpoint = "/";
                     mountOptions = defaultBtrfsOpts;
                   };
+                  "/root-blank" = { };
                   "/nix" = {
                     mountpoint = "/nix";
                     mountOptions = defaultBtrfsOpts;
                   };
-                  "/swap" = {
-                    mountpoint = "/.swapvol";
-                    swap.swapfile.size = "10G";
+                  "/persist" = {
+                    mountpoint = "/persist";
+                    mountOptions = defaultBtrfsOpts;
                   };
                 };
               };

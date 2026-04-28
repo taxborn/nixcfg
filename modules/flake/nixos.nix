@@ -36,6 +36,7 @@
               inputs.agenix.nixosModules.default
               inputs.disko.nixosModules.disko
               inputs.home-manager.nixosModules.home-manager
+              inputs.impermanence.nixosModules.impermanence
               inputs.snippets.nixosModules.snippets
               inputs.lanzaboote.nixosModules.lanzaboote
 
