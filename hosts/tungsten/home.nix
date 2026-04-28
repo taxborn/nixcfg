@@ -1,4 +1,5 @@
 {
+  lib,
   self,
   ...
 }:
@@ -7,5 +8,7 @@
     imports = [
       self.homeModules.profile-workstation
     ];
+
+    myHome.programs.minecraft.enable = lib.mkForce false;
   };
 }

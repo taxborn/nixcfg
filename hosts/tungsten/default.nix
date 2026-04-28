@@ -33,7 +33,7 @@ in
     profiles.btrfs.enable = true;
     profiles.impermanence.enable = true;
     programs = {
-      lanzaboote.enable = true;
+      lanzaboote.enable = false;
       nix.enable = true;
       yubikey.enable = true;
     };
@@ -72,6 +72,11 @@ in
   };
 
   fileSystems."/home".neededForBoot = true;
+
+  boot.loader = {
+    systemd-boot.enable = true;
+    efi.canTouchEfiVariables = true;
+  };
 
   boot.swraid.mdadmConf = "MAILADDR root";
 

@@ -86,6 +86,9 @@ in
       ++ lib.optionals config.hardware.bluetooth.enable [
         "/var/lib/bluetooth"
       ]
+      ++ lib.optionals config.boot.lanzaboote.enable [
+        "/var/lib/sbctl"
+      ]
       ++ lib.optionals config.myNixOS.services.tailscale.enable [
         "/var/lib/tailscale"
       ]
