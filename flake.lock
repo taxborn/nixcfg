@@ -444,11 +444,11 @@
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1777347558,
-        "narHash": "sha256-KS7sVg8CvVce6OL9x342N7dhdFpDaCvzFiaiq454sw8=",
+        "lastModified": 1777347918,
+        "narHash": "sha256-MmcDepJMdkQOt7l6yDVp1d6rQnhY/qOFMVgpDzV/xZ8=",
         "owner": "taxborn",
         "repo": "secrets",
-        "rev": "33fcbf8062f1cbc01566031461a4bf3a20a452bf",
+        "rev": "2e5cfa6b55354aed480408dccb985c5ca33c74b9",
         "type": "github"
       },
       "original": {
