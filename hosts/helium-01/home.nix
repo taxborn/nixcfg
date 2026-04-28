@@ -5,7 +5,7 @@
 {
   home-manager.users.taxborn = {
     imports = [
-      self.homeModules.profile-server
+      self.homeModules.profile-default
     ];
   };
 }

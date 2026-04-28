@@ -1,6 +1,0 @@
-modules/home/programs/neovim/init.lua
-modules/home/programs/neovim/lua
-modules/home/programs/neovim/nvim-pack-lock.json
-modules/home/programs/neovim/plugin
-modules/home/programs/neovim/lazy-lock.json
-modules/home/programs/neovim/config/lazy-lock.json
