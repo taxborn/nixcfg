@@ -182,11 +182,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1777434174,
-        "narHash": "sha256-KwTyQ5g2qDhWIs/O6vH8HeF8n4JCzZIT/VYE7nYnukQ=",
+        "lastModified": 1777476904,
+        "narHash": "sha256-EeLoE8n4+QCbteyAsYXxhfr97RFfWL1ga0xwfL6lpKw=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "d3b4e4b1bd59aedd3d4eb0a8df7162edb6da4607",
+        "rev": "8c8e5389e75a36bee53920de8ee24f017b3ae03e",
         "type": "github"
       },
       "original": {
@@ -403,11 +403,11 @@
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1777414364,
-        "narHash": "sha256-3Yau0T6t3ILJVoRUgONx/xmaaxtJP5iQU6JKmAOq9oU=",
+        "lastModified": 1777482537,
+        "narHash": "sha256-ckLjfO0kfWMJ2Q8wseA5yLWOmxkW8T7ooESzIW9BNao=",
         "owner": "taxborn",
         "repo": "secrets",
-        "rev": "675ccd31ea8884000ff3318619e8742d0147c790",
+        "rev": "63357d917ea69cbbc6ebe837a7e9980270a0353a",
         "type": "github"
       },
       "original": {
@@ -425,11 +425,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1777342546,
-        "narHash": "sha256-D77hOzsDSGB/jjgsqn9e/IsM4q7XmK1va3pgP0YuUP0=",
+        "lastModified": 1777482567,
+        "narHash": "sha256-5o0/1DXNXBNs4POcTMNnSLvjom+nJXeC6t8FpFHPwA4=",
         "owner": "taxborn",
         "repo": "snippets",
-        "rev": "6df0b9a6637844863db36e9cfb5b72eb4d5f669f",
+        "rev": "ac194f209443d98abb263761693c2599f17f9c16",
         "type": "github"
       },
       "original": {
