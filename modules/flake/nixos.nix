@@ -4,7 +4,7 @@
     diskoConfigurations = {
       btrfs-argon = ../disko/btrfs-argon;
       btrfs-carbon = ../disko/btrfs-carbon;
-      btrfs-helium-01 = ../disko/btrfs-helium-01;
+      btrfs-helium = ../disko/btrfs-helium;
       luks-btrfs-tungsten = ../disko/luks-btrfs-tungsten;
       luks-btrfs-uranium = ../disko/luks-btrfs-uranium;
     };
@@ -24,7 +24,7 @@
         [
           "argon"
           "carbon"
-          "helium-01"
+          "helium"
           "tungsten"
           "uranium"
         ]

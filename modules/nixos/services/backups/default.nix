@@ -131,7 +131,7 @@ in
 
       enableRsyncRepo = lib.mkEnableOption "auto-configure rsync.net borg repository for this host";
 
-      enableHeliumRepo = lib.mkEnableOption "auto-configure helium-01 borg repository for this host";
+      enableHeliumRepo = lib.mkEnableOption "auto-configure helium borg repository for this host";
 
       retention = {
         keepDaily = lib.mkOption {
@@ -193,10 +193,10 @@ in
         // lib.optionalAttrs cfg.client.enableHeliumRepo {
           helium = {
             path =
-              if hostname == "helium-01" then
+              if hostname == "helium" then
                 "/mnt/hdd/borg-repos/${hostname}"
               else
-                "ssh://taxborn@${config.mySnippets.mischief-town.networkMap.tailscaleIPs."helium-01"}//mnt/hdd/borg-repos/${hostname}";
+                "ssh://taxborn@${config.mySnippets.mischief-town.networkMap.tailscaleIPs."helium"}//mnt/hdd/borg-repos/${hostname}";
             label = "helium";
             remotePath = null;
           };

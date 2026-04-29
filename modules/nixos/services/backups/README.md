@@ -7,7 +7,7 @@ borgmatic-based backup module supporting multiple repositories per host, agenix-
 - each host runs borgmatic as a systemd timer (daily)
 - each repository gets its own borgmatic configuration (required because rsync.net uses `remote_path = "borg14"`)
 - borgmatic processes all configs in a single timer run
-- helium-01 acts as a borg server via restricted SSH authorized_keys on the taxborn user
+- helium acts as a borg server via restricted SSH authorized_keys on the taxborn user
 
 ## provisioning a new host
 
@@ -63,7 +63,7 @@ scp /tmp/borg_ssh_key.pub de4388@de4388.rsync.net:.ssh/authorized_keys_borg_<hos
 # then SSH in and append to authorized_keys, or use rsync.net's key management
 ```
 
-**helium-01:** add the public key to helium's `myNixOS.services.backups.server.authorizedKeys.<hostname>`.
+**helium:** add the public key to helium's `myNixOS.services.backups.server.authorizedKeys.<hostname>`.
 
 ### 6. initialize borg repos
 

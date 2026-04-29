@@ -7,11 +7,11 @@
   imports = [
     ./home.nix
     ./secrets.nix
-    self.diskoConfigurations.btrfs-helium-01
+    self.diskoConfigurations.btrfs-helium
     self.nixosModules.locale-en-us
   ];
 
-  networking.hostName = "helium-01";
+  networking.hostName = "helium";
   time.timeZone = "America/Chicago";
   system.stateVersion = "25.11";
 
@@ -21,7 +21,10 @@
 
   myNixOS = {
     base.enable = true;
-    profiles.btrfs.enable = true;
+    profiles = {
+      btrfs.enable = true;
+      impermanence.enable = true;
+    };
     programs = {
       nix.enable = true;
       podman.enable = true;
@@ -69,6 +72,10 @@
     enable = true;
     password = "$y$j9T$23GUNNxavO/S4n8DLkfs71$ShByJUJ9XCvIs2PLYmlAjenOtpcFvnSgshjbClEKB18";
   };
+
+  users.users.taxborn.openssh.authorizedKeys.keys = [
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOf8rn+JzRmVc6/4xKOJ4MrmId4xxpYPEgvbCrK18U+N taxborn@yubikey"
+  ];
 
   boot.initrd.availableKernelModules = [
     "xhci_pci"
