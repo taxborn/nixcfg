@@ -11,20 +11,25 @@
     };
 
     home.packages = with pkgs; [
+      bitwarden-desktop
       discord
       obsidian
       spotify
+      vlc
     ];
 
-    programs.fish = {
-      interactiveShellInit = ''
-        set -gx GPG_TTY (tty)
-        set -gx SSH_AUTH_SOCK (gpgconf --list-dirs agent-ssh-socket)
-        gpgconf --launch gpg-agent
-        gpg-connect-agent updatestartuptty /bye > /dev/null
-      '';
-      shellAliases = {
-        yk-restart = "gpg-connect-agent killagent /bye && gpg-connect-agent \"scd serialno\" \"learn --force\" /bye && gpg --card-status";
+    programs = {
+      feh.enable = true;
+      fish = {
+        interactiveShellInit = ''
+          set -gx GPG_TTY (tty)
+          set -gx SSH_AUTH_SOCK (gpgconf --list-dirs agent-ssh-socket)
+          gpgconf --launch gpg-agent
+          gpg-connect-agent updatestartuptty /bye > /dev/null
+        '';
+        shellAliases = {
+          yk-restart = "gpg-connect-agent killagent /bye && gpg-connect-agent \"scd serialno\" \"learn --force\" /bye && gpg --card-status";
+        };
       };
     };
 
@@ -32,10 +37,8 @@
       profiles.defaultApps.enable = true;
       desktop.hyprland.enable = true;
       programs = {
-        bitwarden.enable = true;
         firefox.enable = true;
         ghostty.enable = true;
-        minecraft.enable = true;
         zed-editor.enable = true;
       };
     };

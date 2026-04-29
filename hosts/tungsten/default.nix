@@ -29,8 +29,10 @@ in
         laptopMonitor = "eDP-1,3456x2160@60,0x0,2";
       };
     };
-    profiles.btrfs.enable = true;
-    profiles.impermanence.enable = true;
+    profiles = {
+      btrfs.enable = true;
+      impermanence.enable = true;
+    };
     programs = {
       lanzaboote.enable = true;
       nix.enable = true;
@@ -45,10 +47,7 @@ in
         # managed by Obsidian sync, no need to back up
         extraExcludes = [ "/home/taxborn/documents/notes" ];
       };
-      sddm = {
-        enable = true;
-        autoLogin = "taxborn";
-      };
+      sddm.enable = true;
       tailscale = {
         enable = true;
         operator = "taxborn";

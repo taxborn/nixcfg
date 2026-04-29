@@ -32,8 +32,10 @@ in
         ];
       };
     };
-    profiles.btrfs.enable = true;
-    profiles.impermanence.enable = true;
+    profiles = {
+      btrfs.enable = true;
+      impermanence.enable = true;
+    };
     programs = {
       lanzaboote.enable = true;
       nix.enable = true;

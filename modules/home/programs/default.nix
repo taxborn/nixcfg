@@ -1,21 +1,14 @@
 {
   imports = [
-    ./bitwarden
-    ./feh
     ./firefox
     ./fzf
     ./ghostty
     ./git
     ./gpg
-    ./ledger
-    ./minecraft
     ./neovim
-    ./ripgrep
     ./rofi
     ./ssh
     ./tmux
-    ./via
-    ./vlc
     ./yazi
     ./yubikey
     ./zed-editor

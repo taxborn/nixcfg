@@ -1,5 +1,6 @@
 {
   self,
+  pkgs,
   ...
 }:
 {
@@ -9,13 +10,11 @@
     ];
 
     config = {
-      myHome = {
-        programs = {
-          ledger.enable = true;
-          minecraft.enable = true;
-          via.enable = true;
-        };
-      };
+      home.packages = with pkgs; [
+        ledger-live-desktop
+        prismlauncher
+        via
+      ];
     };
   };
 }

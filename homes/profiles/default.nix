@@ -21,13 +21,14 @@
     };
 
     programs = {
-      home-manager.enable = true;
       fish = {
         enable = true;
         interactiveShellInit = ''
           set fish_greeting # Disable greeting
         '';
       };
+      home-manager.enable = true;
+      ripgrep.enable = true;
     };
 
     myHome.programs = {
@@ -35,7 +36,6 @@
       git.enable = true;
       gpg.enable = true;
       neovim.enable = true;
-      ripgrep.enable = true;
       tmux.enable = true;
       yazi.enable = true;
       yubikey.enable = true;
