@@ -29,6 +29,10 @@
       };
       home-manager.enable = true;
       ripgrep.enable = true;
+      zoxide = {
+        enable = true;
+        enableFishIntegration = true;
+      };
     };
 
     myHome.programs = {
@@ -39,7 +43,6 @@
       tmux.enable = true;
       yazi.enable = true;
       yubikey.enable = true;
-      zoxide.enable = true;
     };
   };
 }

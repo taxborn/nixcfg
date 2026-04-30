@@ -28,7 +28,5 @@
     environment.systemPackages = with pkgs; [
       pavucontrol
     ];
-
-    myNixOS.profiles.bluetooth.enable = true;
   };
 }

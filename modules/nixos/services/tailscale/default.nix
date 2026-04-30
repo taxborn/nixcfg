@@ -21,7 +21,7 @@
 
     operator = lib.mkOption {
       description = "Tailscale operator name";
-      default = null;
+      default = "taxborn";
       type = lib.types.nullOr lib.types.str;
     };
   };

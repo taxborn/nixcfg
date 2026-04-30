@@ -12,6 +12,5 @@
     ./yazi
     ./yubikey
     ./zed-editor
-    ./zoxide
   ];
 }

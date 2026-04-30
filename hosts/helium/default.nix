@@ -20,57 +20,15 @@
   ];
 
   myNixOS = {
-    base.enable = true;
-    profiles = {
-      btrfs.enable = true;
-      impermanence.enable = true;
+    profiles.serverBase.enable = true;
+    programs.systemd-boot.enable = true;
+    services.backups = {
+      server.enable = true;
+      client.extraExcludes = [
+        "/var/lib/caddy"
+        "/mnt/hdd/borg-repos"
+      ];
     };
-    programs = {
-      nix.enable = true;
-      podman.enable = true;
-      systemd-boot.enable = true;
-    };
-    services = {
-      backups = {
-        client = {
-          enable = false;
-          enableRsyncRepo = true;
-          enableHeliumRepo = true;
-          extraExcludes = [
-            "/var/lib/caddy"
-            "/mnt/hdd/borg-repos"
-          ];
-        };
-        server = {
-          enable = false;
-          # authorizedKeys = {
-          #   argon = builtins.readFile "${self.inputs.secrets}/borg/argon/borg_ssh_key.pub";
-          #   uranium = builtins.readFile "${self.inputs.secrets}/borg/uranium/borg_ssh_key.pub";
-          #   tungsten = builtins.readFile "${self.inputs.secrets}/borg/tungsten/borg_ssh_key.pub";
-          #   carbon = builtins.readFile "${self.inputs.secrets}/borg/carbon/borg_ssh_key.pub";
-          # };
-        };
-      };
-      caddy.enable = true;
-      fail2ban = {
-        enable = true;
-        enableCaddyJail = true;
-      };
-      tailscale = {
-        enable = true;
-        operator = "taxborn";
-      };
-    };
-  };
-
-  myHardware = {
-    intel.cpu.enable = true;
-    profiles.ssd.enable = true;
-  };
-
-  myUsers.taxborn = {
-    enable = true;
-    password = "$y$j9T$23GUNNxavO/S4n8DLkfs71$ShByJUJ9XCvIs2PLYmlAjenOtpcFvnSgshjbClEKB18";
   };
 
   boot.initrd.availableKernelModules = [

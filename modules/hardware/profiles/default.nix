@@ -1,7 +1,5 @@
 {
   imports = [
     ./laptop
-    ./ovh
-    ./ssd
   ];
 }

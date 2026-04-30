@@ -46,6 +46,8 @@
 
     security.sudo.extraConfig = "Defaults lecture = never";
 
+    services.fstrim.enable = true;
+
     # Bound persistent journal so boot/log-shippers don't replay months of
     # history and so disk usage stays predictable. ForwardToWall off to
     # skip a wall(1) write per emergency-level line.
@@ -68,6 +70,11 @@
       };
 
       services.openssh.enable = true;
+    };
+
+    myUsers.taxborn = {
+      enable = true;
+      password = "$y$j9T$23GUNNxavO/S4n8DLkfs71$ShByJUJ9XCvIs2PLYmlAjenOtpcFvnSgshjbClEKB18";
     };
   };
 }

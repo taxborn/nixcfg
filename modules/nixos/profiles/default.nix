@@ -7,6 +7,8 @@
     ./impermanence
     ./ovh-server
     ./performance
+    ./server-base
     ./swap
+    ./workstation
   ];
 }
