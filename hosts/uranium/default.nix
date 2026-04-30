@@ -63,6 +63,12 @@ in
     profiles.ssd.enable = true;
   };
 
+  services.pipewire.wireplumber.extraConfig."10-default-audio-sink" = {
+    "wireplumber.settings" = {
+      "default.audio.sink" = "alsa_output.pci-0000_03_00.1.hdmi-stereo-extra3";
+    };
+  };
+
   fileSystems."/home".neededForBoot = true;
 
   boot.swraid.mdadmConf = "MAILADDR root";
