@@ -39,7 +39,6 @@
       programs = {
         firefox.enable = true;
         ghostty.enable = true;
-        yubikey.enable = true;
         zed-editor.enable = true;
       };
     };
