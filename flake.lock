@@ -403,11 +403,11 @@
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1777514713,
-        "narHash": "sha256-ou1Qpg73fgC/LSF7B8l2Kj4FKssDseyN8cTuh/4GCEc=",
+        "lastModified": 1777515850,
+        "narHash": "sha256-CZywaMO9FnMR6GsVYHMt8xZ089IU7OnqzyMQ2BBIooA=",
         "owner": "taxborn",
         "repo": "secrets",
-        "rev": "4bf0e2a56f17aac50ada8a1bf9496bf6943dfc5a",
+        "rev": "77bbae7a30ea59e016804e944a9b807bdc07ace1",
         "type": "github"
       },
       "original": {
