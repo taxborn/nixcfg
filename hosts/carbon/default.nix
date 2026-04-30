@@ -6,6 +6,7 @@
 {
   imports = [
     ./home.nix
+    ./networking.nix
     ./secrets.nix
 
     self.diskoConfigurations.btrfs-carbon
