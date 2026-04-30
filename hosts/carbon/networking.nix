@@ -14,6 +14,8 @@
         may-fail = "true";
         address1 = "2604:2dc0:101:200::2cc6/128";
         route1 = "::/0,2604:2dc0:101:200::1";
+        route1_options = "onlink=true";
+        route2 = "2604:2dc0:101:200::1/128";
       };
     };
   };

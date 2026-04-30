@@ -9,6 +9,10 @@ restart-web host website:
 deploy host:
     sudo nixos-rebuild switch --flake .#{{host}} --target-host {{host}} --sudo
 
+# Deploy to a target host as a test (applied now, not persisted across reboot)
+deploy-test host:
+    sudo nixos-rebuild test --flake .#{{host}} --target-host {{host}} --sudo
+
 # Remove all old nix generations
 clean:
     sudo nix-collect-garbage -d
