@@ -425,11 +425,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1777482567,
-        "narHash": "sha256-5o0/1DXNXBNs4POcTMNnSLvjom+nJXeC6t8FpFHPwA4=",
+        "lastModified": 1777583301,
+        "narHash": "sha256-WD0JCeWJ30iVU0WTWpbqmMt8katWZuKu4VE/481+tes=",
         "owner": "taxborn",
         "repo": "snippets",
-        "rev": "ac194f209443d98abb263761693c2599f17f9c16",
+        "rev": "39bf1aff8d99ab181dea21faa3d85ad421bfe08f",
         "type": "github"
       },
       "original": {

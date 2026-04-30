@@ -6,6 +6,7 @@
 {
   imports = [
     ./home.nix
+    ./proxy.nix
     ./secrets.nix
 
     self.diskoConfigurations.btrfs-carbon
@@ -17,6 +18,10 @@
   networking.hostName = "carbon";
   time.timeZone = "America/Chicago";
   system.stateVersion = "25.11";
+
+  myNixOS.services = {
+    vaultwarden.enable = true;
+  };
 
   myNixOS.profiles.ovhServer.enable = true;
 }

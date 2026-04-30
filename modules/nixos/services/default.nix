@@ -6,5 +6,6 @@
     ./openssh
     ./sddm
     ./tailscale
+    ./vaultwarden
   ];
 }
