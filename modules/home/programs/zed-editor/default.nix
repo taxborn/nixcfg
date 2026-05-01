@@ -31,6 +31,7 @@
       userSettings = {
         auto_indent_on_paste = true;
         auto_update = false;
+        theme = "Catppuccin Mocha";
         icon_theme = "Catppuccin Mocha";
         autosave = "on_focus_change";
 

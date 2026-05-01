@@ -31,6 +31,7 @@
         '';
 
         package = pkgs.caddy.withPlugins {
+          # TODO: update to the 2026 version?
           plugins = [ "github.com/tailscale/caddy-tailscale@v0.0.0-20250508175905-642f61fea3cc" ];
           hash = "sha256-1Hxja8rbjFEQHzN80+UQkuWyU4rsa7WUUtWv2RSzSyc=";
         };

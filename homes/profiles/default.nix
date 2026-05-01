@@ -1,5 +1,6 @@
 {
   config,
+  pkgs,
   self,
   ...
 }:
@@ -18,6 +19,9 @@
       homeDirectory = "/home/taxborn";
       stateVersion = "25.11";
       sessionPath = [ "$HOME/.local/bin" ];
+      packages = with pkgs; [
+        manix
+      ];
     };
 
     programs = {
@@ -40,6 +44,7 @@
       git.enable = true;
       gpg.enable = true;
       neovim.enable = true;
+      ssh.enable = true;
       tmux.enable = true;
       yazi.enable = true;
       yubikey.enable = true;

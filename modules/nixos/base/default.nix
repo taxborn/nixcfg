@@ -30,9 +30,7 @@
       };
     };
 
-    hardware = {
-      enableRedistributableFirmware = lib.mkDefault true;
-    };
+    hardware.enableRedistributableFirmware = lib.mkDefault true;
 
     programs = {
       dconf.enable = true;

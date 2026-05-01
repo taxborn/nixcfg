@@ -10,6 +10,7 @@ in
   options.myNixOS.services.fail2ban = {
     enable = lib.mkEnableOption "fail2ban intrusion prevention";
 
+    # TODO: determine if this is useful, I don't use auth over Caddy I think?
     enableCaddyJail = lib.mkOption {
       type = lib.types.bool;
       default = false;

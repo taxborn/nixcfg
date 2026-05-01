@@ -10,6 +10,7 @@
   config = lib.mkIf config.myNixOS.programs.neovim.enable {
     programs.neovim = {
       enable = true;
+      viAlias = true;
       vimAlias = true;
       defaultEditor = true;
     };
