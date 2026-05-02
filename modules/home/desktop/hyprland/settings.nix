@@ -140,8 +140,8 @@ in
   bindle = [
     # Display, volume, microphone, and media keys.
     # TODO: brightnessctl
-    # ",xf86monbrightnessup,exec,${helpers.brightness.up}"
-    # ",xf86monbrightnessdown,exec,${helpers.brightness.down}"
+    ",xf86monbrightnessup,exec,brightnessctl set +5%"
+    ",xf86monbrightnessdown,exec,brightnessctl set 5%-"
     ",xf86audioraisevolume,exec,${helpers.volume.up}"
     ",xf86audiolowervolume,exec,${helpers.volume.down}"
   ];

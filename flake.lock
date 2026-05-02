@@ -403,11 +403,11 @@
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1777598101,
-        "narHash": "sha256-ec26SbgtYFCPU++yAwlhkmEKQd4K5aSZji0Z4JQxO6w=",
+        "lastModified": 1777638406,
+        "narHash": "sha256-f9Nq3ih3uFvtftq71mYS83fzjx9oF4vzd2iLdPf8D8o=",
         "owner": "taxborn",
         "repo": "secrets",
-        "rev": "a554f91d2307b807dc155a77dba766eec428a7b7",
+        "rev": "9f1f7e398738acf26b1c40eb33425025b12dec08",
         "type": "github"
       },
       "original": {
@@ -425,11 +425,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1777583301,
-        "narHash": "sha256-WD0JCeWJ30iVU0WTWpbqmMt8katWZuKu4VE/481+tes=",
+        "lastModified": 1777638426,
+        "narHash": "sha256-OuazOxGcaUhhET8qI+A6zu5pkYoiqOUAYxtru9y/iqE=",
         "owner": "taxborn",
         "repo": "snippets",
-        "rev": "39bf1aff8d99ab181dea21faa3d85ad421bfe08f",
+        "rev": "62edd1d7b52a3ea697d565de2a309fd87f1b7f5f",
         "type": "github"
       },
       "original": {

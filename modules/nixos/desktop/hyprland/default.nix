@@ -42,7 +42,10 @@
 
     programs = {
       gnupg.agent.pinentryPackage = pkgs.pinentry-gnome3;
-      hyprland.enable = true;
+      hyprland = {
+        enable = true;
+        withUWSM = false;
+      };
     };
 
     services.dbus.packages = [ pkgs.gcr ];
