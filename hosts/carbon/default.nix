@@ -1,6 +1,7 @@
 {
   self,
   modulesPath,
+  pkgs,
   ...
 }:
 {
@@ -16,8 +17,11 @@
   ];
 
   networking.hostName = "carbon";
+  networking.firewall.allowedTCPPorts = [ 25565 ];
   time.timeZone = "America/Chicago";
   system.stateVersion = "25.11";
+
+  environment.systemPackages = [ pkgs.jdk17 ];
 
   myNixOS.services = {
     vaultwarden.enable = true;
