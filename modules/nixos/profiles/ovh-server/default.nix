@@ -19,7 +19,6 @@
     myNixOS = {
       profiles = {
         serverBase.enable = true;
-        impermanence.extraUserDirs = [ "public" ];
       };
       programs.grub.enable = true; # grub seems to be the only bootloader that works on ovh
       services.backups.client.extraExcludes = [

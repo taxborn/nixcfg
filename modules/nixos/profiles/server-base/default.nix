@@ -13,7 +13,10 @@
       base.enable = true;
       profiles = {
         btrfs.enable = true;
-        impermanence.enable = true;
+        impermanence = {
+          enable = true;
+          extraUserDirs = [ "public" ];
+        };
       };
       programs = {
         nix.enable = true;
