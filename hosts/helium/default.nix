@@ -21,6 +21,7 @@
 
   myNixOS = {
     profiles.serverBase.enable = true;
+    services.monitoring.client.enable = true;
     programs.systemd-boot.enable = true;
     services.backups = {
       server.enable = true;

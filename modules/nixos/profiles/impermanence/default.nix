@@ -103,7 +103,13 @@ in
       ]
       ++ lib.optionals config.myNixOS.services.backups.client.enable [
         "/var/lib/borgmatic"
-      ];
+      ]
+      ++ lib.optionals config.myNixOS.services.monitoring.server.enable [
+        { directory = "/var/lib/grafana";    user = "grafana";    group = "grafana";    mode = "0750"; }
+        { directory = "/var/lib/loki";       user = "loki";       group = "loki";       mode = "0750"; }
+        { directory = "/var/lib/prometheus2"; user = "prometheus"; group = "prometheus"; mode = "0750"; }
+      ]
+;
 
       files = [
         "/etc/machine-id"

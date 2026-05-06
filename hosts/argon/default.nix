@@ -6,6 +6,7 @@
 {
   imports = [
     ./home.nix
+    ./proxy.nix
     ./secrets.nix
 
     self.diskoConfigurations.btrfs-argon
@@ -19,4 +20,9 @@
   system.stateVersion = "25.11";
 
   myNixOS.profiles.ovhServer.enable = true;
+
+  myNixOS.services.monitoring = {
+    server.enable = true;
+    client.enable = true;
+  };
 }

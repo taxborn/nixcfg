@@ -16,5 +16,7 @@ in
       encode zstd gzip
       reverse_proxy http://localhost:${toString networkMap.pds.port}
     '';
+
   };
+
 }

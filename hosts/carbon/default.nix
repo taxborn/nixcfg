@@ -26,6 +26,7 @@
   myNixOS.services = {
     vaultwarden.enable = true;
     pds.enable = true;
+    monitoring.client.enable = true;
   };
 
   myNixOS.profiles.ovhServer.enable = true;

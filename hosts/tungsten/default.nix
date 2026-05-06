@@ -21,6 +21,7 @@
 
   myNixOS = {
     profiles.workstation.enable = true;
+    services.monitoring.client.enable = true;
     desktop.hyprland.laptopMonitor = "eDP-1,3456x2160@60,0x0,2";
     services.backups.client.extraExcludes = [
       # managed by Obsidian sync, no need to back up
