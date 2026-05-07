@@ -4,7 +4,7 @@ let
 in
 {
   services.caddy.virtualHosts = {
-    "grafana.${config.mySnippets.tailnet.name}".extraConfig = ''
+    ${networkMap.grafana.domain}.extraConfig = ''
       bind tailscale/grafana
       reverse_proxy localhost:${toString networkMap.grafana.port}
     '';
