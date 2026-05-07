@@ -56,14 +56,30 @@ in
     boot.supportedFilesystems = [ "btrfs" ];
     environment.systemPackages = [ pkgs.snapper-gui ];
 
-    # Snapper expects /home/.snapshots to exist as a subvolume with mode
-     # 0750 owned by root:users (matches ALLOW_GROUPS=users below). The
-     # subvolume itself must be created out-of-band (disko on fresh install,
-     # or `btrfs subvolume create` on an existing system) since tmpfiles
-     # cannot create btrfs subvolumes.
-    systemd.tmpfiles.rules = lib.mkIf hasHomeSubvolume [
-      "d /home/.snapshots 0750 root users - -"
-    ];
+    # Snapper requires /home/.snapshots to be a btrfs subvolume, not a plain
+    # directory. This service creates it idempotently on boot so existing
+    # installs are handled without manual intervention.
+    systemd.services.ensure-home-snapshots-subvolume = lib.mkIf hasHomeSubvolume {
+      description = "Ensure /home/.snapshots is a btrfs subvolume";
+      wantedBy = [ "multi-user.target" ];
+      after = [ "local-fs.target" ];
+      before = [ "snapper-timeline.service" "snapper-cleanup.service" ];
+      serviceConfig.Type = "oneshot";
+      serviceConfig.RemainAfterExit = true;
+      path = [ pkgs.btrfs-progs ];
+      script = ''
+        if btrfs subvolume show /home/.snapshots &>/dev/null; then
+          exit 0
+        fi
+        # Remove plain directory if tmpfiles or manual creation left one behind
+        if [ -d /home/.snapshots ]; then
+          rmdir /home/.snapshots
+        fi
+        btrfs subvolume create /home/.snapshots
+        chmod 0750 /home/.snapshots
+        chown root:users /home/.snapshots
+      '';
+    };
 
     services = lib.mkIf (btrfsFSDevices != [ ]) {
       beesd.filesystems = lib.mkIf config.myNixOS.profiles.btrfs.deduplicate beesdConfig;
