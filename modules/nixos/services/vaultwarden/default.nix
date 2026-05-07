@@ -22,7 +22,7 @@ in
         ROCKET_PORT = networkMap.vaultwarden.port;
         ROCKET_ADDRESS = "127.0.0.1";
 
-        SIGNUPS_ALLOWED = false;
+        SIGNUPS_ALLOWED = true;
         SIGNUPS_VERIFY = true;
         SHOW_PASSWORD_HINT = false;
         INVITATIONS_ALLOWED = true;

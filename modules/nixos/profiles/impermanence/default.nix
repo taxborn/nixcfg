@@ -104,6 +104,16 @@ in
       ++ lib.optionals config.myNixOS.services.backups.client.enable [
         "/var/lib/borgmatic"
       ]
+      ++ lib.optionals config.myNixOS.services.vaultwarden.enable [
+        { directory = "/var/lib/vaultwarden"; user = "vaultwarden"; group = "vaultwarden"; mode = "0700"; }
+      ]
+      ++ lib.optionals config.myNixOS.services.pds.enable [
+        { directory = "/var/lib/pds"; user = "pds"; group = "pds"; mode = "0755"; }
+      ]
+      ++ lib.optionals config.myNixOS.services.forgejo.enable [
+        { directory = "/var/lib/forgejo";    user = "forgejo";    group = "forgejo";    mode = "0750"; }
+        { directory = "/var/lib/postgresql"; user = "postgres";   group = "postgres";   mode = "0755"; }
+      ]
       ++ lib.optionals config.myNixOS.services.monitoring.server.enable [
         { directory = "/var/lib/grafana";    user = "grafana";    group = "grafana";    mode = "0750"; }
         { directory = "/var/lib/loki";       user = "loki";       group = "loki";       mode = "0750"; }

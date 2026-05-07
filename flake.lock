@@ -405,15 +405,15 @@
       "locked": {
         "lastModified": 1778170473,
         "narHash": "sha256-p2wHd1CE1nwyNZk38I3D/UGUj8P/Fp1qZygBSc/SdLk=",
-        "ref": "refs/heads/main",
+        "owner": "taxborn",
+        "repo": "secrets",
         "rev": "28b233ec1263e8ea33187c177bdb4259a93fc09e",
-        "revCount": 52,
-        "type": "git",
-        "url": "https://git.mischief.town/nix-infra/secrets"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "https://git.mischief.town/nix-infra/secrets"
+        "owner": "taxborn",
+        "repo": "secrets",
+        "type": "github"
       }
     },
     "snippets": {
@@ -427,15 +427,15 @@
       "locked": {
         "lastModified": 1778170487,
         "narHash": "sha256-G5UTDsSy9At1FlP4h0/qiVORQabVA3QktVK4w8PtOxw=",
-        "ref": "refs/heads/main",
+        "owner": "taxborn",
+        "repo": "snippets",
         "rev": "af1a9f919f06b0c7a48b8b4e8b39027d2aa18ee2",
-        "revCount": 35,
-        "type": "git",
-        "url": "https://git.mischief.town/nix-infra/snippets"
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "https://git.mischief.town/nix-infra/snippets"
+        "owner": "taxborn",
+        "repo": "snippets",
+        "type": "github"
       }
     },
     "systems": {
