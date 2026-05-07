@@ -39,6 +39,14 @@
             user = "de4388";
           };
 
+          forgejo = {
+            hostname = "git.mischief.town";
+            port = 2222;
+            user = "git";
+            # TODO: seems like I can only access over ipv4, see if I can fix that
+            addressFamily = "inet";
+          };
+
           "*" = {
             forwardAgent = false;
             addKeysToAgent = "no";

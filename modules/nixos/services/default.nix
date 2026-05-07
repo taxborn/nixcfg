@@ -4,6 +4,7 @@
     ./backups
     ./caddy
     ./fail2ban
+    ./forgejo
     ./monitoring
     ./openssh
     ./sddm

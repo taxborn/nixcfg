@@ -17,6 +17,17 @@ in
       reverse_proxy http://localhost:${toString networkMap.pds.port}
     '';
 
-  };
+    ${networkMap.forgejo.domain}.extraConfig = ''
+      encode zstd gzip
 
+      @uploads method POST PUT
+      handle @uploads {
+        request_body { max_size 2GB }
+      }
+
+      reverse_proxy localhost:${toString networkMap.forgejo.port} {
+        header_up X-Real-Ip {remote_host}
+      }
+    '';
+  };
 }

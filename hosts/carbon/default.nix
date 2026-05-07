@@ -27,6 +27,7 @@
     vaultwarden.enable = true;
     pds.enable = true;
     monitoring.client.enable = true;
+    forgejo.enable = true;
   };
 
   myNixOS.profiles.ovhServer.enable = true;
