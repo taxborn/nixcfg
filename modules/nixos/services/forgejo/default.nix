@@ -108,7 +108,7 @@ in
           };
           service = {
             ALLOW_ONLY_INTERNAL_REGISTRATION = true;
-            DISABLE_REGISTRATION = false;
+            DISABLE_REGISTRATION = true;
             ENABLE_NOTIFY_MAIL = true;
           };
 
