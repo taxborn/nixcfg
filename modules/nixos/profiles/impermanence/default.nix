@@ -119,6 +119,9 @@ in
         { directory = "/var/lib/loki";       user = "loki";       group = "loki";       mode = "0750"; }
         { directory = "/var/lib/prometheus2"; user = "prometheus"; group = "prometheus"; mode = "0750"; }
       ]
+      ++ lib.optionals config.myNixOS.services.forgejo-runner.enable [
+        { directory = "/var/lib/gitea-runner"; user = "gitea-runner"; group = "gitea-runner"; mode = "0750"; }
+      ]
 ;
 
       files = [

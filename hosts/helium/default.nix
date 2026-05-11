@@ -21,15 +21,22 @@
 
   myNixOS = {
     profiles.serverBase.enable = true;
-    services.monitoring.client.enable = true;
-    programs.systemd-boot.enable = true;
-    services.backups = {
-      server.enable = true;
-      client.extraExcludes = [
-        "/var/lib/caddy"
-        "/mnt/hdd/borg-repos"
-      ];
+    services = {
+      backups = {
+        server.enable = true;
+        client.extraExcludes = [
+          "/var/lib/caddy"
+          "/mnt/hdd/borg-repos"
+        ];
+      };
+      forgejo-runner = {
+        enable = true;
+        dockerContainers = 3;
+        nativeRunners = 2;
+      };
+      monitoring.client.enable = true;
     };
+    programs.systemd-boot.enable = true;
   };
 
   boot.initrd.availableKernelModules = [

@@ -21,8 +21,17 @@
 
   myNixOS.profiles.ovhServer.enable = true;
 
-  myNixOS.services.monitoring = {
-    server.enable = true;
-    client.enable = true;
+  myNixOS.services = {
+    monitoring = {
+      server.enable = true;
+      client.enable = true;
+    };
+
+    forgejo-runner = {
+      enable = true;
+      dockerContainers = 3;
+      nativeRunners = 2;
+    };
+
   };
 }
