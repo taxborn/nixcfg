@@ -40,6 +40,7 @@
     };
 
     myHome.programs = {
+      direnv.enable = true;
       fzf.enable = true;
       git.enable = true;
       gpg.enable = true;

@@ -1,6 +1,7 @@
 {
   imports = [
     ./firefox
+    ./direnv
     ./fzf
     ./ghostty
     ./git

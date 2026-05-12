@@ -68,7 +68,7 @@
               runner.capacity = config.myNixOS.services.forgejo-runner.dockerContainers;
             };
 
-            url = "http://${config.mySnippets.mischief-town.networkMap.forgejo.domain}:${toString config.mySnippets.mischief-town.networkMap.forgejo.port}";
+            url = "http://${config.mySnippets.mischief-town.networkMap.forgejo.internalHost}:${toString config.mySnippets.mischief-town.networkMap.forgejo.port}";
           };
 
           taxborn-nixos = {
@@ -99,7 +99,7 @@
               runner.capacity = config.myNixOS.services.forgejo-runner.nativeRunners;
             };
 
-            url = "http://${config.mySnippets.mischief-town.networkMap.forgejo.domain}:${toString config.mySnippets.mischief-town.networkMap.forgejo.port}";
+            url = "http://${config.mySnippets.mischief-town.networkMap.forgejo.internalHost}:${toString config.mySnippets.mischief-town.networkMap.forgejo.port}";
           };
         };
     };

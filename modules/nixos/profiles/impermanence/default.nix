@@ -79,6 +79,7 @@ in
         "/var/log"
         "/var/lib/nixos"
         "/var/lib/systemd/coredump"
+        { directory = "/root/.ssh"; mode = "0700"; }
       ]
       ++ lib.optionals config.networking.networkmanager.enable [
         { directory = "/var/lib/NetworkManager"; mode = "0700"; }
