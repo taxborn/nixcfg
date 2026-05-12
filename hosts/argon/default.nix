@@ -19,19 +19,20 @@
   time.timeZone = "America/Chicago";
   system.stateVersion = "25.11";
 
-  myNixOS.profiles.ovhServer.enable = true;
+  myNixOS = {
+    profiles.ovhServer.enable = true;
 
-  myNixOS.services = {
-    monitoring = {
-      server.enable = true;
-      client.enable = true;
+    services = {
+      monitoring = {
+        server.enable = true;
+        client.enable = true;
+      };
+
+      forgejo-runner = {
+        enable = true;
+        dockerContainers = 3;
+        nativeRunners = 2;
+      };
     };
-
-    forgejo-runner = {
-      enable = true;
-      dockerContainers = 3;
-      nativeRunners = 2;
-    };
-
   };
 }

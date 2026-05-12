@@ -34,16 +34,17 @@
     };
   };
 
-  boot.initrd.luks.devices."cryptroot".bypassWorkqueues = true;
-
-  boot.initrd.availableKernelModules = [
-    "xhci_pci"
-    "ahci"
-    "nvme"
-    "usbhid"
-    "usb_storage"
-    "sd_mod"
-    "raid1"
-    "md_mod"
-  ];
+  boot.initrd = {
+    luks.devices."cryptroot".bypassWorkqueues = true;
+    availableKernelModules = [
+      "xhci_pci"
+      "ahci"
+      "nvme"
+      "usbhid"
+      "usb_storage"
+      "sd_mod"
+      "raid1"
+      "md_mod"
+    ];
+  };
 }

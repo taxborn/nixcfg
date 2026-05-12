@@ -16,19 +16,22 @@
     (modulesPath + "/profiles/qemu-guest.nix")
   ];
 
-  networking.hostName = "carbon";
-  networking.firewall.allowedTCPPorts = [ 25565 ];
+  networking = {
+    hostName = "carbon";
+    firewall.allowedTCPPorts = [ 25565 ];
+  };
   time.timeZone = "America/Chicago";
   system.stateVersion = "25.11";
 
   environment.systemPackages = [ pkgs.jdk17 ];
 
-  myNixOS.services = {
-    vaultwarden.enable = true;
-    pds.enable = true;
-    monitoring.client.enable = true;
-    forgejo.enable = true;
+  myNixOS = {
+    services = {
+      vaultwarden.enable = true;
+      pds.enable = true;
+      monitoring.client.enable = true;
+      forgejo.enable = true;
+    };
+    profiles.ovhServer.enable = true;
   };
-
-  myNixOS.profiles.ovhServer.enable = true;
 }

@@ -42,14 +42,17 @@
     intelBusId = "PCI:0:2:0";
   };
 
-  boot.initrd.availableKernelModules = [
-    "xhci_pci"
-    "thunderbolt"
-    "nvme"
-    "usb_storage"
-    "sd_mod"
-    "rtsx_pci_sdmmc"
-    "raid1"
-    "md_mod"
-  ];
+  boot.initrd = {
+    luks.devices."cryptroot".bypassWorkqueues = true;
+    availableKernelModules = [
+      "xhci_pci"
+      "thunderbolt"
+      "nvme"
+      "usb_storage"
+      "sd_mod"
+      "rtsx_pci_sdmmc"
+      "raid1"
+      "md_mod"
+    ];
+  };
 }
