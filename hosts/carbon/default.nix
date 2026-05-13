@@ -27,10 +27,11 @@
 
   myNixOS = {
     services = {
-      vaultwarden.enable = true;
-      pds.enable = true;
-      monitoring.client.enable = true;
       forgejo.enable = true;
+      glance.enable = true;
+      monitoring.client.enable = true;
+      pds.enable = true;
+      vaultwarden.enable = true;
     };
     profiles.ovhServer.enable = true;
   };
