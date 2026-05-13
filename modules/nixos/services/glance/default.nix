@@ -1,4 +1,5 @@
 {
+  self,
   config,
   lib,
   ...
@@ -7,9 +8,16 @@
   options.myNixOS.services.glance.enable = lib.mkEnableOption "glance";
 
   config = lib.mkIf config.myNixOS.services.glance.enable {
+    age.secrets.glance.file = "${self.inputs.secrets}/glance/secrets.age";
+
     services.glance = {
       enable = true;
+      environmentFile = config.age.secrets.glance.path;
       settings = {
+        auth = {
+          secret-key = "\${GLANCE_SECRET_KEY}";
+          users.taxborn.password-hash = "\${GLANCE_TAXBORN_PASSWORD_HASH}";
+        };
         server = {
           port = config.mySnippets.mischief-town.networkMap.glance.port;
           proxied = true;
@@ -24,13 +32,13 @@
         pages = [
           {
             name = "Home";
-            center-vertically = true;
             columns = [
               {
                 size = "full";
                 widgets = [
                   {
                     type = "search";
+                    search-engine = "kagi";
                     autofocus = true;
                   }
                   {
