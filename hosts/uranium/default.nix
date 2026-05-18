@@ -15,7 +15,13 @@
 
   myNixOS = {
     base.enable = true;
-    desktop.hyprland.enable = true;
+    desktop.hyprland = {
+      enable = true;
+      monitors = [
+        "DP-3,2560x1440@165,0x0,1"
+        "HDMI-A-5,1920x1080@60,2560x320,1"
+      ];
+    };
     profiles.btrfs.enable = true;
     programs = {
       systemd-boot.enable = true;
