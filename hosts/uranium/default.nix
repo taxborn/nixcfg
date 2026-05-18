@@ -15,11 +15,15 @@
 
   myNixOS = {
     base.enable = true;
+    desktop.hyprland.enable = true;
     profiles.btrfs.enable = true;
     programs = {
       systemd-boot.enable = true;
       nix.enable = true;
       yubikey.enable = true;
+    };
+    services = {
+      greetd.enable = true;
     };
   };
 

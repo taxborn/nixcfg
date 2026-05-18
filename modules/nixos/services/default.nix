@@ -1,5 +1,6 @@
 {
   imports = [
+    ./greetd
     ./openssh
     ./tailscale
   ];

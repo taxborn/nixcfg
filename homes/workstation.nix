@@ -23,5 +23,15 @@
       };
       tmux.enable = true;
     };
+
+    myHome = {
+      desktop.hyprland.enable = true;
+      programs = {
+        ghostty.enable = true;
+        waybar.enable = true;
+        wofi.enable = true;
+      };
+      services.mako.enable = true;
+    };
   };
 }
