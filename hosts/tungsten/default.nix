@@ -19,7 +19,11 @@
       enable = true;
       laptopMonitor = "eDP-1,3456x2160@60,0x0,2";
     };
-    profiles.btrfs.enable = true;
+    profiles = {
+      btrfs.enable = true;
+      graphical-boot.enable = true;
+      swap.enable = true;
+    };
     programs = {
       claude-desktop.enable = true;
       systemd-boot.enable = true;
