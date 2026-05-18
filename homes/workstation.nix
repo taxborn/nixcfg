@@ -21,6 +21,7 @@
           yk-restart = "gpg-connect-agent killagent /bye && gpg-connect-agent \"scd serialno\" \"learn --force\" /bye && gpg --card-status";
         };
       };
+      tmux.enable = true;
     };
   };
 }
