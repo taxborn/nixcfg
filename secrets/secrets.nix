@@ -1,7 +1,6 @@
 let
   hosts = [
-    # "tungsten"
-    # "uranium"
+    "tungsten"
   ];
   users = [
     "taxborn_age_yubikey"
@@ -10,37 +9,8 @@ let
   userKeys = builtins.map (user: builtins.readFile ./publicKeys/${user}.pub) users;
   keys = systemKeys ++ userKeys;
 
-  hostKey = host: [ (builtins.readFile ./publicKeys/root_${host}.pub) ] ++ userKeys;
+  # hostKey = host: [ (builtins.readFile ./publicKeys/root_${host}.pub) ] ++ userKeys;
 in
 {
   "tailscale/auth.age".publicKeys = keys;
-  "tailscale/caddyAuth.age".publicKeys = keys;
-
-  "atproto/pds.age".publicKeys = hostKey "carbon";
-
-  "glance/secrets.age".publicKeys = hostKey "carbon";
-
-  "mail/vaultwarden.age".publicKeys = hostKey "carbon";
-
-  "grafana/secretKey.age".publicKeys = hostKey "argon";
-
-  "forgejo/postgres.age".publicKeys = hostKey "carbon";
-  "forgejo/mail.age".publicKeys = hostKey "carbon";
-  "forgejo/forgejo-key.age".publicKeys = hostKey "carbon";
-  "forgejo/runner-key.age".publicKeys = keys; # TODO: Limit to whichever devices use the runner
-
-  "borg/uranium/passphrase.age".publicKeys = hostKey "uranium";
-  "borg/uranium/ssh_key.age".publicKeys = hostKey "uranium";
-
-  "borg/tungsten/passphrase.age".publicKeys = hostKey "tungsten";
-  "borg/tungsten/ssh_key.age".publicKeys = hostKey "tungsten";
-
-  "borg/helium/passphrase.age".publicKeys = hostKey "helium";
-  "borg/helium/ssh_key.age".publicKeys = hostKey "helium";
-
-  "borg/argon/passphrase.age".publicKeys = hostKey "argon";
-  "borg/argon/ssh_key.age".publicKeys = hostKey "argon";
-
-  "borg/carbon/passphrase.age".publicKeys = hostKey "carbon";
-  "borg/carbon/ssh_key.age".publicKeys = hostKey "carbon";
 }
