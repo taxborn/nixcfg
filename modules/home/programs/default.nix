@@ -4,6 +4,7 @@
     ./git
     ./gpg
     ./ssh
+    ./tmux
     ./waybar
     ./wofi
     ./yubikey

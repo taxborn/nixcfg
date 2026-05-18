@@ -22,7 +22,6 @@
           yk-restart = "gpg-connect-agent killagent /bye && gpg-connect-agent \"scd serialno\" \"learn --force\" /bye && gpg --card-status";
         };
       };
-      tmux.enable = true;
       claude-code.enable = true;
       firefox = {
         enable = true;
@@ -36,6 +35,7 @@
         ghostty.enable = true;
         waybar.enable = true;
         wofi.enable = true;
+        yubikey.enable = true;
         zed.enable = true;
       };
       services.mako.enable = true;

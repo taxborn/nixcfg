@@ -32,7 +32,7 @@
       git.enable = true;
       gpg.enable = true;
       ssh.enable = true;
-      yubikey.enable = true;
+      tmux.enable = true;
     };
   };
 }
