@@ -27,6 +27,7 @@
             modules = [
               ../../hosts/${host}
               inputs.agenix.nixosModules.default
+              inputs.catppuccin.nixosModules.catppuccin
               inputs.disko.nixosModules.disko
               inputs.home-manager.nixosModules.home-manager
 

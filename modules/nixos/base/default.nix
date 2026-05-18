@@ -11,6 +11,10 @@
   };
 
   config = lib.mkIf config.myNixOS.base.enable {
+    catppuccin = {
+      flavor = "mocha";
+      accent = "mauve";
+    };
     environment = {
       etc."nixos".source = self;
 
