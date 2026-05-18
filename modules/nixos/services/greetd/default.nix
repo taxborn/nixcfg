@@ -50,89 +50,92 @@ in
   config = lib.mkIf cfg.enable {
     programs.regreet = {
       enable = true;
+      # Adapted from https://github.com/FaustXVI/nixos-configuration/blob/03f7ca3ce2266351084e58ee3d61994019251053/modules/hardware/regreet.nix#L4
       extraCss =
         let
-          palettes = builtins.fromJSON (builtins.readFile "${config.catppuccin.sources.palette}/palette.json");
+          palettes = builtins.fromJSON (
+            builtins.readFile "${config.catppuccin.sources.palette}/palette.json"
+          );
           p = palettes.${config.catppuccin.flavor}.colors;
-          defineColors = lib.concatMapStrings
-            (name: "@define-color ${name} ${p.${name}.hex};\n")
-            (lib.attrNames p);
+          defineColors = lib.concatMapStrings (name: "@define-color ${name} ${p.${name}.hex};\n") (
+            lib.attrNames p
+          );
         in
         ''
-        ${defineColors}
-        @define-color accent @${config.catppuccin.accent};
+          ${defineColors}
+          @define-color accent @${config.catppuccin.accent};
 
-        window {
-            background: @base;
-        }
+          window {
+              background: @base;
+          }
 
-        selection {
-            color: @text;
-            background: alpha(@overlay2,0.3);
-        }
+          selection {
+              color: @text;
+              background: alpha(@overlay2,0.3);
+          }
 
-        frame,
-        image,
-        grid {
-            border:0;
-            color: @text;
-        }
+          frame,
+          image,
+          grid {
+              border:0;
+              color: @text;
+          }
 
-        frame {
-            box-shadow: 0 0 0.5rem @accent;
-        }
+          frame {
+              box-shadow: 0 0 0.5rem @accent;
+          }
 
-        button,
-        entry,
-        combobox,
-        combobox entry,
-        combobox popover,
-        combobox popover contents,
-        combobox popover contents modelbutton,
-        combobox button,
-        combobox window menu,
-        frame,
-        input {
-            color: @text;
-            border-color: @surface0;
-            background: @surface0;
-        }
+          button,
+          entry,
+          combobox,
+          combobox entry,
+          combobox popover,
+          combobox popover contents,
+          combobox popover contents modelbutton,
+          combobox button,
+          combobox window menu,
+          frame,
+          input {
+              color: @text;
+              border-color: @surface0;
+              background: @surface0;
+          }
 
-        button:hover,
-        combobox:hover,
-        combobox modelbutton:hover{
-            border-color: @surface1;
-            background: @surface1;
-        }
+          button:hover,
+          combobox:hover,
+          combobox modelbutton:hover{
+              border-color: @surface1;
+              background: @surface1;
+          }
 
 
-        button.suggested-action{
-            color: @base;
-            border-color: @accent;
-            background: @accent;
-        }
-        button.suggested-action:hover{
-            border-color: darker(@accent);
-            background: darker(@accent);
-        }
+          button.suggested-action{
+              color: @base;
+              border-color: @accent;
+              background: @accent;
+          }
+          button.suggested-action:hover{
+              border-color: darker(@accent);
+              background: darker(@accent);
+          }
 
-        button.destructive-action{
-            color: @base;
-            border-color: @red;
-            background: @red;
-        }
-        button.destructive-action:hover{
-            border-color: darker(@red);
-            background: darker(@red);
-        }
+          button.destructive-action{
+              color: @base;
+              border-color: @red;
+              background: @red;
+          }
+          button.destructive-action:hover{
+              border-color: darker(@red);
+              background: darker(@red);
+          }
 
-        infobar,
-        infobar box {
-            border: 0;
-            background: @surface0;
-            color: @red;
-        }
-      '';
+          infobar,
+          infobar box {
+              border: 0;
+              background: @surface0;
+              color: @red;
+          }
+        '';
       settings = {
         background = {
           path = "${../../../../assets/wallpapers/island.jpeg}";
