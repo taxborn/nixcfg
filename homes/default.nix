@@ -22,6 +22,8 @@
       home-manager.enable = true;
     };
 
+    programs.neovim.enable = true;
+
     myHome.programs = {
       git.enable = true;
       gpg.enable = true;
