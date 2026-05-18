@@ -34,7 +34,10 @@
       yubikey.enable = true;
     };
     services = {
-      greetd.enable = true;
+      greetd = {
+        enable = true;
+        primaryOutput = "DP-3";
+      };
       openssh.enable = true;
     };
   };

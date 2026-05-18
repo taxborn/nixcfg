@@ -1,35 +1,15 @@
----------------------
----- MY PROGRAMS ----
----------------------
-
--- Set programs that you use
 local terminal = "ghostty"
 local menu     = "wofi"
 
-
--------------------
----- AUTOSTART ----
--------------------
-
--- See https://wiki.hypr.land/Configuring/Basics/Autostart/
-
--- Autostart necessary processes (like notifications daemons, status bars, etc.)
--- Or execute your favorite apps at launch like this:
---
 hl.on("hyprland.start", function()
     hl.exec_cmd("uwsm app -- mako")
+    hl.exec_cmd("uwsm app -- waybar")
 end)
 
------------------------
----- LOOK AND FEEL ----
------------------------
-
--- Refer to https://wiki.hypr.land/Configuring/Basics/Variables/
 hl.config({
     general = {
-        gaps_in          = 5,
-        gaps_out         = 20,
-
+        gaps_in          = 2,
+        gaps_out         = 2,
         border_size      = 2,
 
         col              = {
@@ -47,25 +27,19 @@ hl.config({
     },
 
     decoration = {
-        rounding         = 10,
-        rounding_power   = 2,
+        rounding         = 0,
+        rounding_power   = 0,
 
         -- Change transparency of focused and unfocused windows
-        active_opacity   = 1.0,
-        inactive_opacity = 1.0,
+        active_opacity   = 0.98,
+        inactive_opacity = 0.93,
 
         shadow           = {
-            enabled      = true,
-            range        = 4,
-            render_power = 3,
-            color        = 0xee1a1a1a,
+            enabled = false,
         },
 
         blur             = {
-            enabled  = true,
-            size     = 3,
-            passes   = 1,
-            vibrancy = 0.1696,
+            enabled = false,
         },
     },
 
@@ -102,25 +76,6 @@ hl.animation({ leaf = "workspacesIn", enabled = true, speed = 1.21, bezier = "al
 hl.animation({ leaf = "workspacesOut", enabled = true, speed = 1.94, bezier = "almostLinear", style = "fade" })
 hl.animation({ leaf = "zoomFactor", enabled = true, speed = 7, bezier = "quick" })
 
--- Ref https://wiki.hypr.land/Configuring/Basics/Workspace-Rules/
--- "Smart gaps" / "No gaps when only"
--- uncomment all if you wish to use that.
--- hl.workspace_rule({ workspace = "w[tv1]", gaps_out = 0, gaps_in = 0 })
--- hl.workspace_rule({ workspace = "f[1]",   gaps_out = 0, gaps_in = 0 })
--- hl.window_rule({
---     name  = "no-gaps-wtv1",
---     match = { float = false, workspace = "w[tv1]" },
---     border_size = 0,
---     rounding    = 0,
--- })
--- hl.window_rule({
---     name  = "no-gaps-f1",
---     match = { float = false, workspace = "f[1]" },
---     border_size = 0,
---     rounding    = 0,
--- })
-
--- See https://wiki.hypr.land/Configuring/Layouts/Dwindle-Layout/ for more
 hl.config({
     dwindle = {
         preserve_split = true, -- You probably want this
@@ -181,36 +136,23 @@ hl.gesture({
     action = "workspace"
 })
 
--- Example per-device config
--- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Devices/ for more
-hl.device({
-    name        = "epic-mouse-v1",
-    sensitivity = -0.5,
-})
-
-
----------------------
----- KEYBINDINGS ----
----------------------
 
 local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 
--- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal))
-local closeWindowBind = hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.close())
--- closeWindowBind:set_enabled(false)
+hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.close())
 hl.bind(mainMod .. " + M",
     hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
 hl.bind(mainMod .. " + F", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
-hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit")) -- dwindle only
+hl.bind(mainMod .. " + SHIFT + F", hl.dsp.layout("togglesplit")) -- dwindle only
 
 -- Move focus with mainMod + arrow keys
-hl.bind(mainMod .. " + left", hl.dsp.focus({ direction = "left" }))
-hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
-hl.bind(mainMod .. " + up", hl.dsp.focus({ direction = "up" }))
-hl.bind(mainMod .. " + down", hl.dsp.focus({ direction = "down" }))
+hl.bind(mainMod .. " + H", hl.dsp.focus({ direction = "left" }))
+hl.bind(mainMod .. " + L", hl.dsp.focus({ direction = "right" }))
+hl.bind(mainMod .. " + K", hl.dsp.focus({ direction = "up" }))
+hl.bind(mainMod .. " + J", hl.dsp.focus({ direction = "down" }))
 
 -- Switch workspaces with mainMod + [0-9]
 -- Move active window to a workspace with mainMod + SHIFT + [0-9]
