@@ -8,6 +8,18 @@
 {
   options.myNixOS.desktop.hyprland = {
     enable = lib.mkEnableOption "Hyprland wayland compositor";
+
+    laptopMonitor = lib.mkOption {
+      description = "Internal laptop monitor.";
+      default = null;
+      type = lib.types.nullOr lib.types.str;
+    };
+
+    monitors = lib.mkOption {
+      description = "List of external monitors.";
+      default = [ ];
+      type = lib.types.listOf lib.types.str;
+    };
   };
 
   config = lib.mkIf config.myNixOS.desktop.hyprland.enable {

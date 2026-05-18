@@ -11,12 +11,8 @@
       enable = true;
       enableFishIntegration = true;
       settings = {
-        theme = "catppuccin-mocha";
         font-family = "JetBrainsMono Nerd Font";
         font-size = 12;
-        window-padding-x = 8;
-        window-padding-y = 8;
-        cursor-style = "bar";
         shell-integration = "fish";
         confirm-close-surface = false;
       };

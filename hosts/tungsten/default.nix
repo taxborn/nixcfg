@@ -15,7 +15,10 @@
 
   myNixOS = {
     base.enable = true;
-    desktop.hyprland.enable = true;
+    desktop.hyprland = {
+      enable = true;
+      laptopMonitor = "eDP-1,3456x2160@60,0x0,2";
+    };
     profiles.btrfs.enable = true;
     programs = {
       systemd-boot.enable = true;
@@ -23,7 +26,10 @@
       yubikey.enable = true;
     };
     services = {
-      greetd.enable = true;
+      greetd = {
+        enable = true;
+        outputScale = 2;
+      };
       openssh.enable = true;
     };
   };
