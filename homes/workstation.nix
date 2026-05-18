@@ -23,7 +23,6 @@
         };
       };
       tmux.enable = true;
-      zed-editor.enable = true;
       claude-code.enable = true;
       firefox = {
         enable = true;
@@ -37,6 +36,7 @@
         ghostty.enable = true;
         waybar.enable = true;
         wofi.enable = true;
+        zed.enable = true;
       };
       services.mako.enable = true;
     };

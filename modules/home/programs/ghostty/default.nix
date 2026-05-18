@@ -15,7 +15,10 @@
         font-size = 12;
         shell-integration = "fish";
         confirm-close-surface = false;
+        theme = "catppuccin-mocha.conf";
       };
     };
+
+    home.file.".config/ghostty/themes/catppuccin-mocha.conf".source = ./catppuccin-mocha.conf;
   };
 }

@@ -7,5 +7,6 @@
     ./waybar
     ./wofi
     ./yubikey
+    ./zed
   ];
 }
