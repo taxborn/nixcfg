@@ -27,7 +27,10 @@
 
     programs.dconf.enable = true;
 
-    myNixOS.profiles.swap.enable = true;
+    myNixOS = {
+      profiles.swap.enable = true;
+      services.tailscale.enable = true;
+    };
 
     networking.networkmanager.enable = true;
 
