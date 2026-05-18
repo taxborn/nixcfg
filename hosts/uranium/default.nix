@@ -24,12 +24,14 @@
     };
     profiles.btrfs.enable = true;
     programs = {
+      claude-desktop.enable = true;
       systemd-boot.enable = true;
       nix.enable = true;
       yubikey.enable = true;
     };
     services = {
       greetd.enable = true;
+      openssh.enable = true;
     };
   };
 

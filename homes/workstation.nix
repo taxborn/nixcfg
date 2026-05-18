@@ -1,3 +1,4 @@
+{ config, ... }:
 {
   imports = [
     ./default.nix
@@ -22,6 +23,12 @@
         };
       };
       tmux.enable = true;
+      zed-editor.enable = true;
+      claude-code.enable = true;
+      firefox = {
+        enable = true;
+        configPath = "${config.xdg.configHome}/mozilla/firefox";
+      };
     };
 
     myHome = {

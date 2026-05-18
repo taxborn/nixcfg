@@ -22,7 +22,11 @@
       home-manager.enable = true;
     };
 
-    programs.neovim.enable = true;
+    programs.neovim = {
+      enable = true;
+      withRuby = false;
+      withPython3 = false;
+    };
 
     myHome.programs = {
       git.enable = true;

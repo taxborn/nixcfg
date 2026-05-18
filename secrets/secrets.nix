@@ -1,6 +1,7 @@
 let
   hosts = [
     "tungsten"
+    "uranium"
   ];
   users = [
     "taxborn_age_yubikey"
