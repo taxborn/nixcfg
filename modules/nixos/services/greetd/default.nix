@@ -41,7 +41,6 @@
     # Ensure greeter has access to wayland session desktop files
     environment.etc."greetd/environments".text = ''
       hyprland-uwsm.desktop
-      hyprland.desktop
     '';
   };
 }
