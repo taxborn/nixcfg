@@ -14,7 +14,7 @@
 
       matchBlocks =
         let
-          tailscaleIPs = config.mySnippets.mischief-town.networkMap.tailscaleIPs;
+          tailscaleIPs = config.mySnippets.tailnet.tailscaleIPs;
 
           machine = name: ip: {
             ${name} = {
