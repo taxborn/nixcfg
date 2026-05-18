@@ -25,10 +25,9 @@
 
     hardware.enableRedistributableFirmware = lib.mkDefault true;
 
-    programs = {
-      dconf.enable = true;
-      git.enable = true;
-    };
+    programs.dconf.enable = true;
+
+    myNixOS.profiles.swap.enable = true;
 
     networking.networkmanager.enable = true;
 

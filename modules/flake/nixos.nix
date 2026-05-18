@@ -29,7 +29,6 @@
               inputs.agenix.nixosModules.default
               inputs.disko.nixosModules.disko
               inputs.home-manager.nixosModules.home-manager
-              ../snippets
 
               modules.hardware
               modules.nixos
