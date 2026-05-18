@@ -1,6 +1,1 @@
-{
-  imports = [
-    ./mako
-    ./waybar
-  ];
-}
+{ }

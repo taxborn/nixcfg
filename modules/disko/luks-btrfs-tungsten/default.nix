@@ -96,8 +96,8 @@ in
                 mountpoint = "/home";
                 mountOptions = defaultBtrfsOpts;
               };
-              "/persist" = {
-                mountpoint = "/persist";
+              "/home/.snapshots" = {
+                mountpoint = "/home/.snapshots";
                 mountOptions = defaultBtrfsOpts;
               };
             };

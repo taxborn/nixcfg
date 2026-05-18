@@ -8,10 +8,3 @@ A desktop PC [I built](https://pcpartpicker.com/user/taxbornfair/saved/bK7L7P) i
 
 ## Tungsten
 A Dell XPS 15 9520 I use on-the-go.
-
-## Helium
-An Intel NUC8iBEK that I use for my homelab. Hosts services I want to only interact with over Tailscale.
-
-## Argon & Carbon
-A pair of OVH VPS' that I use for Minecraft servers, hosting websites, and the
-like.

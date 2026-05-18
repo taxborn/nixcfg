@@ -11,8 +11,6 @@
 
     config = {
       home.packages = with pkgs; [
-        ledger-live-desktop
-        prismlauncher
         via
       ];
     };

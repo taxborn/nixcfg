@@ -8,7 +8,6 @@
     ./home.nix
     ./secrets.nix
     self.diskoConfigurations.luks-btrfs-tungsten
-    self.nixosModules.locale-en-us
   ];
 
   networking.hostName = "tungsten";
@@ -20,15 +19,39 @@
   ];
 
   myNixOS = {
-    profiles.workstation.enable = true;
-    services = {
-      monitoring.client.enable = true;
-      backups.client.extraExcludes = [
-        # managed by Obsidian sync, no need to back up
-        "/home/taxborn/documents/notes"
+    base.enable = true;
+    profiles.btrfs.enable = true;
+    programs = {
+      systemd-boot.enable = true;
+      nix.enable = true;
+      yubikey.enable = true;
+    };
+  };
+
+  boot = {
+    swraid.mdadmConf = "MAILADDR root";
+    initrd = {
+      luks = {
+        devices."cryptroot" = {
+          bypassWorkqueues = true;
+          crypttabExtraOpts = [
+            "fido2-device=auto"
+            "token-timeout=30"
+          ];
+        };
+        fido2Support = false;
+      };
+      availableKernelModules = [
+        "xhci_pci"
+        "thunderbolt"
+        "nvme"
+        "usb_storage"
+        "sd_mod"
+        "rtsx_pci_sdmmc"
+        "raid1"
+        "md_mod"
       ];
     };
-    desktop.hyprland.laptopMonitor = "eDP-1,3456x2160@60,0x0,2";
   };
 
   myHardware = {
@@ -40,19 +63,5 @@
   hardware.nvidia.prime = {
     nvidiaBusId = "PCI:1:0:0";
     intelBusId = "PCI:0:2:0";
-  };
-
-  boot.initrd = {
-    luks.devices."cryptroot".bypassWorkqueues = true;
-    availableKernelModules = [
-      "xhci_pci"
-      "thunderbolt"
-      "nvme"
-      "usb_storage"
-      "sd_mod"
-      "rtsx_pci_sdmmc"
-      "raid1"
-      "md_mod"
-    ];
   };
 }

@@ -2,16 +2,12 @@
 {
   flake = {
     diskoConfigurations = {
-      btrfs-argon = ../disko/btrfs-argon;
-      btrfs-carbon = ../disko/btrfs-carbon;
-      btrfs-helium = ../disko/btrfs-helium;
       luks-btrfs-tungsten = ../disko/luks-btrfs-tungsten;
       luks-btrfs-uranium = ../disko/luks-btrfs-uranium;
     };
 
     nixosModules = {
       hardware = ../hardware;
-      locale-en-us = ../locale/en-us;
       nixos = ../nixos;
       users = ../users;
     };
@@ -22,9 +18,6 @@
       in
       inputs.nixpkgs.lib.genAttrs
         [
-          "argon"
-          "carbon"
-          "helium"
           "tungsten"
           "uranium"
         ]
@@ -36,9 +29,7 @@
               inputs.agenix.nixosModules.default
               inputs.disko.nixosModules.disko
               inputs.home-manager.nixosModules.home-manager
-              inputs.impermanence.nixosModules.impermanence
               inputs.snippets.nixosModules.snippets
-              inputs.lanzaboote.nixosModules.lanzaboote
 
               modules.hardware
               modules.nixos

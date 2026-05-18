@@ -1,14 +1,6 @@
 # Update the local NixOS system
 update:
-    sudo nixos-rebuild switch --flake
-
-# Deploy to a target host (e.g. `just deploy carbon`)
-deploy host:
-    sudo nixos-rebuild switch --flake .#{{host}} --target-host {{host}} --sudo
-
-# Deploy to a target host as a test (applied now, not persisted across reboot)
-deploy-test host:
-    sudo nixos-rebuild test --flake .#{{host}} --target-host {{host}} --sudo
+    sudo nixos-rebuild switch --flake .
 
 # Remove all old nix generations
 clean:

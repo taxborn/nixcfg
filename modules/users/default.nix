@@ -1,33 +1,23 @@
+{ pkgs, ... }:
 {
-  config,
-  lib,
-  self,
-  pkgs,
-  ...
-}:
-{
-  imports = [
-    ./taxborn
-    ./options.nix
-  ];
+  programs.fish.enable = true;
+  documentation.man.cache.enable = false;
 
-  config = lib.mkIf (config.myUsers.root.enable or config.myUsers.taxborn.enable) {
-    programs.fish.enable = true;
-    # as of 2026-01-02 this takes a whileeee and haven't needed it yet.
-    documentation.man.cache.enable = false;
-
-    users = {
-      defaultUserShell = pkgs.fish;
-      mutableUsers = false;
-
-      users.root.openssh.authorizedKeys.keyFiles =
-        lib.map (file: "${self.inputs.secrets}/publicKeys/${file}")
-          (
-            lib.filter (file: lib.hasPrefix "taxborn_" file) (
-              builtins.attrNames (builtins.readDir "${self.inputs.secrets}/publicKeys")
-            )
-          );
+  users = {
+    users.taxborn = {
+      description = "Braxton Fair";
+      extraGroups = [
+        "docker"
+        "libvirtd"
+        "networkmanager"
+        "video"
+        "wheel"
+      ];
+      hashedPassword = "$y$j9T$A0TNjHtgoYuPaVVUDMTg1/$c2X6a5BbYruE.WN0ko5uE3O.FTGDFeEWjFDxwL4YS28";
+      isNormalUser = true;
+      uid = 1000;
     };
+    defaultUserShell = pkgs.fish;
+    mutableUsers = false;
   };
-
 }

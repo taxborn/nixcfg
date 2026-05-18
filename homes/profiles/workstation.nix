@@ -1,4 +1,3 @@
-{ pkgs, ... }:
 {
   imports = [
     ./default.nix
@@ -10,16 +9,7 @@
       userDirs.setSessionVariables = true;
     };
 
-    home.packages = with pkgs; [
-      bitwarden-desktop
-      discord
-      obsidian
-      spotify
-      vlc
-    ];
-
     programs = {
-      feh.enable = true;
       fish = {
         interactiveShellInit = ''
           set -gx GPG_TTY (tty)
@@ -30,16 +20,6 @@
         shellAliases = {
           yk-restart = "gpg-connect-agent killagent /bye && gpg-connect-agent \"scd serialno\" \"learn --force\" /bye && gpg --card-status";
         };
-      };
-    };
-
-    myHome = {
-      profiles.defaultApps.enable = true;
-      desktop.hyprland.enable = true;
-      programs = {
-        firefox.enable = true;
-        ghostty.enable = true;
-        zed-editor.enable = true;
       };
     };
   };

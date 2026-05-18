@@ -4,7 +4,7 @@
   ...
 }:
 {
-  options.myNixOS.programs.systemd-boot.enable = lib.mkEnableOption "boot with systemd-boot";
+  options.myNixOS.programs.systemd-boot.enable = lib.mkEnableOption "systemd bootloader";
 
   config = lib.mkIf config.myNixOS.programs.systemd-boot.enable {
     boot = {

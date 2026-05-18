@@ -7,7 +7,6 @@
     ./home.nix
     ./secrets.nix
     self.diskoConfigurations.luks-btrfs-uranium
-    self.nixosModules.locale-en-us
   ];
 
   networking.hostName = "uranium";
@@ -15,36 +14,43 @@
   system.stateVersion = "25.11";
 
   myNixOS = {
-    profiles.workstation.enable = true;
-    services.monitoring.client.enable = true;
-    desktop.hyprland.monitors = [
-      "DP-3,2560x1440@165,0x0,1"
-      "HDMI-A-5,1920x1080@60,2560x320,1"
-    ];
+    base.enable = true;
+    profiles.btrfs.enable = true;
+    programs = {
+      systemd-boot.enable = true;
+      nix.enable = true;
+      yubikey.enable = true;
+    };
+  };
+
+  boot = {
+    swraid.mdadmConf = "MAILADDR root";
+    initrd = {
+      luks = {
+        devices."cryptroot" = {
+          bypassWorkqueues = true;
+          crypttabExtraOpts = [
+            "fido2-device=auto"
+            "token-timeout=30"
+          ];
+        };
+        fido2Support = false;
+      };
+      availableKernelModules = [
+        "xhci_pci"
+        "ahci"
+        "nvme"
+        "usbhid"
+        "usb_storage"
+        "sd_mod"
+        "raid1"
+        "md_mod"
+      ];
+    };
   };
 
   myHardware = {
     intel.cpu.enable = true;
     amd.gpu.enable = true;
-  };
-
-  services.pipewire.wireplumber.extraConfig."10-default-audio-sink" = {
-    "wireplumber.settings" = {
-      "default.audio.sink" = "alsa_output.pci-0000_03_00.1.hdmi-stereo-extra3";
-    };
-  };
-
-  boot.initrd = {
-    luks.devices."cryptroot".bypassWorkqueues = true;
-    availableKernelModules = [
-      "xhci_pci"
-      "ahci"
-      "nvme"
-      "usbhid"
-      "usb_storage"
-      "sd_mod"
-      "raid1"
-      "md_mod"
-    ];
   };
 }

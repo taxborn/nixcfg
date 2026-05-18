@@ -4,7 +4,7 @@
   ...
 }:
 {
-  options.myNixOS.programs.grub.enable = lib.mkEnableOption "boot with grub";
+  options.myNixOS.programs.grub.enable = lib.mkEnableOption "grub bootloader";
 
   config = lib.mkIf config.myNixOS.programs.grub.enable {
     boot.loader.grub = {

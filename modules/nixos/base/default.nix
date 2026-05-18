@@ -11,8 +11,6 @@
   };
 
   config = lib.mkIf config.myNixOS.base.enable {
-    console.useXkbConfig = true;
-
     environment = {
       etc."nixos".source = self;
 
@@ -23,11 +21,6 @@
         just
         wget
       ];
-
-      variables = {
-        inherit (config.myNixOS) FLAKE;
-        NH_FLAKE = config.myNixOS.FLAKE;
-      };
     };
 
     hardware.enableRedistributableFirmware = lib.mkDefault true;
@@ -37,12 +30,7 @@
       git.enable = true;
     };
 
-    networking.networkmanager = {
-      enable = true;
-      settings.keyfile.path = "/var/lib/NetworkManager/system-connections";
-    };
-
-    security.sudo.extraConfig = "Defaults lecture = never";
+    networking.networkmanager.enable = true;
 
     services.fstrim.enable = true;
 
@@ -58,21 +46,20 @@
 
     system.configurationRevision = self.rev or self.dirtyRev or null;
 
-    myNixOS = {
-      programs.neovim.enable = true;
+    i18n = {
+      defaultLocale = lib.mkDefault "en_US.UTF-8";
 
-      profiles = {
-        bluetooth.enable = true;
-        performance.enable = true;
-        swap.enable = true;
+      extraLocaleSettings = {
+        LC_ADDRESS = config.i18n.defaultLocale;
+        LC_IDENTIFICATION = config.i18n.defaultLocale;
+        LC_MEASUREMENT = config.i18n.defaultLocale;
+        LC_MONETARY = config.i18n.defaultLocale;
+        LC_NAME = config.i18n.defaultLocale;
+        LC_NUMERIC = config.i18n.defaultLocale;
+        LC_PAPER = config.i18n.defaultLocale;
+        LC_TELEPHONE = config.i18n.defaultLocale;
+        LC_TIME = config.i18n.defaultLocale;
       };
-
-      services.openssh.enable = true;
-    };
-
-    myUsers.taxborn = {
-      enable = true;
-      password = "$y$j9T$23GUNNxavO/S4n8DLkfs71$ShByJUJ9XCvIs2PLYmlAjenOtpcFvnSgshjbClEKB18";
     };
   };
 }
