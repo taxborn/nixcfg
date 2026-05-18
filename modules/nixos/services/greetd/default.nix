@@ -47,7 +47,23 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    programs.regreet.enable = true;
+    programs.regreet = {
+      enable = true;
+      settings = {
+        background = {
+          path = "${../../../../assets/wallpapers/island.jpeg}";
+          fit = "Cover";
+        };
+      };
+      extraCss = ''
+        window {
+          background-color: black;
+        }
+        picture {
+          opacity: 0.65;
+        }
+      '';
+    };
 
     services.greetd = {
       enable = true;

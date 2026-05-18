@@ -27,6 +27,10 @@
         enable = true;
         configPath = "${config.xdg.configHome}/mozilla/firefox";
       };
+      obsidian = {
+        enable = true;
+        cli.enable = true;
+      };
     };
 
     myHome = {
