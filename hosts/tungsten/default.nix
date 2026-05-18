@@ -22,7 +22,6 @@
     profiles = {
       btrfs.enable = true;
       graphical-boot.enable = true;
-      swap.enable = true;
     };
     programs = {
       claude-desktop.enable = true;
