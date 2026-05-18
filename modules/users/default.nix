@@ -16,6 +16,9 @@
       hashedPassword = "$y$j9T$A0TNjHtgoYuPaVVUDMTg1/$c2X6a5BbYruE.WN0ko5uE3O.FTGDFeEWjFDxwL4YS28";
       isNormalUser = true;
       uid = 1000;
+      openssh.authorizedKeys.keyFiles = [
+        ../../secrets/publicKeys/taxborn_yubikey_ssh.pub
+      ];
     };
     defaultUserShell = pkgs.fish;
     mutableUsers = false;

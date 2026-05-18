@@ -21,6 +21,9 @@
       nix.enable = true;
       yubikey.enable = true;
     };
+    services = {
+      openssh.enable = true;
+    };
   };
 
   boot = {
