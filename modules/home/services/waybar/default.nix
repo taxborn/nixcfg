@@ -94,14 +94,6 @@
       };
     };
 
-    systemd.user.services.waybar = {
-      Install.WantedBy = lib.mkForce (
-        lib.optional config.wayland.windowManager.hyprland.enable "hyprland-session.target"
-      );
-
-      Service.Restart = lib.mkForce "no";
-
-      Unit.BindsTo = lib.optional config.wayland.windowManager.hyprland.enable "hyprland-session.target";
-    };
+    systemd.user.services.waybar.Service.Restart = lib.mkForce "no";
   };
 }

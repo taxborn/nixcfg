@@ -39,11 +39,10 @@
       blueman-applet.enable = true;
     };
 
-    # TODO: Why is this here?
     systemd.user.services.polkit-gnome-authentication-agent = {
       Unit = {
         After = "graphical-session.target";
-        BindsTo = [ "hyprland-session.target" ];
+        BindsTo = [ "graphical-session.target" ];
         Description = "PolicyKit authentication agent from GNOME.";
         PartOf = "graphical-session.target";
       };
@@ -53,17 +52,14 @@
         Restart = "no";
       };
 
-      Install.WantedBy = [ "hyprland-session.target" ];
+      Install.WantedBy = [ "graphical-session.target" ];
     };
 
     wayland.windowManager.hyprland = {
       enable = true;
       settings = import ./settings.nix { inherit config lib pkgs; };
 
-      systemd = {
-        enable = true;
-        variables = [ "--all" ];
-      };
+      systemd.enable = false;
     };
 
     xdg.portal = {

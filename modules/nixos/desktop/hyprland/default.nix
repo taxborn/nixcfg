@@ -44,7 +44,7 @@
       gnupg.agent.pinentryPackage = pkgs.pinentry-gnome3;
       hyprland = {
         enable = true;
-        withUWSM = false;
+        withUWSM = true;
       };
     };
 
