@@ -83,24 +83,6 @@
         "type": "github"
       }
     },
-    "flake-parts_2": {
-      "inputs": {
-        "nixpkgs-lib": "nixpkgs-lib_2"
-      },
-      "locked": {
-        "lastModified": 1765835352,
-        "narHash": "sha256-XswHlK/Qtjasvhd1nOa1e8MgZ8GS//jBoTqWtrS1Giw=",
-        "owner": "hercules-ci",
-        "repo": "flake-parts",
-        "rev": "a34fae9c08a15ad73f295041fec82323541400a9",
-        "type": "github"
-      },
-      "original": {
-        "owner": "hercules-ci",
-        "repo": "flake-parts",
-        "type": "github"
-      }
-    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -143,28 +125,6 @@
         "type": "github"
       }
     },
-    "home-manager_3": {
-      "inputs": {
-        "nixpkgs": [
-          "snippets",
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1767104570,
-        "narHash": "sha256-GKgwu5//R+cLdKysZjGqvUEEOGXXLdt93sNXeb2M/Lk=",
-        "owner": "nix-community",
-        "repo": "home-manager",
-        "rev": "e4e78a2cbeaddd07ab7238971b16468cc1d14daf",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "ref": "master",
-        "repo": "home-manager",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1778869304,
@@ -196,68 +156,13 @@
         "type": "github"
       }
     },
-    "nixpkgs-lib_2": {
-      "locked": {
-        "lastModified": 1765674936,
-        "narHash": "sha256-k00uTP4JNfmejrCLJOwdObYC9jHRrr/5M/a/8L2EIdo=",
-        "owner": "nix-community",
-        "repo": "nixpkgs.lib",
-        "rev": "2075416fcb47225d9b68ac469a5c4801a9c4dd85",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nix-community",
-        "repo": "nixpkgs.lib",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "agenix": "agenix",
         "disko": "disko",
         "flake-parts": "flake-parts",
         "home-manager": "home-manager_2",
-        "nixpkgs": "nixpkgs",
-        "secrets": "secrets",
-        "snippets": "snippets"
-      }
-    },
-    "secrets": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1778639962,
-        "narHash": "sha256-Z3Ny9VWabRjOGfnfOqIx9mPgm8xu+36zoz6aoUuiuDw=",
-        "ref": "refs/heads/main",
-        "rev": "abaaf08c59457685de3284232d0aa96d1f12e4be",
-        "revCount": 55,
-        "type": "git",
-        "url": "https://git.mischief.town/nix-infra/secrets"
-      },
-      "original": {
-        "type": "git",
-        "url": "https://git.mischief.town/nix-infra/secrets"
-      }
-    },
-    "snippets": {
-      "inputs": {
-        "flake-parts": "flake-parts_2",
-        "home-manager": "home-manager_3",
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1778626772,
-        "narHash": "sha256-woWeN/gaLZf4nmh442/i2KS81CoxnzjViCar4VDTYGg=",
-        "ref": "refs/heads/main",
-        "rev": "0dd4ed36bd7e38da4443abc1a9ec449cb1298e32",
-        "revCount": 38,
-        "type": "git",
-        "url": "https://git.mischief.town/nix-infra/snippets"
-      },
-      "original": {
-        "type": "git",
-        "url": "https://git.mischief.town/nix-infra/snippets"
+        "nixpkgs": "nixpkgs"
       }
     },
     "systems": {

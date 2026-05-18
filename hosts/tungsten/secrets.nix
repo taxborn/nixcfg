@@ -6,7 +6,7 @@
     ];
 
     secrets = {
-      tailscaleAuthKey.file = "${self.inputs.secrets}/tailscale/auth.age";
+      tailscaleAuthKey.file = "${self}/secrets/tailscale/auth.age";
     };
   };
 }

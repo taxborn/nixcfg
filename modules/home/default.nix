@@ -6,6 +6,6 @@
     ./profiles
     ./programs
     ./services
-    self.inputs.snippets.homeModules.snippets
+    ../snippets
   ];
 }

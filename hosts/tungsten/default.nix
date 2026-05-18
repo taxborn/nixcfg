@@ -1,5 +1,4 @@
 {
-  pkgs,
   self,
   ...
 }:
@@ -13,10 +12,6 @@
   networking.hostName = "tungsten";
   time.timeZone = "America/Chicago";
   system.stateVersion = "25.11";
-
-  environment.systemPackages = with pkgs; [
-    brightnessctl
-  ];
 
   myNixOS = {
     base.enable = true;

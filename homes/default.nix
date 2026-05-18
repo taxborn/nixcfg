@@ -1,18 +1,10 @@
-{
-  config,
-  self,
-  ...
-}:
+{ self, ... }:
 {
   imports = [
     self.homeModules.default
   ];
 
   config = {
-    nix = {
-      inherit (config.mySnippets.nix) settings;
-    };
-
     home = {
       username = "taxborn";
       homeDirectory = "/home/taxborn";
