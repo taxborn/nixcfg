@@ -31,7 +31,6 @@
           self.inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
         withUWSM = true;
       };
-      gnupg.agent.pinentryPackage = pkgs.pinentry-gnome3;
       uwsm.enable = true;
     };
 

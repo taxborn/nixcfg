@@ -11,7 +11,7 @@
       enable = true;
       enableFishIntegration = true;
       settings = {
-        font-family = "JetBrainsMono Nerd Font";
+        font-family = "JetBrainsMono NFM";
         font-size = 12;
         shell-integration = "fish";
         confirm-close-surface = false;

@@ -20,9 +20,9 @@
       userSettings = {
         vim_mode = true;
         icon_theme = "Catppuccin Mocha";
-        ui_font_family = "JetBrainsMono Nerd Font Mono";
+        ui_font_family = "JetBrainsMono NFM";
         ui_font_size = 16.0;
-        buffer_font_family = "JetBrainsMono Nerd Font Mono";
+        buffer_font_family = "JetBrainsMono NFM";
         buffer_font_weight = 600.0;
         buffer_font_size = 14.0;
         agent_ui_font_size = 15.0;

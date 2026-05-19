@@ -20,7 +20,6 @@
 
       systemPackages = with pkgs; [
         self.inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
-        age-plugin-yubikey
         btop
         just
         wget

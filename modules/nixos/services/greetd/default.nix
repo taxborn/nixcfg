@@ -142,10 +142,10 @@ in
           fit = "Cover";
         };
         GTK = {
-          font_name = lib.mkForce "JetBrainsMono Nerd Font Mono 14";
+          font_name = lib.mkForce "JetBrainsMono NFM 14";
         };
         font = {
-          name = "JetBrainsMono Nerd Font Mono";
+          name = "JetBrainsMono NFM";
           package = pkgs.nerd-fonts.jetbrains-mono;
           size = 14;
         };
