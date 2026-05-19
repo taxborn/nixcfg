@@ -1,4 +1,5 @@
 {
+  pkgs,
   self,
   ...
 }:
@@ -18,6 +19,8 @@
     desktop.hyprland.laptopMonitor = "eDP-1,3456x2160@60,0x0,2";
     services.greetd.outputScale = 2;
   };
+
+  environment.systemPackages = [ pkgs.brightnessctl ];
 
   boot.initrd.availableKernelModules = [
     "thunderbolt"
