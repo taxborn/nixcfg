@@ -23,25 +23,27 @@
   };
 
   config = lib.mkIf config.myNixOS.desktop.hyprland.enable {
-    programs.hyprland = {
-      enable = true;
-      package = self.inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-      portalPackage =
-        self.inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
-      withUWSM = true;
+    programs = {
+      hyprland = {
+        enable = true;
+        package = self.inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+        portalPackage =
+          self.inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+        withUWSM = true;
+      };
+      gnupg.agent.pinentryPackage = pkgs.pinentry-gnome3;
+      uwsm.enable = true;
     };
-
-    programs.uwsm.enable = true;
 
     xdg.portal = {
       enable = true;
       extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
     };
 
-    security.polkit.enable = true;
-    security.pam.services.hyprlock = { };
-
-    services.dbus.enable = true;
+    security = {
+      polkit.enable = true;
+      pam.services.hyprlock = { };
+    };
 
     fonts.packages = with pkgs; [
       noto-fonts
@@ -51,13 +53,16 @@
 
     hardware.graphics.enable = true;
 
-    services.pipewire = {
-      enable = true;
-      alsa.enable = true;
-      alsa.support32Bit = true;
-      pulse.enable = true;
-      wireplumber.enable = true;
+    services = {
+      dbus.enable = true;
+      pipewire = {
+        enable = true;
+        alsa.enable = true;
+        alsa.support32Bit = true;
+        pulse.enable = true;
+        wireplumber.enable = true;
+      };
+      pulseaudio.enable = false;
     };
-    services.pulseaudio.enable = false;
   };
 }
