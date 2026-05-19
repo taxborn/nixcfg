@@ -7,19 +7,35 @@
   options.myHome.programs.waybar.enable = lib.mkEnableOption "Waybar status bar";
 
   config = lib.mkIf config.myHome.programs.waybar.enable {
-    # catppuccin.waybar.mode = "createLink";
     programs.waybar = {
       enable = true;
       systemd.enable = false; # Launched via Hyprland exec-once under UWSM
       settings.bar = {
         layer = "top";
         position = "top";
+
         modules-left = [
+          # TODO: Can't select workspaces, suspect something to do with new dispatch/lua setup
           "hyprland/workspaces"
           "hyprland/window"
         ];
         modules-center = [ "clock" ];
         modules-right = [ "tray" ];
+
+        "hyprland/workspaces" = {
+          format = "{name}: {icon}";
+          format-icons = {
+            active = "";
+            default = "";
+          };
+        };
+
+        clock = {
+          timezone = "America/Chicago";
+          tooltip-format = "{:%Y-%m-%dT%H:%M:%S%z}";
+          format = "{:%H:%M}";
+          interval = 1;
+        };
       };
       style = ''
         * {
@@ -36,6 +52,9 @@
 
         #workspaces button {
           color: @text;
+          box-shadow: none;
+          text-shadow: none;
+          transition: none;
         }
 
         #workspaces button.active {
@@ -45,7 +64,6 @@
 
         #workspaces button:hover {
           background: transparent;
-          border: none;
         }
       '';
     };
