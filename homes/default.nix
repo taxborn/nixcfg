@@ -32,6 +32,7 @@
     };
 
     myHome.programs = {
+      fzf.enable = true;
       git.enable = true;
       gpg.enable = true;
       ssh.enable = true;

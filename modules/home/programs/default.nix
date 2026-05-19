@@ -1,5 +1,7 @@
 {
   imports = [
+    ./direnv
+    ./fzf
     ./ghostty
     ./git
     ./gpg

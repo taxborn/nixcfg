@@ -32,18 +32,19 @@
         cli.enable = true;
       };
       feh.enable = true;
-      vlc.enable = true;
     };
 
     home.packages = with pkgs; [
       swaybg
       spotify
       bitwarden-desktop
+      vlc
     ];
 
     myHome = {
       desktop.hyprland.enable = true;
       programs = {
+        direnv.enable = true;
         ghostty.enable = true;
         waybar.enable = true;
         wofi.enable = true;
