@@ -36,6 +36,7 @@
       gpg.enable = true;
       ssh.enable = true;
       tmux.enable = true;
+      yazi.enable = true;
     };
   };
 }

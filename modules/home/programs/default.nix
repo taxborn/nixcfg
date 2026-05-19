@@ -7,6 +7,7 @@
     ./tmux
     ./waybar
     ./wofi
+    ./yazi
     ./yubikey
     ./zed
   ];
