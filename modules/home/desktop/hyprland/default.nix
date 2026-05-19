@@ -55,7 +55,6 @@ in
 
     services = {
       gnome-keyring.enable = true;
-      blueman-applet.enable = true;
     };
 
     wayland.windowManager.hyprland = {

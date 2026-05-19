@@ -13,7 +13,7 @@
     config = {
       home.packages = with pkgs; [
         via
-        swaybg
+        prismlauncher
       ];
 
       wayland.windowManager.hyprland.extraConfig = lib.mkAfter ''

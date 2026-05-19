@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 {
   imports = [
     ./default.nix
@@ -32,6 +32,12 @@
         cli.enable = true;
       };
     };
+
+    home.packages = with pkgs; [
+      swaybg
+      spotify
+      bitwarden-desktop
+    ];
 
     myHome = {
       desktop.hyprland.enable = true;

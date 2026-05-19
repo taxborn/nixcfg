@@ -4,6 +4,8 @@
     ./bluetooth
     ./btrfs
     ./graphical-boot
+    ./server
     ./swap
+    ./workstation
   ];
 }

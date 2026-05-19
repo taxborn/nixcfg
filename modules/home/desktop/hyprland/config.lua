@@ -4,6 +4,7 @@ local menu     = "wofi"
 hl.on("hyprland.start", function()
     hl.exec_cmd("uwsm app -- mako")
     hl.exec_cmd("uwsm app -- waybar")
+    hl.exec_cmd("uwsm app -- blueman-applet")
 end)
 
 hl.config({
