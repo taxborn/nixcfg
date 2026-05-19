@@ -53,6 +53,11 @@ in
     # currently only outputs hyprscript or whatever, disable for now
     catppuccin.hyprland.enable = false;
 
+    services = {
+      gnome-keyring.enable = true;
+      blueman-applet.enable = true;
+    };
+
     wayland.windowManager.hyprland = {
       enable = true;
       xwayland.enable = true;

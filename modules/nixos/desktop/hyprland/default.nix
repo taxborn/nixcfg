@@ -51,16 +51,6 @@
       nerd-fonts.jetbrains-mono
     ];
 
-    services = {
-      dbus.enable = true;
-      pipewire = {
-        enable = true;
-        alsa.enable = true;
-        alsa.support32Bit = true;
-        pulse.enable = true;
-        wireplumber.enable = true;
-      };
-      pulseaudio.enable = false;
-    };
+    services.dbus.enable = true;
   };
 }

@@ -15,9 +15,12 @@
 
   myNixOS = {
     base.enable = true;
-    desktop.hyprland = {
+    desktop = {
       enable = true;
-      laptopMonitor = "eDP-1,3456x2160@60,0x0,2";
+      hyprland = {
+        enable = true;
+        laptopMonitor = "eDP-1,3456x2160@60,0x0,2";
+      };
     };
     profiles = {
       btrfs.enable = true;
