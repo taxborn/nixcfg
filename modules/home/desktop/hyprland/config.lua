@@ -2,6 +2,7 @@ local terminal = "ghostty"
 local menu     = "wofi"
 
 hl.on("hyprland.start", function()
+    -- TODO: Add these snippets to the nix config when the features are enabled
     hl.exec_cmd("uwsm app -- mako")
     hl.exec_cmd("uwsm app -- waybar")
     hl.exec_cmd("uwsm app -- blueman-applet")
@@ -10,21 +11,17 @@ end)
 hl.config({
     general = {
         gaps_in          = 2,
-        gaps_out         = 2,
+        gaps_out         = 4,
         border_size      = 2,
-
         col              = {
-            active_border   = { colors = { "rgba(33ccffee)", "rgba(00ff99ee)" }, angle = 45 },
-            inactive_border = "rgba(595959aa)",
+            active_border   = "rgba(cba6f7ff)",
+            inactive_border = "rgba(cba6f7aa)",
         },
-
         -- Set to true to enable resizing windows by clicking and dragging on borders and gaps
         resize_on_border = false,
-
         -- Please see https://wiki.hypr.land/Configuring/Advanced-and-Cool/Tearing/ before you turn this on
         allow_tearing    = false,
-
-        layout           = "dwindle",
+        layout           = "master",
     },
 
     decoration = {
