@@ -49,6 +49,8 @@
       ForwardToWall=no
     '';
 
+    programs.ssh.knownHosts = config.mySnippets.ssh.knownHosts;
+
     system.configurationRevision = self.rev or self.dirtyRev or null;
 
     i18n = {

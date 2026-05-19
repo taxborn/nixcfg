@@ -1,5 +1,6 @@
 {
   imports = [
+    ../snippets
     ./base
     ./desktop
     ./profiles

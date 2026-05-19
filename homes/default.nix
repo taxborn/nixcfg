@@ -20,15 +20,19 @@
         '';
       };
       home-manager.enable = true;
-    };
-
-    programs.neovim = {
-      enable = true;
-      withRuby = false;
-      withPython3 = false;
-      defaultEditor = true;
-      viAlias = true;
-      vimAlias = true;
+      ripgrep.enable = true;
+      zoxide = {
+        enable = true;
+        enableFishIntegration = true;
+      };
+      neovim = {
+        enable = true;
+        withRuby = false;
+        withPython3 = false;
+        defaultEditor = true;
+        viAlias = true;
+        vimAlias = true;
+      };
     };
 
     myHome.programs = {
