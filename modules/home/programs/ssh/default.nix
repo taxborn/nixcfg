@@ -12,18 +12,16 @@
       enable = true;
       enableDefaultConfig = false;
 
-      matchBlocks =
+      settings =
         let
           tailscaleIPs = config.mySnippets.tailnet.tailscaleIPs;
 
           machine = name: ip: {
             ${name} = {
-              hostname = ip;
-              user = "taxborn";
-              extraOptions = {
-                RequestTTY = "yes";
-                RemoteCommand = "tmux new -As0";
-              };
+              Hostname = ip;
+              User = "taxborn";
+              RequestTTY = "yes";
+              RemoteCommand = "tmux new -As0";
             };
           };
 
@@ -35,29 +33,29 @@
         machines
         // {
           rsync-backup = {
-            hostname = "de4388.rsync.net";
-            user = "de4388";
+            Hostname = "de4388.rsync.net";
+            User = "de4388";
           };
 
           forgejo = {
-            hostname = "git.mischief.town";
-            port = 2222;
-            user = "git";
+            Hostname = "git.mischief.town";
+            Port = 2222;
+            User = "git";
             # TODO: seems like I can only access over ipv4, see if I can fix that
-            addressFamily = "inet";
+            AddressFamily = "inet";
           };
 
           "*" = {
-            forwardAgent = false;
-            addKeysToAgent = "no";
-            compression = false;
-            serverAliveInterval = 0;
-            serverAliveCountMax = 3;
-            hashKnownHosts = false;
-            userKnownHostsFile = "~/.ssh/known_hosts";
-            controlMaster = "no";
-            controlPath = "~/.ssh/master-%r@%n:%p";
-            controlPersist = "no";
+            ForwardAgent = "no";
+            AddKeysToAgent = "no";
+            Compression = "no";
+            ServerAliveInterval = 0;
+            ServerAliveCountMax = 3;
+            HashKnownHosts = "no";
+            UserKnownHostsFile = "~/.ssh/known_hosts";
+            ControlMaster = "no";
+            ControlPath = "~/.ssh/master-%r@%n:%p";
+            ControlPersist = "no";
           };
         };
 
