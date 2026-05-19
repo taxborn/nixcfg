@@ -31,6 +31,8 @@
         enable = true;
         cli.enable = true;
       };
+      feh.enable = true;
+      vlc.enable = true;
     };
 
     home.packages = with pkgs; [
