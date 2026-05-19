@@ -16,9 +16,10 @@
       default = {
         uranium = "100.64.0.0";
         tungsten = "100.64.0.1";
-        helium = "100.64.1.0";
-        carbon = "100.64.2.0";
-        argon = "100.64.2.1";
+        # FIXME: re-enable once server configs are in-tree
+        # helium = "100.64.1.0";
+        # carbon = "100.64.2.0";
+        # argon = "100.64.2.1";
       };
     };
   };
