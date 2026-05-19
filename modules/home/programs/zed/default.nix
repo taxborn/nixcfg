@@ -20,11 +20,6 @@
       userSettings = {
         vim_mode = true;
         icon_theme = "Catppuccin Mocha";
-        theme = {
-          mode = "dark";
-          light = "One Light";
-          dark = "Catppuccin Mocha";
-        };
         ui_font_family = "JetBrainsMono Nerd Font Mono";
         ui_font_size = 16.0;
         buffer_font_family = "JetBrainsMono Nerd Font Mono";

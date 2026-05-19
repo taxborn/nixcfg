@@ -44,5 +44,13 @@
       };
       services.mako.enable = true;
     };
+
+    catppuccin = {
+      enable = true;
+      flavor = "mocha";
+      accent = "mauve";
+      gtk.icon.enable = true;
+      cursors.enable = true;
+    };
   };
 }

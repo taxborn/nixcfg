@@ -50,11 +50,15 @@ in
   };
 
   config = lib.mkIf config.myHome.desktop.hyprland.enable {
+    # currently only outputs hyprscript or whatever, disable for now
+    catppuccin.hyprland.enable = false;
+
     wayland.windowManager.hyprland = {
       enable = true;
       xwayland.enable = true;
       package = self.inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-      portalPackage = self.inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+      portalPackage =
+        self.inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
       systemd.enable = false; # UWSM manages the session
       configType = "lua";
       extraConfig = ''
