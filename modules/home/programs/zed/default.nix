@@ -10,6 +10,30 @@
     programs.zed-editor = {
       enable = true;
       installRemoteServer = true;
+
+      userTasks = [
+        {
+          label = "lazygit";
+          command = "lazygit";
+          use_new_terminal = false;
+          allow_concurrent_runs = false;
+          reveal = "always";
+          hide = "on_success";
+        }
+      ];
+
+      userKeymaps = [
+        {
+          context = "Workspace";
+          bindings = {
+            "ctrl-shift-g" = [
+              "task::Spawn"
+              { task_name = "lazygit"; }
+            ];
+          };
+        }
+      ];
+
       extensions = [
         "catppuccin"
         "catppuccin-icons"
