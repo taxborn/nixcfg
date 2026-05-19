@@ -51,8 +51,6 @@
       nerd-fonts.jetbrains-mono
     ];
 
-    hardware.graphics.enable = true;
-
     services = {
       dbus.enable = true;
       pipewire = {
