@@ -20,7 +20,10 @@
           "hyprland/window"
         ];
         modules-center = [ "clock" ];
-        modules-right = [ "tray" ];
+        modules-right = [
+          "battery"
+          "tray"
+        ];
 
         "hyprland/workspaces" = {
           format = "{name}: {icon}";
