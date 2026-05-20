@@ -27,6 +27,14 @@
     "usbhid"
   ];
 
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true;
+    dedicatedServer.openFirewall = true;
+  };
+
+  hardware.steam-hardware.enable = true;
+
   myHardware = {
     amd.gpu.enable = true;
     intel.cpu.enable = true;

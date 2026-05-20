@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ lib, ... }:
 {
   options.mySnippets.mischief-town.networkMap = lib.mkOption {
     type = lib.types.attrs;

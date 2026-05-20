@@ -167,10 +167,5 @@ in
       GDK_SCALE = toString cfg.outputScale;
       XCURSOR_SIZE = toString (24 * cfg.outputScale);
     };
-
-    # Ensure greeter has access to wayland session desktop files
-    environment.etc."greetd/environments".text = ''
-      hyprland-uwsm.desktop
-    '';
   };
 }

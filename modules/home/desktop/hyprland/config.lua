@@ -190,6 +190,10 @@ hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = tr
 hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
 
+-- Screenshots (selection: Print, fullscreen: SHIFT + Print)
+hl.bind("F12", hl.dsp.exec_cmd("bash -c 'D=$HOME/media/photos/screenshots; mkdir -p $D && grim -g \"$(slurp)\" $D/$(date +%Y%m%d_%H%M%S).png'"))
+hl.bind("SHIFT + F12", hl.dsp.exec_cmd("bash -c 'D=$HOME/media/photos/screenshots; mkdir -p $D && grim $D/$(date +%Y%m%d_%H%M%S).png'"))
+
 
 --------------------------------
 ---- WINDOWS AND WORKSPACES ----

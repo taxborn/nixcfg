@@ -50,6 +50,11 @@ in
   };
 
   config = lib.mkIf config.myHome.desktop.hyprland.enable {
+    home.packages = with pkgs; [
+      grim
+      slurp
+    ];
+
     # currently only outputs hyprscript or whatever, disable for now
     catppuccin.hyprland.enable = false;
 

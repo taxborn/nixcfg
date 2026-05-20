@@ -15,9 +15,9 @@
       flavor = "mocha";
       accent = "mauve";
     };
+
     environment = {
       etc."nixos".source = self;
-
       systemPackages = with pkgs; [
         self.inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
         btop
@@ -28,7 +28,10 @@
 
     hardware.enableRedistributableFirmware = lib.mkDefault true;
 
-    programs.dconf.enable = true;
+    programs = {
+      dconf.enable = true;
+      ssh.knownHosts = config.mySnippets.ssh.knownHosts;
+    };
 
     myNixOS = {
       profiles.swap.enable = true;
@@ -37,19 +40,18 @@
 
     networking.networkmanager.enable = true;
 
-    services.fstrim.enable = true;
-
-    # Bound persistent journal so boot/log-shippers don't replay months of
-    # history and so disk usage stays predictable. ForwardToWall off to
-    # skip a wall(1) write per emergency-level line.
-    services.journald.extraConfig = ''
-      SystemMaxUse=500M
-      SystemKeepFree=1G
-      MaxRetentionSec=2week
-      ForwardToWall=no
-    '';
-
-    programs.ssh.knownHosts = config.mySnippets.ssh.knownHosts;
+    services = {
+      # Bound persistent journal so boot/log-shippers don't replay months of
+      # history and so disk usage stays predictable. ForwardToWall off to
+      # skip a wall(1) write per emergency-level line.
+      journald.extraConfig = ''
+        SystemMaxUse=500M
+        SystemKeepFree=1G
+        MaxRetentionSec=2week
+        ForwardToWall=no
+      '';
+      fstrim.enable = true;
+    };
 
     system.configurationRevision = self.rev or self.dirtyRev or null;
 
