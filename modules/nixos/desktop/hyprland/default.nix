@@ -23,15 +23,11 @@
   };
 
   config = lib.mkIf config.myNixOS.desktop.hyprland.enable {
-    programs = {
-      hyprland = {
-        enable = true;
-        package = self.inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-        portalPackage =
-          self.inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
-        withUWSM = true;
-      };
-      uwsm.enable = true;
+    programs.hyprland = {
+      enable = true;
+      package = self.inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+      portalPackage =
+        self.inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
     };
 
     xdg.portal = {

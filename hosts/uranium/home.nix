@@ -18,7 +18,7 @@
 
       wayland.windowManager.hyprland.extraConfig = lib.mkAfter ''
         hl.on("hyprland.start", function()
-            hl.exec_cmd("uwsm app -- swaybg -m fill -i ${../../assets/wallpapers/island.jpeg}")
+            hl.exec_cmd("swaybg -m fill -i ${../../assets/wallpapers/island.jpeg}")
         end)
       '';
     };

@@ -64,7 +64,7 @@ in
       package = self.inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
       portalPackage =
         self.inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
-      systemd.enable = false; # UWSM manages the session
+      systemd.enable = true;
       configType = "lua";
       extraConfig = ''
         ${mapMonitors}

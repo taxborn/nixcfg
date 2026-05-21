@@ -3,9 +3,9 @@ local menu     = "wofi"
 
 hl.on("hyprland.start", function()
     -- TODO: Add these snippets to the nix config when the features are enabled
-    hl.exec_cmd("uwsm app -- mako")
-    hl.exec_cmd("uwsm app -- waybar")
-    hl.exec_cmd("uwsm app -- blueman-applet")
+    hl.exec_cmd("mako")
+    hl.exec_cmd("waybar")
+    hl.exec_cmd("blueman-applet")
 end)
 
 hl.config({
@@ -105,6 +105,13 @@ hl.config({
     },
 })
 
+hl.config({
+    xwayland = {
+        enabled             = true,
+        force_zero_scaling  = true,
+    },
+})
+
 
 ---------------
 ---- INPUT ----
@@ -142,7 +149,7 @@ hl.bind(mainMod .. " + SHIFT + Q", hl.dsp.window.close())
 hl.bind(mainMod .. " + M",
     hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
 hl.bind(mainMod .. " + F", hl.dsp.window.float({ action = "toggle" }))
-hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("systemd-run --user --scope --quiet --collect " .. menu))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + SHIFT + F", hl.dsp.layout("togglesplit")) -- dwindle only
 
