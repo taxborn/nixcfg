@@ -13,7 +13,7 @@
         "wheel"
       ];
       openssh.authorizedKeys.keyFiles = [
-        ../../secrets/publicKeys/taxborn_yubikey_ssh.pub
+        ../../secrets/publicKeys/yubikey.pub
       ];
     };
     defaultUserShell = pkgs.fish;
