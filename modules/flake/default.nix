@@ -17,7 +17,10 @@
     };
 
     nixosConfigurations =
-      let modules = self.nixosModules; in inputs.nixpkgs.lib.genAttrs
+      let
+        modules = self.nixosModules;
+      in
+      inputs.nixpkgs.lib.genAttrs
         [
           # FIXME: uncomment hosts when ready
           "argon"
@@ -31,6 +34,7 @@
           inputs.nixpkgs.lib.nixosSystem {
             modules = [
               ../../hosts/${host}
+              inputs.agenix.nixosModules.default
               inputs.disko.nixosModules.disko
               inputs.home-manager.nixosModules.home-manager
 
@@ -53,5 +57,5 @@
             specialArgs = { inherit self; };
           }
         );
-    };
+  };
 }
