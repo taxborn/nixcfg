@@ -35,7 +35,7 @@
             # https://github.com/caddy-dns/cloudflare/tags
             "github.com/caddy-dns/cloudflare@v0.2.4"
           ];
-          hash = "sha256-OwSvmqoGGGRHi1akpwxk5UMhEVJGaDnr6zjjGqVVwkA=";
+          hash = "sha256-TAg2e7r6du1b2CY81x63yGPJ59mjvzdOKcuno+Klaa8=";
         };
       };
 
