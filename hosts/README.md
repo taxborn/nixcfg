@@ -30,7 +30,7 @@ An Intel OVH VPS. VPS-2 2026 Model, 12 GB of RAM, 6 vCPUs, 100 GB of storage.
 
 ### Services hosted
 
-- None.
+- Main Caddy proxy for all services.
 
 ## :balloon: Helium
 
