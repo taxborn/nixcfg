@@ -33,6 +33,7 @@
         self.inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
         btop
         wget
+        git
         tmux
         neovim
       ];
