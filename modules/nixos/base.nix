@@ -16,6 +16,8 @@
 
     networking.networkmanager.enable = true;
 
+    programs.ssh.knownHosts = config.mySnippets.ssh.knownHosts;
+
     myNixOS = {
       profiles.swap.enable = true;
       programs.nix.enable = true;

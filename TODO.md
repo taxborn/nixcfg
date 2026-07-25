@@ -22,7 +22,7 @@ All on Argon/Carbon, before Helium is touched.
       (domains/ports), `ssh/known-hosts`. Nearly every service module reads
       `config.mySnippets.*`, and port/vhost assignments are miserable to untangle
       once services are live.
-- [ ] Home-manager base. `modules/home/base.nix` is `{ }` and nothing sets
+- [x] Home-manager base. `modules/home/base.nix` is `{ }` and nothing sets
       `home-manager.users.taxborn`, so HM is wired into the flake but inert. Port
       `homes/default.nix` and the `profile-default` module — every host formatted
       after this lands usable instead of a bare TTY.

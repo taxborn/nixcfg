@@ -26,6 +26,7 @@
             modules.hardware
             modules.nixos
             modules.users
+            modules.snippets
 
             {
               home-manager = {

@@ -1,0 +1,25 @@
+{
+  lib,
+  ...
+}:
+{
+  options.mySnippets.tailnet = {
+    name = lib.mkOption {
+      default = "tucuxi-hexatonic.ts.net";
+      description = "Tailnet name.";
+      type = lib.types.str;
+    };
+
+    tailscaleIPs = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      description = "Hostname to Tailscale IP mapping for hosts on the tailnet.";
+      default = {
+        argon = "100.64.2.1";
+        carbon = "100.64.2.0";
+        helium = "100.64.1.0";
+        uranium = "100.64.0.0";
+        tungsten = "100.64.0.1";
+      };
+    };
+  };
+}
