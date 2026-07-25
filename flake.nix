@@ -20,15 +20,13 @@
     };
 
     flake-parts.url = "github:hercules-ci/flake-parts";
+    import-tree.url = "github:denful/import-tree";
   };
 
   outputs =
     inputs@{ flake-parts, ... }:
-    flake-parts.lib.mkFlake { inherit inputs; } {
-      systems = [ "x86_64-linux" ];
-      imports = [
-        ./modules/flake
-        inputs.home-manager.flakeModules.home-manager
-      ];
-    };
+    # Only ./modules/flake holds flake-parts modules. The other trees under
+    # ./modules are NixOS/home-manager modules and are import-tree'd from
+    # ./modules/flake/modules.nix instead.
+    flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules/flake);
 }
