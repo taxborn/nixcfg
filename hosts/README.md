@@ -18,7 +18,7 @@ i9-12900HK CPU, 3050 Ti GPU (Intel Xe integrated), 2x1TB NVME drives.
 
 ## Argon
 
-An Intel OVH VPS. VPS-2 2026 Model, 12 GB of RAM, 6 vCPUs, 100 GB of storage.
+An Intel OVH VPS. VPS-2020-elite-8-16-320 Model, 16 GB of RAM, 8 vCPUs, 320 GB of storage.
 
 ### Services hosted
 
@@ -26,7 +26,7 @@ An Intel OVH VPS. VPS-2 2026 Model, 12 GB of RAM, 6 vCPUs, 100 GB of storage.
 
 ## Carbon
 
-An Intel OVH VPS. VPS-2020-elite-8-16-320 Model, 16 GB of RAM, 8 vCPUs, 320 GB of storage.
+An Intel OVH VPS. VPS-2 2026 Model, 12 GB of RAM, 6 vCPUs, 100 GB of storage.
 
 ### Services hosted
 
