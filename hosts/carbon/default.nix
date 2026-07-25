@@ -12,6 +12,7 @@
   myNixOS = {
     base.enable = true;
     profiles.btrfs.enable = true;
+    programs.grub.enable = true;
   };
 
   myHardware = {
