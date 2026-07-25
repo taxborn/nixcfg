@@ -1,6 +1,7 @@
 {
   imports = [
     ./base
-    ./profiles/swap/default.nix
+    ./profiles/swap
+    ./profiles/btrfs
   ];
 }

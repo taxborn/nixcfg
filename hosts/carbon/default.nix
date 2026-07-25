@@ -10,6 +10,7 @@
   system.stateVersion = "25.11";
 
   myNixOS.base.enable = true;
+  myNixOS.profiles.btrfs.enable = true;
 
   myHardware = {
     intel.cpu.enable = true;
