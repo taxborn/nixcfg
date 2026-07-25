@@ -6,7 +6,7 @@
     (modulesPath + "/profiles/qemu-guest.nix")
   ];
 
-  networking.hostName = "argon";
+  networking.hostName = "carbon";
   system.stateVersion = "25.11";
 
   myNixOS.base.enable = true;
