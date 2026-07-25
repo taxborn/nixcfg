@@ -14,7 +14,10 @@
 
     networking.networkmanager.enable = true;
 
-    myNixOS.profiles.swap.enable = true;
+    myNixOS = {
+      profiles.swap.enable = true;
+      programs.nix.enable = true;
+    };
 
     services = {
       fstrim.enable = true;
