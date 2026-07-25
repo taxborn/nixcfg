@@ -9,11 +9,7 @@
   networking.hostName = "argon";
   system.stateVersion = "25.11";
 
-  myNixOS = {
-    base.enable = true;
-    profiles.btrfs.enable = true;
-    programs.grub.enable = true;
-  };
+  myNixOS.profiles.server.enable = true;
 
   myHardware = {
     intel.cpu.enable = true;

@@ -14,24 +14,9 @@ Ordering rules, in priority:
 2. Backups precede data. Immich and Paperless hold the only irreplaceable bytes.
 3. Formatting is gated by hard blockers. Those are marked **blocker** below.
 
-## Phase 0 — foundation
-
-All on Argon/Carbon, before Helium is touched.
-
-- [ ] Port `mySnippets`: `tailnet` (name + IPs), `mischief-town.networkMap`
-      (domains/ports), `ssh/known-hosts`. Nearly every service module reads
-      `config.mySnippets.*`, and port/vhost assignments are miserable to untangle
-      once services are live.
-- [x] Home-manager base. `modules/home/base.nix` is `{ }` and nothing sets
-      `home-manager.users.taxborn`, so HM is wired into the flake but inert. Port
-      `homes/default.nix` and the `profile-default` module — every host formatted
-      after this lands usable instead of a bare TTY.
-- [ ] Monitoring client. Standalone and tiny; adding it now means history exists
-      by the time the server does.
-
 ## Phase 1 — server profile + Caddy
 
-- [ ] `profiles/server` (base + btrfs + podman + caddy + fail2ban). Get it right
+- [ ] `profiles/server` (base + btrfs + podman + caddy + fail3ban). Get it right
       against two hosts that can afford to break.
 - [ ] Caddy, with the tailscale + cloudflare plugins and `tailscale/caddyAuth.age`.
       The linchpin — every user-facing service is downstream, and the tailnet-bound

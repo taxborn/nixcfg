@@ -15,4 +15,5 @@ let
 in
 {
   "tailscale/auth.age".publicKeys = keys;
+  "tailscale/caddy.age".publicKeys = keys;
 }
