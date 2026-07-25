@@ -8,6 +8,8 @@
 
     homeModules = {
       default = inputs.import-tree ../home;
+      profile-default = ../../homes/default.nix;
+      profile-workstation = ../../homes/workstation.nix;
     };
 
     nixosModules = {
