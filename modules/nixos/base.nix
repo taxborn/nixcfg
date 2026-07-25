@@ -10,6 +10,8 @@
   options.myNixOS.base.enable = lib.mkEnableOption "base NixOS system configuration";
 
   config = lib.mkIf config.myNixOS.base.enable {
+    home-manager.users.taxborn.imports = [ self.homeModules.profile-default ];
+
     age.identityPaths = lib.mkDefault [ "/etc/ssh/ssh_host_ed25519_key" ];
 
     networking.networkmanager.enable = true;
