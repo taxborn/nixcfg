@@ -24,6 +24,7 @@
       systemPackages = with pkgs; [
         btop
         wget
+        tmux
         neovim
       ];
     };

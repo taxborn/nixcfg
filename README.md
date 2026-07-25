@@ -2,5 +2,5 @@
 this repository holds my nixos configuration for all of my hosts.
 
 ## references
-- [aly.codes]()'s nixcfg
-- [isabelroses.com]()'s configuration
+- [aly.codes](https://github.com/alyraffauf/nixcfg)'s nixcfg
+- [isabelroses.com](https://github.com/isabelroses/dotfiles)'s configuration

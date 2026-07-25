@@ -1,2 +1,2 @@
 # agenix secrets
-This is my [agenix]() secrets folder.
+This is my [agenix](https://github.com/ryantm/agenix) secrets folder.
