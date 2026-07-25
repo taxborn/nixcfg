@@ -17,6 +17,7 @@
     myNixOS = {
       profiles.swap.enable = true;
       programs.nix.enable = true;
+      services.tailscale.enable = true;
     };
 
     services = {

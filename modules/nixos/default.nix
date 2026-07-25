@@ -4,5 +4,6 @@
     ./profiles/swap
     ./profiles/btrfs
     ./programs/nix
+    ./services/tailscale
   ];
 }

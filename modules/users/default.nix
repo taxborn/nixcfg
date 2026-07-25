@@ -19,4 +19,6 @@
     defaultUserShell = pkgs.fish;
     mutableUsers = false;
   };
+
+  myNixOS.services.tailscale.operator = "taxborn";
 }
