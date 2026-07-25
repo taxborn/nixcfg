@@ -25,8 +25,5 @@
 
   outputs =
     inputs@{ flake-parts, ... }:
-    # Only ./modules/flake holds flake-parts modules. The other trees under
-    # ./modules are NixOS/home-manager modules and are import-tree'd from
-    # ./modules/flake/modules.nix instead.
     flake-parts.lib.mkFlake { inherit inputs; } (inputs.import-tree ./modules/flake);
 }

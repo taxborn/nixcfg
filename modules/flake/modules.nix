@@ -1,8 +1,5 @@
 { inputs, ... }:
 
-# Each tree is walked recursively by import-tree, so adding a module is just
-# dropping a .nix file into the right directory. Files/dirs whose name starts
-# with an underscore are skipped.
 {
   flake = {
     diskoConfigurations = {
