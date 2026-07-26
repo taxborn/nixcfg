@@ -11,7 +11,13 @@
         base.enable = true;
         profiles.btrfs.enable = true;
         programs.grub.enable = true;
-        services.caddy.enable = true;
+        services = {
+          caddy.enable = true;
+          fail2ban = {
+            enable = true;
+            enableCaddyJail = true;
+          };
+        };
       };
   };
 }

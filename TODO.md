@@ -16,13 +16,12 @@ Ordering rules, in priority:
 
 ## Phase 1 — server profile + Caddy
 
-- [ ] `profiles/server` (base + btrfs + podman + caddy + fail3ban). Get it right
+- [x] `profiles/server` (base + btrfs + podman + caddy + fail2ban). Get it right
       against two hosts that can afford to break.
-- [ ] Caddy, with the tailscale + cloudflare plugins and `tailscale/caddyAuth.age`.
+- [X] Caddy, with the tailscale + cloudflare plugins and `tailscale/caddyAuth.age`.
       The linchpin — every user-facing service is downstream, and the tailnet-bound
       vhosts (Grafana, Paperless, Immich) need the plugin.
-- [ ] `website` (taxborn.com). Smallest real vhost; proves ACME and the deploy path.
-- [ ] fail2ban with the Caddy jail, now that something public exists to protect.
+- [x] fail2ban with the Caddy jail, now that something public exists to protect.
 
 ## Phase 2 — backups, before anything holds data
 
