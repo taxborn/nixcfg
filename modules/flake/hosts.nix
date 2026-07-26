@@ -10,7 +10,7 @@
         # FIXME: uncomment hosts when ready
         "argon"
         "carbon"
-        # "helium"
+        "helium"
         # "tungsten"
         # "uranium"
       ]

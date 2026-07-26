@@ -4,6 +4,7 @@
   flake = {
     diskoConfigurations = {
       btrfs-ovh = ../disko/btrfs-ovh.nix;
+      btrfs-helium = ../disko/btrfs-helium.nix;
     };
 
     homeModules = {
