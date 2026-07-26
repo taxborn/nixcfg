@@ -11,7 +11,7 @@
       homeDirectory = "/home/taxborn";
       stateVersion = "25.11";
       sessionPath = [ "$HOME/.local/bin" ];
-      # packages = with pkgs; [ ];
+      packages = with pkgs; [ just ];
     };
 
     programs = {
