@@ -9,7 +9,10 @@
   networking.hostName = "carbon";
   system.stateVersion = "25.11";
 
-  myNixOS.profiles.server.enable = true;
+  myNixOS = {
+    profiles.server.enable = true;
+    services.backups.client.enable = true;
+  };
 
   myHardware = {
     intel.cpu.enable = true;
