@@ -16,6 +16,13 @@
 
   myHardware = {
     intel.cpu.enable = true;
-    profiles.ovh.enable = true;
+    profiles.ovh = {
+      enable = true;
+      ipv6 = {
+        enable = true;
+        address = "2604:2dc0:202:300::236a";
+        gateway = "2604:2dc0:202:300::1";
+      };
+    };
   };
 }

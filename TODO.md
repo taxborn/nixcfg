@@ -25,7 +25,7 @@ Ordering rules, in priority:
 
 ## Phase 2 — backups, before anything holds data
 
-- [ ] Backups client, rsync.net target only (Helium's repo doesn't exist yet).
+- [X] Backups client, rsync.net target only (Helium's repo doesn't exist yet).
       Argon/Carbon carry almost nothing right now, which is exactly why this is the
       moment: prove the module, the per-host secret layout, and the retention rules
       against data that doesn't matter.
