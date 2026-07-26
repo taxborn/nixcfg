@@ -29,19 +29,24 @@ openssl rand -base64 32 > /tmp/borg_passphrase
 ### 2. encrypt with agenix
 
 `secrets/secrets.nix` already derives rules for every host in its `hosts` list,
-so nothing needs adding there for an existing host. From the repo root:
+so nothing needs adding there for an existing host. Run from `secrets/`, not the
+repo root — agenix looks up the file argument as a rule name verbatim:
 
 ```bash
-mkdir -p secrets/borg/<hostname>
-agenix -e secrets/borg/<hostname>/passphrase.age < /tmp/borg_passphrase
-agenix -e secrets/borg/<hostname>/ssh_key.age < /tmp/borg_ssh_key
+cd secrets
+mkdir -p borg/<hostname>
+agenix -e borg/<hostname>/passphrase.age < /tmp/borg_passphrase
+agenix -e borg/<hostname>/ssh_key.age < /tmp/borg_ssh_key
 ```
+
+`agenix -e` decrypts an existing target before writing, so to *replace* a secret,
+delete the `.age` file first rather than piping over it.
 
 Keep the public key in-repo — the borg server module will want it once Helium
 exists:
 
 ```bash
-cp /tmp/borg_ssh_key.pub secrets/borg/<hostname>/ssh_key.pub
+cp /tmp/borg_ssh_key.pub borg/<hostname>/ssh_key.pub
 ```
 
 ### 3. authorize the key on rsync.net
