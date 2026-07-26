@@ -1,8 +1,9 @@
-{ pkgs, ... }:
+{ pkgs, self, ... }:
 {
-  # imports = [
-  #   self.homeModules.default
-  # ];
+  imports = [
+    self.homeModules.default
+    self.homeModules.snippets
+  ];
 
   config = {
     home = {
@@ -24,13 +25,8 @@
       home-manager.enable = true;
     };
 
-    # myHome.programs = {
-    #   fzf.enable = true;
-    #   git.enable = true;
-    #   gpg.enable = true;
-    #   ssh.enable = true;
-    #   tmux.enable = true;
-    #   yazi.enable = true;
-    # };
+    myHome.programs = {
+      ssh.enable = true;
+    };
   };
 }
