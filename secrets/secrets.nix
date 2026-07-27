@@ -2,11 +2,8 @@ let
   hosts = [
     "argon"
     "carbon"
+    "helium"
   ];
-  # `yubikey.pub` (the OpenPGP-applet SSH key) is deliberately *not* a recipient:
-  # age can only decrypt with an SSH key it can read from disk, and that one
-  # lives on the card. `yubikey_age.pub` is the PIV recipient, which
-  # age-plugin-yubikey can actually decrypt with.
   extras = [
     "yubikey_age"
   ];
