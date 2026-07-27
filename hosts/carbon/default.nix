@@ -4,6 +4,7 @@
   imports = [
     self.diskoConfigurations.btrfs-ovh
     (modulesPath + "/profiles/qemu-guest.nix")
+    ./proxy.nix
   ];
 
   networking.hostName = "carbon";
