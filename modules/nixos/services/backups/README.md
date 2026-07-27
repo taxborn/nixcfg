@@ -167,6 +167,152 @@ On Helium, the served repositories are inspectable directly:
 sudo borg list /mnt/hdd/borg/argon
 ```
 
+## testing restore
+
+A backup that has never been restored is a hypothesis. Three tiers, cheapest
+first; each one proves something the tier below it does not.
+
+Everything at once, from a workstation:
+
+```bash
+just restore-all
+```
+
+Runs all three tiers against all three hosts and both repositories, continues
+past failures rather than stopping at the first, and prints a pass/fail summary
+at the end. It is interactive by nature — a yubikey touch per decrypt and a sudo
+prompt per host — so it is not something to put on a timer. The individual
+recipes below are what to reach for when one line of that summary says `FAIL`.
+
+### tier 0 — key material
+
+```bash
+just restore-keys
+```
+
+`secrets.nix` encrypts each host's passphrase and SSH key to that host's root
+key *plus* my yubikey, and nothing else. If a host is destroyed, the yubikey is
+the only thing left that can open its archives — so this is the highest-value
+check in the list, and it costs seconds. Run it from a workstation, not a
+server.
+
+`agenix -d` only tries the default ssh keys on its own — `age.identityPaths` is
+a system-level setting and does not reach the CLI — so the recipes pass
+`-i ~/.config/age/yubikey-identity.txt`. Override with `AGE_IDENTITY` if the
+identity lives elsewhere.
+
+### tier 1 — canary round-trip, per host, per repository
+
+```bash
+just restore-test argon
+```
+
+Writes a timestamp to `/var/lib/backup-canary`, runs `borgmatic create`, then
+extracts that one file from *every* configured repository and diffs it against
+the original. Repositories are discovered from `/etc/borgmatic.d/`, so a third
+target is covered as soon as it deploys.
+
+The byte comparison is the assertion, not borg's exit code: an `--path` that
+matches nothing still exits 0 and leaves an empty destination. Two related
+traps, both baked into the script:
+
+- `--destination` must already exist — borgmatic chdirs into it rather than
+  creating it, and fails with `[Errno 2] No such file or directory` if absent.
+- extracting into a directory that already holds a previous run collides on
+  `etc/static` (`[Errno 17] File exists`), because that symlink points into
+  `/nix/store`. Always extract into a freshly emptied directory.
+
+Note that on Helium the `helium` repository is a local path, so that iteration
+exercises no SSH at all. Helium's role as a *server* is only covered when a
+client runs tier 1 — run it on Argon or Carbon to exercise the
+`--restrict-to-path` forced command.
+
+The scheduled integrity checks can also be forced on demand, independent of
+their `frequency`. This reads the whole repository and is slow, which is why it
+is not part of `restore-test`:
+
+```bash
+sudo borgmatic check --repository rsync --force
+```
+
+### tier 2 — disaster rehearsal
+
+Tier 1 runs on a healthy host that already has its own secrets mounted, which
+is not the scenario any of this insures against. Tier 2 restores a host's data
+from a machine that holds none of it, using only the yubikey:
+
+```bash
+just restore-dr argon                    # off-site copy, on rsync.net
+just restore-dr argon helium             # second copy, on Helium's drive
+just restore-dr argon rsync helium       # both, on one pair of yubikey touches
+```
+
+Decrypts that host's key material to `/run/user/$UID` (tmpfs, `0700`, shredded
+on exit), then for each named repository pulls the latest archive name, extracts
+the canary, and compares it against the live host if it is still reachable.
+Passing both repositories means the host is genuinely recoverable from either
+copy with nothing but the yubikey.
+
+The decryption happens once regardless of how many repositories are named, since
+each `agenix -d` costs a yubikey touch. Naming both is strictly cheaper than two
+invocations.
+
+Reaching the Helium repository from a third machine works *because* of the
+forced command, not in spite of it: the key being used is the client's own, and
+`--restrict-to-path` confines it to exactly the repository being read. Helium's
+tailnet address comes from `nix eval` against `mySnippets.tailnet` rather than a
+literal, so the recipe cannot drift from the module.
+
+`just restore-dr helium helium` is therefore impossible and exits with a note
+pointing elsewhere — Helium reaches its own repository by local path and holds
+no key entry for itself (`hosts/helium/default.nix:16-18`). Verify that one on
+the host:
+
+```bash
+sudo borg list /mnt/hdd/borg/helium
+```
+
+Doing it by hand, the two things that bite:
+
+- `repo::` takes the archive *name*, not the ID. `borg list` prints name,
+  timestamp, and ID; copying the wrong column gives `Archive … does not exist`.
+  Let `--last 1 --format '{archive}{NL}'` pick it instead.
+- `ssh <host> <command>` fails with `Cannot execute command-line and remote
+  command` wherever the SSH client config sets `RemoteCommand`. Add
+  `-o RemoteCommand=none`, the same workaround `just update` uses for
+  `nixos-rebuild`.
+- that same config sets `RequestTTY yes`, which allocates a pty whenever ssh
+  itself has a local tty — and a pty translates LF to CRLF. Reading a file that
+  way returns a trailing `\r` that command substitution does *not* strip, so a
+  byte comparison fails against content that is visibly identical. Pass
+  `-o RequestTTY=no` **and** pipe through `tr -d '\r'`: the option loses to an
+  explicit `-t`/`-tt`, so neither alone is sufficient. This only reproduces from
+  an interactive shell, which makes it easy to miss when testing from a script.
+
+### what a real restore actually looks like
+
+Not `borg extract` with no path argument. Most of a host's `/etc` is symlinks
+into `/nix/store` (`etc/static` among them), and a recovered host gets that
+directory regenerated by rebuilding from the flake. Extracting the archive's
+`/etc` over it fights nix rather than helping it. The order is:
+
+1. rebuild the host from the flake — this restores `/etc`, `/nix`, and every
+   service's configuration
+2. restore only the state the flake cannot reproduce: `/var/lib` for service
+   data, `/home` for everything else
+3. run that step as root with `--numeric-ids`, or ownership and modes come back
+   wrong
+
+Tiers 1 and 2 extract as a single small file for speed, which deliberately does
+*not* verify ownership. Once a service with real state exists, do one `sudo`
+restore of its `/var/lib` directory to confirm permissions survive the trip.
+
+> `authorized_keys` on rsync.net holds bare public keys with no forced command,
+> unlike Helium's `--restrict-to-path` entries. Any host's borg key can
+> therefore read *and delete* every other host's repository there, so one
+> compromised VPS can take out all three off-site copies. Worth closing with
+> `command="borg14 serve --restrict-to-path …"` entries.
+
 ## options
 
 ### `myNixOS.services.backups.client`

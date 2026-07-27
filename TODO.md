@@ -29,7 +29,10 @@ Ordering rules, in priority:
       Argon/Carbon carry almost nothing right now, which is exactly why this is the
       moment: prove the module, the per-host secret layout, and the retention rules
       against data that doesn't matter.
-- [ ] **Test restore.** Not optional. Everything in Phase 4 and 6 assumes this works.
+- [X] **Test restore.** Not optional. Everything in Phase 4 and 6 assumes this works.
+      Verified across all three hosts and both repositories, including a restore
+      from a machine holding nothing but the yubikey. `just restore-all` re-runs
+      the whole matrix; see the backups module README.
 
 ## Phase 3 — Helium
 
