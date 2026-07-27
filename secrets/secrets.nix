@@ -32,5 +32,6 @@ in
 {
   "tailscale/auth.age".publicKeys = keys;
   "tailscale/caddy.age".publicKeys = keys;
+  "vaultwarden/mail.age".publicKeys = hostKey "carbon";
 }
 // borgSecrets
