@@ -37,7 +37,7 @@ Blockers to clear first: `disko/btrfs-helium`, systemd-boot (Phase 0), the
 `/mnt/hdd` external-drive mount, host entry in `modules/flake/hosts.nix`, root key
 → rekey.
 
-- [ ] Format Helium barebones. Verify Tailscale, SSH, base.
+- [X] Format Helium barebones. Verify Tailscale, SSH, base.
 - [ ] Backups server on Helium (borg repos on the HDD).
 - [ ] Flip Argon/Carbon clients to dual-target rsync + Helium. Two destinations
       live before any data exists.

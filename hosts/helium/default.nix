@@ -11,7 +11,7 @@
   myNixOS = {
     profiles.server.enable = true;
     programs.systemd-boot.enable = true;
-    # services.backups.client.enable = true;
+    services.backups.client.enable = true;
   };
 
   myHardware.intel.cpu.enable = true;
