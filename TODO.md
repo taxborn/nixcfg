@@ -38,8 +38,8 @@ Blockers to clear first: `disko/btrfs-helium`, systemd-boot (Phase 0), the
 → rekey.
 
 - [X] Format Helium barebones. Verify Tailscale, SSH, base.
-- [ ] Backups server on Helium (borg repos on the HDD).
-- [ ] Flip Argon/Carbon clients to dual-target rsync + Helium. Two destinations
+- [X] Backups server on Helium (borg repos on the HDD).
+- [X] Flip Argon/Carbon clients to dual-target rsync + Helium. Two destinations
       live before any data exists.
 
 ## Phase 4 — services, on Carbon

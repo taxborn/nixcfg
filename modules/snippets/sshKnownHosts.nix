@@ -29,6 +29,18 @@
         ];
         publicKeyFile = "${self}/keys/root_carbon.pub";
       };
+
+      # The tailnet IP is load-bearing: borg clients address Helium's repository
+      # by IP, and ssh matches known_hosts against the literal host it was given.
+      helium = {
+        hostNames = [
+          "helium"
+          "helium.local"
+          "helium.${config.mySnippets.tailnet.name}"
+          config.mySnippets.tailnet.tailscaleIPs.helium
+        ];
+        publicKeyFile = "${self}/keys/root_helium.pub";
+      };
     };
   };
 }

@@ -11,7 +11,19 @@
   myNixOS = {
     profiles.server.enable = true;
     programs.systemd-boot.enable = true;
-    services.backups.client.enable = true;
+    services.backups = {
+      client.enable = true;
+      # Helium holds the second copy of every host's archives on its external
+      # drive, served over restricted SSH on the tailnet. Its own repository is
+      # local, so it needs no key here.
+      server = {
+        enable = true;
+        authorizedKeys = {
+          argon = builtins.readFile "${self}/secrets/borg/argon/ssh_key.pub";
+          carbon = builtins.readFile "${self}/secrets/borg/carbon/ssh_key.pub";
+        };
+      };
+    };
   };
 
   myHardware.intel.cpu.enable = true;
