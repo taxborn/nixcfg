@@ -11,6 +11,17 @@
   myNixOS = {
     profiles.server.enable = true;
     programs.systemd-boot.enable = true;
+
+    # Off here alone. This host's whole job is holding the second copy of every
+    # other host's archives, and the forced `borg serve --restrict-to-path`
+    # command that confines each client is enforced by sshd — which Tailscale
+    # SSH bypasses entirely on port 22. Leaving it on would mean any client that
+    # gets compromised could open a shell here and delete every repository,
+    # which is the exact scenario the restriction exists to prevent.
+    #
+    # Consequence: reaching Helium needs a real SSH key (`keys/yubikey.pub`,
+    # already in its authorized_keys). Tailnet identity is no longer enough.
+    services.tailscale.enableSSH = false;
     services.backups = {
       client.enable = true;
       # Helium holds the second copy of every host's archives on its external

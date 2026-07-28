@@ -83,14 +83,18 @@ restore-dr host *repos="rsync":
                     continue
                 fi
                 # This works only because the forced command pinned to {{host}}'s
-                # key restricts it to exactly this path. The address comes from
-                # the flake so it cannot drift from mySnippets.tailnet.
+                # key restricts it to exactly this path. Address and port both
+                # come from the flake so they cannot drift from the modules —
+                # and the port is not 22 precisely so that the forced command is
+                # applied at all (Tailscale SSH would bypass it on 22).
                 if [ -z "$helium_ip" ]; then
                     helium_ip=$(cd "$root" && nix eval --raw \
                         .#nixosConfigurations.helium.config.mySnippets.tailnet.tailscaleIPs.helium)
+                    helium_port=$(cd "$root" && nix eval \
+                        .#nixosConfigurations.helium.config.myNixOS.services.backups.server.sshPort)
                 fi
                 # basePath is absolute, hence the doubled slash after the host.
-                repo_url="ssh://taxborn@$helium_ip//mnt/hdd/borg/{{host}}"
+                repo_url="ssh://taxborn@$helium_ip:$helium_port//mnt/hdd/borg/{{host}}"
                 remote=()
                 ;;
             *)

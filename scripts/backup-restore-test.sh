@@ -38,10 +38,26 @@ for cfg in /etc/borgmatic.d/*.yaml; do
     # The comparison is the assertion, not borg's exit code: a --path that
     # matches nothing still exits 0 and leaves an empty destination.
     if diff -q "$dest/${canary#/}" "$canary" >/dev/null 2>&1; then
-        echo "PASS $repo"
+        echo "PASS $repo — canary"
     else
         echo "FAIL $repo — restored file missing or does not match"
         rc=1
+    fi
+
+    # On a host taking database dumps, the file check above is not enough to
+    # call the archive good: /var/lib/postgresql is excluded in favour of the
+    # dump, so a hook that silently failed would leave an archive that restores
+    # cleanly and contains no database at all. Assert the dump is really in
+    # there. Derived from the config rather than hardcoded, so a host without a
+    # database skips it.
+    if grep -q '^postgresql_databases:' "$cfg"; then
+        if borgmatic list --repository "$repo" --archive latest 2>/dev/null \
+                | grep -q 'postgresql_databases/'; then
+            echo "PASS $repo — postgres dump present"
+        else
+            echo "FAIL $repo — no postgres dump in the archive"
+            rc=1
+        fi
     fi
     echo
 done

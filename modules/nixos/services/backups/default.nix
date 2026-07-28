@@ -83,6 +83,23 @@ in
         description = "Additional exclude patterns, on top of the module's defaults.";
       };
 
+      postgresqlDumpAll = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = ''
+          Capture every PostgreSQL database as a consistent logical dump
+          (`pg_dumpall`) inside each archive, and exclude the live
+          `/var/lib/postgresql` data directory.
+
+          Copying a running cluster's files is not a backup: borg walks them
+          over a period during which the cluster keeps writing, so the archive
+          holds a torn mix of pages whose recovery depends on catching a
+          checkpoint at the right moment. The dump is taken through the server
+          itself and is consistent by construction, and borgmatic replays it on
+          `borgmatic restore`. Enable this on any host running PostgreSQL.
+        '';
+      };
+
       repositories = lib.mkOption {
         type = lib.types.attrsOf repoOpts;
         default = { };
@@ -123,6 +140,27 @@ in
     server = {
       enable = lib.mkEnableOption "borg repository server, served over restricted SSH";
 
+      sshPort = lib.mkOption {
+        type = lib.types.port;
+        default = 2222;
+        description = ''
+          Port the server's sshd offers borg on, and the port clients address.
+
+          Deliberately not 22. Where Tailscale SSH is enabled it answers port 22
+          on the tailnet address by tailnet identity and never reads
+          `authorized_keys`, which skips the forced command below and leaves the
+          client unconfined. Every client reaches this host over the tailnet, so
+          on 22 the restriction would be decorative. Tailscale intercepts only
+          22, so any other port is served by real sshd with the forced command
+          applied.
+
+          Declared here rather than on the server alone because `knownHosts`
+          needs the same number — ssh records a non-default port as
+          `[host]:port`, and a mismatch fails host key verification on every
+          backup run.
+        '';
+      };
+
       authorizedKeys = lib.mkOption {
         type = lib.types.attrsOf lib.types.str;
         default = { };
@@ -161,7 +199,7 @@ in
               # the leading slash of basePath is what makes this absolute.
               "ssh://${backupServer.user}@${
                 config.mySnippets.tailnet.tailscaleIPs.${backupServer.host}
-              }/${backupServer.basePath}/${hostname}";
+              }:${toString cfg.server.sshPort}/${backupServer.basePath}/${hostname}";
         };
       };
 
@@ -187,7 +225,11 @@ in
           {
             source_directories = cfg.client.paths;
             repositories = [ { inherit (repo) path label; } ];
-            exclude_patterns = commonExcludes ++ cfg.client.extraExcludes;
+            exclude_patterns =
+              commonExcludes
+              # superseded by the logical dump configured below
+              ++ lib.optional cfg.client.postgresqlDumpAll "/var/lib/postgresql"
+              ++ cfg.client.extraExcludes;
             exclude_if_present = [ ".nobackup" ];
 
             encryption_passcommand = "cat ${config.age.secrets.borgPassphrase.path}";
@@ -215,12 +257,44 @@ in
           // lib.optionalAttrs (repo.remotePath != null) {
             remote_path = repo.remotePath;
           }
+          // lib.optionalAttrs cfg.client.postgresqlDumpAll {
+            # `username` with no `password` and no `pg_dump_command` is load
+            # bearing in a way that is easy to undo by accident: that exact
+            # combination is what makes the nixpkgs borgmatic module wrap the
+            # dump in `sudo -u postgres` *and* relax the hardened unit
+            # (NoNewPrivileges = false, CAP_SETUID/CAP_SETGID) so the user
+            # switch is permitted. Supplying an equivalent command by hand —
+            # runuser, or an explicit pg_dumpall — opts out of that relaxation
+            # and the dump dies with "cannot set groups: Operation not
+            # permitted". The user switch itself is needed because the cluster
+            # trusts peer authentication, not a password.
+            postgresql_databases = [
+              {
+                name = "all";
+                username = "postgres";
+              }
+            ];
+          }
         ) cfg.client.repositories;
       };
     })
 
     (lib.mkIf cfg.server.enable {
       environment.systemPackages = [ pkgs.borgbackup ];
+
+      # sshd answers borg on its own port so the forced command below actually
+      # binds; see the `sshPort` description. `openFirewall` would punch a hole
+      # for both ports on every interface, so it is off and 22 is opened by
+      # hand — the borg port stays reachable over the tailnet only, because the
+      # tailscale interface is in `trustedInterfaces`.
+      services.openssh = {
+        ports = [
+          22
+          cfg.server.sshPort
+        ];
+        openFirewall = false;
+      };
+      networking.firewall.allowedTCPPorts = [ 22 ];
 
       # A repository must never end up inside its own backup. Inert today — the
       # default source directories don't reach the drive — but load-bearing the
@@ -247,6 +321,10 @@ in
       # `restrict` drops pty allocation, port forwarding, agent forwarding, and
       # user rc; the forced command means the key can do nothing but serve that
       # one repository, whatever the client asks for.
+      #
+      # This only binds where sshd is the thing answering, which is why clients
+      # address `sshPort` rather than 22 and why Helium turns Tailscale SSH off
+      # (`hosts/helium`). On 22 with Tailscale SSH enabled, none of it applies.
       users.users.${backupServer.user}.openssh.authorizedKeys.keys = lib.mapAttrsToList (
         client: pubkey:
         "command=\"${lib.getExe' pkgs.borgbackup "borg"} serve --restrict-to-path ${backupServer.basePath}/${client}\",restrict ${lib.trim pubkey}"

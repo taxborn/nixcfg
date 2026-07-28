@@ -5,6 +5,39 @@
   self,
   ...
 }:
+let
+  # Cloudflare's proxy egress ranges. Every public request reaches us from one
+  # of these, so they are the set Caddy may believe a forwarded-client header
+  # from. Refresh with:
+  #   curl -s https://www.cloudflare.com/ips-v4 https://www.cloudflare.com/ips-v6
+  # Cloudflare changes these rarely, and a stale entry fails closed: the worst
+  # case is that Caddy stops trusting a new edge range and falls back to
+  # logging that edge's own address, which is what it did before this existed.
+  cloudflareRanges = [
+    "173.245.48.0/20"
+    "103.21.244.0/22"
+    "103.22.200.0/22"
+    "103.31.4.0/22"
+    "141.101.64.0/18"
+    "108.162.192.0/18"
+    "190.93.240.0/20"
+    "188.114.96.0/20"
+    "197.234.240.0/22"
+    "198.41.128.0/17"
+    "162.158.0.0/15"
+    "104.16.0.0/13"
+    "104.24.0.0/14"
+    "172.64.0.0/13"
+    "131.0.72.0/22"
+    "2400:cb00::/32"
+    "2606:4700::/32"
+    "2803:f800::/32"
+    "2405:b500::/32"
+    "2405:8100::/32"
+    "2a06:98c0::/29"
+    "2c0f:f248::/32"
+  ];
+in
 {
   options.myNixOS.services.caddy.enable = lib.mkEnableOption "Caddy web server.";
 
@@ -35,6 +68,22 @@
           }
 
           acme_dns cloudflare {env.CF_API_TOKEN}
+
+          # Public traffic arrives through Cloudflare's proxy, so the peer
+          # address Caddy sees is a Cloudflare edge rather than the visitor.
+          # Without this, `{client_ip}` and the access log's `client_ip` field
+          # both name Cloudflare — which would make the fail2ban caddy jail ban
+          # Cloudflare's edge and take every site here off the internet for
+          # everyone at once. Trusting the ranges above lets Caddy read the
+          # real address out of CF-Connecting-IP, which Cloudflare sets itself
+          # and strips from inbound requests, so a client cannot forge it.
+          #
+          # Tailnet-bound vhosts are unaffected: their peer is a tailnet
+          # address, matches none of these ranges, and stays its own client_ip.
+          servers {
+            trusted_proxies static ${lib.concatStringsSep " " cloudflareRanges}
+            client_ip_headers CF-Connecting-IP
+          }
         '';
 
         package = pkgs.caddy.withPlugins {

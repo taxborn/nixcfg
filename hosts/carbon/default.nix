@@ -14,7 +14,19 @@
     profiles.server.enable = true;
     programs.grub.enable = true;
     services = {
-      backups.client.enable = true;
+      backups.client = {
+        enable = true;
+        # Forgejo's cluster lives here.
+        postgresqlDumpAll = true;
+        extraExcludes = [
+          # Bleve indexes. REPO_INDEXER_ENABLED makes these roughly the size of
+          # the repository content again and they churn on every push, so they
+          # would dominate each archive — and Forgejo rebuilds them on demand,
+          # so there is nothing in them worth carrying off-site.
+          "/var/lib/forgejo/data/indexers"
+        ];
+      };
+      forgejo.enable = true;
       vaultwarden.enable = true;
     };
   };

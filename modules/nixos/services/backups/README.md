@@ -16,6 +16,9 @@ drive over the tailnet.
   path rather than ssh'ing to itself
 - passphrase and SSH key are per-host agenix secrets, readable only by that
   host's key (and my yubikey)
+- hosts running PostgreSQL set `postgresqlDumpAll`, which swaps the live data
+  directory for a consistent logical dump inside every archive (see
+  [databases](#databases))
 
 The server's paths and the clients' targets both derive from one `backupServer`
 attrset at the top of `default.nix`. There is exactly one backup server, so
@@ -32,9 +35,40 @@ command="…/borg serve --restrict-to-path /mnt/hdd/borg/<client>",restrict <key
 ```
 
 The forced command replaces whatever the client asks to run, so the key can do
-nothing but serve that one repository — a compromised host can neither read nor
-delete another host's archives. `restrict` additionally drops pty allocation,
-port forwarding, agent forwarding, and user rc.
+nothing but serve that one repository. `restrict` additionally drops pty
+allocation, port forwarding, agent forwarding, and user rc.
+
+### why the borg port is not 22, and why Helium alone has no Tailscale SSH
+
+That forced command is only worth anything where sshd is the thing answering,
+and for a while here it was not. Both halves of this are deliberate:
+
+**Clients address Helium on `server.sshPort` (2222), not 22.** Tailscale SSH
+takes port 22 on the tailnet address and authorises by tailnet identity, never
+reading `authorized_keys` — so on 22 the `--restrict-to-path` restriction is
+simply not applied, whatever it says in the file. Tailscale intercepts only 22,
+so any other port is real sshd with the forced command in force. The port is
+absent from `allowedTCPPorts`; the tailscale interface is in
+`trustedInterfaces`, so it is reachable over the tailnet and nowhere else.
+
+**Helium sets `myNixOS.services.tailscale.enableSSH = false`.** The port move
+alone would not have been enough. Every repository lives on an ntfs-3g mount
+with `uid=1000,umask=0000`, so every archive is owned by `taxborn` and
+world-writable — a client that got compromised could ignore borg entirely, open
+a shell on 22 by tailnet identity, and delete the lot. Turning Tailscale SSH off
+here closes that path; Helium is the one host where a forced command is a
+security boundary rather than a convenience.
+
+Verify the distinction on any host — `"none"` means tailscaled answered and no
+`authorized_keys` was consulted:
+
+```bash
+ssh -v taxborn@<tailnet ip> id 2>&1 | grep 'Authenticated to'
+```
+
+The consequence is that Helium is reachable only with a real SSH key
+(`keys/yubikey.pub`, already in its `authorized_keys`). Tailnet identity is no
+longer enough, so a machine with no key loaded cannot get in at all.
 
 `borg-repo-base.service` creates `/mnt/hdd/borg` at boot. It runs as `taxborn`
 and carries `RequiresMountsFor`, so it does nothing when the external drive is
@@ -167,6 +201,45 @@ On Helium, the served repositories are inspectable directly:
 sudo borg list /mnt/hdd/borg/argon
 ```
 
+## databases
+
+Copying a running PostgreSQL cluster's files is not a backup. borg walks
+`/var/lib/postgresql` over a stretch of time during which the cluster keeps
+writing, so what lands in the archive is a torn mix of pages whose
+recoverability depends on where the checkpoints happened to fall. It usually
+works, which is the dangerous part.
+
+`postgresqlDumpAll = true` (Carbon, for Forgejo) excludes that directory and
+adds borgmatic's database hook instead: a `pg_dumpall` taken through the server
+itself, consistent by construction, streamed into each archive.
+
+Three details in the module are load-bearing and worth not "cleaning up":
+
+- The dump is declared as `{ name = "all"; username = "postgres"; }` and
+  nothing else. That precise shape — a `username`, no `password`, no
+  `pg_dump_command` — is what makes the nixpkgs borgmatic module both wrap the
+  dump in `sudo -u postgres` *and* relax its own hardened unit
+  (`NoNewPrivileges=false`, `CAP_SETUID`/`CAP_SETGID`) so that switch is
+  allowed. Writing the equivalent command by hand opts out of the relaxation
+  and the dump dies with `cannot set groups: Operation not permitted`.
+- The user switch is needed because the cluster authenticates by peer over its
+  unix socket. There is no database password anywhere in this config, for
+  Forgejo or for borgmatic.
+- borgmatic runs one configuration per repository, so the dump is taken once
+  per target. That is a little redundant and entirely intentional: each archive
+  is independently complete.
+
+Restoring is a separate verb from extracting files:
+
+```bash
+sudo borgmatic restore --archive latest              # all databases
+sudo borgmatic restore --archive latest --database git
+```
+
+This writes to the *live* cluster, so it is not something to run as a test —
+tier 1 below asserts the dump is present in the archive without touching the
+running database.
+
 ## testing restore
 
 A backup that has never been restored is a hypothesis. Three tiers, cheapest
@@ -211,6 +284,12 @@ Writes a timestamp to `/var/lib/backup-canary`, runs `borgmatic create`, then
 extracts that one file from *every* configured repository and diffs it against
 the original. Repositories are discovered from `/etc/borgmatic.d/`, so a third
 target is covered as soon as it deploys.
+
+On a host with `postgresqlDumpAll`, the script additionally asserts that the
+archive actually contains a `postgresql_databases/` dump. The canary check alone
+cannot catch a failed database hook: the live data directory is excluded either
+way, so an archive with no database in it restores files perfectly and has
+silently lost everything Forgejo stores.
 
 The byte comparison is the assertion, not borg's exit code: an `--path` that
 matches nothing still exits 0 and leaves an empty destination. Two related
@@ -259,14 +338,14 @@ invocations.
 
 Reaching the Helium repository from a third machine works *because* of the
 forced command, not in spite of it: the key being used is the client's own, and
-`--restrict-to-path` confines it to exactly the repository being read. Helium's
-tailnet address comes from `nix eval` against `mySnippets.tailnet` rather than a
-literal, so the recipe cannot drift from the module.
+`--restrict-to-path` confines it to exactly the repository being read. Both
+Helium's tailnet address and the borg port come from `nix eval` against the
+modules rather than literals, so the recipe cannot drift from them — and the
+port is non-default precisely so the forced command is applied at all.
 
 `just restore-dr helium helium` is therefore impossible and exits with a note
 pointing elsewhere — Helium reaches its own repository by local path and holds
-no key entry for itself (`hosts/helium/default.nix:16-18`). Verify that one on
-the host:
+no key entry for itself. Verify that one on the host:
 
 ```bash
 sudo borg list /mnt/hdd/borg/helium
