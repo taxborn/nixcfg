@@ -1,12 +1,12 @@
 # forgejo
 
-Git forge on Carbon, at `git.mischief.town`, with PostgreSQL behind it.
+Git forge on Carbon, at `git.mischief.town`, on SQLite.
 
 ## the shape of it
 
 - web UI over HTTPS through Caddy, on the proxied Cloudflare record
 - git over SSH on **Forgejo's own SSH server, port 2222**, **tailnet only**
-- PostgreSQL over a unix socket with peer authentication — no database password
+- SQLite in the state directory — no database daemon, no database password
 - one agenix secret (SMTP) plus a commit-signing key
 
 Clone URLs:
@@ -115,23 +115,31 @@ the origin, not a way around Cloudflare's.
 
 ## database
 
-PostgreSQL is reached over `/run/postgresql` with peer authentication, so there
-is no password to leak, rotate, or forget, and nothing listening on a loopback
-port for anything else on the host to talk to. `createDatabase = true` provisions
-it.
+SQLite, at `/var/lib/forgejo/data/forgejo.db`. One user and one forge do not
+need a second daemon to run, patch, and version-pin, nor a `pg_upgrade` day
+whenever nixpkgs moves its default major. There is no password here for the same
+reason there was none under PostgreSQL: nothing is listening, and access is
+filesystem permissions on a file only `git` can open.
 
-The module asserts that the database user matches the service user, and for
-PostgreSQL that the database name matches the database user. Forgejo runs as
-`git` so clone URLs read `git@…`, which means the database is also named `git`.
-That is cosmetic and not worth a hand-rolled `ensureUsers` to avoid.
+This started on PostgreSQL and moved. Should it ever need to move back, note
+that Forgejo has no supported cross-engine conversion — `forgejo dump` writes
+SQL in the dialect it read, so the paths are "start empty" or "adopt the
+repositories from disk into a fresh instance".
 
-`postgresql.package` is pinned rather than left to follow the nixpkgs default: a
-default bump is a major-version bump, needing a dump and reload of the cluster
-rather than a rebuild.
+`SQLITE_JOURNAL_MODE = "WAL"` is set, and it is about the backup rather than
+about load. The dump hook is one long read across the whole database; under the
+default rollback journal it holds a shared lock for that whole read, and any
+write Forgejo attempts meanwhile — a push, or one of the crons — fails with
+`database is locked` once `SQLITE_TIMEOUT` runs out half a second later. Under
+WAL, readers and writers do not block each other and the backup is invisible to
+the running service.
 
-Backups are handled by the backups module's `postgresqlDumpAll`, which excludes
-the live data directory in favour of a consistent `pg_dumpall` in every archive.
-See that module's README.
+Backups are handled by the backups module's `sqliteDatabases`, set on Carbon.
+It excludes the live file *and its `-wal`/`-shm` companions* in favour of a
+`sqlite3 .dump` in every archive. Excluding the sidecars matters as much as
+excluding the database: they hold everything committed since the last
+checkpoint, and a copy of the pair taken moments apart is a torn pair that
+recovery will read and trust. See that module's README.
 
 ## provisioning
 
@@ -177,9 +185,21 @@ just update carbon
 Registration is disabled, so the first account is made by hand on the host:
 
 ```bash
-sudo -u git forgejo admin user create \
+sudo -u git forgejo --config /var/lib/forgejo/custom/conf/app.ini \
+  admin user create \
   --admin --username taxborn --email hello@taxborn.com --random-password
 ```
+
+`--config` is not optional and is not cosmetic. Run without it, the binary
+resolves its work path relative to *itself* and goes looking for
+`/nix/store/…-forgejo/custom/conf/app.ini`, finds nothing, and falls back to
+defaults — which means a second, empty SQLite database somewhere under the store
+path, and an account created in a database no running service will ever open.
+`--config` is a global flag, so it goes before the subcommand.
+
+The module puts `forgejo` and `sqlite3` in the system PATH for exactly this
+reason; the nixpkgs module leaves the binary reachable only from inside the
+unit.
 
 ### 4. add an SSH key and verify the path end to end
 

@@ -176,5 +176,13 @@ restore-all:
     echo
     echo "############ summary"
     printf '%s\n' "${results[@]}"
-    printf '%s\n' "${results[@]}" | grep -q '^FAIL' && exit 1
+
+    # Deliberately not `printf ... | grep -q '^FAIL'`: grep exits at the first
+    # match and SIGPIPEs the producer, which under `pipefail` flips the status
+    # and lets a run with failures exit 0. The summary is short enough that it
+    # would not bite today, but it is the same trap that made the dump
+    # assertion in scripts/backup-restore-test.sh report false failures.
+    for result in "${results[@]}"; do
+        [[ $result == FAIL* ]] && exit 1
+    done
     exit 0

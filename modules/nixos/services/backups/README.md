@@ -16,9 +16,9 @@ drive over the tailnet.
   path rather than ssh'ing to itself
 - passphrase and SSH key are per-host agenix secrets, readable only by that
   host's key (and my yubikey)
-- hosts running PostgreSQL set `postgresqlDumpAll`, which swaps the live data
-  directory for a consistent logical dump inside every archive (see
-  [databases](#databases))
+- hosts running a database swap the live files for a consistent logical dump
+  inside every archive — `postgresqlDumpAll` for a cluster, `sqliteDatabases`
+  for a file (see [databases](#databases))
 
 The server's paths and the clients' targets both derive from one `backupServer`
 attrset at the top of `default.nix`. There is exactly one backup server, so
@@ -203,15 +203,29 @@ sudo borg list /mnt/hdd/borg/argon
 
 ## databases
 
-Copying a running PostgreSQL cluster's files is not a backup. borg walks
-`/var/lib/postgresql` over a stretch of time during which the cluster keeps
-writing, so what lands in the archive is a torn mix of pages whose
-recoverability depends on where the checkpoints happened to fall. It usually
-works, which is the dangerous part.
+Copying a database's files while something is writing to them is not a backup.
+borg walks them over a stretch of time during which the writes keep coming, so
+what lands in the archive is a torn mix of pages whose recoverability depends on
+where the commits happened to fall. It usually works, which is the dangerous
+part.
 
-`postgresqlDumpAll = true` (Carbon, for Forgejo) excludes that directory and
-adds borgmatic's database hook instead: a `pg_dumpall` taken through the server
-itself, consistent by construction, streamed into each archive.
+So the live files are excluded and borgmatic's database hooks put a logical dump
+in the archive instead — taken through the database's own code, consistent by
+construction, streamed into each archive as it is written:
+
+| option | engine | dump | what it excludes |
+| --- | --- | --- | --- |
+| `postgresqlDumpAll = true` | PostgreSQL | `pg_dumpall` of every database | `/var/lib/postgresql` |
+| `sqliteDatabases.<name> = <path>` | SQLite | `sqlite3 <path> .dump` | `<path>*` |
+
+Carbon uses the SQLite hook, for Forgejo. Nothing uses the PostgreSQL one at the
+moment — Forgejo did until it moved to SQLite, and the option stays because the
+next service with a cluster behind it (Immich, Paperless) needs it.
+
+The SQLite exclude carries a trailing glob for a reason: `-wal` and `-shm` sit
+beside the database file and hold everything committed since the last
+checkpoint. Archiving those out of step with the file they belong to is worse
+than archiving neither, because recovery reads the pair and trusts it.
 
 **An exclude can silently eat the dump.** borgmatic stages dumps on disk and
 hands borg the staging path as an extra source, so any exclude covering that
@@ -227,18 +241,21 @@ here, and nothing surfaced it except the dump assertion in the restore test.
 Anything that adds a database hook later — Immich, Paperless — inherits the
 same trap.
 
-Three details in the module are load-bearing and worth not "cleaning up":
+Details in the module that are load-bearing and worth not "cleaning up":
 
-- The dump is declared as `{ name = "all"; username = "postgres"; }` and
-  nothing else. That precise shape — a `username`, no `password`, no
-  `pg_dump_command` — is what makes the nixpkgs borgmatic module both wrap the
-  dump in `sudo -u postgres` *and* relax its own hardened unit
-  (`NoNewPrivileges=false`, `CAP_SETUID`/`CAP_SETGID`) so that switch is
-  allowed. Writing the equivalent command by hand opts out of the relaxation
-  and the dump dies with `cannot set groups: Operation not permitted`.
-- The user switch is needed because the cluster authenticates by peer over its
-  unix socket. There is no database password anywhere in this config, for
-  Forgejo or for borgmatic.
+- The SQLite hook takes **no** `username`. borgmatic reads the file directly and
+  the unit already runs as root, so there is nothing to switch to. The nixpkgs
+  module fills in `sqlite_command` from `pkgs.sqlite` on its own.
+- The PostgreSQL dump, when something uses it again, must be declared as
+  `{ name = "all"; username = "postgres"; }` and nothing else. That precise
+  shape — a `username`, no `password`, no `pg_dump_command` — is what makes the
+  nixpkgs borgmatic module both wrap the dump in `sudo -u postgres` *and* relax
+  its own hardened unit (`NoNewPrivileges=false`, `CAP_SETUID`/`CAP_SETGID`) so
+  that switch is allowed. Writing the equivalent command by hand opts out of the
+  relaxation and the dump dies with `cannot set groups: Operation not
+  permitted`. Note the relaxation is keyed on the PostgreSQL hook alone, so a
+  host taking only SQLite dumps keeps the hardened unit — which is fine, and is
+  why the SQLite hook must not grow a `username`.
 - borgmatic runs one configuration per repository, so the dump is taken once
   per target. That is a little redundant and entirely intentional: each archive
   is independently complete.
@@ -246,9 +263,13 @@ Three details in the module are load-bearing and worth not "cleaning up":
 Restoring is a separate verb from extracting files:
 
 ```bash
-sudo borgmatic restore --archive latest              # all databases
-sudo borgmatic restore --archive latest --database git
+sudo borgmatic restore --archive latest                  # all databases
+sudo borgmatic restore --archive latest --database forgejo
 ```
+
+For SQLite this **overwrites the live file at its configured path** — borgmatic
+removes it and replays the dump into a new one. Stop the service first, or it
+will be holding a database that no longer exists.
 
 This writes to the *live* cluster, so it is not something to run as a test —
 tier 1 below asserts the dump is present in the archive without touching the
@@ -299,21 +320,34 @@ extracts that one file from *every* configured repository and diffs it against
 the original. Repositories are discovered from `/etc/borgmatic.d/`, so a third
 target is covered as soon as it deploys.
 
-On a host with `postgresqlDumpAll`, the script additionally asserts that the
-archive actually contains a `postgresql_databases/` dump. The canary check alone
-cannot catch a failed database hook: the live data directory is excluded either
-way, so an archive with no database in it restores files perfectly and has
-silently lost everything Forgejo stores.
+On a host taking database dumps, the script additionally asserts that the
+archive really contains the matching `postgresql_databases/` or
+`sqlite_databases/` directory. Which hooks to check it reads out of the
+borgmatic config on disk, so a host that gains an engine is covered without the
+script changing. The canary check alone cannot catch a failed database hook: the
+live files are excluded either way, so an archive with no database in it
+restores files perfectly and has silently lost everything Forgejo stores outside
+the repositories themselves — users, keys, issues, and the mapping from a
+directory on disk to a repository anyone can see.
 
 The byte comparison is the assertion, not borg's exit code: an `--path` that
-matches nothing still exits 0 and leaves an empty destination. Two related
-traps, both baked into the script:
+matches nothing still exits 0 and leaves an empty destination. Three related
+traps, all baked into the script:
 
 - `--destination` must already exist — borgmatic chdirs into it rather than
   creating it, and fails with `[Errno 2] No such file or directory` if absent.
 - extracting into a directory that already holds a previous run collides on
   `etc/static` (`[Errno 17] File exists`), because that symlink points into
   `/nix/store`. Always extract into a freshly emptied directory.
+- the dump assertion greps a here-string, never a pipe. `grep -q` exits at the
+  first match, which SIGPIPEs a producer still writing an archive listing much
+  larger than the pipe buffer; under `set -o pipefail` the pipeline then reports
+  141 and the assertion inverts, calling a dump that is present missing. It is
+  not a race — borgmatic injects the dump patterns at the head of the pattern
+  list, so the match is always in the first few lines of a listing with the
+  whole of `/home`, `/var/lib`, and `/etc` still to come. `just restore-all`
+  had the same shape in its summary, where the inversion would have hidden
+  failures rather than invented them.
 
 Note that on Helium the `helium` repository is a local path, so that iteration
 exercises no SSH at all. Helium's role as a *server* is only covered when a

@@ -16,13 +16,9 @@ let
 
   # Forgejo runs under this name rather than the module's `forgejo` default so
   # clone URLs read `git@host:owner/repo.git`, which is what every tool and
-  # every set of fingers expects. It also has to be a real login user, because
-  # the host's sshd authenticates pushes as it (see below).
-  #
-  # The module asserts that the database user equals the service user, and for
-  # postgres that the database name equals the database user, so the database
-  # ends up named `git` as well. That is cosmetic, not a constraint worth
-  # working around with a hand-rolled `ensureUsers`.
+  # every set of fingers expects. Nothing ever authenticates as it — the
+  # builtin SSH server answers git traffic itself — so it gets no shell, for
+  # the reason spelled out at the bottom of this file.
   user = "git";
 in
 {
@@ -49,15 +45,6 @@ in
       "L+ ${signingKeyDir}/key.pub - - - - ${self}/secrets/forgejo/signing-key.pub"
     ];
 
-    services.postgresql = {
-      enable = true;
-      # Pinned rather than left to follow the nixpkgs default. A default bump
-      # is a major-version bump, which needs a dump and reload of the cluster
-      # rather than a rebuild, so moving it should be a deliberate act on a day
-      # chosen for it.
-      package = pkgs.postgresql_18;
-    };
-
     services.forgejo = {
       enable = true;
       # The module defaults to the LTS series; track the current one.
@@ -67,15 +54,17 @@ in
       group = user;
 
       database = {
-        type = "postgres";
-        createDatabase = true;
-        name = user;
-        user = user;
-        # `socket` defaults to /run/postgresql when the module provisions the
-        # database, so Forgejo connects over the unix socket and authenticates
-        # by peer. That is why there is no database password secret here: there
-        # is no password to leak, rotate, or forget, and nothing listening on a
-        # loopback port for anything else on the host to talk to.
+        # One user, one forge. SQLite carries that without a second daemon to
+        # run, patch, and version-pin, and without a `pg_upgrade` day whenever
+        # nixpkgs moves its default major. The whole database is one file under
+        # the state directory — `path` is left at the module's default,
+        # /var/lib/forgejo/data/forgejo.db, which is the path carbon hands to
+        # its backup hook.
+        #
+        # There is no database password here for the same reason there was none
+        # under postgres: nothing is listening. Access is filesystem
+        # permissions on a file only this service's user can open.
+        type = "sqlite3";
       };
 
       lfs.enable = true;
@@ -84,6 +73,15 @@ in
 
       settings = {
         DEFAULT.APP_NAME = appName;
+
+        # Readers do not block writers under WAL, which is what makes the
+        # nightly backup invisible to the running service. The dump hook is a
+        # `sqlite3 .dump` — one long read over the whole database — and under
+        # the default rollback journal it holds a shared lock for the length of
+        # that read, so anything Forgejo tried to write meanwhile (a push, or
+        # one of the crons below) would fail with "database is locked" as soon
+        # as SQLITE_TIMEOUT ran out half a second later.
+        database.SQLITE_JOURNAL_MODE = "WAL";
 
         server = {
           DOMAIN = networkMap.forgejo.domain;
@@ -174,7 +172,7 @@ in
         };
 
         service = {
-          DISABLE_REGISTRATION = true;
+          DISABLE_REGISTRATION = false;
           ALLOW_ONLY_INTERNAL_REGISTRATION = true;
           ENABLE_NOTIFY_MAIL = true;
         };
@@ -189,6 +187,19 @@ in
         };
       };
     };
+
+    # `forgejo admin …` is the only way to make the first account, since
+    # registration is disabled, and the nixpkgs module puts the binary nowhere
+    # a person can reach — it exists only inside the unit's PATH. `sqlite3` is
+    # here for the same reason: the database is a file now, and looking at it
+    # is a thing that will be wanted on a day when the web UI is the problem.
+    #
+    # Both need `--config`/the file path spelled out when run by hand; the
+    # binary's own default work path is its store directory. See the README.
+    environment.systemPackages = [
+      config.services.forgejo.package
+      pkgs.sqlite
+    ];
 
     # The forgejo module only declares these when the service runs under its
     # default name.

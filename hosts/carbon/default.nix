@@ -16,8 +16,9 @@
     services = {
       backups.client = {
         enable = true;
-        # Forgejo's cluster lives here.
-        postgresqlDumpAll = true;
+        # Forgejo keeps everything but the repositories themselves in here, so
+        # an archive without it restores a forge that has never heard of them.
+        sqliteDatabases.forgejo = "/var/lib/forgejo/data/forgejo.db";
         extraExcludes = [
           # Bleve indexes. REPO_INDEXER_ENABLED makes these roughly the size of
           # the repository content again and they churn on every push, so they

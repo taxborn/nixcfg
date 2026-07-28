@@ -45,25 +45,40 @@ for cfg in /etc/borgmatic.d/*.yaml; do
     fi
 
     # On a host taking database dumps, the file check above is not enough to
-    # call the archive good: /var/lib/postgresql is excluded in favour of the
+    # call the archive good: the live database is excluded in favour of the
     # dump, so a hook that silently failed would leave an archive that restores
     # cleanly and contains no database at all. Assert the dump is really in
-    # there. Derived from the config rather than hardcoded, so a host without a
-    # database skips it.
-    if grep -q '^postgresql_databases:' "$cfg"; then
-        listing=$(borgmatic list --repository "$repo" --archive latest 2>&1 || true)
-        if printf '%s' "$listing" | grep -q 'postgresql_databases/'; then
-            echo "PASS $repo — postgres dump present"
+    # there. Which hooks to check is derived from the config rather than
+    # hardcoded, so a host without a database skips this and a host that grows
+    # a second engine is covered without touching this script.
+    listing=""
+    for hook in postgresql sqlite; do
+        grep -q "^${hook}_databases:" "$cfg" || continue
+
+        # Listed once, however many hooks are configured.
+        [ -n "$listing" ] ||
+            listing=$(borgmatic list --repository "$repo" --archive latest 2>&1 || true)
+
+        # Here-string rather than a pipe into grep. `grep -q` exits at the
+        # first match, SIGPIPEing a producer still writing a listing far larger
+        # than the pipe buffer; under `pipefail` that makes the pipeline status
+        # 141 and inverts the assertion, reporting a dump that is present as
+        # missing. Not a race: borgmatic injects the dump patterns at the head
+        # of the pattern list, so the match is always in the first few lines
+        # and the producer always still has the rest of the archive to write.
+        if grep -q "${hook}_databases/" <<<"$listing"; then
+            echo "PASS $repo — $hook dump present"
         else
-            echo "FAIL $repo — no postgres dump in the archive"
+            echo "FAIL $repo — no $hook dump in the archive"
             # The usual cause is an exclude swallowing borgmatic's staging
             # directory (/run under systemd, /tmp when run by hand), which
-            # fails silently everywhere else. Show enough to tell that apart
-            # from the listing having failed outright.
-            printf '%s' "$listing" | tail -5 | sed 's/^/       | /'
+            # fails silently everywhere else. The dumps sort to the top of the
+            # listing, so that is the end worth showing — and it doubles as
+            # telling an eaten dump apart from a listing that errored outright.
+            head -5 <<<"$listing" | sed 's/^/       | /'
             rc=1
         fi
-    fi
+    done
     echo
 done
 

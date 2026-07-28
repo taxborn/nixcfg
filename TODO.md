@@ -50,13 +50,17 @@ Blockers to clear first: `disko/btrfs-helium`, systemd-boot (Phase 0), the
 Ordered by pain-if-absent.
 
 - [X] Vaultwarden. Highest personal impact, small module, one secret.
-- [X] Forgejo. Postgres over a unix socket with peer auth, so it needed one
-      secret rather than three (SMTP; the signing key makes two). The
-      `postgresqlDumpAll` backup path landed with it — which is why Phase 2
-      came first. Git over SSH is tailnet-only on Forgejo's builtin server,
-      port 2222: the web domain cannot carry SSH (Cloudflare's proxy is
-      HTTP-only) and port 22 cannot either (Tailscale SSH intercepts it on the
-      tailnet and skips the forced command). See the module README.
+- [X] Forgejo. Landed on Postgres, then moved to SQLite once it was clear one
+      user does not need a second daemon to patch and version-pin. Two secrets
+      either way (SMTP; the signing key makes two) — neither engine needs a
+      database password. The backup dump path landed with it, which is why
+      Phase 2 came first; it is now `sqliteDatabases` rather than
+      `postgresqlDumpAll`, and the Postgres option stays for whatever brings a
+      cluster back (Immich, Paperless). Git over SSH is tailnet-only on
+      Forgejo's builtin server, port 2222: the web domain cannot carry SSH
+      (Cloudflare's proxy is HTTP-only) and port 22 cannot either (Tailscale SSH
+      intercepts it on the tailnet and skips the forced command). See the module
+      README.
 - [ ] Once Forgejo is deployed, migrate this configuration there and update all
       GitHub links to the respective Forgejo link.
 - [ ] forgejo-runner (Argon/Helium), registry-deploy.

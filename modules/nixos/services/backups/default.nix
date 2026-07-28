@@ -42,6 +42,12 @@ let
     "**/__pycache__"
   ];
 
+  # Whether this host replaces a live database with a logical dump in the
+  # archive. Everything below that is about dumps rather than about one
+  # particular engine keys off this, so adding a third hook later is one more
+  # disjunct rather than a sweep through the file.
+  takesDumps = cfg.client.postgresqlDumpAll || cfg.client.sqliteDatabases != { };
+
   # borgmatic stages database dumps on disk and hands borg the staging path as
   # an extra source, so an exclude covering that path silently drops the dump:
   # the dump still runs, the archive is still created, borgmatic still reports
@@ -122,6 +128,30 @@ in
           checkpoint at the right moment. The dump is taken through the server
           itself and is consistent by construction, and borgmatic replays it on
           `borgmatic restore`. Enable this on any host running PostgreSQL.
+        '';
+      };
+
+      sqliteDatabases = lib.mkOption {
+        type = lib.types.attrsOf lib.types.str;
+        default = { };
+        example = lib.literalExpression ''
+          { forgejo = "/var/lib/forgejo/data/forgejo.db"; }
+        '';
+        description = ''
+          Database name -> path of a SQLite file to capture as a logical dump
+          (`sqlite3 .dump`) inside each archive. The live file, and its `-wal`
+          and `-shm` companions, are excluded in favour of that dump.
+
+          Same reasoning as `postgresqlDumpAll`, and if anything a sharper
+          version of it: most of a busy SQLite database's recent history lives
+          *outside* the file it is named after, in the write-ahead log, and borg
+          reaches the two at different moments. A `-wal` archived out of step
+          with its database is a torn pair, and the pair is what recovery reads.
+          The dump goes through SQLite itself and sees one consistent snapshot.
+
+          The name is a label for `borgmatic restore --database <name>`, not
+          something the file has to be called. Restoring writes the dump back
+          over the live path, replacing whatever is there.
         '';
       };
 
@@ -251,14 +281,12 @@ in
             source_directories = cfg.client.paths;
             repositories = [ { inherit (repo) path label; } ];
             exclude_patterns =
-              (
-                if cfg.client.postgresqlDumpAll then
-                  lib.subtractLists dumpStagingPaths commonExcludes
-                else
-                  commonExcludes
-              )
-              # superseded by the logical dump configured below
+              (if takesDumps then lib.subtractLists dumpStagingPaths commonExcludes else commonExcludes)
+              # superseded by the logical dumps configured below
               ++ lib.optional cfg.client.postgresqlDumpAll "/var/lib/postgresql"
+              # the trailing glob takes the `-wal` and `-shm` sidecars with it,
+              # which are half the database while the service is running
+              ++ lib.mapAttrsToList (_: path: "${path}*") cfg.client.sqliteDatabases
               ++ cfg.client.extraExcludes;
             exclude_if_present = [ ".nobackup" ];
 
@@ -304,6 +332,15 @@ in
                 username = "postgres";
               }
             ];
+          }
+          // lib.optionalAttrs (cfg.client.sqliteDatabases != { }) {
+            # No `username` here, and deliberately: borgmatic reads the file
+            # directly and the unit already runs as root, so there is no user to
+            # switch to and none of the postgres hook's unit relaxation applies.
+            # The nixpkgs module fills in `sqlite_command` from pkgs.sqlite.
+            sqlite_databases = lib.mapAttrsToList (name: path: {
+              inherit name path;
+            }) cfg.client.sqliteDatabases;
           }
         ) cfg.client.repositories;
       };
