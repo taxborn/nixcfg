@@ -42,6 +42,31 @@ let
     "**/__pycache__"
   ];
 
+  # borgmatic stages database dumps on disk and hands borg the staging path as
+  # an extra source, so an exclude covering that path silently drops the dump:
+  # the dump still runs, the archive is still created, borgmatic still reports
+  # success, and the database is simply not in the backup. Nothing surfaces it
+  # except restoring — or the dump assertion in `scripts/backup-restore-test.sh`,
+  # which is how this was caught.
+  #
+  # Which path it uses depends on how borgmatic was started, so both have to go:
+  #   /run  — the packaged unit sets RuntimeDirectory=borgmatic, giving
+  #           /run/./borgmatic (the `/./` is borg's slashdot hack, so the
+  #           archive stores it as plain `borgmatic/…`)
+  #   /tmp  — the fallback when neither XDG_RUNTIME_DIR nor a systemd
+  #           RuntimeDirectory is set, which is the case running `borgmatic`
+  #           by hand over ssh, exactly as the restore test does
+  #
+  # Dropping these is safe as long as `paths` stays below them, which it is:
+  # /home, /var/lib, and /etc never traverse /run or /tmp, so the excludes were
+  # inert for file selection and doing nothing but this harm. Revisit if a host
+  # ever backs up / or /var wholesale.
+  dumpStagingPaths = [
+    "/run"
+    "/tmp"
+    "/var/tmp"
+  ];
+
   repoOpts = lib.types.submodule {
     options = {
       path = lib.mkOption {
@@ -226,7 +251,12 @@ in
             source_directories = cfg.client.paths;
             repositories = [ { inherit (repo) path label; } ];
             exclude_patterns =
-              commonExcludes
+              (
+                if cfg.client.postgresqlDumpAll then
+                  lib.subtractLists dumpStagingPaths commonExcludes
+                else
+                  commonExcludes
+              )
               # superseded by the logical dump configured below
               ++ lib.optional cfg.client.postgresqlDumpAll "/var/lib/postgresql"
               ++ cfg.client.extraExcludes;

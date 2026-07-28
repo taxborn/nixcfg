@@ -51,11 +51,16 @@ for cfg in /etc/borgmatic.d/*.yaml; do
     # there. Derived from the config rather than hardcoded, so a host without a
     # database skips it.
     if grep -q '^postgresql_databases:' "$cfg"; then
-        if borgmatic list --repository "$repo" --archive latest 2>/dev/null \
-                | grep -q 'postgresql_databases/'; then
+        listing=$(borgmatic list --repository "$repo" --archive latest 2>&1 || true)
+        if printf '%s' "$listing" | grep -q 'postgresql_databases/'; then
             echo "PASS $repo — postgres dump present"
         else
             echo "FAIL $repo — no postgres dump in the archive"
+            # The usual cause is an exclude swallowing borgmatic's staging
+            # directory (/run under systemd, /tmp when run by hand), which
+            # fails silently everywhere else. Show enough to tell that apart
+            # from the listing having failed outright.
+            printf '%s' "$listing" | tail -5 | sed 's/^/       | /'
             rc=1
         fi
     fi

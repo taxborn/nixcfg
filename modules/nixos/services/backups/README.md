@@ -213,6 +213,20 @@ works, which is the dangerous part.
 adds borgmatic's database hook instead: a `pg_dumpall` taken through the server
 itself, consistent by construction, streamed into each archive.
 
+**An exclude can silently eat the dump.** borgmatic stages dumps on disk and
+hands borg the staging path as an extra source, so any exclude covering that
+path drops the database from the archive while everything still reports success.
+The path depends on how borgmatic was started — `/run/borgmatic` under the
+packaged unit (`RuntimeDirectory=borgmatic`), `/tmp` when run by hand, as the
+restore test does — so the module removes `/run`, `/tmp`, and `/var/tmp` from
+the exclude list on any host taking dumps. They were inert for file selection
+anyway, since `paths` never traverses them.
+
+This is not hypothetical: it is exactly what happened on the first real run
+here, and nothing surfaced it except the dump assertion in the restore test.
+Anything that adds a database hook later — Immich, Paperless — inherits the
+same trap.
+
 Three details in the module are load-bearing and worth not "cleaning up":
 
 - The dump is declared as `{ name = "all"; username = "postgres"; }` and
