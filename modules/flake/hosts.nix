@@ -12,7 +12,7 @@
         "carbon"
         "helium"
         # "tungsten"
-        # "uranium"
+        "uranium"
       ]
       (
         host:

@@ -4,7 +4,7 @@ This folder houses the main configuration for each host on for my homelab.
 
 <!-- TODO: Images of each system, if applicable. -->
 
-## Uranium
+## [Uranium](./uranium)
 
 My desktop PC I built in August 2023 _(which, in hindsight was probably a decent
 time to build considering pricing over the last few years)_. [PCPartPicker build](https://pcpartpicker.com/user/taxbornfair/saved/bK7L7P).
