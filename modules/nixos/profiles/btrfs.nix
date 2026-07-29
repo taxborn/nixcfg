@@ -42,30 +42,59 @@ let
     }) btrfsFSDevices
   );
 
+  cfg = config.myNixOS.profiles.btrfs;
+
   # Check if a btrfs /home entry exists
   hasHomeSubvolume =
     lib.hasAttr "/home" config.fileSystems && config.fileSystems."/home".fsType == "btrfs";
+
+  timelineConfig = subvolume: {
+    ALLOW_GROUPS = [ "users" ];
+    SUBVOLUME = subvolume;
+    TIMELINE_CLEANUP = true;
+    TIMELINE_CREATE = true;
+  };
 in
 {
   options.myNixOS.profiles.btrfs = {
     enable = lib.mkEnableOption "btrfs filesystem configuration";
     deduplicate = lib.mkEnableOption "deduplicate btrfs filesystems";
+
+    snapshotSubvolumes = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      default = { };
+      example = lib.literalExpression ''
+        { compatdata = "/games/steamapps/compatdata"; }
+      '';
+      description = ''
+        Snapper config name -> subvolume path, for subvolumes that should get
+        timeline snapshots on top of `/home`.
+
+        `/home` is picked up on its own wherever it is a btrfs subvolume, which
+        covers the root array. This is for the ones that are not derivable that
+        way — in practice, subvolumes on a companion drive, where the interesting
+        question is which parts of the drive are worth snapshotting at all
+        rather than whether the drive is btrfs.
+
+        Each subvolume named here needs a `.snapshots` subvolume beneath it. The
+        NixOS snapper module writes config files and nothing else, so that has to
+        come from the disko layout — see modules/disko for how the existing
+        /home/.snapshots is declared.
+      '';
+    };
   };
 
-  config = lib.mkIf config.myNixOS.profiles.btrfs.enable {
+  config = lib.mkIf cfg.enable {
     environment.systemPackages = [ pkgs.snapper-gui ];
 
     services = lib.mkIf (btrfsFSDevices != [ ]) {
-      beesd.filesystems = lib.mkIf config.myNixOS.profiles.btrfs.deduplicate beesdConfig;
+      beesd.filesystems = lib.mkIf cfg.deduplicate beesdConfig;
       btrfs.autoScrub.enable = true;
 
       snapper = {
-        configs.home = lib.mkIf hasHomeSubvolume {
-          ALLOW_GROUPS = [ "users" ];
-          SUBVOLUME = "/home";
-          TIMELINE_CLEANUP = true;
-          TIMELINE_CREATE = true;
-        };
+        configs =
+          lib.optionalAttrs hasHomeSubvolume { home = timelineConfig "/home"; }
+          // lib.mapAttrs (_: timelineConfig) cfg.snapshotSubvolumes;
 
         filters = ''
           -.bash_profile
