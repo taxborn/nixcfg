@@ -29,7 +29,6 @@
 
     myHome = {
       programs = {
-        gpg.enable = true;
         yubikey.enable = true;
       };
     };

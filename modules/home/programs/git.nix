@@ -1,0 +1,35 @@
+{
+  config,
+  lib,
+  ...
+}:
+{
+  options.myHome.programs.git.enable = lib.mkEnableOption "git version control";
+
+  config = lib.mkIf config.myHome.programs.git.enable {
+    programs = {
+      git = {
+        enable = true;
+        lfs.enable = true;
+
+        signing.key = "F22AFD6CFD66B874";
+        signing.signByDefault = true;
+
+        settings = {
+          color.ui = true;
+          github.user = "taxborn";
+
+          push.autoSetupRemote = true;
+          init.defaultBranch = "main";
+
+          user = {
+            name = "Braxton Fair";
+            email = "hello@taxborn.com";
+          };
+        };
+      };
+
+      lazygit.enable = true;
+    };
+  };
+}
