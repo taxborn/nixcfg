@@ -34,9 +34,9 @@ in
   "tailscale/caddy.age".publicKeys = keys;
   "vaultwarden/mail.age".publicKeys = hostKey "carbon";
 
-  # Forgejo's SMTP password and its commit-signing key. There is deliberately
-  # no database secret: Forgejo reaches PostgreSQL over the unix socket and
-  # authenticates by peer.
+  # Forgejo's SMTP password and its commit-signing key. There is deliberately no
+  # database secret: Forgejo is on SQLite, so the database is a file guarded by
+  # filesystem permissions and nothing is listening to authenticate against.
   "forgejo/mail.age".publicKeys = hostKey "carbon";
   "forgejo/signing-key.age".publicKeys = hostKey "carbon";
 }
