@@ -11,7 +11,6 @@
 
   myNixOS = {
     profiles.server.enable = true;
-    programs.grub.enable = true;
     services.backups.client.enable = true;
   };
 

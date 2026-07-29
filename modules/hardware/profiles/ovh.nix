@@ -62,6 +62,17 @@ in
           "virtio_pci"
           "virtio_scsi"
         ];
+
+        # How these instances boot is a property of the instance, not of the
+        # host running on it — both OVH hosts were setting this identically.
+        # `efiInstallAsRemovable` is the part that matters: OVH's firmware does
+        # not persist EFI variables across a rebuild, so the loader has to be
+        # findable at the removable media path.
+        myNixOS.programs.grub.enable = lib.mkDefault true;
+
+        # No SMART behind virtio. smartd is on by default in `nixos/base`, and
+        # with nothing to register it fails to start rather than idling.
+        services.smartd.enable = false;
       }
 
       (lib.mkIf cfg.ipv6.enable {

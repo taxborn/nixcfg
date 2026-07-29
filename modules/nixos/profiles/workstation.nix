@@ -17,6 +17,7 @@
 
     myNixOS = {
       base.enable = true;
+      profiles.btrfs.guiTools = true;
       services = {
         yubikey.enable = true;
       };

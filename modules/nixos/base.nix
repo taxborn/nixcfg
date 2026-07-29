@@ -27,6 +27,17 @@
 
     services = {
       fstrim.enable = true;
+
+      # autoScrub checks the filesystem and mdadmConf watches the array, but
+      # both report damage that has already happened — SMART is the part that
+      # says a drive is on its way out beforehand. `mkDefault` so the OVH
+      # profile can turn it off: there is no SMART behind virtio, and smartd
+      # fails to start rather than idling when it can register nothing.
+      smartd = {
+        enable = lib.mkDefault true;
+        autodetect = true;
+      };
+
       openssh = {
         enable = true;
         settings = {

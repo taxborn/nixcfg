@@ -60,6 +60,14 @@ in
     enable = lib.mkEnableOption "btrfs filesystem configuration";
     deduplicate = lib.mkEnableOption "deduplicate btrfs filesystems";
 
+    guiTools = lib.mkEnableOption ''
+      graphical btrfs tooling (snapper-gui).
+
+      Off by default because this profile is enabled on every host: the servers
+      were carrying a GTK application none of them can display. Set by
+      `profiles.workstation`
+    '';
+
     snapshotSubvolumes = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;
       default = { };
@@ -85,7 +93,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [ pkgs.snapper-gui ];
+    environment.systemPackages = lib.optional cfg.guiTools pkgs.snapper-gui;
 
     # Keep every snapshotted subvolume's `.snapshots` out of the archives.
     # Snapper holds a timeline of full subtrees, so a backup path that contains

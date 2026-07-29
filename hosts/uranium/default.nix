@@ -57,16 +57,6 @@
     };
   };
 
-  # Nothing was watching the drives themselves. autoScrub checks the filesystem
-  # and mdadmConf watches the array, but both of those report damage that has
-  # already happened — SMART is the part that says a drive is on its way out
-  # beforehand. That matters most for the 850 EVO, which is 2014-era hardware
-  # now holding a backup repository.
-  services.smartd = {
-    enable = true;
-    autodetect = true;
-  };
-
   # Fresh btrfs subvolumes come out of mkfs owned by root, and /games/steamapps
   # exists only as a bare mountpoint for the compatdata subvolume beneath it.
   # Steam runs as taxborn, so without this it cannot create its library at all —
