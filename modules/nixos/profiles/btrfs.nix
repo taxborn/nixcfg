@@ -87,6 +87,17 @@ in
   config = lib.mkIf cfg.enable {
     environment.systemPackages = [ pkgs.snapper-gui ];
 
+    # Keep every snapshotted subvolume's `.snapshots` out of the archives.
+    # Snapper holds a timeline of full subtrees, so a backup path that contains
+    # one hands borg every retained snapshot as well as the live data — the
+    # exact mistake `/home/.snapshots` in the backup module's own excludes
+    # already avoids, one subvolume over. Derived from `snapshotSubvolumes`
+    # rather than written per host because the host that adds the next
+    # subvolume is the host that forgets.
+    myNixOS.services.backups.client.extraExcludes = lib.mapAttrsToList (
+      _: subvolume: "${subvolume}/.snapshots"
+    ) cfg.snapshotSubvolumes;
+
     services = lib.mkIf (btrfsFSDevices != [ ]) {
       beesd.filesystems = lib.mkIf cfg.deduplicate beesdConfig;
       btrfs.autoScrub.enable = true;

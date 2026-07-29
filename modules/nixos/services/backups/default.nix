@@ -42,6 +42,47 @@ let
     "**/__pycache__"
   ];
 
+  # Everything a desktop $HOME accumulates that is large, rewritten constantly,
+  # and either regenerated on demand or re-downloadable. `commonExcludes` was
+  # written against servers, where /home holds a shell history and little else;
+  # on a workstation those same three source directories pull in browser and
+  # Electron caches, Steam's runtime, and every virtualenv and direnv on the
+  # machine. That is tens of gigabytes of pure churn going off-site nightly —
+  # the same problem uranium's compatdata split solves, one directory over, and
+  # worse, because none of it dedups between runs.
+  desktopExcludes = [
+    # XDG cache, and the same directory wherever else it turns up
+    "**/.cache"
+
+    # Chromium and Electron apps keep caches under .config, not .cache, so the
+    # pattern above misses them entirely — this is most of the win on a machine
+    # running an editor and a chat client.
+    "**/.config/*/Cache"
+    "**/.config/*/CachedData"
+    "**/.config/*/Code Cache"
+    "**/.config/*/GPUCache"
+    "**/.config/*/Service Worker/CacheStorage"
+
+    # Steam's default library and its runtimes. On uranium the library itself
+    # lives on the games drive, but the runtime and shader caches still land
+    # here, and on a host without that drive this is the whole library.
+    "/home/*/.local/share/Steam"
+    "/home/*/.steam"
+
+    # flatpak runtimes and per-app caches
+    "/home/*/.local/share/flatpak"
+    "/home/*/.var/app/*/cache"
+
+    # already deleted
+    "/home/*/.local/share/Trash"
+
+    # reproducible from a lockfile, a flake, or the network
+    "**/.venv"
+    "**/.direnv"
+    "**/.gradle/caches"
+    "**/.cargo/registry"
+  ];
+
   # Whether this host replaces a live database with a logical dump in the
   # archive. Everything below that is about dumps rather than about one
   # particular engine keys off this, so adding a third hook later is one more
@@ -112,6 +153,28 @@ in
         type = lib.types.listOf lib.types.str;
         default = [ ];
         description = "Additional exclude patterns, on top of the module's defaults.";
+      };
+
+      desktopExcludes = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = ''
+          Also exclude the caches, runtimes, and re-downloadable data that a
+          desktop `$HOME` accumulates. Enable on any host someone logs into
+          graphically.
+
+          The module's default excludes were written against servers, where
+          `/home` is nearly empty. A workstation backing up the same three
+          directories ships browser caches, Electron app caches (which live
+          under `.config`, not `.cache`), Steam runtimes, and every virtualenv
+          and direnv on the machine — tens of gigabytes that change every day,
+          dedup poorly between runs, and restore to nothing anyone wants.
+
+          Deliberately not on by default and not implied by
+          `profiles.workstation`: what counts as disposable under `/home` is a
+          judgement about the host, and getting it wrong silently drops data.
+          `~/Downloads` is left *in* for the same reason.
+        '';
       };
 
       postgresqlDumpAll = lib.mkOption {
@@ -282,6 +345,7 @@ in
             repositories = [ { inherit (repo) path label; } ];
             exclude_patterns =
               (if takesDumps then lib.subtractLists dumpStagingPaths commonExcludes else commonExcludes)
+              ++ lib.optionals cfg.client.desktopExcludes desktopExcludes
               # superseded by the logical dumps configured below
               ++ lib.optional cfg.client.postgresqlDumpAll "/var/lib/postgresql"
               # the trailing glob takes the `-wal` and `-shm` sidecars with it,

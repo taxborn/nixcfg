@@ -449,6 +449,7 @@ restore of its `/var/lib` directory to confirm permissions survive the trip.
 | `enable` | bool | `false` | enable the borgmatic client |
 | `paths` | list of str | `[ "/home" "/var/lib" "/etc" ]` | directories to back up |
 | `extraExcludes` | list of str | `[ ]` | exclude patterns on top of the defaults |
+| `desktopExcludes` | bool | `false` | also exclude a desktop `$HOME`'s caches and re-downloadable data |
 | `repositories` | attrsOf { path, label, remotePath? } | rsync.net + Helium | targets to back up to |
 | `retention.keepDaily` | int | `7` | daily archives to keep |
 | `retention.keepWeekly` | int | `4` | weekly archives to keep |
@@ -456,6 +457,22 @@ restore of its `/var/lib` directory to confirm permissions survive the trip.
 | `retention.keepYearly` | int | `1` | yearly archives to keep |
 
 A directory containing `.nobackup` is skipped.
+
+`desktopExcludes` exists because the default excludes were written against
+servers, where `/home` holds a shell history and little else. Backing up the
+same three directories on a workstation ships browser caches, Electron app
+caches — which live under `.config`, not `.cache`, so they survive the obvious
+pattern — Steam runtimes, and every virtualenv and direnv on the machine. None
+of it dedups well between runs and none of it is worth restoring.
+
+It is off by default and *not* implied by `profiles.workstation`: deciding what
+under `/home` is disposable is a judgement about the host, and getting it wrong
+drops real data silently. `~/Downloads` is left in the archive for that reason.
+
+Snapper's `.snapshots` directories need no entry here. `profiles/btrfs` derives
+an exclude for every subvolume in its `snapshotSubvolumes`, so a backup path
+containing one does not quietly archive the whole timeline alongside the live
+data.
 
 ### `myNixOS.services.backups.server`
 
