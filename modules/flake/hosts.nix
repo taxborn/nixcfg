@@ -7,11 +7,10 @@
     in
     inputs.nixpkgs.lib.genAttrs
       [
-        # FIXME: uncomment hosts when ready
         "argon"
         "carbon"
         "helium"
-        # "tungsten"
+        "tungsten"
         "uranium"
       ]
       (
