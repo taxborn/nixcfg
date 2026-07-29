@@ -22,8 +22,17 @@
   games ? null,
   backup ? null,
 }:
-{ lib, ... }:
+{
+  config,
+  lib,
+  ...
+}:
 let
+  # The second ESP, on nvme1. Named once because two things have to agree on
+  # it: the mount point below, and the bootloader sync at the bottom of this
+  # file that keeps it populated.
+  fallbackMountPoint = "/boot-fallback";
+
   defaultBtrfsOpts = [
     "compress=zstd:1"
     "discard=async"
@@ -175,19 +184,19 @@ in
         content = {
           type = "gpt";
           partitions = {
-            # Second ESP, kept in sync by the bootloader (see the host's
-            # `extraInstallCommands`). The array survives losing either drive,
-            # but without this the bootloader lives only on nvme0 — lose that
-            # one and the result is a perfectly intact RAID1 attached to a
-            # machine that will not boot. Sized to match nvme0's ESP so the
-            # two are interchangeable.
+            # Second ESP, kept in sync by the bootloader sync at the bottom of
+            # this file. The array survives losing either drive, but without
+            # this the bootloader lives only on nvme0 — lose that one and the
+            # result is a perfectly intact RAID1 attached to a machine that
+            # will not boot. Sized to match nvme0's ESP so the two are
+            # interchangeable.
             ESP = {
               size = "4G";
               type = "EF00";
               content = {
                 type = "filesystem";
                 format = "vfat";
-                mountpoint = "/boot-fallback";
+                mountpoint = fallbackMountPoint;
                 mountOptions = [
                   "umask=0077"
                   "nofail"
@@ -317,4 +326,40 @@ in
       name: "${name} ${companions.${name}}-part1 ${keyDir}/${name}.key luks,discard,nofail\n"
     ) (lib.attrNames companions);
   };
+
+  # Populate the second ESP. This lives here, next to the partition it fills,
+  # rather than on each host: the layout is what promises a spare bootloader,
+  # and a host that takes the partition without an installer writing to it gets
+  # a 4G empty vfat standing in for one. That is not hypothetical — tungsten had
+  # exactly that shape until this moved.
+  #
+  # lzbt runs once per mount point, signing every artifact again and writing a
+  # fresh loader.conf, so each drive ends up a fully independent ESP carrying
+  # its own signed EFI/BOOT/BOOTX64.EFI. Firmware that can no longer see nvme0
+  # finds the fallback through the removable path with Secure Boot still
+  # enforcing, without needing an EFI variable to have survived.
+  #
+  # Note there is no mount guard: /boot-fallback is `nofail`, so with nvme1
+  # absent lzbt installs into the bare mount point on the root filesystem and
+  # reports success. Harmless, but check `findmnt /boot-fallback` if that drive
+  # is ever pulled.
+  boot.lanzaboote.extraEfiSysMountPoints = [ fallbackMountPoint ];
+
+  # Every host on this layout uses lanzaboote, and the line above is the only
+  # thing that fills the fallback ESP. Under any other bootloader the partition
+  # is still created, still mounted, and simply stays empty — which looks
+  # perfectly healthy right up until nvme0 dies and the surviving half of the
+  # mirror will not boot. Fail at build time instead.
+  assertions = [
+    {
+      assertion = config.boot.lanzaboote.enable;
+      message = ''
+        The btrfs-luks-raid1 layout puts a fallback ESP on nvme1 at
+        ${fallbackMountPoint}, and lanzaboote is the only bootloader here that
+        installs to it. Set myNixOS.programs.lanzaboote.enable on this host, or
+        teach modules/disko/btrfs-luks-raid1.nix how to populate that mount
+        point for whichever bootloader replaces it.
+      '';
+    }
+  ];
 }

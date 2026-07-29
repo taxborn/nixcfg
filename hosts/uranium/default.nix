@@ -28,6 +28,13 @@
     services.backups.client = {
       enable = true;
 
+      # First workstation in the backup set, so the first host where /home is
+      # mostly cache. See the option — without this the nightly run ships
+      # browser and Electron caches and Steam's runtime to all three
+      # repositories. The `.snapshots` directory under the compatdata subvolume
+      # below is excluded on its own, by the btrfs profile.
+      desktopExcludes = true;
+
       # The module's default, plus the Proton prefixes. Everything else on the
       # games drive is re-downloadable from Valve and stays out of the archive
       # deliberately — it would otherwise be ~280G of Marvel Rivals going to
@@ -50,27 +57,12 @@
     };
   };
 
-  boot = {
-    # Root is a two-disk mdraid RAID1 (see the disko config). The raid initrd
-    # modules come for free — declaring an mdadm device makes disko set
-    # boot.swraid.enable, which pulls md_mod and the raid levels in — but that
-    # module also warns and crashes mdmon when neither MAILADDR nor PROGRAM is
-    # set, so this is the one part that has to be spelled out per host.
-    swraid.mdadmConf = "MAILADDR root";
-
-    # Install the bootloader to both ESPs rather than copying one into the
-    # other. lzbt runs once per mount point, so each drive gets its own signed
-    # artifacts and its own loader.conf, and lanzaboote writes a signed
-    # EFI/BOOT/BOOTX64.EFI to each — meaning firmware that can no longer see
-    # nvme0 finds the fallback through the removable path with Secure Boot
-    # still enforcing, without needing an EFI variable to have survived.
-    #
-    # Note this has no mount guard of its own: /boot-fallback is `nofail`, so
-    # with nvme1 absent lzbt installs into the bare mountpoint on the root
-    # filesystem and reports success. Harmless, but check `findmnt
-    # /boot-fallback` if that drive is ever pulled.
-    lanzaboote.extraEfiSysMountPoints = [ "/boot-fallback" ];
-  };
+  # Root is a two-disk mdraid RAID1 (see the disko config). The raid initrd
+  # modules come for free — declaring an mdadm device makes disko set
+  # boot.swraid.enable, which pulls md_mod and the raid levels in — but that
+  # module also warns and crashes mdmon when neither MAILADDR nor PROGRAM is
+  # set, so this is the one part that has to be spelled out per host.
+  boot.swraid.mdadmConf = "MAILADDR root";
 
   # Nothing was watching the drives themselves. autoScrub checks the filesystem
   # and mdadmConf watches the array, but both of those report damage that has
