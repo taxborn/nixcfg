@@ -345,6 +345,13 @@ in
   # is ever pulled.
   boot.lanzaboote.extraEfiSysMountPoints = [ fallbackMountPoint ];
 
+  # Declaring an mdadm device makes disko set `boot.swraid.enable`, which pulls
+  # md_mod and the raid levels into the initrd for free. That module also warns
+  # and crashes mdmon when neither MAILADDR nor PROGRAM is set — so it belongs
+  # next to the array that triggers it, rather than copied into every host on
+  # this layout, which is where it was.
+  boot.swraid.mdadmConf = lib.mkDefault "MAILADDR root";
+
   # Every host on this layout uses lanzaboote, and the line above is the only
   # thing that fills the fallback ESP. Under any other bootloader the partition
   # is still created, still mounted, and simply stays empty — which looks

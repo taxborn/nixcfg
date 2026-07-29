@@ -57,13 +57,6 @@
     };
   };
 
-  # Root is a two-disk mdraid RAID1 (see the disko config). The raid initrd
-  # modules come for free — declaring an mdadm device makes disko set
-  # boot.swraid.enable, which pulls md_mod and the raid levels in — but that
-  # module also warns and crashes mdmon when neither MAILADDR nor PROGRAM is
-  # set, so this is the one part that has to be spelled out per host.
-  boot.swraid.mdadmConf = "MAILADDR root";
-
   # Nothing was watching the drives themselves. autoScrub checks the filesystem
   # and mdadmConf watches the array, but both of those report damage that has
   # already happened — SMART is the part that says a drive is on its way out

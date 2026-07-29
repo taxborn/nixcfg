@@ -26,16 +26,10 @@
     };
   };
 
-  # Root is a two-disk mdraid RAID1 (see the disko config); the raid modules
-  # must be available in the initrd to assemble it before LUKS unlock. The
-  # fallback ESP on nvme1 is populated by the disko module itself.
-  boot = {
-    swraid.mdadmConf = "MAILADDR root";
-    initrd.availableKernelModules = [
-      "thunderbolt"
-      "rtsx_pci_sdmmc"
-    ];
-  };
+  boot.initrd.availableKernelModules = [
+    "thunderbolt"
+    "rtsx_pci_sdmmc"
+  ];
 
   myHardware = {
     nvidia.gpu.enable = true;

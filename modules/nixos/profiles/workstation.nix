@@ -17,10 +17,6 @@
 
     myNixOS = {
       base.enable = true;
-      profiles.btrfs.enable = true;
-      programs = {
-        nix.enable = true;
-      };
       services = {
         yubikey.enable = true;
       };

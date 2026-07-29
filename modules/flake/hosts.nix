@@ -37,6 +37,13 @@
               };
 
               nixpkgs.config.allowUnfree = true;
+
+              # Was set inside the Intel CPU module, which made the platform a
+              # property of the CPU vendor: the first non-Intel host would have
+              # come up with no `hostPlatform` at all and failed to evaluate for
+              # a reason pointing nowhere near the cause. `systems` in parts.nix
+              # already says this is the only architecture built here.
+              nixpkgs.hostPlatform = inputs.nixpkgs.lib.mkDefault "x86_64-linux";
             }
           ];
 

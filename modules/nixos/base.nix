@@ -19,6 +19,7 @@
     programs.ssh.knownHosts = config.mySnippets.ssh.knownHosts;
 
     myNixOS = {
+      profiles.btrfs.enable = true;
       profiles.swap.enable = true;
       programs.nix.enable = true;
       services.tailscale.enable = true;
