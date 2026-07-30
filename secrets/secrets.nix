@@ -3,6 +3,7 @@ let
     "argon"
     "carbon"
     "helium"
+    "tungsten"
     "uranium"
   ];
   extras = [
