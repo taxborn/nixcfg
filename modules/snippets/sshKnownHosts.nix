@@ -56,6 +56,15 @@
         ];
         publicKeyFile = "${self}/keys/root_uranium.pub";
       };
+
+      tungsten = {
+        hostNames = [
+          "tungsten"
+          "tungsten.local"
+          "tungsten.${config.mySnippets.tailnet.name}"
+        ];
+        publicKeyFile = "${self}/keys/root_tungsten.pub";
+      };
     };
   };
 }
