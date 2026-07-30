@@ -286,8 +286,34 @@ in
         content = {
           type = "luks";
           name = "cryptroot";
-          settings.allowDiscards = true;
+          settings = {
+            allowDiscards = true;
+
+            # Enrolling the token is only half of it. systemd-cryptsetup does
+            # not go looking for a FIDO2 token on its own — crypttab(5) is
+            # explicit that `fido2-device=` is what selects that mechanism —
+            # and the crypttab line nixpkgs generates from
+            # `boot.initrd.luks.devices` carries nothing but `discard` unless
+            # something puts this here. Without it the initrd walks straight
+            # past a perfectly good enrolled token to the passphrase prompt.
+            #
+            # `settings` is spread into boot.initrd.luks.devices.cryptroot, so
+            # this is that option, set from the side of the config that also
+            # owns the enrollment below. The two have to agree; keep them
+            # together.
+            #
+            # Falling back still works: with the token absent or declined,
+            # systemd-cryptsetup drops to the passphrase in slot 0.
+            crypttabExtraOpts = [ "fido2-device=auto" ];
+          };
           extraFormatArgs = defaultExtraFormatArgs;
+
+          # disko has `enrollFido2`, which does this enrollment *and* emits the
+          # crypttab option above. It is not used here because it also
+          # autogenerates the initial passphrase and wipes slot 0 afterwards,
+          # leaving the token and the printed recovery key as the only ways in.
+          # This keeps a passphrase in slot 0 instead — worth the hand-rolled
+          # hook for a fallback that survives losing both.
           postCreateHook = ''
             sudo systemd-cryptenroll /dev/md/data --fido2-device=auto
           '';
