@@ -3,6 +3,7 @@ let
     "argon"
     "carbon"
     "helium"
+    "uranium"
   ];
   extras = [
     "yubikey_age"
