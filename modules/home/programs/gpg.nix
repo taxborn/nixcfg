@@ -6,7 +6,27 @@
 }:
 
 {
-  options.myHome.programs.gpg.enable = lib.mkEnableOption "gpg config";
+  options.myHome.programs.gpg = {
+    enable = lib.mkEnableOption "gpg config";
+
+    agent.enable = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        Run a gpg-agent on this host.
+
+        On where the yubikey is physically plugged in, off everywhere else —
+        and off is what makes forwarding work. `S.gpg-agent` is a fixed path,
+        so an agent here and a forwarded socket from a session both want the
+        same one; a local agent on a host with no card would win that fight
+        while being unable to sign anything.
+
+        The rest of the gpg configuration, `keys/pgp.asc` included, is
+        unconditional: the far end of a forward still needs the public key to
+        know what the agent is holding.
+      '';
+    };
+  };
 
   config = lib.mkIf config.myHome.programs.gpg.enable {
     programs.gpg = {
@@ -66,9 +86,15 @@
 
     # https://github.com/drduh/YubiKey-Guide/blob/master/config/gpg-agent.conf
     # https://www.gnupg.org/documentation/manuals/gnupg/Agent-Options.html
-    services.gpg-agent = {
+    services.gpg-agent = lib.mkIf config.myHome.programs.gpg.agent.enable {
       enable = true;
       enableSshSupport = true;
+
+      # The socket a forwarded session connects to on this end. Restricted by
+      # design: it refuses key management and passphrase changes, so a remote
+      # host can use the card without being able to reconfigure it.
+      enableExtraSocket = true;
+
       extraConfig = ''
         ttyname $GPG_TTY
       '';

@@ -414,18 +414,12 @@ in
       environment.systemPackages = [ pkgs.borgbackup ];
 
       # sshd answers borg on its own port so the forced command below actually
-      # binds; see the `sshPort` description. `openFirewall` would punch a hole
-      # for both ports on every interface, so it is off and 22 is opened by
-      # hand — the borg port stays reachable over the tailnet only, because the
-      # tailscale interface is in `trustedInterfaces`.
-      services.openssh = {
-        ports = [
-          22
-          cfg.server.sshPort
-        ];
-        openFirewall = false;
-      };
-      networking.firewall.allowedTCPPorts = [ 22 ];
+      # binds; see the `sshPort` description. Only this port is added here — 22,
+      # the agent-forwarding port, `openFirewall = false`, and the firewall hole
+      # for 22 all come from `programs/ssh.nix`, which every host running this
+      # module has enabled through `base`. Listing 22 again would emit a second
+      # `Port 22` and sshd would fail to bind it twice.
+      services.openssh.ports = [ cfg.server.sshPort ];
 
       # A repository must never end up inside its own backup. Inert today — the
       # default source directories don't reach the drive — but load-bearing the

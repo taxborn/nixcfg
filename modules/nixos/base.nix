@@ -16,12 +16,11 @@
 
     networking.networkmanager.enable = true;
 
-    programs.ssh.knownHosts = config.mySnippets.ssh.knownHosts;
-
     myNixOS = {
       profiles.btrfs.enable = true;
       profiles.swap.enable = true;
       programs.nix.enable = true;
+      programs.ssh.enable = true;
       services.tailscale.enable = true;
     };
 
@@ -38,6 +37,7 @@
         autodetect = true;
       };
 
+      # Ports, firewall, and forwarding live in `programs/ssh.nix`.
       openssh = {
         enable = true;
         settings = {
