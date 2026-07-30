@@ -20,6 +20,7 @@
           yk-restart = "gpg-connect-agent killagent /bye && gpg-connect-agent \"scd serialno\" \"learn --force\" /bye && gpg --card-status";
         };
       };
+      claude-code.enable = true;
     };
 
     home.packages = with pkgs; [
@@ -28,12 +29,6 @@
 
     programs = {
       zed-editor.enable = true;
-      neovim = {
-        enable = true;
-        defaultEditor = true;
-        viAlias = true;
-        vimAlias = true;
-      };
       ghostty.enable = true;
     };
 

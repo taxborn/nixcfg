@@ -1,6 +1,5 @@
 {
   self,
-  config,
   lib,
   pkgs,
   ...
@@ -9,6 +8,13 @@
   imports = [
     self.diskoConfigurations.btrfs-luks-raid1-uranium
   ];
+
+  home-manager.users.taxborn = {
+    home.packages = with pkgs; [
+      via
+      prismlauncher
+    ];
+  };
 
   networking.hostName = "uranium";
   system.stateVersion = "25.11";

@@ -19,10 +19,10 @@
         enable = true;
         interactiveShellInit = ''
           set fish_greeting # Disable greeting
-          # ${pkgs.fnm}/bin/fnm env --use-on-cd --shell fish | source
         '';
       };
       home-manager.enable = true;
+      ripgrep.enable = true;
     };
 
     myHome.programs = {
