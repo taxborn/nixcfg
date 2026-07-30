@@ -19,6 +19,14 @@
   networking.hostName = "uranium";
   system.stateVersion = "25.11";
 
+  programs = {
+    steam = {
+      enable = true;
+      remotePlay.openFirewall = true;
+      dedicatedServer.openFirewall = true;
+    };
+  };
+
   myNixOS = {
     profiles.workstation.enable = true;
     programs.lanzaboote.enable = true;
@@ -63,4 +71,6 @@
     amd.gpu.enable = true;
     intel.cpu.enable = true;
   };
+
+  hardware.steam-hardware.enable = true;
 }
