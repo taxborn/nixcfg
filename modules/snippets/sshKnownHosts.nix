@@ -10,8 +10,6 @@
     description = "Default ssh known hosts.";
 
     default = {
-      # The public addresses were transposed between these two entries until
-      # 2026-07-27; verify with `ssh-keyscan -t ed25519 <addr>` before editing.
       argon = {
         hostNames = [
           "argon"
@@ -48,6 +46,15 @@
           "[${config.mySnippets.tailnet.tailscaleIPs.helium}]:${toString config.myNixOS.services.backups.server.sshPort}"
         ];
         publicKeyFile = "${self}/keys/root_helium.pub";
+      };
+
+      uranium = {
+        hostNames = [
+          "uranium"
+          "uranium.local"
+          "uranium.${config.mySnippets.tailnet.name}"
+        ];
+        publicKeyFile = "${self}/keys/root_uranium.pub";
       };
     };
   };
