@@ -22,7 +22,14 @@
       };
     };
 
-    home.packages = with pkgs; [ ];
+    home.packages = with pkgs; [ wofi waybar firefox ];
+    home.sessionVariables.NIXOS_OZONE_WL = "1";
+    # wayland.windowManager.hyprland = {
+    #   enable = true;
+    #   # set the Hyprland and XDPH packages to null to use the ones from the NixOS module
+    #   package = null;
+    #   portalPackage = null;
+    # };
 
     myHome = {
       programs = {
