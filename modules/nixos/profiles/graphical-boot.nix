@@ -8,6 +8,11 @@
   options.myNixOS.profiles.graphical-boot.enable = lib.mkEnableOption "non-text boot experience";
 
   config = lib.mkIf config.myNixOS.profiles.graphical-boot.enable {
+    services.getty = {
+      autologinOnce = true;
+      autologinUser = "taxborn";
+    };
+
     boot = {
       consoleLogLevel = 0;
       initrd.verbose = false;

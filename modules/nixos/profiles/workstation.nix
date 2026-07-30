@@ -17,6 +17,11 @@
     ];
 
     programs.hyprland.enable = true;
+    programs.fish.loginShellInit = ''
+      if test -z "$WAYLAND_DISPLAY"; and test "$XDG_VTNR" = 1
+          start-hyprland
+      end
+    '';
 
     boot.kernelPackages = pkgs.linuxPackages_latest;
 

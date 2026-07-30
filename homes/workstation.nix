@@ -22,23 +22,26 @@
       };
     };
 
-    home.packages = with pkgs; [ wofi waybar firefox ];
-    programs.zed-editor.enable = true;
-    programs.neovim = {
-      enable = true;
-      defaultEditor = true;
+    home.packages = with pkgs; [
+      firefox
+    ];
+
+    programs = {
+      zed-editor.enable = true;
+      neovim = {
+        enable = true;
+        defaultEditor = true;
+        viAlias = true;
+        vimAlias = true;
+      };
+      ghostty.enable = true;
     };
-    programs.ghostty.enable = true;
+
     home.sessionVariables.NIXOS_OZONE_WL = "1";
-    # wayland.windowManager.hyprland = {
-    #   enable = true;
-    #   # set the Hyprland and XDPH packages to null to use the ones from the NixOS module
-    #   package = null;
-    #   portalPackage = null;
-    # };
 
     myHome = {
       programs = {
+        hyprland.enable = true;
         yubikey.enable = true;
       };
     };
