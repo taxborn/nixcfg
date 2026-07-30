@@ -28,8 +28,6 @@
           };
         };
       };
-
-      lazygit.enable = true;
     };
   };
 }
