@@ -23,6 +23,12 @@
     };
 
     home.packages = with pkgs; [ wofi waybar firefox ];
+    programs.zed-editor.enable = true;
+    programs.neovim = {
+      enable = true;
+      defaultEditor = true;
+    };
+    programs.ghostty.enable = true;
     home.sessionVariables.NIXOS_OZONE_WL = "1";
     # wayland.windowManager.hyprland = {
     #   enable = true;

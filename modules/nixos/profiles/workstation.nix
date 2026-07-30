@@ -17,14 +17,24 @@
     ];
 
     programs.hyprland.enable = true;
-    environment = {
-      sessionVariables.NIXOS_OZONE_WL = "1";
-      systemPackages = with pkgs; [ ghostty ];
+
+    boot.kernelPackages = pkgs.linuxPackages_latest;
+
+    services = {
+      blueman.enable = lib.mkIf config.hardware.bluetooth.enable true;
+      gnome.gnome-keyring.enable = true;
+      gvfs.enable = true; # Mount, trash, etc.
+      libinput.enable = true;
     };
 
     myNixOS = {
       base.enable = true;
-      profiles.btrfs.guiTools = true;
+      profiles = {
+        audio.enable = true;
+        bluetooth.enable = true;
+        btrfs.guiTools = true;
+        graphical-boot.enable = true;
+      };
       services = {
         yubikey.enable = true;
       };

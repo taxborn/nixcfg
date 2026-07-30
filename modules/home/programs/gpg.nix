@@ -75,7 +75,7 @@
       defaultCacheTtl = 60;
       maxCacheTtl = 120;
 
-      pinentry.package = pkgs.pinentry-curses;
+      pinentry.package = pkgs.pinentry-gnome3;
     };
   };
 }
