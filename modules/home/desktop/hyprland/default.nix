@@ -1,0 +1,102 @@
+{
+  config,
+  lib,
+  osConfig,
+  pkgs,
+  ...
+}:
+let
+  cfg = config.myHome.desktop.hyprland;
+  # isLaptop = osConfig.myHardware.profiles.laptop.enable or false;
+  # decorationConfig =
+  #   if isLaptop then
+  #     ''
+  #       hl.config({
+  #           decoration = {
+  #               inactive_opacity = 1.0,
+
+  #               shadow = {
+  #                   enabled = false,
+  #               },
+
+  #               blur = {
+  #                   enabled = false,
+  #               },
+  #           },
+  #       })''
+  #   else
+  #     ''
+  #       hl.config({
+  #           decoration = {
+  #               -- Change transparency of unfocused windows on desktops
+  #               inactive_opacity = 0.90,
+
+  #               shadow = {
+  #                   enabled = true,
+  #               },
+
+  #               blur = {
+  #                   enabled = true,
+  #               },
+  #           },
+  #       })'';
+in
+{
+  options.myHome.desktop.hyprland = {
+    enable = lib.mkEnableOption "Hyprland home-manager configuration";
+  };
+
+  config = lib.mkIf cfg.enable {
+    home.packages = with pkgs; [
+      grim
+      playerctl
+      slurp
+      wl-clipboard
+    ];
+
+    home.pointerCursor = {
+      enable = true;
+      package = pkgs.catppuccin-cursors.mochaMauve;
+      name = "catppuccin-mocha-mauve-cursors";
+      size = 24;
+      gtk.enable = true;
+      x11.enable = true;
+      hyprcursor.enable = true;
+    };
+
+    wayland.windowManager.hyprland = {
+      enable = true;
+      xwayland.enable = true;
+      systemd = {
+        enable = true;
+        # Import every session env var into the systemd user manager so
+        # apps launched via dbus activation (e.g. .desktop files) inherit
+        # NIXOS_OZONE_WL etc.
+        variables = [ "--all" ];
+      };
+      configType = "lua";
+      extraConfig = ''
+        ${builtins.readFile ./lua/hyprland.lua}
+
+        -- Also exported by home.pointerCursor as session variables, but those
+        -- only reach the compositor if shell init ran before it started. Set
+        -- them here too so Hyprland resolves the theme on its own from a bare
+        -- TTY or display-manager launch.
+        hl.env("XCURSOR_THEME", "${config.home.pointerCursor.name}")
+        hl.env("HYPRCURSOR_THEME", "${config.home.pointerCursor.name}")
+        -- hl.bind("SUPER + SHIFT + L", hl.dsp.exec_cmd("${lib.getExe' pkgs.systemd "loginctl"} lock-session"))
+      '';
+    };
+
+    # `lua/hyprland.lua` is only the entry point — it `require()`s the rest,
+    # which resolves against the config directory. So these have to be placed
+    # beside the generated hyprland.lua rather than inlined into it.
+    xdg.configFile = {
+      "hypr/animations.lua".source = ./lua/animations.lua;
+      "hypr/decorations.lua".source = ./lua/decorations.lua;
+      "hypr/keybinds.lua".source = ./lua/keybinds.lua;
+      "hypr/monitors.lua".source = ./lua/monitors.lua;
+      "hypr/rules.lua".source = ./lua/rules.lua;
+    };
+  };
+}

@@ -43,10 +43,14 @@
     home.sessionVariables.NIXOS_OZONE_WL = "1";
 
     myHome = {
+      desktop.hyprland.enable = true;
+
       programs = {
         # The card lives here, so this is where the agent runs — and what every
         # other host borrows over a forwarded socket.
         gpg.agent.enable = true;
+        # Still the package set (wofi, waybar, hyprlock, hypridle) that the
+        # `desktop.hyprland` lua config drives; only the config moved.
         hyprland.enable = true;
         yubikey.enable = true;
       };
