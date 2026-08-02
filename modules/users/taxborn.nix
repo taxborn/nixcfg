@@ -10,6 +10,8 @@
       isNormalUser = true;
       hashedPassword = "$y$j9T$A0TNjHtgoYuPaVVUDMTg1/$c2X6a5BbYruE.WN0ko5uE3O.FTGDFeEWjFDxwL4YS28";
       extraGroups = [
+        "networkmanager"
+        "video"
         "wheel"
       ];
       openssh.authorizedKeys.keyFiles = [
