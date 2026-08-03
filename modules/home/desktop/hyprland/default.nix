@@ -7,39 +7,39 @@
 }:
 let
   cfg = config.myHome.desktop.hyprland;
-  # isLaptop = osConfig.myHardware.profiles.laptop.enable or false;
-  # decorationConfig =
-  #   if isLaptop then
-  #     ''
-  #       hl.config({
-  #           decoration = {
-  #               inactive_opacity = 1.0,
+  isLaptop = osConfig.myHardware.profiles.laptop.enable or false;
+  decorationConfig =
+    if isLaptop then
+      ''
+        hl.config({
+            decoration = {
+                inactive_opacity = 1.0,
 
-  #               shadow = {
-  #                   enabled = false,
-  #               },
+                shadow = {
+                    enabled = false,
+                },
 
-  #               blur = {
-  #                   enabled = false,
-  #               },
-  #           },
-  #       })''
-  #   else
-  #     ''
-  #       hl.config({
-  #           decoration = {
-  #               -- Change transparency of unfocused windows on desktops
-  #               inactive_opacity = 0.90,
+                blur = {
+                    enabled = false,
+                },
+            },
+        })''
+    else
+      ''
+        hl.config({
+            decoration = {
+                -- Change transparency of unfocused windows on desktops
+                inactive_opacity = 0.90,
 
-  #               shadow = {
-  #                   enabled = true,
-  #               },
+                shadow = {
+                    enabled = true,
+                },
 
-  #               blur = {
-  #                   enabled = true,
-  #               },
-  #           },
-  #       })'';
+                blur = {
+                    enabled = true,
+                },
+            },
+        })'';
 in
 {
   options.myHome.desktop.hyprland = {
@@ -74,6 +74,7 @@ in
       configType = "lua";
       extraConfig = ''
         ${builtins.readFile ./lua/hyprland.lua}
+        ${decorationConfig}
       '';
     };
 
