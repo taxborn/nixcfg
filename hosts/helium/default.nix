@@ -29,12 +29,21 @@
   };
 
   myHardware.intel.cpu.enable = true;
-  boot.initrd.availableKernelModules = [
-    "xhci_pci"
-    "ahci"
-    "nvme"
-    "usb_storage"
-    "sd_mod"
-    "rtsx_pci_sdmmc"
-  ];
+
+  boot = {
+    initrd.availableKernelModules = [
+      "xhci_pci"
+      "ahci"
+      "nvme"
+      "usb_storage"
+      "sd_mod"
+      "rtsx_pci_sdmmc"
+    ];
+
+    # The countdown was 5s of a 42s boot, spent on a menu nothing reads. Holding
+    # space through firmware still brings it up when a generation needs picking,
+    # so this costs nothing but the wait. Hosts on the graphical-boot profile
+    # already run at 0; this one is not one of them.
+    loader.timeout = 1;
+  };
 }
