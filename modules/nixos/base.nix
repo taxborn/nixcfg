@@ -56,6 +56,13 @@
         git
         tmux
         neovim
+
+        # Terminfo only, not the emulator. Every host here is reached over ssh
+        # from a ghostty on the other end, and a host that does not know the
+        # xterm-ghostty entry fails anything that opens a pager — `systemctl
+        # status`, `journalctl`, `less` — with "unknown terminal type" rather
+        # than degrading. Cheaper than making $TERM lie on every session.
+        ghostty.terminfo
       ];
     };
 
