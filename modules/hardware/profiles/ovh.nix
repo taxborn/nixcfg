@@ -63,6 +63,26 @@ in
           "virtio_scsi"
         ];
 
+        # These instances serve the public internet over long-haul paths, where
+        # a dropped packet is far more often a blip than a signal of congestion.
+        # cubic halves its window for both; BBR paces against measured bandwidth
+        # and RTT instead, which is the distinction that matters out here. `fq`
+        # rather than the default `fq_codel` because BBR's pacing lives in that
+        # qdisc.
+        #
+        # Loaded explicitly: both ship as modules and neither is loaded on these
+        # instances, so the sysctls below would otherwise be naming things the
+        # kernel does not yet know about.
+        boot.kernelModules = [
+          "tcp_bbr"
+          "sch_fq"
+        ];
+
+        boot.kernel.sysctl = {
+          "net.ipv4.tcp_congestion_control" = "bbr";
+          "net.core.default_qdisc" = "fq";
+        };
+
         # How these instances boot is a property of the instance, not of the
         # host running on it — both OVH hosts were setting this identically.
         # `efiInstallAsRemovable` is the part that matters: OVH's firmware does
