@@ -28,9 +28,6 @@
   ...
 }:
 let
-  # The second ESP, on nvme1. Named once because two things have to agree on
-  # it: the mount point below, and the bootloader sync at the bottom of this
-  # file that keeps it populated.
   fallbackMountPoint = "/boot-fallback";
 
   defaultBtrfsOpts = [
@@ -67,28 +64,15 @@ let
     "--sector-size=4096"
   ];
 
-  # Companion keyfiles are generated into the installer at `keyStagingDir` and
-  # come to rest at `keyDir` on the encrypted root.
   keyStagingDir = "/tmp/luks";
   keyDir = "/etc/luks";
 
-  # disko's default rootMountPoint, which the postMountHook writes through.
-  rootMountPoint = "/mnt";
-
   companions = lib.filterAttrs (_: device: device != null) { inherit games backup; };
 
-  # GPT, one partition, LUKS, btrfs. Shared by both companions, since the only
-  # things that differ between them are the subvolume layout and whether losing
-  # the root array is allowed to take the volume with it.
   companionDisk =
     {
       name,
       subvolumes,
-      # Enrolls a high-entropy recovery passphrase in a second keyslot and prints
-      # it as a QR code during installation, making the volume openable without
-      # the keyfile. Set this wherever the volume has to outlive the root array;
-      # leave it off where the contents are disposable and the extra install
-      # step is not worth it.
       enrollRecovery ? false,
     }:
     {
@@ -138,8 +122,8 @@ let
               # under it and the target root is writable by the time this runs.
               # Fires once per subvolume mount, hence the guard.
               postMountHook = ''
-                if [ ! -f ${rootMountPoint}${keyDir}/${name}.key ]; then
-                  install -D -m 0400 ${keyStagingDir}/${name}.key ${rootMountPoint}${keyDir}/${name}.key
+                if [ ! -f /mnt${keyDir}/${name}.key ]; then
+                  install -D -m 0400 ${keyStagingDir}/${name}.key /mnt${keyDir}/${name}.key
                 fi
               '';
             };
@@ -149,6 +133,30 @@ let
     };
 in
 {
+  assertions = [
+    {
+      assertion = config.boot.lanzaboote.enable;
+      message = ''
+        The btrfs-luks-raid1 layout puts a fallback ESP on nvme1 at
+        ${fallbackMountPoint}, and lanzaboote is the only bootloader here that
+        installs to it. Set myNixOS.programs.lanzaboote.enable on this host, or
+        teach modules/disko/btrfs-luks-raid1.nix how to populate that mount
+        point for whichever bootloader replaces it.
+      '';
+    }
+  ];
+
+  environment.etc.crypttab = lib.mkIf (companions != { }) {
+    text = lib.concatMapStrings (
+      name: "${name} ${companions.${name}}-part1 ${keyDir}/${name}.key luks,discard,nofail\n"
+    ) (lib.attrNames companions);
+  };
+
+  boot = {
+    lanzaboote.extraEfiSysMountPoints = [ fallbackMountPoint ];
+    swraid.mdadmConf = lib.mkDefault "MAILADDR root";
+  };
+
   disko.devices = {
     disk = {
       nvme0 = {
@@ -288,32 +296,9 @@ in
           name = "cryptroot";
           settings = {
             allowDiscards = true;
-
-            # Enrolling the token is only half of it. systemd-cryptsetup does
-            # not go looking for a FIDO2 token on its own — crypttab(5) is
-            # explicit that `fido2-device=` is what selects that mechanism —
-            # and the crypttab line nixpkgs generates from
-            # `boot.initrd.luks.devices` carries nothing but `discard` unless
-            # something puts this here. Without it the initrd walks straight
-            # past a perfectly good enrolled token to the passphrase prompt.
-            #
-            # `settings` is spread into boot.initrd.luks.devices.cryptroot, so
-            # this is that option, set from the side of the config that also
-            # owns the enrollment below. The two have to agree; keep them
-            # together.
-            #
-            # Falling back still works: with the token absent or declined,
-            # systemd-cryptsetup drops to the passphrase in slot 0.
             crypttabExtraOpts = [ "fido2-device=auto" ];
           };
           extraFormatArgs = defaultExtraFormatArgs;
-
-          # disko has `enrollFido2`, which does this enrollment *and* emits the
-          # crypttab option above. It is not used here because it also
-          # autogenerates the initial passphrase and wipes slot 0 afterwards,
-          # leaving the token and the printed recovery key as the only ways in.
-          # This keeps a passphrase in slot 0 instead — worth the hand-rolled
-          # hook for a fallback that survives losing both.
           postCreateHook = ''
             sudo systemd-cryptenroll /dev/md/data --fido2-device=auto
           '';
@@ -343,56 +328,4 @@ in
       };
     };
   };
-
-  # Opened in stage 2 from keyfiles on the encrypted root; see `initrdUnlock`
-  # above. `nofail` here pairs with `nofail` in the mount options — a companion
-  # that is missing, dead, or not yet formatted must never strand the boot.
-  environment.etc.crypttab = lib.mkIf (companions != { }) {
-    text = lib.concatMapStrings (
-      name: "${name} ${companions.${name}}-part1 ${keyDir}/${name}.key luks,discard,nofail\n"
-    ) (lib.attrNames companions);
-  };
-
-  # Populate the second ESP. This lives here, next to the partition it fills,
-  # rather than on each host: the layout is what promises a spare bootloader,
-  # and a host that takes the partition without an installer writing to it gets
-  # a 4G empty vfat standing in for one. That is not hypothetical — tungsten had
-  # exactly that shape until this moved.
-  #
-  # lzbt runs once per mount point, signing every artifact again and writing a
-  # fresh loader.conf, so each drive ends up a fully independent ESP carrying
-  # its own signed EFI/BOOT/BOOTX64.EFI. Firmware that can no longer see nvme0
-  # finds the fallback through the removable path with Secure Boot still
-  # enforcing, without needing an EFI variable to have survived.
-  #
-  # Note there is no mount guard: /boot-fallback is `nofail`, so with nvme1
-  # absent lzbt installs into the bare mount point on the root filesystem and
-  # reports success. Harmless, but check `findmnt /boot-fallback` if that drive
-  # is ever pulled.
-  boot.lanzaboote.extraEfiSysMountPoints = [ fallbackMountPoint ];
-
-  # Declaring an mdadm device makes disko set `boot.swraid.enable`, which pulls
-  # md_mod and the raid levels into the initrd for free. That module also warns
-  # and crashes mdmon when neither MAILADDR nor PROGRAM is set — so it belongs
-  # next to the array that triggers it, rather than copied into every host on
-  # this layout, which is where it was.
-  boot.swraid.mdadmConf = lib.mkDefault "MAILADDR root";
-
-  # Every host on this layout uses lanzaboote, and the line above is the only
-  # thing that fills the fallback ESP. Under any other bootloader the partition
-  # is still created, still mounted, and simply stays empty — which looks
-  # perfectly healthy right up until nvme0 dies and the surviving half of the
-  # mirror will not boot. Fail at build time instead.
-  assertions = [
-    {
-      assertion = config.boot.lanzaboote.enable;
-      message = ''
-        The btrfs-luks-raid1 layout puts a fallback ESP on nvme1 at
-        ${fallbackMountPoint}, and lanzaboote is the only bootloader here that
-        installs to it. Set myNixOS.programs.lanzaboote.enable on this host, or
-        teach modules/disko/btrfs-luks-raid1.nix how to populate that mount
-        point for whichever bootloader replaces it.
-      '';
-    }
-  ];
 }

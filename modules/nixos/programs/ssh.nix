@@ -30,27 +30,12 @@ in
       openFirewall = false;
 
       settings = {
-        # The forwarded socket lands on a path something else may already own:
-        # this host's own gpg-agent on a workstation, or a socket left behind
-        # by a session that died without cleaning up. sshd's default is to
-        # refuse the bind in that case, so every reconnect after a hard
-        # disconnect would come up without a card until someone removed the
-        # file by hand.
         StreamLocalBindUnlink = true;
       };
     };
 
     networking.firewall.allowedTCPPorts = [ 22 ];
 
-    # sshd binds the forwarded gpg socket inside this directory and will not
-    # create it, so on a host with no local gpg-agent nothing else does either
-    # and the forward fails with `bind: No such file or directory`.
-    #
-    # Lingering is what makes this reliable rather than lucky. The rules run
-    # from the user's systemd manager, and without lingering that manager is
-    # started by the very SSH login that needs the directory — a race sshd
-    # loses about as often as it wins. With it, the manager comes up at boot
-    # and the directory is there before the first connection.
     users.users.taxborn.linger = true;
     systemd.user.tmpfiles.users.taxborn.rules = [
       "d ${gnupgSocketDir} 0700 - - -"

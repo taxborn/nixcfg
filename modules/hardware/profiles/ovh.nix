@@ -63,16 +63,6 @@ in
           "virtio_scsi"
         ];
 
-        # These instances serve the public internet over long-haul paths, where
-        # a dropped packet is far more often a blip than a signal of congestion.
-        # cubic halves its window for both; BBR paces against measured bandwidth
-        # and RTT instead, which is the distinction that matters out here. `fq`
-        # rather than the default `fq_codel` because BBR's pacing lives in that
-        # qdisc.
-        #
-        # Loaded explicitly: both ship as modules and neither is loaded on these
-        # instances, so the sysctls below would otherwise be naming things the
-        # kernel does not yet know about.
         boot.kernelModules = [
           "tcp_bbr"
           "sch_fq"
@@ -83,15 +73,7 @@ in
           "net.core.default_qdisc" = "fq";
         };
 
-        # How these instances boot is a property of the instance, not of the
-        # host running on it — both OVH hosts were setting this identically.
-        # `efiInstallAsRemovable` is the part that matters: OVH's firmware does
-        # not persist EFI variables across a rebuild, so the loader has to be
-        # findable at the removable media path.
         myNixOS.programs.grub.enable = lib.mkDefault true;
-
-        # No SMART behind virtio. smartd is on by default in `nixos/base`, and
-        # with nothing to register it fails to start rather than idling.
         services.smartd.enable = false;
       }
 
@@ -103,22 +85,7 @@ in
           }
         ];
 
-        # Without this, NetworkManager auto-creates a "Wired connection N" for
-        # the device and activates it before `ensure-profiles` has written the
-        # profile below — reloading does not move an already-active device, so
-        # the declarative profile ends up loaded but idle. Suppressing the
-        # auto-default leaves the device free until the profile lands.
-        #
-        # Scoped to this interface rather than "*": on a host whose IPv4 lives
-        # on a separate NIC, blanket suppression would strip that NIC of its
-        # auto-default too and take the host off the network entirely.
         networking.networkmanager.settings.main.no-auto-default = cfg.ipv6.interface;
-
-        # NetworkManager owns this interface, so the address is declared as a
-        # profile rather than through `networking.interfaces` — the two would
-        # otherwise both try to configure ens3. IPv4 stays on DHCP exactly as
-        # before and `may-fail` keeps a broken v6 from blocking activation, so
-        # a broken v6 config costs IPv6 rather than the host.
         networking.networkmanager.ensureProfiles.profiles.${cfg.ipv6.interface} = {
           connection = {
             id = cfg.ipv6.interface;

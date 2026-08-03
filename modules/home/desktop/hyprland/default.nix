@@ -69,22 +69,11 @@ in
       xwayland.enable = true;
       systemd = {
         enable = true;
-        # Import every session env var into the systemd user manager so
-        # apps launched via dbus activation (e.g. .desktop files) inherit
-        # NIXOS_OZONE_WL etc.
         variables = [ "--all" ];
       };
       configType = "lua";
       extraConfig = ''
         ${builtins.readFile ./lua/hyprland.lua}
-
-        -- Also exported by home.pointerCursor as session variables, but those
-        -- only reach the compositor if shell init ran before it started. Set
-        -- them here too so Hyprland resolves the theme on its own from a bare
-        -- TTY or display-manager launch.
-        hl.env("XCURSOR_THEME", "${config.home.pointerCursor.name}")
-        hl.env("HYPRCURSOR_THEME", "${config.home.pointerCursor.name}")
-        -- hl.bind("SUPER + SHIFT + L", hl.dsp.exec_cmd("${lib.getExe' pkgs.systemd "loginctl"} lock-session"))
       '';
     };
 

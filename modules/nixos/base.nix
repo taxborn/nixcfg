@@ -26,18 +26,10 @@
 
     services = {
       fstrim.enable = true;
-
-      # autoScrub checks the filesystem and mdadmConf watches the array, but
-      # both report damage that has already happened — SMART is the part that
-      # says a drive is on its way out beforehand. `mkDefault` so the OVH
-      # profile can turn it off: there is no SMART behind virtio, and smartd
-      # fails to start rather than idling when it can register nothing.
       smartd = {
         enable = lib.mkDefault true;
         autodetect = true;
       };
-
-      # Ports, firewall, and forwarding live in `programs/ssh.nix`.
       openssh = {
         enable = true;
         settings = {
@@ -56,12 +48,6 @@
         git
         tmux
         neovim
-
-        # Terminfo only, not the emulator. Every host here is reached over ssh
-        # from a ghostty on the other end, and a host that does not know the
-        # xterm-ghostty entry fails anything that opens a pager — `systemctl
-        # status`, `journalctl`, `less` — with "unknown terminal type" rather
-        # than degrading. Cheaper than making $TERM lie on every session.
         ghostty.terminfo
       ];
     };
