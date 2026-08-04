@@ -73,20 +73,21 @@ in
       };
       configType = "lua";
       extraConfig = ''
-        ${builtins.readFile ./lua/hyprland.lua}
+        ${builtins.readFile ./config/hyprland.lua}
         ${decorationConfig}
       '';
     };
 
-    # `lua/hyprland.lua` is only the entry point — it `require()`s the rest,
+    # `config/hyprland.lua` is only the entry point — it `require()`s the rest,
     # which resolves against the config directory. So these have to be placed
     # beside the generated hyprland.lua rather than inlined into it.
     xdg.configFile = {
-      "hypr/animations.lua".source = ./lua/animations.lua;
-      "hypr/decorations.lua".source = ./lua/decorations.lua;
-      "hypr/keybinds.lua".source = ./lua/keybinds.lua;
-      "hypr/monitors.lua".source = ./lua/monitors.lua;
-      "hypr/rules.lua".source = ./lua/rules.lua;
+      "hypr/animations.lua".source = ./config/animations.lua;
+      "hypr/decorations.lua".source = ./config/decorations.lua;
+      "hypr/keybinds.lua".source = ./config/keybinds.lua;
+      "hypr/monitors.lua".source = ./config/monitors.lua;
+      "hypr/rules.lua".source = ./config/rules.lua;
+      "hypr/hyprpaper.conf".source = ./config/hyprpaper.conf;
     };
   };
 }
