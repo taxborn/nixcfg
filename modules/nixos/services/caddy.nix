@@ -60,7 +60,7 @@ in
         # Our records sit behind Cloudflare's proxy, which terminates TLS and
         # won't negotiate acme-tls/1, so TLS-ALPN-01 can never succeed; solving
         # over DNS avoids that failed attempt on issuance and every renewal.
-        # CF_API_TOKEN comes from the environmentFile secret below, and the
+        # CF_API_TOKEN comes from the environmentFile secret above, and the
         # token needs Zone:DNS:Edit + Zone:Zone:Read on every zone we serve.
         globalConfig = ''
           tailscale {

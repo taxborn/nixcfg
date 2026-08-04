@@ -16,7 +16,9 @@
   nvme0,
   nvme1,
   # Caps the raid partition on the first disk so mismatched drive sizes still
-  # mirror cleanly (e.g. "930G").
+  # mirror cleanly (e.g. "920G"). Size it against the *smaller* drive minus its
+  # own 4G ESP, not against the larger one — Tungsten's pair leaves 927.5 GiB,
+  # and the 930G this example used to name would have failed the disko run.
   raidSize ? "100%",
   # Optional single-disk companions, as by-id paths. Null on hosts without them.
   games ? null,
