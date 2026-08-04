@@ -230,22 +230,6 @@ mostly firmware settings rather than anything in this config.
       there is no 32-bit VAAPI at all and wine/Steam fall back to software
       decode.
 
-- [x] Fingerprint reader. The sensor in the power button is a Goodix
-      `27c6:63ac`, and that PID is in upstream libfprint's `goodixmoc` table as
-      of 1.94.10 — so plain `services.fprintd.enable`, no `tod.enable` and no
-      vendor blob. The catch is that `security.pam.services.<name>.fprintAuth`
-      defaults to `services.fprintd.enable`, which switches it on across all 27
-      PAM services this host defines; `sshd` is turned back off explicitly,
-      since a finger cannot be presented down an ssh connection. Verified in the
-      rendered stack: `pam_fprintd` lands `sufficient` at order 11400, ahead of
-      `pam_unix` at 11700, so a password is still the fallback rather than
-      being replaced. **Enrolment is per-user and imperative** — `fprintd-enroll`,
-      then `fprintd-verify` — and nothing in this repo can do it for you.
-
-      This does not touch disk unlock. LUKS is opened from the initrd where
-      fprintd does not exist, so the FIDO2 YubiKey stays the only key to the
-      root filesystem.
-
 - [x] Deprioritize `borgmatic.service` fleet-wide — `Nice = 19`,
       `IOSchedulingClass = "idle"`, `CPUSchedulingPolicy = "idle"`. Its timer is
       `OnCalendar=daily` with `Persistent=true`, which on a laptop asleep at

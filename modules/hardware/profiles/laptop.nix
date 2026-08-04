@@ -14,28 +14,9 @@
         # a dock plugged into a machine that lacks it is simply inert.
         hardware.bolt.enable = true;
 
-        # The reader in Tungsten's power button is a Goodix 27c6:63ac, which
-        # upstream libfprint already drives through goodixmoc — no TOD shim and
-        # no vendor blob. Left unconditional because the daemon is D-Bus
-        # activated and simply finds no device on a laptop without a reader.
-        #
-        # This cannot reach the disk. LUKS is unlocked from the initrd, where
-        # fprintd does not exist; the FIDO2 YubiKey remains the only key to the
-        # root filesystem. What follows is for prompts on an already-running
-        # system.
-        fprintd.enable = true;
-
         tuned.enable = lib.mkDefault true;
         upower.enable = true;
       };
-
-      # `fprintAuth` defaults to `services.fprintd.enable`, and that default
-      # lands on every PAM service the host defines — 27 of them here, sshd
-      # among them. A finger cannot be presented down an ssh connection, so
-      # there the module is pure latency on the auth path. Everywhere else is a
-      # local prompt, which is exactly where offering the reader is the point,
-      # so the default is left alone rather than enumerated.
-      security.pam.services.sshd.fprintAuth = false;
 
       # Intel's wifi parts ship with power_save=0 and handle runtime PM fine.
       boot.extraModprobeConfig = ''
