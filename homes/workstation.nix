@@ -1,4 +1,5 @@
 {
+  config,
   pkgs,
   ...
 }:
@@ -9,17 +10,27 @@
 
   config = {
     programs = {
+      claude-code.enable = true;
       fish.shellAliases = {
         yk-restart = "gpg-connect-agent killagent /bye && gpg-connect-agent \"scd serialno\" \"learn --force\" /bye && gpg --card-status";
         yk-resocket = "gpgconf --kill gpg-agent; systemctl --user restart gpg-agent.socket gpg-agent-ssh.socket gpg-agent-extra.socket";
       };
-      claude-code.enable = true;
+      obsidian = {
+        enable = true;
+        cli.enable = true;
+      };
+      firefix = {
+        enable = true;
+        configPath = "${config.xdg.configHome}/mozilla/firefox"
+      };
     };
 
     home.packages = with pkgs; [
+      bitwarden-desktop
       firefox
-      vesktop
       spotify
+      vesktop
+      vlc
     ];
 
     programs = {
