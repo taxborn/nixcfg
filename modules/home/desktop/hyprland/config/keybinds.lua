@@ -6,6 +6,7 @@ local menu     = "wofi --show drun"
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("firefox"))
 hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd("zeditor"))
+hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("obsidian"))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
 
 hl.bind(mainMod .. " + Q", hl.dsp.window.close())
