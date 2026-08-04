@@ -408,6 +408,24 @@ in
           }
         ) cfg.client.repositories;
       };
+
+      # The packaged timer is `OnCalendar=daily` with `Persistent=true`, which
+      # is the right shape and should stay: on a laptop asleep at midnight the
+      # catch-up run is the only run that ever happens. The cost is that it
+      # fires the instant the machine wakes — on Tungsten it last started in the
+      # same second as resume — and then spends a minute and a half competing
+      # with a desktop that is still coming up.
+      #
+      # The fix is priority, not schedule. borg is I/O bound, so idle I/O
+      # scheduling is what does the work here; the CPU settings just keep the
+      # compression from being felt. The backup still starts promptly, which is
+      # what a machine that is rarely awake needs, it simply yields to anything
+      # a person is waiting on.
+      systemd.services.borgmatic.serviceConfig = {
+        Nice = 19;
+        IOSchedulingClass = "idle";
+        CPUSchedulingPolicy = "idle";
+      };
     })
 
     (lib.mkIf cfg.server.enable {
