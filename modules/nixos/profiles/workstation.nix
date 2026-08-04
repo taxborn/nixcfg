@@ -27,6 +27,12 @@
 
     services = {
       blueman.enable = lib.mkIf config.hardware.bluetooth.enable true;
+
+      # Firmware updates over LVFS. This is not a nicety on the laptop: custom
+      # Secure Boot keys rule out the vendor's own updater, so UEFI capsules
+      # through fwupd are the only route to a current BIOS.
+      fwupd.enable = true;
+
       gnome.gnome-keyring.enable = true;
       gvfs.enable = true; # Mount, trash, etc.
       libinput.enable = true;
