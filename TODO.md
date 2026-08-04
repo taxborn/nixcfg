@@ -2,9 +2,9 @@
 
 Things around the config I want to remember to do.
 
-This is the rebuild plan. Argon, Carbon, Helium, and Tungsten run this config.
-Uranium is the last one left on the old config; it has a host config here, but
-the machine has not been formatted yet.
+This is the rebuild plan, and the rebuild itself is done: all five hosts —
+Argon, Carbon, Helium, Tungsten, and Uranium — are formatted and running this
+config. What is left is services and the graphical half of the workstations.
 
 Ordering rules, in priority:
 
@@ -88,10 +88,10 @@ Ordered by pain-if-absent.
 
 ## Phase 7 — workstations
 
-Was the largest gap; now it is mostly the desktop. Storage, boot, hardware, and
-backups are in place for both hosts, and Tungsten is installed and running them.
-What is left is the graphical half on both, Uranium's install, and Uranium's
-secrets bootstrap.
+Was the largest gap; now it is nearly closed. Storage, boot, hardware, backups,
+and secrets are in place on both hosts, and both are installed and running this
+config. What is left is theming and the parts of the desktop that are installed
+but unconfigured.
 
 Landed:
 
@@ -123,41 +123,43 @@ Landed:
       `raidSize = "920G"` on the PC801 clears that with room to spare.
 - [x] Format Tungsten. RAID1 is assembled across both NVMes, both ESPs are
       mounted, and Secure Boot is enrolled and enforcing with a measured UKI.
+- [x] Format Uranium. On the tailnet at 100.64.0.0 and running the same
+      revision as every other host.
+- [x] Home: the Hyprland config tree (`modules/home/desktop/hyprland`, with the
+      lua split), plus ghostty and zed. `programs/hyprland.nix` installs waybar,
+      wofi, mako and the hypr* tools, and enables hyprlock and hypridle.
 
 Still missing:
 
 - [ ] Flake input: `catppuccin`.
-- [ ] NixOS: `desktop/hyprland`, sddm, claude-desktop. Note that sddm may be
-      moot — the workstation profile currently starts Hyprland from fish's
-      login shell on VT1 instead.
-- [ ] Home: hyprland config, waybar, wofi, mako, hypridle, neovim config tree.
-      Ghostty and Zed have landed.
-- [ ] Format Uranium.
+- [ ] NixOS: sddm and claude-desktop. sddm may be moot — the workstation
+      profile starts Hyprland from fish's login shell on VT1 instead.
+- [ ] Configure what is merely installed: waybar, wofi and mako all ship as
+      packages with no config of their own, so they run at their defaults.
+      Neovim is still an unconfigured `environment.systemPackages` entry from
+      `base`.
+- [ ] `security.pam.services.hyprlock` is not declared. home-manager's
+      `programs.hyprlock` writes config but PAM is a NixOS-level concern, so
+      hyprlock is falling back to another service's stack rather than its own.
 
 ### secrets bootstrap, per workstation
 
-**blocker** for backups, and for the machine reaching the tailnet unattended.
-Cleared for Tungsten; Uranium's root key still does not exist, so it is not yet
-a recipient of anything under `secrets/`:
+Cleared on both. Each host's root key is in `keys/`, both are in the `hosts`
+list in `secrets/secrets.nix`, both have borg passphrase and SSH key material
+under `secrets/borg/`, and Helium's `authorizedKeys` admits both:
 
-- [x] Tungsten: root key collected into `keys/root_tungsten.pub`, host added to
-      the `hosts` list in `secrets/secrets.nix`, rekeyed, borg key material
-      provisioned. Backups are running.
-- [ ] Uranium: install, then collect `/etc/ssh/ssh_host_ed25519_key.pub` into
-      `keys/root_uranium.pub`, add the host to the `hosts` list in
-      `secrets/secrets.nix`, rekey, and rebuild.
-- [ ] Uranium: provision borg key material — steps 1-4 of the backups module
-      README, including the `authorizedKeys` entry on Helium. Until this lands,
-      activation reports a failed decrypt and borgmatic has no passphrase.
+- [x] Tungsten: root key, secrets recipient, borg material. Backups running.
+- [x] Uranium: same, and Helium authorizes its borg key.
 
-The old note here said the yubikey age identity "doesn't exist on a freshly
-formatted host." Half true now: `modules/home/programs/yubikey.nix` writes it
-declaratively, but home-manager runs as a systemd service, well after
-`agenixInstall` in the activation script — so it is still absent for the first
-activation. The sharper problem is that `/run/agenix` is tmpfs, so falling
-through to the yubikey identity means the key has to be present and PIN-unlocked
-on *every* boot before tailscaled can read its auth key. Getting the host key
-into `secrets.nix` is what actually fixes this.
+Resolved, and worth keeping for the next host. The concern was the yubikey age
+identity: `modules/home/programs/yubikey.nix` writes it declaratively, but
+home-manager runs as a systemd service well after `agenixInstall` in the
+activation script, so it is absent for the very first activation. The sharper
+edge was that `/run/agenix` is tmpfs, so falling through to the yubikey identity
+would mean the key had to be present and PIN-unlocked on *every* boot before
+tailscaled could read its auth key. Getting each host key into `secrets.nix` is
+what fixed it, and both workstations are in that list now — so this only bites
+again in the window between installing a sixth host and rekeying for it.
 
 Secure Boot needs no bootstrap step any more. The old note — install under
 systemd-boot, run `sbctl create-keys`, enroll, then flip to lanzaboote — is
