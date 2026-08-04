@@ -25,7 +25,17 @@
     };
 
     services = {
-      fstrim.enable = true;
+      # Monthly rather than the weekly default. Every btrfs mount in
+      # `modules/disko` carries `discard=async` and every LUKS volume allows
+      # discards, so freed extents are already being trimmed continuously and
+      # this pass mostly duplicates that — on Tungsten it still spent over two
+      # minutes of I/O finding leftovers. Kept rather than dropped because it
+      # covers what async discard does not: space the filesystem never
+      # allocated in the first place.
+      fstrim = {
+        enable = true;
+        interval = "monthly";
+      };
       smartd = {
         enable = lib.mkDefault true;
         autodetect = true;
