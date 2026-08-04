@@ -29,6 +29,12 @@
 
     environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
+    fonts.packages = with pkgs; [
+      noto-fonts
+      noto-fonts-color-emoji
+      nerd-fonts.jetbrains-mono
+    ];
+
     services = {
       blueman.enable = lib.mkIf config.hardware.bluetooth.enable true;
       fwupd.enable = true;

@@ -25,7 +25,6 @@
         enable = true;
         configPath = "${config.xdg.configHome}/mozilla/firefox";
       };
-      ghostty.enable = true;
       zed-editor.enable = true;
     };
 
@@ -41,6 +40,7 @@
     myHome = {
       desktop.hyprland.enable = true;
       programs = {
+        ghostty.enable = true;
         gpg.agent.enable = true;
         hyprland.enable = true;
         yubikey.enable = true;
