@@ -18,8 +18,6 @@ What is left. Everything here is open — finished work is in git history.
 ## Workstation desktop
 
 - [ ] Flake input: `catppuccin`.
-- [ ] sddm and claude-desktop. sddm may be moot: the workstation profile starts
-      Hyprland from fish's login shell on VT1 instead.
 - [ ] Configure waybar, wofi and mako. All three ship as bare packages today and
       run at their defaults. Neovim is still an unconfigured `systemPackages`
       entry from `base`.
@@ -29,18 +27,6 @@ What is left. Everything here is open — finished work is in git history.
 
 ## Tungsten
 
-- [ ] BIOS `PrimaryBattChargeCfg` reads `Express`, not Custom, so the stored
-      `CustomChargeStart=50` / `CustomChargeStop=90` are inert and the pack
-      fast-charges to 100%. Set it to `Custom`. Sysfs reports 50/90 either way —
-      `dell_laptop` shows the stored values, not the active mode — so it is not
-      evidence the limit is applied.
-- [ ] BIOS `Absolute` → `DisableAbsolute`. A firmware-resident persistence agent
-      that exists to inject itself into a running Windows install; dead weight
-      here. Not `PermanentlyDisabled`, which is irreversible and buys nothing.
-- [ ] BIOS `BIOSConnect` → Disabled, and `FOTA` with it. The firmware's own
-      HTTPS client for Dell-hosted recovery; the CVE-2021-2157x chain was this
-      path, and fwupd covers updates.
-- [ ] BIOS `FirmwareTamperDet` is `Silent` → `Enabled`, so detection says so.
 - [ ] Battery replacement, eventually. 40.5 Wh of an 84.3 Wh design pack, which
       halves every runtime number on this machine.
 
@@ -61,6 +47,17 @@ Decisions that are cheap to forget and expensive to redo.
   is a USB YubiKey, so that locks the machine out of its own root filesystem.
 - Do not lower `TelemetryAccessLvl` from `Full`. It plausibly gates the Dell
   Data Vault that `dell_wmi_ddv` reads for fan RPM and battery telemetry.
+- Do not disable `CapsuleFirmwareUpdate`. It reads like it belongs with
+  `BIOSConnect` and `FOTA`, which are off, but it is the UEFI capsule path fwupd
+  itself delivers through — turning it off removes the update route that was the
+  reason for disabling Dell's.
+- Do not disable `MSUefiCA`. The NVIDIA option ROM is signed by the Microsoft
+  third-party UEFI CA, so dropping it from db risks a machine that will not POST.
+- Do not enable `AdvBatteryChargeCfg` or `PeakShiftCfg`. Either one overrides
+  `PrimaryBattChargeCfg`, silently undoing the 50/90 charge limit.
+- BIOS writes through `dell_wmi_sysman` need the admin password first: as root,
+  write it to `authentication/Admin/current_password`, then write attribute
+  values. Without it every write returns `EACCES`.
 - Clear the firmware PK (Expert Key Management → Delete All Keys) *before* ever
   reinstalling a lanzaboote host. `/var/lib/sbctl` lives on the encrypted root,
   so formatting destroys the keys and `autoEnrollKeys` needs setup mode.
