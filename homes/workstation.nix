@@ -19,24 +19,28 @@
         enable = true;
         cli.enable = true;
       };
-      firefix = {
+      firefox = {
         enable = true;
-        configPath = "${config.xdg.configHome}/mozilla/firefox"
+
+        # home.stateVersion is below 26.05, so the default is still the legacy
+        # `.mozilla/firefox`. The profile here already lives under XDG, so this
+        # has to be set explicitly or home-manager manages a directory that does
+        # not exist. Any host that adopts this with an existing `~/.mozilla`
+        # needs that directory moved by hand first — the option does not migrate
+        # it, and native messaging hosts do not follow either.
+        configPath = "${config.xdg.configHome}/mozilla/firefox";
       };
+
+      ghostty.enable = true;
+      zed-editor.enable = true;
     };
 
     home.packages = with pkgs; [
       bitwarden-desktop
-      firefox
       spotify
       vesktop
       vlc
     ];
-
-    programs = {
-      zed-editor.enable = true;
-      ghostty.enable = true;
-    };
 
     home.sessionVariables.NIXOS_OZONE_WL = "1";
 
