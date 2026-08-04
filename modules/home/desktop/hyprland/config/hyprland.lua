@@ -10,6 +10,8 @@ hl.on("hyprland.start", function()
     hl.exec_cmd(terminal)
     hl.exec_cmd("waybar & hyprpaper")
     hl.exec_cmd("systemctl --user start hyprpolkitagent")
+    hl.exec_cmd("[workspace special:terminal silent] ghostty -e tmux new-session -A -s main")
+    hl.exec_cmd("[workspace special:discord silent] vesktop")
 end)
 
 hl.env("XCURSOR_SIZE", "24")
@@ -28,4 +30,10 @@ hl.config({
             natural_scroll = false,
         },
     },
+})
+
+hl.window_rule({
+    name      = "discord-special-workspace",
+    match     = { class = "vesktop" },
+    workspace = "special:discord",
 })

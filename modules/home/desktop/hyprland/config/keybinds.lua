@@ -29,10 +29,20 @@ for i = 1, 10 do
     hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
 end
 
---
 hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("terminal"))
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:terminal" }))
-hl.bind("F13", hl.dsp.workspace.toggle_special("terminal"))
+
+hl.bind(mainMod .. " + D", hl.dsp.workspace.toggle_special("discord"))
+hl.bind(mainMod .. " + SHIFT + D", hl.dsp.window.move({ workspace = "special:discord" }))
+
+-- The Q11's F13-F17 never arrive as F13-F17. The base layout only names F1-F12
+-- (srvr_ctrl(fkey2vt)), so xkb's inet(evdev) rules fill keycodes 191-195 with
+-- these vendor keysyms instead. Bind the keysym, not the label on the keycap.
+hl.bind("XF86Tools", hl.dsp.workspace.toggle_special("terminal")) -- F13
+hl.bind("XF86Launch5", hl.dsp.workspace.toggle_special("discord")) -- F14
+-- hl.bind("XF86Launch6", ...) -- F15
+-- hl.bind("XF86Launch7", ...) -- F16
+-- hl.bind("XF86Launch8", ...) -- F17
 
 -- Move/resize windows with mainMod + LMB/RMB and dragging
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
