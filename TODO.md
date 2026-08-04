@@ -41,9 +41,6 @@ What is left. Everything here is open — finished work is in git history.
       HTTPS client for Dell-hosted recovery; the CVE-2021-2157x chain was this
       path, and fwupd covers updates.
 - [ ] BIOS `FirmwareTamperDet` is `Silent` → `Enabled`, so detection says so.
-- [ ] Re-measure awake draw. It was 12-14 W with the dGPU pinned on. RTD3 works
-      now (`power/control` reads `auto`, `runtime_status` `suspended`) but the
-      wattage has not been checked since.
 - [ ] Battery replacement, eventually. 40.5 Wh of an 84.3 Wh design pack, which
       halves every runtime number on this machine.
 
