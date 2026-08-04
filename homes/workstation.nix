@@ -21,16 +21,8 @@
       };
       firefox = {
         enable = true;
-
-        # home.stateVersion is below 26.05, so the default is still the legacy
-        # `.mozilla/firefox`. The profile here already lives under XDG, so this
-        # has to be set explicitly or home-manager manages a directory that does
-        # not exist. Any host that adopts this with an existing `~/.mozilla`
-        # needs that directory moved by hand first — the option does not migrate
-        # it, and native messaging hosts do not follow either.
         configPath = "${config.xdg.configHome}/mozilla/firefox";
       };
-
       ghostty.enable = true;
       zed-editor.enable = true;
     };
@@ -46,7 +38,6 @@
 
     myHome = {
       desktop.hyprland.enable = true;
-
       programs = {
         gpg.agent.enable = true;
         hyprland.enable = true;
