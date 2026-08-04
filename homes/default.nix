@@ -23,12 +23,15 @@
       };
       home-manager.enable = true;
       ripgrep.enable = true;
+      fd.enable = true;
     };
 
     myHome.programs = {
+      fzf.enable = true;
       git.enable = true;
       gpg.enable = true;
       ssh.enable = true;
+      yazi.enable = true;
     };
   };
 }

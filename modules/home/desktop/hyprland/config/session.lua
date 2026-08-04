@@ -1,9 +1,3 @@
-require("keybinds")
-require("monitors")
-require("decorations")
-require("animations")
-require("rules")
-
 hl.on("hyprland.start", function()
     hl.exec_cmd("waybar & hyprpaper")
     hl.exec_cmd("systemctl --user start hyprpolkitagent")
