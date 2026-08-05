@@ -21,7 +21,8 @@
     programs = {
       hyprland.enable = true;
       fish.loginShellInit = ''
-        if test -z "$WAYLAND_DISPLAY"; and test "$XDG_VTNR" = 1
+        # XDG_VTNR leaks into SSH sessions here, so key off the tty instead.
+        if test -z "$WAYLAND_DISPLAY"; and test -z "$SSH_CONNECTION"; and test (tty) = /dev/tty1
             start-hyprland
         end
       '';

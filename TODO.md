@@ -4,10 +4,15 @@ What is left. Everything here is open — finished work is in git history.
 
 ## Services
 
-- [ ] Repoint the GitHub self-link in `README.md` (the reference-commit link).
+- [X] Repoint the GitHub self-link in `README.md` (the reference-commit link).
       The other `github.com` links credit other people's configs and stay.
-- [ ] forgejo-runner (Argon/Helium), registry-deploy.
-- [ ] Glance.
+- [X] forgejo-runner (Argon/Helium).
+- [ ] registry-deploy. Note that the runners cannot `docker build`: job
+      containers get no container socket (`container.docker_host = "-"`), which
+      is deliberate — see the comment on that setting in
+      `modules/nixos/services/forgejo/runner.nix` before reaching for the
+      obvious fix.
+- [X] Glance.
 - [ ] atproto stack: PDS + gatekeeper (the only podman consumer), tangled-knot,
       tangled-spindle.
 - [ ] Minecraft.
@@ -24,11 +29,6 @@ What is left. Everything here is open — finished work is in git history.
 - [ ] Declare `security.pam.services.hyprlock`. home-manager's
       `programs.hyprlock` writes config, but PAM is a NixOS-level concern, so
       the lock screen is authenticating against some other service's stack.
-
-## Tungsten
-
-- [ ] Battery replacement, eventually. 40.5 Wh of an 84.3 Wh design pack, which
-      halves every runtime number on this machine.
 
 Every BIOS attribute is readable and writable from the OS through
 `dell_wmi_sysman`:
@@ -65,6 +65,6 @@ Decisions that are cheap to forget and expensive to redo.
   so there was no drain problem to solve. It would cost ~36 GiB of `nodatacow`
   swap on the mirror plus a `resume_offset` read off the created file and pasted
   into `kernelParams` — imperative state this config works to avoid.
-- Fingerprint: the reader cannot enrol. Supported by libfprint, but it measures
+- Fingerprint: the reader cannot enroll. Supported by libfprint, but it measures
   50 coverage against a hardcoded threshold of 65, and the thresholds are
   CRC-protected constants. See `e1141ed`.

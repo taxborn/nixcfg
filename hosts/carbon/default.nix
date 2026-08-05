@@ -18,9 +18,20 @@
         sqliteDatabases.forgejo = "/var/lib/forgejo/data/forgejo.db";
         extraExcludes = [
           "/var/lib/forgejo/data/indexers"
+          # Build outputs, reproducible by re-running the job that produced
+          # them, and the one part of Actions state large enough to bloat an
+          # archive. Job logs are not excluded: they are compressed text and
+          # they are the record of why a run failed.
+          "/var/lib/forgejo/data/actions_artifacts"
         ];
       };
-      forgejo.enable = true;
+      forgejo = {
+        enable = true;
+        runners = {
+          argon = { };
+          helium = { };
+        };
+      };
       glance.enable = true;
       vaultwarden.enable = true;
     };

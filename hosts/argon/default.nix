@@ -12,8 +12,8 @@
   myNixOS = {
     profiles.server.enable = true;
     services.backups.client.enable = true;
+    services.forgejo.runner.enable = true;
   };
-
 
   myHardware = {
     intel.cpu.enable = true;

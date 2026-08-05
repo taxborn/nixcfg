@@ -37,11 +37,50 @@ let
     "2a06:98c0::/29"
     "2c0f:f248::/32"
   ];
+
+  cfg = config.myNixOS.services.caddy;
+
+  # Per-node blocks for the tailscale plugin, nested inside its global options
+  # block below. The plugin only reads node configuration from there, so a
+  # tailnet-bound vhost cannot carry its own — hence the option.
+  tailscaleNodes = lib.concatStringsSep "\n" (
+    lib.mapAttrsToList (name: conf: ''
+      ${name} {
+        ${conf}
+      }
+    '') cfg.tailscaleNodes
+  );
 in
 {
-  options.myNixOS.services.caddy.enable = lib.mkEnableOption "Caddy web server.";
+  options.myNixOS.services.caddy = {
+    enable = lib.mkEnableOption "Caddy web server.";
 
-  config = lib.mkIf config.myNixOS.services.caddy.enable {
+    tailscaleNodes = lib.mkOption {
+      type = lib.types.attrsOf lib.types.lines;
+      default = { };
+      example = lib.literalExpression ''
+        { paperless = "ephemeral false"; }
+      '';
+      description = ''
+        Node name -> raw Caddyfile directives for the caddy-tailscale plugin.
+
+        A vhost reaches one of these with `bind tailscale/<name>`, which
+        replaces that site's listeners with a userspace Tailscale node of its
+        own. The site is then reachable at `<name>.<tailnet>` and nowhere else:
+        there is no socket on any of the host's real interfaces to connect to,
+        so it is off the internet by construction rather than by firewall rule.
+
+        Directives here override the plugin's global defaults for that one node.
+        The one worth setting on anything long-lived is `ephemeral false`, since
+        an ephemeral node is deleted from the tailnet whenever Caddy stops and
+        has to re-register on each start — which needs a valid auth key every
+        time, and hands out a `-1` suffixed name if the old node has not been
+        reaped yet.
+      '';
+    };
+  };
+
+  config = lib.mkIf cfg.enable {
     age.secrets.tailscaleCaddyAuth.file = "${self}/secrets/tailscale/caddy.age";
 
     networking.firewall.allowedTCPPorts = [
@@ -65,6 +104,7 @@ in
         globalConfig = ''
           tailscale {
             ephemeral true
+            ${tailscaleNodes}
           }
 
           acme_dns cloudflare {env.CF_API_TOKEN}

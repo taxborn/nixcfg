@@ -127,6 +127,38 @@ in
           SSH_CREATE_AUTHORIZED_KEYS_FILE = false;
         };
 
+        actions = {
+          # On by default since 1.21, pinned because it is load-bearing now
+          # rather than incidental: `runners` in actions.nix registers runners
+          # against this instance and they have nothing to poll without it.
+          ENABLED = true;
+
+          # Where a bare `uses:` resolves. `uses: actions/checkout@v6` becomes
+          # https://data.forgejo.org/actions/checkout — Forgejo's own mirror of
+          # actions known to work here and published under a free licence.
+          #
+          # This is the stock value, and it is worth stating rather than
+          # inheriting, because the failure mode of pointing it somewhere with
+          # open registration is quiet: `uses: foo/bar@main` would run whatever
+          # is at that path, and a stranger who can create `foo/bar` there
+          # chooses what our workflows execute.
+          DEFAULT_ACTIONS_URL = "https://data.forgejo.org";
+
+          # Down from 90. Artifacts land in
+          # /var/lib/forgejo/data/actions_artifacts, which is the one piece of
+          # Actions state large enough to matter to Carbon's disk — and it is
+          # excluded from the borg set (see hosts/carbon) because a build
+          # artifact is reproducible by re-running the job that made it. Thirty
+          # days is long enough to fetch something from a run you have half
+          # forgotten and short enough that a runaway workflow cannot quietly
+          # fill the disk over a quarter.
+          #
+          # LOG_RETENTION_DAYS is left at its 365-day default: job logs are
+          # zstd-compressed text, they are the record of *why* a run failed,
+          # and they cost almost nothing to keep.
+          ARTIFACT_RETENTION_DAYS = 30;
+        };
+
         cron = {
           ENABLED = true;
           RUN_AT_START = true;
@@ -172,8 +204,23 @@ in
         };
 
         service = {
-          DISABLE_REGISTRATION = false;
-          ALLOW_ONLY_INTERNAL_REGISTRATION = true;
+          # Closed, because Actions runners exist now. An open signup form on
+          # an instance with runners is an unauthenticated path to code
+          # execution on Argon and Helium: `ENABLE_PUSH_CREATE_USER` above lets
+          # any account create a repository by pushing to it, and a repository
+          # is all a workflow needs. Nothing about the runner configuration can
+          # close that hole from its own side — the account is legitimate and
+          # the workflow is in a repository its owner controls.
+          #
+          # This replaces `ALLOW_ONLY_INTERNAL_REGISTRATION = true`, which was
+          # never the guard it reads like: it forces signups through Forgejo's
+          # own form rather than a third-party OAuth provider, and does nothing
+          # to stop the signup itself. With registration off it has no effect
+          # at all, so it is gone rather than left as reassuring noise.
+          #
+          # Accounts are made with `forgejo admin user create` instead. See the
+          # README for how to run that against this instance's config.
+          DISABLE_REGISTRATION = true;
           ENABLE_NOTIFY_MAIL = true;
         };
 
@@ -217,12 +264,23 @@ in
       shell = "${pkgs.shadow}/bin/nologin";
     };
 
-    # The listen port is deliberately absent from `allowedTCPPorts`. The
-    # tailscale interface is in `trustedInterfaces`, so tailnet peers reach the
-    # listener while the firewall drops it on the public interface — tailnet
-    # only, without binding to a specific address. Binding to the tailnet
-    # address instead would be the other way to get there, and a worse one: it
-    # makes Forgejo fail to start whenever tailscaled has not yet assigned it.
+    # The listen port is deliberately absent from `allowedTCPPorts`, and with
+    # `HTTP_ADDR` on loopback that is belt and braces rather than the boundary:
+    # there is no socket on a real interface for the firewall to have an opinion
+    # about. Caddy is the only local client.
+    #
+    # Tailnet peers — the Actions runners on Argon and Helium — reach the forge
+    # through a second Caddy vhost bound to a userspace Tailscale node, in
+    # hosts/carbon/proxy.nix. That is what `networkMap.forgejo.tailnetDomain`
+    # names. Two alternatives were available and are worse:
+    #
+    #   - Dropping HTTP_ADDR so Forgejo binds 0.0.0.0 and letting the firewall
+    #     confine it. The tailscale interface is in `trustedInterfaces`, so this
+    #     does work, and it leaves the forge listening on Carbon's public
+    #     address with nothing but a firewall rule in front of it.
+    #   - Binding HTTP_ADDR to the tailnet address. Forgejo then fails to start
+    #     whenever tailscaled has not yet assigned it, and Caddy's public vhost
+    #     has to proxy to a tailnet address to reach a service on its own host.
 
   };
 }
