@@ -1,0 +1,138 @@
+name: build
+
+# Every job here runs on the `nix` label, which is a Nix image carrying git but
+# no node — see the `labels` option in modules/nixos/services/forgejo/runner.nix.
+# Nothing below may therefore be a `uses:` step, and the checkout is done by
+# hand. It is the same six lines in each job because there is no way to factor
+# them out: a local composite action would itself have to be checked out first.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  # The image ships flakes turned off. An env var rather than a flag on each
+  # invocation, because it also reaches the nix that `nix build` re-execs.
+  NIX_CONFIG: |
+    experimental-features = nix-command flakes
+
+jobs:
+  hosts:
+    name: discover hosts
+    runs-on: nix
+    outputs:
+      hosts: ${{ steps.list.outputs.hosts }}
+
+    steps:
+      - name: check out
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git init -q .
+          git remote add origin "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
+          if [ -n "$TOKEN" ]; then
+            git config http.extraheader \
+              "Authorization: Basic $(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)"
+          fi
+          git fetch --depth 1 origin "$GITHUB_SHA" || git fetch --depth 1 origin "$GITHUB_REF"
+          git checkout -q FETCH_HEAD
+
+      - name: list hosts
+        id: list
+        run: |
+          set -euo pipefail
+
+          # Read out of the flake rather than listed here, so a host added to
+          # modules/flake/hosts.nix is covered without touching this file.
+          # attrNames does not force the configurations, so this stays cheap.
+          hosts="$(nix eval --json .#nixosConfigurations --apply builtins.attrNames)"
+          echo "$hosts"
+          echo "hosts=$hosts" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: ${{ matrix.host }}
+    needs: hosts
+    runs-on: nix
+
+    strategy:
+      # One broken host should not hide the state of the other four.
+      fail-fast: false
+      matrix:
+        host: ${{ fromJSON(needs.hosts.outputs.hosts) }}
+
+    steps:
+      - name: check out
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git init -q .
+          git remote add origin "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
+          if [ -n "$TOKEN" ]; then
+            git config http.extraheader \
+              "Authorization: Basic $(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)"
+          fi
+          git fetch --depth 1 origin "$GITHUB_SHA" || git fetch --depth 1 origin "$GITHUB_REF"
+          git checkout -q FETCH_HEAD
+
+      - name: build
+        run: |
+          set -euo pipefail
+
+          # The out-link is what makes the shared store worth having. It lands
+          # inside the volume, so the indirect GC root Nix registers for it
+          # survives the container, and the previous run's closure is still a
+          # root when the next run's `nix store gc` comes around — an unchanged
+          # host then builds with no downloads at all.
+          #
+          # A host removed from the flake leaves its link behind, pinning a
+          # closure nothing will ask for again. `podman volume rm` is the reset.
+          mkdir -p /nix/var/ci-roots
+          nix build --print-build-logs \
+            --out-link "/nix/var/ci-roots/${{ matrix.host }}" \
+            ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel"
+
+      - name: collect garbage
+        if: always()
+        # Bounds the shared volume: everything the five current closures need is
+        # rooted by the links above, and the rest — superseded closures, build
+        # inputs nothing points at — goes. Never allowed to turn a green build
+        # red; a store that fails to shrink is a disk-space problem for the host,
+        # not a verdict on the commit.
+        continue-on-error: true
+        run: nix store gc
+
+  lint:
+    name: lint
+    runs-on: nix
+
+    steps:
+      - name: check out
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          git init -q .
+          git remote add origin "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
+          if [ -n "$TOKEN" ]; then
+            git config http.extraheader \
+              "Authorization: Basic $(printf 'x-access-token:%s' "$TOKEN" | base64 -w0)"
+          fi
+          git fetch --depth 1 origin "$GITHUB_SHA" || git fetch --depth 1 origin "$GITHUB_REF"
+          git checkout -q FETCH_HEAD
+
+      # `--inputs-from .` resolves `nixpkgs#` against this flake's locked
+      # nixpkgs, so the linters here are the same builds as the ones on a
+      # workstation and CI cannot disagree with `nix run nixpkgs#...` locally
+      # over a version nobody chose.
+      - name: nixfmt
+        run: nix run --inputs-from . nixpkgs#nixfmt -- --check $(git ls-files '*.nix')
+
+      - name: deadnix
+        run: nix run --inputs-from . nixpkgs#deadnix -- --fail .
+
+      - name: statix
+        run: nix run --inputs-from . nixpkgs#statix -- check .

@@ -8,7 +8,7 @@
   networking.hostName = "tungsten";
   system.stateVersion = "25.11";
 
-    environment.systemPackages = [ pkgs.brightnessctl ];
+  environment.systemPackages = [ pkgs.brightnessctl ];
 
   myNixOS = {
     profiles.workstation.enable = true;

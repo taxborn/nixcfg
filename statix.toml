@@ -1,0 +1,6 @@
+# `repeated_keys` is off because it is wrong for NixOS modules. It reads
+# `services.tailscale.enableSSH` and `services.paperless.enable` in one host
+# file as a missed nesting opportunity, but writing option paths flat is how
+# every NixOS config is written and how the option names themselves read.
+# Collapsing them to satisfy the lint would make the files harder to grep.
+disabled = ["repeated_keys"]

@@ -19,6 +19,21 @@ let
   # without pinning a uid. Every consumer below computes it from `id -u`.
   socketPath = "/run/user/$(id -u)/podman/podman.sock";
 
+  # A Podman named volume holding /nix across jobs, so a workflow that builds a
+  # NixOS closure does not re-fetch it from cache.nixos.org on every run. On
+  # first mount the volume is empty and Podman copies the image's own /nix into
+  # it; from then on the image's copy is masked by whatever the volume has
+  # accumulated.
+  #
+  # That masking is why the image reference is in the name. Bumping `nixImage`
+  # with a fixed volume name would leave every job running the *old* Nix out of
+  # the volume, because there is nothing left to copy up into — a silent no-op
+  # rather than an error. Deriving the name means a bump starts a fresh store,
+  # and the stale volume is left behind for `podman volume rm` to reclaim.
+  nixStoreVolume = "forgejo-nix-store-${
+    lib.replaceStrings [ "/" ":" "." ] [ "-" "-" "-" ] (lib.toLower cfg.nixImage)
+  }";
+
   settingsFormat = pkgs.formats.yaml { };
 
   baseSettings = {
@@ -31,8 +46,7 @@ let
     };
 
     runner = {
-      capacity = cfg.capacity;
-      labels = cfg.labels;
+      inherit (cfg) capacity labels;
 
       # Down from the three-hour default, which the upstream security notes
       # single out: with capacity 1, one job that never finishes holds the only
@@ -82,6 +96,16 @@ let
       # container in the first place: that comes from DOCKER_HOST in the unit
       # below, which "-" leaves untouched.
       docker_host = "-";
+
+      # Note the scope: the runner has one `options` for all job containers, not
+      # one per label, so the shared store is mounted into node-image jobs too —
+      # writable, as it has to be. Any job on this host can therefore write into
+      # the store that a later job builds against, which is a real weakening of
+      # the isolation the rest of this block is buying. It is acceptable here
+      # only because registration is closed and every workflow on this forge is
+      # already the same person's. It stops being acceptable the moment someone
+      # else can push a workflow.
+      options = lib.optionalString (cfg.nixImage != null) "--volume=${nixStoreVolume}:/nix";
     };
   };
 
@@ -186,7 +210,8 @@ in
       default = [
         "docker:docker://data.forgejo.org/oci/node:lts"
         "ubuntu-latest:docker://data.forgejo.org/oci/node:lts"
-      ];
+      ]
+      ++ lib.optional (cfg.nixImage != null) "nix:docker://${cfg.nixImage}";
       example = lib.literalExpression ''
         [ "docker:docker://data.forgejo.org/oci/node:lts" ]
       '';
@@ -203,10 +228,38 @@ in
         written against GitHub reach for that name, and Forgejo's node image
         carries enough of what they assume to be worth answering to it.
 
+        `nix` comes from `nixImage` and is the odd one out: it carries Nix and
+        git but no node, so no `uses:` step can run under it — the runner
+        executes JavaScript actions with the image's own node, and there isn't
+        one. Workflows on this label do their own checkout with git. That is the
+        trade for a job that starts with a working Nix rather than installing
+        one.
+
         Note that images are pulled once and then reused forever — the runner
         does the equivalent of `docker run`, not `docker pull`. A floating tag
         like `:lts` goes stale silently; `container.force_pull` through
         `settings` is the trade if that matters more than the bandwidth.
+      '';
+    };
+
+    nixImage = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      default = "docker.io/nixos/nix:2.35.1";
+      example = null;
+      description = ''
+        Image behind the `nix` label, and the thing the persistent store volume
+        is keyed on. `null` drops both — no `nix` label is offered and no volume
+        is mounted.
+
+        Fully qualified on purpose: Podman resolves short names against
+        `unqualified-search-registries`, and this reference is passed through to
+        it verbatim.
+
+        Pinned rather than floating because the runner pulls an image once and
+        then reuses it. A floating tag here would be worse than elsewhere: the
+        store volume is keyed on this string, so a tag that moves underneath the
+        same name would keep the volume — and the Nix inside it — frozen while
+        appearing to have been updated.
       '';
     };
 

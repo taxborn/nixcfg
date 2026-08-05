@@ -43,6 +43,34 @@ accounts are made by hand:
 forgejo --config /var/lib/forgejo/custom/conf/app.ini admin user create ...
 ```
 
+## ci
+
+[`.forgejo/workflows/build.yaml`](./.forgejo/workflows/build.yaml) builds every
+host on push to `main`, on pull requests, and on demand. The host list is read
+out of the flake rather than written in the workflow, so a host added to
+[modules/flake/hosts.nix](modules/flake/hosts.nix) is covered by the next run
+without a second edit. A `lint` job runs `nixfmt --check`, `deadnix` and
+`statix` against the same nixpkgs the flake is locked to.
+
+Jobs run on the `nix` label, a Nix image with git but no node — so no `uses:`
+step works there, and the workflow checks out with git by hand. Both runners
+mount a Podman named volume at `/nix`, which is what keeps a run from re-fetching
+the whole closure from cache.nixos.org: each job leaves a GC root for what it
+built, and `nix store gc` at the end of the job removes everything the current
+closures no longer need.
+
+Two things follow from that volume:
+
+- it is mounted into *every* job on the runner, writable, because the runner has
+  one `container.options` rather than one per label. Fine while this forge has a
+  single user; not fine if that changes.
+- bumping `myNixOS.services.forgejo.runner.nixImage` starts a fresh volume, since
+  the name is derived from the image reference. The old one keeps its disk until
+  `podman volume rm` — check with `podman volume ls` as `forgejo-runner`.
+
+Argon and helium have to be rebuilt before any of this runs; the `nix` label is
+declared by the runner at startup, and carbon does not create it.
+
 ## references
 
 - [aly.codes](https://github.com/alyraffauf/nixcfg)'s nixcfg
