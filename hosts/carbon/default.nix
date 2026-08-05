@@ -21,6 +21,7 @@
         ];
       };
       forgejo.enable = true;
+      glance.enable = true;
       vaultwarden.enable = true;
     };
   };

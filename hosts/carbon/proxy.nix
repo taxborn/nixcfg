@@ -32,5 +32,12 @@ in
         ${realIp}
       }
     '';
+
+    "mischief.town".extraConfig = ''
+      redir https://${networkMap.glance.domain}{uri} permanent
+    '';
+    ${networkMap.glance.domain}.extraConfig = ''
+      reverse_proxy localhost:${toString networkMap.glance.port}
+    '';
   };
 }
