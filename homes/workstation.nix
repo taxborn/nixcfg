@@ -50,6 +50,7 @@
     xdg.userDirs = {
       enable = true;
       createDirectories = true;
+      setSessionVariables = false;
       desktop = lib.mkDefault "${config.home.homeDirectory}/desktop";
       documents = lib.mkDefault "${config.home.homeDirectory}/documents";
       download = lib.mkDefault "${config.home.homeDirectory}/downloads";

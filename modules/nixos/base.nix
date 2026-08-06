@@ -56,9 +56,7 @@
         btop
         wget
         git
-        tmux
-        neovim
-        ghostty.terminfo
+        vim
       ];
     };
 
