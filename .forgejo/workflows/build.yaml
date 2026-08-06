@@ -82,11 +82,12 @@ jobs:
         run: |
           set -euo pipefail
 
-          # The out-link is what makes the shared store worth having. It lands
-          # inside the volume, so the indirect GC root Nix registers for it
-          # survives the container, and the previous run's closure is still a
-          # root when the next run's `nix store gc` comes around — an unchanged
-          # host then builds with no downloads at all.
+          # The out-link lands inside the volume, so the indirect GC root Nix
+          # registers for it outlives the container. Nothing here collects — see
+          # the pid-namespace note on `nixStoreVolume` in the runner module for
+          # why a job must not, now that three of them run at once. These roots
+          # are for `just runner-gc`, which runs with the runner stopped and uses
+          # them to keep the current closures while dropping everything else.
           #
           # A host removed from the flake leaves its link behind, pinning a
           # closure nothing will ask for again. `podman volume rm` is the reset.
@@ -94,16 +95,6 @@ jobs:
           nix build --print-build-logs \
             --out-link "/nix/var/ci-roots/${{ matrix.host }}" \
             ".#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel"
-
-      - name: collect garbage
-        if: always()
-        # Bounds the shared volume: everything the five current closures need is
-        # rooted by the links above, and the rest — superseded closures, build
-        # inputs nothing points at — goes. Never allowed to turn a green build
-        # red; a store that fails to shrink is a disk-space problem for the host,
-        # not a verdict on the commit.
-        continue-on-error: true
-        run: nix store gc
 
   lint:
     name: lint

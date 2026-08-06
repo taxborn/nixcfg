@@ -53,14 +53,20 @@ without a second edit. A `lint` job runs `nixfmt --check`, `deadnix` and
 `statix` against the same nixpkgs the flake is locked to.
 
 Jobs run on the `nix` label, a Nix image with git but no node — so no `uses:`
-step works there, and the workflow checks out with git by hand. Both runners
-mount a Podman named volume at `/nix`, which is what keeps a run from re-fetching
-the whole closure from cache.nixos.org: each job leaves a GC root for what it
-built, and `nix store gc` at the end of the job removes everything the current
-closures no longer need.
+step works there, and the workflow checks out with git by hand. Each runner takes
+three jobs at once and mounts one Podman named volume at `/nix` across all of
+them, which is what keeps a run from re-fetching the whole closure from
+cache.nixos.org.
 
-Two things follow from that volume:
+Three things follow from that volume:
 
+- **nothing inside a job may collect garbage.** Nix guards a running build with
+  `/nix/var/nix/temproots/<pid>` and assumes no two processes share a pid;
+  concurrent jobs are separate pid namespaces all counting from 1, so they
+  clobber each other's roots and a collector stops seeing live builds. Reclaim
+  from outside instead, with the runner stopped: `just runner-gc <host>`. The
+  out-links each job leaves under `/nix/var/ci-roots` are what let that keep the
+  current closures rather than emptying the store.
 - it is mounted into *every* job on the runner, writable, because the runner has
   one `container.options` rather than one per label. Fine while this forge has a
   single user; not fine if that changes.

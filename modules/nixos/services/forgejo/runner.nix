@@ -30,6 +30,21 @@ let
   # the volume, because there is nothing left to copy up into — a silent no-op
   # rather than an error. Deriving the name means a bump starts a fresh store,
   # and the stale volume is left behind for `podman volume rm` to reclaim.
+  #
+  # Nothing running inside a job may garbage-collect this store while `capacity`
+  # is above 1, and the reason is not obvious. Nix protects an in-flight build's
+  # paths with a temporary root at `/nix/var/nix/temproots/<pid>`, and deletes
+  # any file it finds there on the grounds that "there can be no two processes
+  # with the same pid" (src/libstore/gc.cc). Concurrent jobs are separate
+  # containers with separate pid namespaces, all counting up from 1 through the
+  # same sequence of steps, so two builds landing on one pid is ordinary rather
+  # than unlucky — and the second one deletes the first's roots, leaving a
+  # collector free to delete paths a live build is standing on.
+  #
+  # Builds alone are fine: the SQLite database and the per-path lock files are
+  # keyed on inodes, which cross namespaces correctly. It is only collection
+  # that breaks. So the store grows, and is reclaimed from outside a job, with
+  # the runner stopped — `just runner-gc <host>`.
   nixStoreVolume = "forgejo-nix-store-${
     lib.replaceStrings [ "/" ":" "." ] [ "-" "-" "-" ] (lib.toLower cfg.nixImage)
   }";
@@ -263,14 +278,32 @@ in
       '';
     };
 
+    storeVolume = lib.mkOption {
+      type = lib.types.nullOr lib.types.str;
+      readOnly = true;
+      default = if cfg.nixImage == null then null else nixStoreVolume;
+      defaultText = lib.literalMD "derived from `nixImage`";
+      description = ''
+        The Podman volume holding the shared `/nix`. Derived, not settable —
+        it exists so that tooling outside the closure can ask the flake for the
+        name instead of recomputing it. `just runner-gc` is the caller.
+      '';
+    };
+
     capacity = lib.mkOption {
       type = lib.types.ints.positive;
-      default = 1;
+      default = 3;
       description = ''
         How many jobs this runner executes at once. Each one is unconstrained in
         CPU, memory and I/O unless `container.options` is set through
         `settings`, so raising this raises how much of the host a single
-        workflow can take.
+        workflow can take. Three concurrent Nix builds on a four-core NUC is
+        already oversubscribed; `--cpus` and `--memory` there are the answer if
+        it starts hurting the host's other services.
+
+        Above 1 this carries a constraint that is not visible from here: no job
+        may run a garbage collection against the shared store — see the comment
+        on `nixStoreVolume`.
       '';
     };
 
