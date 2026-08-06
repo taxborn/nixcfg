@@ -25,7 +25,6 @@
         enable = true;
         configPath = "${config.xdg.configHome}/mozilla/firefox";
       };
-      zed-editor.enable = true;
       obs-studio.enable = true;
     };
 
@@ -46,6 +45,7 @@
         gpg.agent.enable = true;
         hyprland.enable = true;
         yubikey.enable = true;
+        zed.enable = true;
       };
       services.hypridle.enable = true;
     };
