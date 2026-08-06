@@ -26,6 +26,7 @@
         configPath = "${config.xdg.configHome}/mozilla/firefox";
       };
       zed-editor.enable = true;
+      obs-studio.enable = true;
     };
 
     home.packages = with pkgs; [
@@ -33,6 +34,7 @@
       spotify
       vesktop
       vlc
+      feh
     ];
 
     services.gnome-keyring.enable = true;
