@@ -27,19 +27,13 @@
       home-manager.enable = true;
       ripgrep.enable = true;
       fd.enable = true;
-      neovim = {
-        enable = true;
-        defaultEditor = true;
-        vimAlias = true;
-        withPython3 = false;
-        withRuby = false;
-      };
     };
 
     myHome.programs = {
       fzf.enable = true;
       git.enable = true;
       gpg.enable = true;
+      neovim.enable = true;
       ssh.enable = true;
       tmux.enable = true;
       yazi.enable = true;
