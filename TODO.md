@@ -4,31 +4,16 @@ What is left. Everything here is open — finished work is in git history.
 
 ## Services
 
-- [X] Repoint the GitHub self-link in `README.md` (the reference-commit link).
-      The other `github.com` links credit other people's configs and stay.
-- [X] forgejo-runner (Argon/Helium).
-- [ ] registry-deploy. Note that the runners cannot `docker build`: job
-      containers get no container socket (`container.docker_host = "-"`), which
-      is deliberate — see the comment on that setting in
-      `modules/nixos/services/forgejo/runner.nix` before reaching for the
-      obvious fix.
-- [X] Glance.
 - [ ] atproto stack: PDS + gatekeeper (the only podman consumer), tangled-knot,
       tangled-spindle.
-- [ ] Minecraft.
 - [ ] Grafana + Prometheus + Loki, on Argon.
-- [ ] Immich and Paperless, on Helium. Add both to the backup set in the *same
+- [ ] Minecraft.
+- [ ] Immich on Helium. Add both to the backup set in the *same
       commit* that enables them — they hold the only irreplaceable bytes here.
 
 ## Workstation desktop
 
-- [ ] Flake input: `catppuccin`.
-- [ ] Configure waybar, wofi and mako. All three ship as bare packages today and
-      run at their defaults. Neovim is still an unconfigured `systemPackages`
-      entry from `base`.
-- [ ] Declare `security.pam.services.hyprlock`. home-manager's
-      `programs.hyprlock` writes config, but PAM is a NixOS-level concern, so
-      the lock screen is authenticating against some other service's stack.
+- [ ] hypridle and hyprlock
 
 Every BIOS attribute is readable and writable from the OS through
 `dell_wmi_sysman`:

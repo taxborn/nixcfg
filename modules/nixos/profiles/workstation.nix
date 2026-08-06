@@ -28,6 +28,11 @@
       '';
     };
 
+    # home-manager's programs.hyprlock only writes config; the PAM service is a
+    # NixOS concern. Without it hyprlock falls through to /etc/pam.d/other,
+    # which is pam_deny, so no password would ever unlock the screen.
+    security.pam.services.hyprlock = { };
+
     environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
     fonts.packages = with pkgs; [

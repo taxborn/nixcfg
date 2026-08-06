@@ -1,5 +1,5 @@
 hl.on("hyprland.start", function()
-    hl.exec_cmd("waybar & hyprpaper")
+    hl.exec_cmd("hyprpaper & blueman-applet")
     hl.exec_cmd("systemctl --user start hyprpolkitagent")
     hl.exec_cmd("[workspace special:terminal silent] ghostty -e tmux new-session -A -s main")
     hl.exec_cmd("[workspace special:discord silent] vesktop")

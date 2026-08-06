@@ -47,6 +47,7 @@
         hyprland.enable = true;
         yubikey.enable = true;
       };
+      services.hypridle.enable = true;
     };
 
     xdg.userDirs = {
@@ -71,5 +72,10 @@
       "file://${config.xdg.userDirs.videos}"
       "file://${config.xdg.userDirs.pictures}"
     ];
+
+    catppuccin = {
+      gtk.icon.enable = true;
+      cursors.enable = true;
+    };
   };
 }

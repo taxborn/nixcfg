@@ -11,7 +11,10 @@
       homeDirectory = "/home/taxborn";
       stateVersion = "25.11";
       sessionPath = [ "$HOME/.local/bin" ];
-      packages = with pkgs; [ just ghostty.terminfo ];
+      packages = with pkgs; [
+        just
+        ghostty.terminfo
+      ];
     };
 
     programs = {
@@ -40,6 +43,13 @@
       ssh.enable = true;
       tmux.enable = true;
       yazi.enable = true;
+    };
+
+    catppuccin = {
+      enable = true;
+      autoEnable = true;
+      flavor = "mocha";
+      accent = "mauve";
     };
   };
 }

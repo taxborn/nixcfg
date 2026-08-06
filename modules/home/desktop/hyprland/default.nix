@@ -54,15 +54,7 @@ in
       wl-clipboard
     ];
 
-    home.pointerCursor = {
-      enable = true;
-      package = pkgs.catppuccin-cursors.mochaMauve;
-      name = "catppuccin-mocha-mauve-cursors";
-      size = 24;
-      gtk.enable = true;
-      x11.enable = true;
-      hyprcursor.enable = true;
-    };
+    home.pointerCursor.enable = true;
 
     wayland.windowManager.hyprland = {
       enable = true;
@@ -83,9 +75,20 @@ in
         rules = ./config/rules.lua;
         session = ./config/session.lua;
       };
-      extraConfig = decorationConfig;
+      extraConfig = ''
+        ${decorationConfig}
+        hl.bind("SUPER + SHIFT + L", hl.dsp.exec_cmd("${lib.getExe' pkgs.systemd "loginctl"} lock-session"))
+      '';
     };
 
     xdg.configFile."hypr/hyprpaper.conf".source = ./config/hyprpaper.conf;
+
+    myHome = {
+      programs = {
+        waybar.enable = true;
+        wofi.enable = true;
+      };
+      services.mako.enable = true;
+    };
   };
 }

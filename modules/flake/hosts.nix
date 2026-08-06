@@ -19,6 +19,7 @@
           modules = [
             ../../hosts/${host}
             inputs.agenix.nixosModules.default
+            inputs.catppuccin.nixosModules.catppuccin
             inputs.disko.nixosModules.disko
             inputs.home-manager.nixosModules.home-manager
             inputs.lanzaboote.nixosModules.lanzaboote
@@ -34,10 +35,12 @@
                 useUserPackages = true;
                 extraSpecialArgs = { inherit self; };
                 backupFileExtension = "backup";
+                sharedModules = [
+                  inputs.catppuccin.homeModules.catppuccin
+                ];
               };
 
               nixpkgs.config.allowUnfree = true;
-
             }
           ];
 

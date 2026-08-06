@@ -14,6 +14,10 @@
       via
       prismlauncher
     ];
+
+    # Desktop: nothing under /sys/class/leds is a kbd_backlight, so the dim
+    # listener would fail brightnessctl on every idle cycle.
+    myHome.services.hypridle.kbdBacklight = false;
   };
 
   networking.hostName = "uranium";

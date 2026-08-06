@@ -13,6 +13,11 @@ hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 
 hl.bind(mainMod .. " + M",
     hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
+-- Through logind rather than calling hyprlock directly, so this, the idle
+-- timeout, and before_sleep_cmd all converge on hypridle's lock_cmd -- which is
+-- also the only place the `pidof hyprlock` guard against double-launch lives.
+hl.bind(mainMod .. " + SHIFT + L", hl.dsp.exec_cmd("loginctl lock-session"))
+
 hl.bind(mainMod .. " + F", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + V", hl.dsp.layout("togglesplit")) -- dwindle only
 
