@@ -95,12 +95,21 @@ let
       # the only thing that is supposed to.
       network = "";
 
-      # Both defaults, restated because they are the two settings that decide
-      # whether a workflow is confined at all: privileged containers are root on
-      # this host, and any path listed in valid_volumes is readable and
-      # writable by every job.
+      # The two settings that decide whether a workflow is confined at all:
+      # privileged containers are root on this host, and anything listed in
+      # valid_volumes may be mounted into a job.
       privileged = false;
-      valid_volumes = [ ];
+
+      # This is an allowlist for `options` below as much as for what a workflow
+      # asks for — the runner checks its own mounts against it too, and silently
+      # logs "is not a valid volume, will be ignored" rather than failing to
+      # start. An empty list here is what a shared store is worth nothing.
+      #
+      # Naming the store volume does let a workflow mount it explicitly, which
+      # sounds like a widening and is not: `options` already puts it in every
+      # job on this host, writable. Nothing else is listed, so a workflow still
+      # cannot reach a path on the host.
+      valid_volumes = lib.optional (cfg.nixImage != null) nixStoreVolume;
 
       # No container runtime socket inside job containers. A job can therefore
       # not start containers of its own — `docker build` and dind-style
