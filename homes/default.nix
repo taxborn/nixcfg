@@ -18,6 +18,15 @@
     };
 
     programs = {
+      bat.enable = true;
+      eza = {
+        enable = true;
+        enableFishIntegration = true;
+        git = true;
+        icons = "auto";
+        extraOptions = [ "--group-directories-first" ];
+      };
+      fd.enable = true;
       fish = {
         enable = true;
         interactiveShellInit = ''
@@ -26,7 +35,10 @@
       };
       home-manager.enable = true;
       ripgrep.enable = true;
-      fd.enable = true;
+      zoxide = {
+        enable = true;
+        enableFishIntegration = true;
+      };
     };
 
     myHome.programs = {

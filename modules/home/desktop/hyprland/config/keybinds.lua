@@ -35,6 +35,14 @@ for i = 1, 10 do
     hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
 end
 
+-- MX Master 3S thumb button, via services.logiops. logid can only synthesise
+-- KEY_* events, so the gesture button types these combos through uinput and
+-- they arrive here like any keyboard bind. Swiping it left/right walks the
+-- workspaces; a plain press types SUPER + R, which the wofi bind above already
+-- answers. F13-F17 are unavailable as targets -- see the Q11 note below.
+hl.bind(mainMod .. " + bracketleft", hl.dsp.focus({ workspace = "-1" }))
+hl.bind(mainMod .. " + bracketright", hl.dsp.focus({ workspace = "+1" }))
+
 hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("terminal"))
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:terminal" }))
 
