@@ -211,7 +211,13 @@ in
             name = "ntfy";
             webhook_configs = [
               {
-                url = "http://127.0.0.1:${toString ports.alertmanagerNtfy.port}/";
+                # `/hook`, not `/`. The bridge serves the webhook on that one
+                # path and answers 404 everywhere else, and nothing about that
+                # failure is loud: Alertmanager records a delivery error in its
+                # own log and moves on, so the alert fires, resolves, and never
+                # reaches a phone. Verified by posting an Alertmanager payload
+                # at each candidate path — `/hook` is the only 200.
+                url = "http://127.0.0.1:${toString ports.alertmanagerNtfy.port}/hook";
 
                 # The resolved notification is half the value. An alert that
                 # fires and never visibly clears trains you to treat the whole
