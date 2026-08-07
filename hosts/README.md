@@ -2,6 +2,11 @@
 
 This folder houses the main configuration for each host on for my homelab.
 
+Every host runs the [monitoring client](../modules/nixos/services/monitoring) —
+node_exporter, smartctl_exporter where there are real disks, and Alloy shipping
+the journal to Loki on Argon. It comes from `base.nix` rather than being opted
+into per host, so it is not repeated in the service lists below.
+
 <!-- TODO: Images of each system, if applicable. -->
 
 ## [Uranium](./uranium)
@@ -23,9 +28,13 @@ An Intel OVH VPS, `vps-2020-elite-8-16-320` model.
 
 ### Services hosted
 
-- Borg backup client (rsync.net + Helium).
-- Earmarked for the monitoring stack (Grafana/Prometheus/Loki) and a
-  forgejo-runner; see [TODO.md](../TODO.md).
+- The [monitoring server](../modules/nixos/services/monitoring): Prometheus,
+  Loki, Alertmanager and Grafana, the last at `grafana.<tailnet>` on a Tailscale
+  node of Caddy's own. Scrapes and receives logs from every host on the tailnet;
+  alerts go to ntfy.
+- A forgejo-runner for the forge on Carbon.
+- Borg backup client (rsync.net + Helium), excluding the metrics and log stores
+  and dumping Grafana's SQLite database.
 
 ## [Carbon](./carbon)
 

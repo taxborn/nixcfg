@@ -34,6 +34,29 @@
         domain = "vw.mischief.town";
         port = 3000;
       };
+
+      # The monitoring stack, all of it on Argon. Only Grafana has a domain:
+      # everything else here is reached by a peer that already knows the port,
+      # and none of it is proxied — see modules/nixos/services/monitoring.
+      #
+      # The 300x numbers continue the sequence above, but the two exporters use
+      # their registered upstream defaults instead. Every off-the-shelf
+      # dashboard, alert rule and troubleshooting page assumes 9100 for
+      # node_exporter, and a local renumbering buys nothing to pay for that.
+      monitoring = {
+        grafana = {
+          domain = "grafana.${config.mySnippets.tailnet.name}";
+          port = 3003;
+        };
+
+        prometheus.port = 3004;
+        alertmanager.port = 3005;
+        alertmanagerNtfy.port = 3006;
+        loki.port = 3007;
+
+        nodeExporter.port = 9100;
+        smartctlExporter.port = 9633;
+      };
     };
   };
 }

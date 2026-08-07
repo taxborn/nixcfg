@@ -62,6 +62,20 @@ in
   # Paperless's initial superuser password. Helium only — no other host runs it,
   # and the documents it guards are the reason that service is tailnet-bound.
   "paperless/admin-password.age".publicKeys = hostKey "helium";
+
+  # The monitoring stack, all of it on Argon. The exporters and Alloy on the
+  # other four hosts need no secret at all: they are reached over the tailnet,
+  # which is the authentication.
+  #
+  # Grafana's login, and the key signing its session cookies. Argon only.
+  "grafana/admin-password.age".publicKeys = hostKey "argon";
+  "grafana/secret-key.age".publicKeys = hostKey "argon";
+
+  # The ntfy topic alerts are published to, as a YAML fragment. On a public ntfy
+  # instance the topic name is the only thing between this alert stream and
+  # anyone who guesses it — it is a password, which is why it is here rather
+  # than in the module beside the base URL.
+  "ntfy/alertmanager.age".publicKeys = hostKey "argon";
 }
 // runnerSecrets
 // borgSecrets

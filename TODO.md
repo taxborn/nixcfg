@@ -6,7 +6,6 @@ What is left. Everything here is open — finished work is in git history.
 
 - [ ] atproto stack: PDS + gatekeeper (the only podman consumer), tangled-knot,
       tangled-spindle.
-- [ ] Grafana + Prometheus + Loki, on Argon.
 - [ ] Minecraft.
 - [ ] Immich on Helium. Add both to the backup set in the *same
       commit* that enables them — they hold the only irreplaceable bytes here.
