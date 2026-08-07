@@ -11,10 +11,6 @@ What is left. Everything here is open — finished work is in git history.
 - [ ] Immich on Helium. Add both to the backup set in the *same
       commit* that enables them — they hold the only irreplaceable bytes here.
 
-## Workstation desktop
-
-- [ ] hypridle and hyprlock
-
 Every BIOS attribute is readable and writable from the OS through
 `dell_wmi_sysman`:
 
