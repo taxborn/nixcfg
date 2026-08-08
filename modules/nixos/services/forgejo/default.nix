@@ -25,6 +25,8 @@ in
   options.myNixOS.services.forgejo.enable = lib.mkEnableOption "Forgejo git forge";
 
   config = lib.mkIf config.myNixOS.services.forgejo.enable {
+    catppuccin.forgejo.enable = true;
+
     age.secrets = {
       forgejoMail.file = "${self}/secrets/forgejo/mail.age";
 
