@@ -23,6 +23,7 @@
       default = inputs.import-tree ../home;
       profile-default = ../../homes/default.nix;
       profile-workstation = ../../homes/workstation.nix;
+      profile-server = ../../homes/server.nix;
     };
 
     nixosModules = {

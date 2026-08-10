@@ -1,12 +1,15 @@
 {
   config,
   lib,
+  self,
   ...
 }:
 {
   options.myNixOS.profiles.server.enable = lib.mkEnableOption "common server configuration";
 
   config = lib.mkIf config.myNixOS.profiles.server.enable {
+    home-manager.users.taxborn.imports = [ self.homeModules.profile-server ];
+
     myNixOS = {
       base.enable = true;
       services = {
