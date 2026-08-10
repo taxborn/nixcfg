@@ -12,8 +12,11 @@
       stateVersion = "25.11";
       sessionPath = [ "$HOME/.local/bin" ];
       packages = with pkgs; [
-        just
+        cargo
         ghostty.terminfo
+        just
+        nodejs
+        rustc
       ];
     };
 
@@ -52,10 +55,11 @@
     };
 
     catppuccin = {
-      enable = true;
-      autoEnable = true;
-      flavor = "mocha";
       accent = "mauve";
+      autoEnable = true;
+      cache.enable = true;
+      enable = true;
+      flavor = "mocha";
     };
   };
 }
