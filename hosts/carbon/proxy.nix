@@ -1,6 +1,7 @@
 { config, ... }:
 let
   networkMap = config.mySnippets.mischief-town.networkMap;
+  taxborn = config.myNixOS.services.taxborn-com;
   hsts = ''
     header Strict-Transport-Security "max-age=31536000"
   '';
@@ -88,6 +89,27 @@ in
     '';
     ${networkMap.glance.domain}.extraConfig = ''
       reverse_proxy localhost:${toString networkMap.glance.port}
+    '';
+
+    # taxborn.com. The first vhost on this host outside the mischief.town zone,
+    # which is why it reads its address off the service rather than out of the
+    # network map. It needs nothing else the others do not: no `tls` block,
+    # because a public name inherits the global `acme_dns cloudflare` correctly
+    # — though the API token behind that has to carry the taxborn.com zone as
+    # well, or issuance fails here and nowhere else.
+    #
+    # The apex is a redirect rather than a second copy of the site, mirroring
+    # mischief.town above. It still needs its own DNS record: Cloudflare has to
+    # reach Caddy for the redirect to be the thing that answers.
+    "taxborn.com".extraConfig = ''
+      redir https://${taxborn.domain}{uri} permanent
+    '';
+    ${taxborn.domain}.extraConfig = ''
+      encode zstd gzip
+      ${hsts}
+      reverse_proxy localhost:${toString taxborn.port} {
+        ${realIp}
+      }
     '';
   };
 }

@@ -29,6 +29,18 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # The website Carbon serves. Over HTTPS rather than the `ssh://carbon:2222`
+    # remote the repo is cloned from day to day: the repository is public, and
+    # this way evaluating the flake does not require being on the tailnet.
+    #
+    # This is also the deploy mechanism. The revision in flake.lock is the
+    # revision Carbon runs, so `just deploy-site` is a lock bump and a rebuild,
+    # and rolling the site back is rolling back a generation.
+    taxborn-com = {
+      url = "git+https://git.mischief.town/taxborn/taxborn.com.git";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:denful/import-tree";
   };

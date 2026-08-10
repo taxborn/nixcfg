@@ -12,6 +12,24 @@ update host="":
             nixos-rebuild switch --flake .#{{host}} --target-host {{host}} --ask-sudo-password
     fi
 
+# Deploy the current tip of taxborn.com to Carbon
+deploy-site:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # The whole deploy is this lock bump: the revision pinned here is the
+    # revision Carbon serves, so the site rolls back the way anything else on
+    # these machines does, by rolling back a generation.
+    nix flake update taxborn-com
+
+    # Guarded so re-running when the site has not moved redeploys rather than
+    # failing on an empty commit.
+    if ! git diff --quiet flake.lock; then
+        git commit -m "chore(site): bump taxborn.com" flake.lock
+    fi
+
+    just update carbon
+
 # Remove all old nix generations
 clean:
     sudo nix-collect-garbage -d

@@ -33,6 +33,7 @@
         };
       };
       glance.enable = true;
+      taxborn-com.enable = true;
       vaultwarden.enable = true;
     };
   };
