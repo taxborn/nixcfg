@@ -17,10 +17,11 @@
     networking.networkmanager.enable = true;
 
     catppuccin = {
-      enable = true;
-      autoEnable = true;
-      flavor = "mocha";
       accent = "mauve";
+      autoEnable = true;
+      cache.enable = true;
+      enable = true;
+      flavor = "mocha";
     };
 
     myNixOS = {
