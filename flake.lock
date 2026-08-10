@@ -276,7 +276,8 @@
         "home-manager": "home-manager_2",
         "import-tree": "import-tree",
         "lanzaboote": "lanzaboote",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "taxborn-com": "taxborn-com"
       }
     },
     "rust-overlay": {
@@ -313,6 +314,26 @@
         "owner": "nix-systems",
         "repo": "default",
         "type": "github"
+      }
+    },
+    "taxborn-com": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1786402146,
+        "narHash": "sha256-726MBEIgJESLOvGmUtgVwBLIUA7YEziDASD8Deuf4Ac=",
+        "ref": "refs/heads/main",
+        "rev": "d2cf53c3b8a1c225f19ff18f10a6356235231caf",
+        "revCount": 12,
+        "type": "git",
+        "url": "https://git.mischief.town/taxborn/taxborn.com.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://git.mischief.town/taxborn/taxborn.com.git"
       }
     }
   },
