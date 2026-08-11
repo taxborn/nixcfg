@@ -16,6 +16,19 @@ let
   caddyVirtualHosts = config.services.caddy.virtualHosts;
   caddyJail = cfg.enableCaddyJail && caddyVirtualHosts != { };
 
+  # A vhost name is not always a usable filename, so the upstream Caddy module
+  # rewrites it before building the default `access-<host>.log` path. The
+  # pre-creation rule below has to land on exactly the same name or it creates
+  # one file while Caddy writes another, which reads as working — the file is
+  # there, the jail's glob matches it — while the log it was meant to cover
+  # stays unwatched.
+  #
+  # `/` and space are what upstream replaces. `*` is ours: a wildcard vhost like
+  # `*.taxborn.com` otherwise puts a literal glob character in a filename, in a
+  # directory the caddy-auth jail reads by glob. Legal, and a trap to leave for
+  # whoever next runs a shell in /var/log/caddy.
+  caddyLogName = host: lib.replaceStrings [ "/" " " "*" ] [ "_" "_" "wildcard" ] host;
+
   # The apps behind Caddy do not answer a failed login with a status code the
   # proxy can see — Vaultwarden's token endpoint returns 400 (OAuth2
   # `invalid_grant`) and Forgejo re-renders its login page with 200 — so the
@@ -120,7 +133,7 @@ in
     systemd.tmpfiles.rules = lib.mkIf caddyJail (
       lib.mapAttrsToList (
         host: _:
-        "f ${config.services.caddy.logDir}/access-${host}.log 0640 ${config.services.caddy.user} ${config.services.caddy.group} -"
+        "f ${config.services.caddy.logDir}/access-${caddyLogName host}.log 0640 ${config.services.caddy.user} ${config.services.caddy.group} -"
       ) caddyVirtualHosts
     );
 

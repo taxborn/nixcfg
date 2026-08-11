@@ -5,6 +5,10 @@ let
   hsts = ''
     header Strict-Transport-Security "max-age=31536000"
   '';
+  frameAncestors = ''
+    header Content-Security-Policy "frame-ancestors 'none'"
+    header X-Frame-Options "DENY"
+  '';
   realIp = ''
     header_up X-Real-IP {client_ip}
   '';
@@ -24,6 +28,7 @@ in
     ${networkMap.vaultwarden.domain}.extraConfig = ''
       encode zstd gzip
       ${hsts}
+      ${frameAncestors}
       reverse_proxy localhost:${toString networkMap.vaultwarden.port} {
         ${realIp}
       }
@@ -33,6 +38,7 @@ in
     ${networkMap.forgejo.domain}.extraConfig = ''
       encode zstd gzip
       ${hsts}
+      ${frameAncestors}
 
       request_body {
         max_size 2GB
@@ -107,9 +113,47 @@ in
     ${taxborn.domain}.extraConfig = ''
       encode zstd gzip
       ${hsts}
+      ${frameAncestors}
       reverse_proxy localhost:${toString taxborn.port} {
         ${realIp}
       }
     '';
+
+    # Every name under taxborn.com arrives here, because the zone's wildcard
+    # CNAME is proxied. Without this block such a request matches no site, dies
+    # at the TLS handshake, and Cloudflare reports 525 — which reads like an
+    # outage rather than a subdomain that was never meant to exist.
+    #
+    # It is also what makes the zone's HSTS header true. Cloudflare appends
+    # `includeSubDomains; preload` to what Caddy sends, promising that every
+    # name under taxborn.com speaks valid HTTPS; a handshake failure on an
+    # arbitrary subdomain is that promise being false, and `preload` is the part
+    # that is painful to withdraw once a browser has it.
+    #
+    # The certificate this needs is a wildcard, so it can only be issued over
+    # DNS-01. That is already the default here via the global `acme_dns
+    # cloudflare`, and the API token behind it carries the taxborn.com zone —
+    # which is exactly what it did not do when this site first went up.
+    #
+    # Caddy matches the most specific site block, so `www` above keeps its own
+    # vhost and certificate, and a future `pds.taxborn.com` will too. This only
+    # catches names nothing else has claimed. 404 rather than a redirect to the
+    # homepage on purpose: a redirect would turn every typo into a 200 and
+    # quietly swallow a subdomain someone meant to configure.
+    "*.taxborn.com" = {
+      # The one vhost here that cannot take the module's default log path: it
+      # derives the filename from the site address, which for this one contains
+      # a `*`. `wildcard` is what the caddy-auth jail's pre-creation rule
+      # rewrites that to, and the two have to agree — see `caddyLogName` in
+      # modules/nixos/services/fail2ban.nix for what goes wrong when they do
+      # not.
+      logFormat = "output file /var/log/caddy/access-wildcard.taxborn.com.log";
+
+      extraConfig = ''
+        ${hsts}
+        ${frameAncestors}
+        respond 404
+      '';
+    };
   };
 }
