@@ -323,11 +323,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1786402146,
-        "narHash": "sha256-726MBEIgJESLOvGmUtgVwBLIUA7YEziDASD8Deuf4Ac=",
+        "lastModified": 1786406586,
+        "narHash": "sha256-HIVJmzG3ei/SXjgyg10QcZJ0OM7umhToyYgu2Fhk3kE=",
         "ref": "refs/heads/main",
-        "rev": "d2cf53c3b8a1c225f19ff18f10a6356235231caf",
-        "revCount": 12,
+        "rev": "21838bc1865bb59f9ace1e61e587d91f5c56b5de",
+        "revCount": 14,
         "type": "git",
         "url": "https://git.mischief.town/taxborn/taxborn.com.git"
       },
