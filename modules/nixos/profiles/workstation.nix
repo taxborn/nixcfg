@@ -20,6 +20,7 @@
 
     programs = {
       hyprland.enable = true;
+      solaar.enable = true;
       fish.loginShellInit = ''
         # XDG_VTNR leaks into SSH sessions here, so key off the tty instead.
         if test -z "$WAYLAND_DISPLAY"; and test -z "$SSH_CONNECTION"; and test (tty) = /dev/tty1
@@ -119,10 +120,7 @@
     };
 
     hardware = {
-      logitech.wireless = {
-        enable = true;
-        enableGraphical = true;
-      };
+      logitech.wireless.enable = true;
       keyboard.qmk.enable = true;
     };
   };

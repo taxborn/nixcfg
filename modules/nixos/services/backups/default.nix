@@ -409,22 +409,51 @@ in
         ) cfg.client.repositories;
       };
 
-      # The packaged timer is `OnCalendar=daily` with `Persistent=true`, which
-      # is the right shape and should stay: on a laptop asleep at midnight the
-      # catch-up run is the only run that ever happens. The cost is that it
-      # fires the instant the machine wakes — on Tungsten it last started in the
-      # same second as resume — and then spends a minute and a half competing
-      # with a desktop that is still coming up.
-      #
-      # The fix is priority, not schedule. borg is I/O bound, so idle I/O
-      # scheduling is what does the work here; the CPU settings just keep the
-      # compression from being felt. The backup still starts promptly, which is
-      # what a machine that is rarely awake needs, it simply yields to anything
-      # a person is waiting on.
-      systemd.services.borgmatic.serviceConfig = {
-        Nice = 19;
-        IOSchedulingClass = "idle";
-        CPUSchedulingPolicy = "idle";
+      systemd.services.borgmatic = {
+        # A `nixos-rebuild switch` has no business touching a backup that is
+        # already running, and by default it restarts this unit like any other.
+        # That does two bad things at once: the switch blocks on the start job
+        # for as long as a full run takes, and the SIGTERM that precedes the
+        # restart kills borg mid-archive, leaving a stale lock in
+        # /root/.cache/borg that the replacement run then times out against.
+        # Argon lost eight days of backups to exactly that sequence. The timer
+        # decides when a backup runs; a configuration change lands on the next
+        # scheduled one.
+        restartIfChanged = false;
+
+        serviceConfig = {
+          # `Type=oneshot` defaults TimeoutStartSec to infinity, so a run that
+          # wedges sits in `activating` forever instead of failing. That is how
+          # those eight days went unnoticed: the fleet alert watches
+          # `node_systemd_unit_state{state="failed"}`, and a unit that never
+          # fails never alerts. The wedge itself is borgmatic's — when borg
+          # exits early, the database dump processes are left blocked writing
+          # to a named pipe nothing will ever read. Six hours is far past any
+          # run these hosts do, so the only thing this bound catches is a hang,
+          # and it turns that hang into something the alert can see.
+          #
+          # Recovery after one fires is `borgmatic break-lock`, since the
+          # timeout kill leaves behind the same stale lock a switch used to.
+          # Deliberately not automated: breaking a lock a live borg still holds
+          # is worse than the wedge.
+          TimeoutStartSec = "6h";
+
+          # The packaged timer is `OnCalendar=daily` with `Persistent=true`,
+          # which is the right shape and should stay: on a laptop asleep at
+          # midnight the catch-up run is the only run that ever happens. The
+          # cost is that it fires the instant the machine wakes — on Tungsten
+          # it last started in the same second as resume — and then spends a
+          # minute and a half competing with a desktop that is still coming up.
+          #
+          # The fix is priority, not schedule. borg is I/O bound, so idle I/O
+          # scheduling is what does the work here; the CPU settings just keep
+          # the compression from being felt. The backup still starts promptly,
+          # which is what a machine that is rarely awake needs, it simply
+          # yields to anything a person is waiting on.
+          Nice = 19;
+          IOSchedulingClass = "idle";
+          CPUSchedulingPolicy = "idle";
+        };
       };
     })
 
