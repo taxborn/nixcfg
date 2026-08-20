@@ -1,0 +1,5 @@
+# `nix build` output symlinks. These are GC roots pointing into the store, so
+# committing one pins a build result in a repo that otherwise only describes how
+# to produce them.
+result
+result-*
