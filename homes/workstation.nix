@@ -13,6 +13,10 @@
     dconf.enable = true;
     programs = {
       claude-code.enable = true;
+      firefox = {
+        enable = true;
+        configPath = "${config.xdg.configHome}/mozilla/firefox";
+      };
       fish.shellAliases = {
         yk-restart = "gpg-connect-agent killagent /bye && gpg-connect-agent \"scd serialno\" \"learn --force\" /bye && gpg --card-status";
         yk-resocket = "gpgconf --kill gpg-agent; systemctl --user restart gpg-agent.socket gpg-agent-ssh.socket gpg-agent-extra.socket";
@@ -21,11 +25,8 @@
         enable = true;
         cli.enable = true;
       };
-      firefox = {
-        enable = true;
-        configPath = "${config.xdg.configHome}/mozilla/firefox";
-      };
       obs-studio.enable = true;
+      t3code.enable = true;
     };
 
     home.packages = with pkgs; [
@@ -44,6 +45,9 @@
         ghostty.enable = true;
         gpg.agent.enable = true;
         hyprland.enable = true;
+        # Workstation-only: the prebuilt nix-index database is ~100 MiB, and the
+        # machines that get edited are the ones this repo is edited from.
+        nix-search.enable = true;
         yubikey.enable = true;
         zed.enable = true;
       };

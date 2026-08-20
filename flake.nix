@@ -29,6 +29,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Only the prebuilt weekly database is wanted here, not the tool: nixpkgs
+    # ships nix-index itself, but generating its index locally is a ~15 minute
+    # run that is stale again by the next flake update.
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # The website Carbon serves. Over HTTPS rather than the `ssh://carbon:2222`
     # remote the repo is cloned from day to day: the repository is public, and
     # this way evaluating the flake does not require being on the tailnet.
