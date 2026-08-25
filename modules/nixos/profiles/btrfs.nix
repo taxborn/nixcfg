@@ -131,5 +131,26 @@ in
         persistentTimer = true;
       };
     };
+
+    # `snapper-timeline.service` ships with `Requires=local-fs.target` and no
+    # ordering of its own, and a companion drive is not ordered before that
+    # target — so the timer's boot catch-up run can reach a subvolume on one
+    # before it is mounted. On uranium the margin was 152ms: the run started at
+    # 16:33:49.356 and /games/steamapps/compatdata mounted at 16:33:49.538.
+    # What snapper reads in that window is the bare mountpoint underneath, and
+    # the whole run dies on "subvolume is not a btrfs subvolume" — once per
+    # boot, leaving a failed unit until the next hourly tick.
+    #
+    # Only `snapshotSubvolumes` needs this. `/home` is picked up separately and
+    # lives on the root array, which has to be mounted for the host to boot at
+    # all; these are the ones on a drive that mounts whenever it gets round to
+    # it. Derived from the same attrset that creates the problem rather than
+    # written per host, for the reason the excludes above give: the host that
+    # adds the next subvolume is the host that forgets.
+    systemd.services.snapper-timeline =
+      lib.mkIf (btrfsFSDevices != [ ] && cfg.snapshotSubvolumes != { })
+        {
+          unitConfig.RequiresMountsFor = lib.attrValues cfg.snapshotSubvolumes;
+        };
   };
 }
