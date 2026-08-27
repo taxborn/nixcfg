@@ -3,3 +3,10 @@
 # to produce them.
 result
 result-*
+
+# direnv's cache of the devShell environment, and the GC root pinning it.
+.direnv
+
+# Written by the devShell as a symlink into the store. The hook set is declared
+# in modules/flake/pre-commit.nix; this is only its generated form.
+.pre-commit-config.yaml

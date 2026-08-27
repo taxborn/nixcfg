@@ -30,6 +30,10 @@ deploy-site:
 
     just update carbon
 
+# Run every pre-commit hook over the whole tree, not just the staged files
+check:
+    nix develop --command pre-commit run --all-files
+
 # Remove all old nix generations
 clean:
     sudo nix-collect-garbage -d
