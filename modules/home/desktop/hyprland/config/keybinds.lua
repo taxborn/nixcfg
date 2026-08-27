@@ -14,8 +14,9 @@ hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
 -- Capture to satty, which owns the annotate-then-save step and writes into
 -- ~/media/photos/screenshots. Escape in satty discards without touching disk.
 -- `monitor` grabs whichever output has focus, not a fixed connector.
-hl.bind("Print", hl.dsp.exec_cmd("screenshot region"))
-hl.bind("SHIFT + Print", hl.dsp.exec_cmd("screenshot monitor"))
+-- XF86Launch6 is the Q11's F15 -- see the F13-F17 note below for why.
+hl.bind("XF86Launch6", hl.dsp.exec_cmd("screenshot region"))
+hl.bind("SHIFT + XF86Launch6", hl.dsp.exec_cmd("screenshot monitor"))
 
 hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 
@@ -65,7 +66,7 @@ hl.bind(mainMod .. " + SHIFT + D", hl.dsp.window.move({ workspace = "special:dis
 -- these vendor keysyms instead. Bind the keysym, not the label on the keycap.
 hl.bind("XF86Tools", hl.dsp.workspace.toggle_special("terminal")) -- F13
 hl.bind("XF86Launch5", hl.dsp.workspace.toggle_special("discord")) -- F14
--- hl.bind("XF86Launch6", ...) -- F15
+-- XF86Launch6 (F15) drives the screenshot binds near the top of this file.
 -- hl.bind("XF86Launch7", ...) -- F16
 -- hl.bind("XF86Launch8", ...) -- F17
 
