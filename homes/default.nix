@@ -13,14 +13,21 @@
       sessionPath = [ "$HOME/.local/bin" ];
       packages = with pkgs; [
         cargo
+        # For throwaway compiles and for the build steps pip and npm shell out
+        # to. Anything that is actually a project should get a devShell now
+        # that direnv is here, rather than another entry in this list.
+        gcc
         ghostty.terminfo
+        gnumake
         jq
         just
         ncdu
         nodejs
         p7zip
+        python3
         rustc
         unzip
+        xh
       ];
     };
 
