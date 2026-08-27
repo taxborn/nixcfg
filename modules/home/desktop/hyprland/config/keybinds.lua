@@ -9,6 +9,12 @@ hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd("zeditor"))
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("obsidian"))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
 
+-- Capture to satty, which owns the annotate-then-save step and writes into
+-- ~/media/photos/screenshots. Escape in satty discards without touching disk.
+-- `monitor` grabs whichever output has focus, not a fixed connector.
+hl.bind("Print", hl.dsp.exec_cmd("screenshot region"))
+hl.bind("SHIFT + Print", hl.dsp.exec_cmd("screenshot monitor"))
+
 hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 
 hl.bind(mainMod .. " + M",

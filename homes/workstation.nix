@@ -48,6 +48,7 @@
         # Workstation-only: the prebuilt nix-index database is ~100 MiB, and the
         # machines that get edited are the ones this repo is edited from.
         nix-search.enable = true;
+        screenshot.enable = true;
         yubikey.enable = true;
         zed.enable = true;
       };
