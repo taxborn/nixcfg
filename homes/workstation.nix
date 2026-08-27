@@ -69,13 +69,23 @@
       projects = null;
     };
 
-    gtk.gtk3.bookmarks = [
-      "file://${config.xdg.userDirs.documents}"
-      "file://${config.xdg.userDirs.download}"
-      "file://${config.xdg.userDirs.music}"
-      "file://${config.xdg.userDirs.videos}"
-      "file://${config.xdg.userDirs.pictures}"
-    ];
+    gtk = {
+      # catppuccin.gtk.icon only *names* the icon theme (Papirus-Dark); it is
+      # home-manager's gtk module that installs the package and writes
+      # gtk-icon-theme-name. Without this the session has no icon theme at all
+      # and GTK falls back to a near-empty hicolor, so Waybar's tray cannot
+      # resolve the icon names nm-applet publishes over StatusNotifierItem and
+      # logs "Could not find an icon named 'nm-...'" for every animation frame.
+      enable = true;
+
+      gtk3.bookmarks = [
+        "file://${config.xdg.userDirs.documents}"
+        "file://${config.xdg.userDirs.download}"
+        "file://${config.xdg.userDirs.music}"
+        "file://${config.xdg.userDirs.videos}"
+        "file://${config.xdg.userDirs.pictures}"
+      ];
+    };
 
     catppuccin = {
       gtk.icon.enable = true;

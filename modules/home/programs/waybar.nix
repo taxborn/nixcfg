@@ -211,8 +211,12 @@ in
     };
 
     # Feed the Waybar tray: nm-applet exposes NetworkManager via the
-    # StatusNotifierItem protocol (home-manager passes --indicator). Runs as a
-    # graphical-session user service, so it's only meaningful with the tray.
+    # StatusNotifierItem protocol (nixpkgs builds it against
+    # libayatana-appindicator, so it registers one without --indicator). Runs as
+    # a graphical-session user service, so it's only meaningful with the tray.
+    # It publishes bare icon *names* with an empty IconThemePath, so Waybar has
+    # to resolve them out of the session icon theme -- see gtk.enable in
+    # homes/workstation.nix.
     services.network-manager-applet.enable = true;
   };
 }
