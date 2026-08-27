@@ -7,6 +7,8 @@ hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("firefox"))
 hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd("zeditor"))
 hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("obsidian"))
+hl.bind(mainMod .. " + E", hl.dsp.exec_cmd("nautilus"))
+hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("firefox --new-window https://excalidraw.com"))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
 
 -- Capture to satty, which owns the annotate-then-save step and writes into

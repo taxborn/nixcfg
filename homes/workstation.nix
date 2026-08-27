@@ -39,6 +39,22 @@
       feh
     ];
 
+    # Excalidraw has no Linux desktop build in nixpkgs -- only the export CLI
+    # and the font. The hosted app registers a service worker on first load and
+    # keeps drawings in local storage, so it works offline after that; this is
+    # the real thing rather than a substitute like drawio.
+    xdg.desktopEntries.excalidraw = {
+      name = "Excalidraw";
+      genericName = "Whiteboard";
+      exec = "firefox --new-window https://excalidraw.com";
+      icon = "applications-graphics";
+      categories = [
+        "Graphics"
+        "Office"
+      ];
+      terminal = false;
+    };
+
     services.gnome-keyring.enable = true;
 
     myHome = {
