@@ -29,8 +29,7 @@ let
   };
 in
 {
-  options.myHome.programs.cliphist.enable =
-    lib.mkEnableOption "clipboard history with a wofi picker";
+  options.myHome.programs.cliphist.enable = lib.mkEnableOption "clipboard history with a wofi picker";
 
   config = lib.mkIf cfg.enable {
     # Runs a wl-paste watcher per MIME class; wl-clipboard alone only ever
