@@ -31,6 +31,8 @@
 
     home.packages = with pkgs; [
       bitwarden-desktop
+      nautilus
+      papers
       spotify
       vesktop
       vlc
@@ -69,6 +71,17 @@
       templates = lib.mkDefault "${config.home.homeDirectory}/templates";
       publicShare = lib.mkDefault "${config.home.homeDirectory}/public";
       projects = null;
+    };
+
+    # Without these, xdg-open has no handler for either type: nothing claimed
+    # application/pdf at all, and inode/directory only ever resolved to
+    # whatever GTK guessed, since yazi ships no desktop entry.
+    xdg.mimeApps = {
+      enable = true;
+      defaultApplications = {
+        "application/pdf" = "org.gnome.Papers.desktop";
+        "inode/directory" = "org.gnome.Nautilus.desktop";
+      };
     };
 
     gtk = {
