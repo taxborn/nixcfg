@@ -114,6 +114,7 @@
         audio.enable = true;
         bluetooth.enable = true;
         btrfs.guiTools = true;
+        containers.enable = true;
         graphical-boot.enable = true;
       };
       services.yubikey.enable = true;
