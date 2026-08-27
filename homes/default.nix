@@ -14,9 +14,13 @@
       packages = with pkgs; [
         cargo
         ghostty.terminfo
+        jq
         just
+        ncdu
         nodejs
+        p7zip
         rustc
+        unzip
       ];
     };
 
