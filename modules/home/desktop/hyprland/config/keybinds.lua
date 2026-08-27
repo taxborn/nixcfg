@@ -27,6 +27,9 @@ hl.bind(mainMod .. " + SHIFT + L", hl.dsp.exec_cmd("loginctl lock-session"))
 hl.bind(mainMod .. " + F", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + V", hl.dsp.layout("togglesplit")) -- dwindle only
 
+-- wl-clipboard only ever holds the latest copy; cliphist keeps the backlog.
+hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("clipboard-history"))
+
 -- Move focus with mainMod + arrow keys
 hl.bind(mainMod .. " + H", hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + L", hl.dsp.focus({ direction = "right" }))

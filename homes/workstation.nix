@@ -42,6 +42,7 @@
     myHome = {
       desktop.hyprland.enable = true;
       programs = {
+        cliphist.enable = true;
         ghostty.enable = true;
         gpg.agent.enable = true;
         hyprland.enable = true;
