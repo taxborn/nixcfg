@@ -26,6 +26,14 @@
 
     programs = {
       bat.enable = true;
+      # nix-direnv swaps the stock `use nix` for a version that pins the
+      # devShell as a GC root and caches its environment, so entering a
+      # directory is a file read rather than a nix evaluation -- and the shell
+      # survives the `--delete-older-than 3d` collection in programs/nix.nix.
+      direnv = {
+        enable = true;
+        nix-direnv.enable = true;
+      };
       eza = {
         enable = true;
         enableFishIntegration = true;
