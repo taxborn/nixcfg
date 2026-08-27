@@ -63,8 +63,16 @@ let
           --actions-on-enter save-to-file,save-to-clipboard,exit \
           --actions-on-escape exit
 
+      # Copy from the saved file rather than leaning on satty's own copy
+      # action: that one only fires on Enter, so saving from the toolbar button
+      # would exit with the clipboard still holding whatever preceded it. Going
+      # through the file means what pastes is exactly what landed on disk.
+      #
+      # wl-copy infers image/png from the magic bytes, but the type is named
+      # here so a paste target never depends on that inference.
       if [ -f "$file" ]; then
-          notify-send --app-name screenshot "Screenshot saved" "$file"
+          wl-copy --type image/png < "$file"
+          notify-send --app-name screenshot "Screenshot copied and saved" "$file"
       fi
     '';
   };
