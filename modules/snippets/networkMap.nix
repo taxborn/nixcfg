@@ -35,6 +35,15 @@
         port = 3000;
       };
 
+      # The atproto PDS. `domain` names the server itself; every account handle
+      # is a further label under it (`alice.pds.mischief.town`), which is why
+      # this is the one entry here whose Caddy vhost comes as a pair. See
+      # hosts/carbon/proxy.nix for why those records are not proxied.
+      pds = {
+        domain = "pds.mischief.town";
+        port = 3009;
+      };
+
       # The monitoring stack, all of it on Argon. Only Grafana has a domain:
       # everything else here is reached by a peer that already knows the port,
       # and none of it is proxied — see modules/nixos/services/monitoring.
@@ -52,7 +61,15 @@
         prometheus.port = 3004;
         alertmanager.port = 3005;
         alertmanagerNtfy.port = 3006;
-        loki.port = 3007;
+        loki = {
+          port = 3007;
+
+          # Loki's ring advertises whatever port is *configured*, not the one
+          # the listener ended up on, so the single-binary gRPC socket cannot
+          # be left at 0 for the kernel to choose — the compactor then dials
+          # 127.0.0.1:0 to reach itself and fails once a minute forever.
+          grpcPort = 3008;
+        };
 
         nodeExporter.port = 9100;
         smartctlExporter.port = 9633;

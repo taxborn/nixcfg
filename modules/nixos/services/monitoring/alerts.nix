@@ -143,7 +143,15 @@ let
             # writing through. Everything on the host keeps running and quietly
             # fails to persist anything, which is worse than a crash and far
             # easier to miss.
-            expr = "node_filesystem_readonly{${realFs}} == 1";
+            #
+            # `/nix/store` is excluded because NixOS bind-mounts it read-only
+            # by default (`boot.readOnlyNixStore`), and the bind inherits the
+            # underlying btrfs fstype — so it passes `realFs` and reports
+            # `node_filesystem_readonly == 1` on every host, permanently. Left
+            # in, this alert never resolves, and an alert that never resolves
+            # holds the notification path open until the receiver rate-limits
+            # it and every *other* alert stops being delivered too.
+            expr = ''node_filesystem_readonly{${realFs}, mountpoint!="/nix/store"} == 1'';
             for = "5m";
             labels.severity = "critical";
             annotations = {

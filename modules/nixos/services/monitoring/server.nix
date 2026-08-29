@@ -271,10 +271,12 @@ in
           http_listen_address = argonIP;
           http_listen_port = ports.loki.port;
 
-          # Single binary, so the gRPC ring talks to itself. Port 0 asks the
-          # kernel for a free one instead of holding 9095.
+          # Single binary, so the gRPC ring talks to itself — over loopback,
+          # never the tailnet. The port is pinned rather than left at 0: the
+          # kernel does hand out a free port, but the ring goes on advertising
+          # the configured value, so every internal client dials 127.0.0.1:0.
           grpc_listen_address = "127.0.0.1";
-          grpc_listen_port = 0;
+          grpc_listen_port = ports.loki.grpcPort;
 
           log_level = "warn";
         };

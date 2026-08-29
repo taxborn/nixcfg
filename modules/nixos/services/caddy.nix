@@ -129,11 +129,11 @@ in
         package = pkgs.caddy.withPlugins {
           plugins = [
             # curl -s https://proxy.golang.org/github.com/tailscale/caddy-tailscale/@latest
-            "github.com/tailscale/caddy-tailscale@v0.0.0-20260106222316-bb080c4414ac"
+            "github.com/tailscale/caddy-tailscale@v0.0.0-20260826180304-de41b249af4f"
             # https://github.com/caddy-dns/cloudflare/tags
             "github.com/caddy-dns/cloudflare@v0.2.4"
           ];
-          hash = "sha256-TAg2e7r6du1b2CY81x63yGPJ59mjvzdOKcuno+Klaa8=";
+          hash = "sha256-qznZBLjAnDjjopl8Pmt4HfIPYB+hp/SLNk5h2v+u6B0=";
         };
       };
 

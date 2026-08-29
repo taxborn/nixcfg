@@ -54,6 +54,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # The PDS behind pds.mischief.town. Deliberately not following our nixpkgs,
+    # unlike every input above: Tranquil is a large Rust tree whose CI pushes
+    # finished artifacts to tranquil.cachix.org, built against the pin in its
+    # own lock. Following ours would change every derivation hash and rule that
+    # cache out permanently. Keeping the pin makes what we evaluate identical to
+    # what CI publishes — verified, same store path — so the cache is usable
+    # whenever it has actually been populated for the pinned revision.
+    tranquil.url = "git+https://tangled.org/tranquil.farm/tranquil-pds";
+
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:denful/import-tree";
   };

@@ -63,6 +63,12 @@ in
   # and the documents it guards are the reason that service is tailnet-bound.
   "paperless/admin-password.age".publicKeys = hostKey "helium";
 
+  # The PDS's three cryptographic secrets and its Fastmail SMTP login, as one
+  # environment file. Carbon only. `master_key` is the load-bearing one: every
+  # account's signing key is encrypted under it, so a lost copy is a lost
+  # instance and a leaked copy is every identity on it.
+  "tranquil-pds/secrets.age".publicKeys = hostKey "carbon";
+
   # The monitoring stack, all of it on Argon. The exporters and Alloy on the
   # other four hosts need no secret at all: they are reached over the tailnet,
   # which is the authentication.

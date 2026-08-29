@@ -90,6 +90,51 @@ in
       reverse_proxy localhost:${toString networkMap.forgejo.port}
     '';
 
+    # The atproto PDS, and every account handle issued under it. Two vhosts
+    # because a handle is a further label: `pds.mischief.town` is the server
+    # and `alice.pds.mischief.town` is an account, and Caddy matches the more
+    # specific site, so the wildcard only ever catches the latter.
+    #
+    # Both names are DNS-only records, the only ones in this zone that are —
+    # every other vhost here sits behind Cloudflare's proxy. Three reasons, any
+    # one of which is sufficient:
+    #
+    #   - The universal certificate covers `mischief.town` and
+    #     `*.mischief.town` and stops there. A proxied
+    #     `alice.pds.mischief.town` has no edge certificate at all and dies at
+    #     the handshake, which is every account on the instance.
+    #   - `com.atproto.sync.subscribeRepos` is a long-lived WebSocket that
+    #     relays hold open through idle periods, and the proxy times those out.
+    #   - The free tier caps a request body at 100 MB. Blob uploads here are
+    #     allowed up to 10 GiB.
+    #
+    # Going direct means Caddy sees the real peer, so `client_ip` is already
+    # correct and no `X-Real-IP` is needed — same as the tailnet vhost above,
+    # for the opposite reason.
+    ${networkMap.pds.domain}.extraConfig = ''
+      encode zstd gzip
+      ${hsts}
+      ${frameAncestors}
+
+      reverse_proxy localhost:${toString networkMap.pds.port}
+    '';
+
+    "*.${networkMap.pds.domain}" = {
+      # Same override, same reason as `*.taxborn.com` below: the default log
+      # path is derived from the site address, which here contains a `*`, and
+      # the caddy-auth jail's pre-creation rule rewrites that to `wildcard`.
+      # See `caddyLogName` in modules/nixos/services/fail2ban.nix.
+      logFormat = "output file /var/log/caddy/access-wildcard.${networkMap.pds.domain}.log";
+
+      extraConfig = ''
+        encode zstd gzip
+        ${hsts}
+        ${frameAncestors}
+
+        reverse_proxy localhost:${toString networkMap.pds.port}
+      '';
+    };
+
     "mischief.town".extraConfig = ''
       redir https://${networkMap.glance.domain}{uri} permanent
     '';
