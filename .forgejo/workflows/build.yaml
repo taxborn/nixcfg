@@ -1,0 +1,89 @@
+# Builds every host on every push.
+#
+# This gates nothing. `nixos-rebuild --target-host` builds locally before it
+# switches, so a configuration that does not build never reaches the host it was
+# aimed at — that protection already exists. What this catches is the other
+# direction: a change to a shared module deployed to one host, which quietly
+# breaks a host nobody is about to rebuild. See
+# docs/adr/0002-ci-detects-deploys-stay-manual.md.
+name: build
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  # Applied to every `nix` invocation below, so none of them repeat the flags.
+  # The image ships no flake support enabled by default.
+  #
+  # The substituters are deliberately duplicated from the systems this builds —
+  # modules/nixos/programs/nix.nix and modules/nixos/services/tranquil-pds.nix —
+  # because `nix.settings` configures the *built system*, not the container
+  # doing the building. Without the tranquil entry, building Carbon compiles the
+  # whole PDS from source, which does not fit in the runner's one-hour job
+  # timeout.
+  NIX_CONFIG: |
+    experimental-features = nix-command flakes
+    extra-substituters = https://nix-community.cachix.org https://tranquil.cachix.org
+    extra-trusted-public-keys = nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs= tranquil.cachix.org-1:PoO+mGL6a6LcJiPakMDHN4E218/ei/7v2sxeDtNkSRg=
+
+jobs:
+  build:
+    # Argon. The label comes from `runner.nixImage`, and the job container gets
+    # the persistent /nix volume mounted, so the store survives between runs.
+    runs-on: nix
+
+    steps:
+      # The `nix` image carries Nix and git but no node, so no `uses:` step can
+      # run here — the runner executes JavaScript actions with the image's own
+      # node and there isn't one. Hence a checkout by hand.
+      #
+      # Not shallow: `self.rev` has to resolve, or every closure this builds
+      # differs from the one a deploy produces by its
+      # `system.configurationRevision`. A full clone of this repo is a second.
+      - name: Checkout
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          # The runner rewrites GITHUB_SERVER_URL from whatever connection it
+          # came in on — git.<tailnet>, never the public name — so this clone
+          # stays on the tailnet and never crosses Cloudflare's 100 MB cap.
+          remote="https://x-access-token:$TOKEN@${GITHUB_SERVER_URL#*://}/$GITHUB_REPOSITORY"
+
+          git init -q .
+          git fetch -q "$remote" "$GITHUB_REF"
+          git checkout -q "$GITHUB_SHA"
+
+      # deadnix, nixfmt, shellcheck and statix over the whole tree, plus every
+      # `checks` output. The same hook set `.git/hooks/pre-commit` runs over
+      # staged files, which is what keeps the two from drifting.
+      - name: Flake check
+        run: nix flake check --print-build-logs
+
+      # Hardcoded until the roster lands and this can read one list —
+      # see .scratch/fleet-audit/issues/03-host-roster.md.
+      #
+      # No `set -e`: a host that fails must not hide the state of the ones after
+      # it. The whole point is learning all five in one run.
+      - name: Build every host closure
+        run: |
+          set -uo pipefail
+
+          failed=""
+          for host in argon carbon helium tungsten uranium; do
+            echo "::group::$host"
+            if ! nix build --no-link --print-build-logs \
+                ".#nixosConfigurations.$host.config.system.build.toplevel"; then
+              failed="$failed $host"
+            fi
+            echo "::endgroup::"
+          done
+
+          if [ -n "$failed" ]; then
+            echo "failed to build:$failed"
+            exit 1
+          fi
+          echo "all five hosts built"
