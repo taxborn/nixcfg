@@ -49,6 +49,14 @@ let
     lib.replaceStrings [ "/" ":" "." ] [ "-" "-" "-" ] (lib.toLower cfg.nixImage)
   }";
 
+  # How long a single job may run, and equally how long a shutdown waits for one
+  # to finish. One value in seconds because three settings have to agree on it:
+  # the runner's `timeout`, its `shutdown_timeout`, and systemd's
+  # `TimeoutStopSec`. The last is the one that actually decides, and it is not
+  # obvious from either of the others — see the unit below.
+  jobTimeoutSeconds = 60 * 60;
+  jobTimeout = "${toString jobTimeoutSeconds}s";
+
   settingsFormat = pkgs.formats.yaml { };
 
   baseSettings = {
@@ -66,13 +74,14 @@ let
       # Down from the three-hour default, which the upstream security notes
       # single out: with capacity 1, one job that never finishes holds the only
       # slot on this host for three hours, and a `while true` loop is enough to
-      # do it by accident. Nothing here legitimately builds for an hour.
-      timeout = "1h";
+      # do it by accident.
+      timeout = jobTimeout;
 
       # How long a shutdown waits for running jobs before cancelling them. Kept
       # equal to `timeout` so a rebuild that restarts this unit does not kill a
-      # job that was going to succeed.
-      shutdown_timeout = "1h";
+      # job that was going to succeed — see `TimeoutStopSec` in the unit below,
+      # without which this setting does nothing at all.
+      shutdown_timeout = jobTimeout;
     };
 
     cache = {
@@ -129,7 +138,9 @@ let
       # only because registration is closed and every workflow on this forge is
       # already the same person's. It stops being acceptable the moment someone
       # else can push a workflow.
-      options = lib.optionalString (cfg.nixImage != null) "--volume=${nixStoreVolume}:/nix";
+      options = lib.concatStringsSep " " (
+        lib.optional (cfg.nixImage != null) "--volume=${nixStoreVolume}:/nix" ++ cfg.containerOptions
+      );
     };
   };
 
@@ -299,16 +310,46 @@ in
       '';
     };
 
+    containerOptions = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      example = lib.literalExpression ''
+        [
+          "--memory=12g"
+          "--cpus=6"
+        ]
+      '';
+      description = ''
+        Extra `podman run` arguments applied to every job container, appended
+        after the shared store mount.
+
+        This exists rather than sending people to `settings.container.options`
+        because that setting is a single string and `settings` is merged over
+        the module's own configuration with `recursiveUpdate`. Setting it there
+        *replaces* the `--volume=<store>:/nix` mount instead of adding to it,
+        which costs every job on the host its shared store and reports nothing
+        — the jobs still run, they just re-fetch the closure every time.
+
+        Resource limits are the reason to reach for this. The runner applies
+        none of its own, so `capacity` jobs are otherwise free to take the whole
+        machine between them.
+      '';
+    };
+
     capacity = lib.mkOption {
       type = lib.types.ints.positive;
       default = 3;
       description = ''
         How many jobs this runner executes at once. Each one is unconstrained in
-        CPU, memory and I/O unless `container.options` is set through
-        `settings`, so raising this raises how much of the host a single
-        workflow can take. Three concurrent Nix builds on a four-core NUC is
-        already oversubscribed; `--cpus` and `--memory` there are the answer if
-        it starts hurting the host's other services.
+        CPU, memory and I/O unless `containerOptions` sets a limit, so raising
+        this raises how much of the host a single workflow can take. Three
+        concurrent Nix builds on a four-core NUC is already oversubscribed;
+        `--cpus` and `--memory` there are the answer if it starts hurting the
+        host's other services.
+
+        Note that those limits are per container, so the two options have to be
+        chosen together: `capacity` of 3 against `--memory=12g` is 36g of claim
+        on a 16 GB host, which is not a limit at all.
 
         Above 1 this carries a constraint that is not visible from here: no job
         may run a garbage collection against the shared store — see the comment
@@ -320,12 +361,16 @@ in
       type = lib.types.submodule { freeformType = settingsFormat.type; };
       default = { };
       example = lib.literalExpression ''
-        { container.options = "--memory=4g --cpus=2"; }
+        { container.force_pull = true; }
       '';
       description = ''
-        Merged over the module's own runner configuration. The place for
-        per-host tuning — resource limits in particular, which the runner
-        applies to job containers only through `container.options`.
+        Merged over the module's own runner configuration, for per-host tuning
+        of anything this module does not already expose.
+
+        Not the place for resource limits, despite being where the runner's own
+        documentation points: `container.options` is a single string and this is
+        merged with `recursiveUpdate`, so setting it here silently drops the
+        shared store mount. Use `containerOptions`, which composes.
 
         `server` is rejected: the connection block is generated at start,
         because it carries a UUID that is only knowable once the token has been
@@ -408,6 +453,25 @@ in
 
         ExecStartPre = writeConfig;
         ExecStart = daemonScript;
+
+        # What makes `shutdown_timeout` above mean anything. systemd's default
+        # TimeoutStopSec is 90 seconds, so without this the runner announces it
+        # will wait an hour for a job in flight and is SIGKILLed a minute and a
+        # half later, taking the job with it and latching the unit failed.
+        #
+        # Observed on argon on 2026-08-31: `just update argon` restarted this
+        # unit three minutes into a CI run, and the journal reads "waiting
+        # [runner].shutdown_timeout=1h0m0s" at 07:10:46 followed by "State
+        # 'stop-sigterm' timed out. Killing." at 07:12:16. The job was lost and
+        # is not requeued.
+        #
+        # A minute of headroom over the runner's own grace period, so the runner
+        # is always the one that decides to give up rather than systemd.
+        #
+        # The cost is real and worth knowing: a rebuild of this host blocks for
+        # as long as a job is running, up to that hour, with no output while it
+        # waits. `just runner-gc` already carries the same caveat.
+        TimeoutStopSec = jobTimeoutSeconds + 60;
 
         # Covers the ordinary startup race as well as failure: this unit and the
         # runner user's own systemd instance are not ordered against each other
