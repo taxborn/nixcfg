@@ -4,6 +4,7 @@
   imports = [
     self.diskoConfigurations.btrfs-ovh
     (modulesPath + "/profiles/qemu-guest.nix")
+    ./proxy.nix
   ];
 
   networking.hostName = "argon";
@@ -12,6 +13,7 @@
   myNixOS = {
     profiles.server.enable = true;
     services.backups.client.enable = true;
+    services.glance.enable = true;
   };
 
   myHardware = {
