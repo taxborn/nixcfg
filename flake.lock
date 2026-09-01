@@ -302,19 +302,6 @@
         "type": "github"
       }
     },
-    "nixpkgs_2": {
-      "locked": {
-        "lastModified": 1784176690,
-        "narHash": "sha256-UCyrwrMqHxfvgEJBdqVUYg18mjf+HZtT+A5AxWNEmu8=",
-        "rev": "6368bc923cec55a5f78960ade0cb4dd99580e087",
-        "type": "tarball",
-        "url": "https://releases.nixos.org/nixpkgs/nixpkgs-26.11pre1035778.6368bc923cec/nixexprs.tar.xz"
-      },
-      "original": {
-        "type": "tarball",
-        "url": "https://channels.nixos.org/nixpkgs-unstable/nixexprs.tar.xz"
-      }
-    },
     "pre-commit": {
       "inputs": {
         "flake-compat": "flake-compat_2",
@@ -348,9 +335,7 @@
         "import-tree": "import-tree",
         "lanzaboote": "lanzaboote",
         "nix-index-database": "nix-index-database",
-        "nixpkgs": "nixpkgs",
-        "taxborn-com": "taxborn-com",
-        "tranquil": "tranquil"
+        "nixpkgs": "nixpkgs"
       }
     },
     "rust-overlay": {
@@ -387,44 +372,6 @@
         "owner": "nix-systems",
         "repo": "default",
         "type": "github"
-      }
-    },
-    "taxborn-com": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1788135857,
-        "narHash": "sha256-63p9UGPD7mjWIn7ZsMZ1kD92snbU1YyPFLCQ8tpjgcE=",
-        "ref": "refs/heads/main",
-        "rev": "b830b17c7352afd60523e42a410d0e7fd9e8fa56",
-        "revCount": 19,
-        "type": "git",
-        "url": "https://git.mischief.town/taxborn/taxborn.com.git"
-      },
-      "original": {
-        "type": "git",
-        "url": "https://git.mischief.town/taxborn/taxborn.com.git"
-      }
-    },
-    "tranquil": {
-      "inputs": {
-        "nixpkgs": "nixpkgs_2"
-      },
-      "locked": {
-        "lastModified": 1788034270,
-        "narHash": "sha256-wL3vW4n5sXi7UOLDwoIabNF6sNpogka1VjSbrmG+d0s=",
-        "ref": "refs/heads/main",
-        "rev": "eba8167da8c21cfd9133eec5a47dd33170b6e5ea",
-        "revCount": 543,
-        "type": "git",
-        "url": "https://tangled.org/tranquil.farm/tranquil-pds"
-      },
-      "original": {
-        "type": "git",
-        "url": "https://tangled.org/tranquil.farm/tranquil-pds"
       }
     }
   },

@@ -14,10 +14,7 @@
       base.enable = true;
       services = {
         caddy.enable = true;
-        fail2ban = {
-          enable = true;
-          enableCaddyJail = true;
-        };
+        fail2ban.enable = true;
       };
     };
   };

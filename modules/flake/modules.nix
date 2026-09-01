@@ -31,12 +31,6 @@
       hardware = inputs.import-tree ../hardware;
       nixos = inputs.import-tree ../nixos;
       users = inputs.import-tree ../users;
-
-      # Tranquil ships its own NixOS module. Re-exported here for the same
-      # reason packages.nix re-exports taxborn.com: modules in this repo take
-      # `self` and never `inputs`, so the service wrapper in
-      # modules/nixos/services/tranquil-pds.nix reaches it through that.
-      tranquil-pds = inputs.tranquil.nixosModules.default;
     };
   };
 }
