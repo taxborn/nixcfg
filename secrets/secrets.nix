@@ -36,5 +36,6 @@ in
   "tailscale/caddy.age".publicKeys = keys;
 
   "glance.age".publicKeys = hostKey "argon";
+  "vaultwarden.age".publicKeys = hostKey "argon";
 }
 // borgSecrets

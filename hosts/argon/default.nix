@@ -12,8 +12,11 @@
 
   myNixOS = {
     profiles.server.enable = true;
-    services.backups.client.enable = true;
-    services.glance.enable = true;
+    services = {
+      backups.client.enable = true;
+      glance.enable = true;
+      vaultwarden.enable = true;
+    };
   };
 
   myHardware = {

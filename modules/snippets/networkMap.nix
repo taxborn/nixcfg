@@ -12,6 +12,11 @@
         domain = "www.biscuits.at";
         port = 3000;
       };
+
+      vaultwarden = {
+        domain = "vw.biscuits.at";
+        port = 3001;
+      };
     };
   };
 }
