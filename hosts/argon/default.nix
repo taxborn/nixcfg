@@ -14,6 +14,7 @@
     profiles.server.enable = true;
     services = {
       backups.client.enable = true;
+      forgejo.enable = true;
       glance.enable = true;
       vaultwarden.enable = true;
     };

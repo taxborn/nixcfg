@@ -35,6 +35,9 @@ in
   "tailscale/auth.age".publicKeys = keys;
   "tailscale/caddy.age".publicKeys = keys;
 
+  "forgejo/signing-key.age".publicKeys = hostKey "argon";
+  "forgejo/mail.age".publicKeys = hostKey "argon";
+
   "glance.age".publicKeys = hostKey "argon";
   "vaultwarden.age".publicKeys = hostKey "argon";
 }

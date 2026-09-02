@@ -17,5 +17,16 @@ in
       encode zstd gzip
       reverse_proxy localhost:${toString networkMap.vaultwarden.port}
     '';
+
+    # Forgejo
+    ${networkMap.forgejo.domain}.extraConfig = ''
+      encode zstd gzip
+
+      request_body {
+        max_size 2GB
+      }
+
+      reverse_proxy localhost:${toString networkMap.forgejo.port}
+    '';
   };
 }
