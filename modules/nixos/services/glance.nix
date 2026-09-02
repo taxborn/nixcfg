@@ -86,11 +86,11 @@ in
                           }
                           {
                             title = "Vaultwarden";
-                            url = "https://vw.biscuits.at";
+                            url = "https://${networkMap.vaultwarden.domain}";
                           }
                           {
                             title = "Forgejo";
-                            url = "https://git.biscuits.at";
+                            url = "https://${networkMap.forgejo.domain}";
                           }
                           {
                             title = "Paperless";
