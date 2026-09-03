@@ -23,6 +23,26 @@
         "type": "github"
       }
     },
+    "braxton-is": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1788404711,
+        "narHash": "sha256-cl8WXrPGYTYYvkXbGESF9epVzoPrlIBP2QiM3+ScAOQ=",
+        "ref": "refs/heads/main",
+        "rev": "68f28a784cdb8ca46845bedbaf2c66195ad05cba",
+        "revCount": 12,
+        "type": "git",
+        "url": "https://code.biscuits.at/braxton/braxton.is.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://code.biscuits.at/braxton/braxton.is.git"
+      }
+    },
     "catppuccin": {
       "inputs": {
         "nixpkgs": [
@@ -327,6 +347,7 @@
     "root": {
       "inputs": {
         "agenix": "agenix",
+        "braxton-is": "braxton-is",
         "catppuccin": "catppuccin",
         "disko": "disko",
         "flake-parts": "flake-parts",
