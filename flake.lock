@@ -30,11 +30,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1788404711,
-        "narHash": "sha256-cl8WXrPGYTYYvkXbGESF9epVzoPrlIBP2QiM3+ScAOQ=",
+        "lastModified": 1788408732,
+        "narHash": "sha256-8bPkOUPgLu6T+y20/W79upjDw5srz0aLwrDQFB5Cvh0=",
         "ref": "refs/heads/main",
-        "rev": "68f28a784cdb8ca46845bedbaf2c66195ad05cba",
-        "revCount": 12,
+        "rev": "488ba25d75c0abd7bcaaec4f77afcb7a31826f80",
+        "revCount": 13,
         "type": "git",
         "url": "https://code.biscuits.at/braxton/braxton.is.git"
       },
