@@ -256,28 +256,7 @@ in
     };
 
     server = {
-      enable = lib.mkEnableOption "borg repository server, served over restricted SSH";
-
-      sshPort = lib.mkOption {
-        type = lib.types.port;
-        default = 2222;
-        description = ''
-          Port the server's sshd offers borg on, and the port clients address.
-
-          Deliberately not 22. Where Tailscale SSH is enabled it answers port 22
-          on the tailnet address by tailnet identity and never reads
-          `authorized_keys`, which skips the forced command below and leaves the
-          client unconfined. Every client reaches this host over the tailnet, so
-          on 22 the restriction would be decorative. Tailscale intercepts only
-          22, so any other port is served by real sshd with the forced command
-          applied.
-
-          Declared here rather than on the server alone because `knownHosts`
-          needs the same number — ssh records a non-default port as
-          `[host]:port`, and a mismatch fails host key verification on every
-          backup run.
-        '';
-      };
+      enable = lib.mkEnableOption "borg repository server, served over SSH";
 
       authorizedKeys = lib.mkOption {
         type = lib.types.attrsOf lib.types.str;
@@ -286,9 +265,8 @@ in
           { argon = builtins.readFile "''${self}/secrets/borg/argon/ssh_key.pub"; }
         '';
         description = ''
-          Client hostname -> that host's borg SSH public key. Each key is pinned
-          to a forced `borg serve` confined to that client's own repository, so
-          one compromised host can neither read nor delete another's archives.
+          Client hostname -> that host's borg SSH public key, authorized for
+          the backup user.
         '';
       };
     };
@@ -317,7 +295,7 @@ in
               # the leading slash of basePath is what makes this absolute.
               "ssh://${backupServer.user}@${
                 config.mySnippets.tailnet.tailscaleIPs.${backupServer.host}
-              }:${toString cfg.server.sshPort}/${backupServer.basePath}/${hostname}";
+              }/${backupServer.basePath}/${hostname}";
         };
       };
 
@@ -460,14 +438,6 @@ in
     (lib.mkIf cfg.server.enable {
       environment.systemPackages = [ pkgs.borgbackup ];
 
-      # sshd answers borg on its own port so the forced command below actually
-      # binds; see the `sshPort` description. Only this port is added here — 22,
-      # the agent-forwarding port, `openFirewall = false`, and the firewall hole
-      # for 22 all come from `programs/ssh.nix`, which every host running this
-      # module has enabled through `base`. Listing 22 again would emit a second
-      # `Port 22` and sshd would fail to bind it twice.
-      services.openssh.ports = [ cfg.server.sshPort ];
-
       # A repository must never end up inside its own backup. Inert today — the
       # default source directories don't reach the drive — but load-bearing the
       # moment a data service living there joins the backup set.
@@ -490,16 +460,8 @@ in
         };
       };
 
-      # `restrict` drops pty allocation, port forwarding, agent forwarding, and
-      # user rc; the forced command means the key can do nothing but serve that
-      # one repository, whatever the client asks for.
-      #
-      # This only binds where sshd is the thing answering, which is why clients
-      # address `sshPort` rather than 22 and why Helium turns Tailscale SSH off
-      # (`hosts/helium`). On 22 with Tailscale SSH enabled, none of it applies.
       users.users.${backupServer.user}.openssh.authorizedKeys.keys = lib.mapAttrsToList (
-        client: pubkey:
-        "command=\"${lib.getExe' pkgs.borgbackup "borg"} serve --restrict-to-path ${backupServer.basePath}/${client}\",restrict ${lib.trim pubkey}"
+        _client: pubkey: lib.trim pubkey
       ) cfg.server.authorizedKeys;
     })
   ];

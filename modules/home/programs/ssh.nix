@@ -14,20 +14,14 @@
       settings =
         let
           tailscaleIPs = config.mySnippets.tailnet.tailscaleIPs;
-          inherit (config.mySnippets.ssh) gnupgSocketDir;
           inherit (config.mySnippets.biscuits-at.networkMap) forgejo;
 
           machine = name: ip: {
             ${name} = {
               Hostname = ip;
               User = "taxborn";
-              # Not 22: that is Tailscale SSH, which cannot carry the socket
-              # forward below. See `mySnippets.ssh.port`.
-              Port = config.mySnippets.ssh.port;
               RequestTTY = "yes";
               RemoteCommand = "tmux new -As0";
-              ForwardAgent = true;
-              RemoteForward = "${gnupgSocketDir}/S.gpg-agent ${gnupgSocketDir}/S.gpg-agent.extra";
             };
           };
 
