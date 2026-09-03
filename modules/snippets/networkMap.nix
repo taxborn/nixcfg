@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   ...
 }:
@@ -10,9 +11,11 @@
     default = {
       forgejo = {
         domain = "code.biscuits.at";
-        # DNS-only record straight to argon. Cloudflare's proxy in front of
-        # `domain` carries HTTP only, so SSH needs a name that bypasses it.
-        sshDomain = "git.biscuits.at";
+        # Git over SSH is tailnet-only, so this is argon's MagicDNS name and
+        # not a public record. Both ends read it from here — the ssh_config
+        # alias on the clients and the clone URL Forgejo prints — so they
+        # cannot drift apart.
+        sshDomain = "argon.${config.mySnippets.tailnet.name}";
         port = 3002;
         sshPort = 2222;
       };

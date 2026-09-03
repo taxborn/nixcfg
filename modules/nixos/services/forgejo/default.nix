@@ -41,8 +41,11 @@ in
       "L+ ${signingKeyDir}/key.pub - - - - ${self}/secrets/forgejo/signing-key.pub"
     ];
 
-    # HTTP stays behind Caddy; the built-in SSH server is reached directly.
-    networking.firewall.allowedTCPPorts = [ networkMap.forgejo.sshPort ];
+    # No port is opened for either transport. HTTP stays behind Caddy, and the
+    # built-in SSH server binds every interface, so the closed firewall is the
+    # only thing keeping git-over-SSH on the tailnet, whose interface is
+    # already trusted. Reopening it means bringing back a fail2ban jail too:
+    # nothing else watches that daemon, since it is not OpenSSH.
 
     services.forgejo = {
       enable = true;

@@ -3,6 +3,8 @@ let
   site = config.myNixOS.services.braxton-is;
 in
 {
+  myNixOS.services.caddy.cloudflareOnly = true;
+
   services.caddy.virtualHosts = {
     # `www` exists to be given up. It needs its own DNS record and its own
     # certificate — Caddy issues one per site address, and a name with no
@@ -22,7 +24,9 @@ in
       header Content-Security-Policy "frame-ancestors 'none'"
       header X-Frame-Options "DENY"
 
-      reverse_proxy localhost:${toString site.port}
+      reverse_proxy localhost:${toString site.port} {
+        import client-ip
+      }
     '';
   };
 }
