@@ -4,6 +4,7 @@
   imports = [
     self.diskoConfigurations.btrfs-ovh
     (modulesPath + "/profiles/qemu-guest.nix")
+    ./proxy.nix
   ];
 
   networking.hostName = "carbon";
@@ -11,7 +12,10 @@
 
   myNixOS = {
     profiles.server.enable = true;
-    services.backups.client.enable = true;
+    services = {
+      backups.client.enable = true;
+      braxton-is.enable = true;
+    };
   };
 
   myHardware = {
