@@ -10,6 +10,9 @@
     default = {
       forgejo = {
         domain = "code.biscuits.at";
+        # DNS-only record straight to argon. Cloudflare's proxy in front of
+        # `domain` carries HTTP only, so SSH needs a name that bypasses it.
+        sshDomain = "git.biscuits.at";
         port = 3002;
         sshPort = 2222;
       };

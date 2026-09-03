@@ -41,6 +41,9 @@ in
       "L+ ${signingKeyDir}/key.pub - - - - ${self}/secrets/forgejo/signing-key.pub"
     ];
 
+    # HTTP stays behind Caddy; the built-in SSH server is reached directly.
+    networking.firewall.allowedTCPPorts = [ networkMap.forgejo.sshPort ];
+
     services.forgejo = {
       enable = true;
       # The module defaults to the LTS series; track the current one.
@@ -64,6 +67,7 @@ in
           LANDING_PAGE = "explore";
 
           START_SSH_SERVER = true;
+          SSH_DOMAIN = networkMap.forgejo.sshDomain;
           SSH_LISTEN_PORT = networkMap.forgejo.sshPort;
           SSH_PORT = networkMap.forgejo.sshPort;
           BUILTIN_SSH_SERVER_USER = "git";

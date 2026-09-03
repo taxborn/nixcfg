@@ -15,6 +15,7 @@
         let
           tailscaleIPs = config.mySnippets.tailnet.tailscaleIPs;
           inherit (config.mySnippets.ssh) gnupgSocketDir;
+          inherit (config.mySnippets.biscuits-at.networkMap) forgejo;
 
           machine = name: ip: {
             ${name} = {
@@ -40,6 +41,13 @@
           rsync-backup = {
             Hostname = "de4388.rsync.net";
             User = "de4388";
+          };
+
+          # `git clone forgejo:owner/repo`
+          forgejo = {
+            Hostname = forgejo.sshDomain;
+            User = "git";
+            Port = forgejo.sshPort;
           };
         };
     };
