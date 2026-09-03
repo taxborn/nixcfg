@@ -20,7 +20,7 @@ in
       config = {
         DOMAIN = "https://${networkMap.vaultwarden.domain}";
         ROCKET_PORT = networkMap.vaultwarden.port;
-        ROCKET_ADDRESS = "0.0.0.0";
+        ROCKET_ADDRESS = "127.0.0.1";
 
         SIGNUPS_ALLOWED = true;
         SIGNUPS_VERIFY = true;
