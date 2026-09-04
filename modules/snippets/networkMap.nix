@@ -44,6 +44,11 @@
         port = 3003;
       };
 
+      piper = {
+        domain = "piper.biscuits.at";
+        port = 3005;
+      };
+
       vaultwarden = {
         domain = "vw.biscuits.at";
         port = 3001;

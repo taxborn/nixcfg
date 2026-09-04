@@ -37,6 +37,19 @@ in
       }
     '';
 
+    # Piper is the per-account music tracker that submits records to teal.fm.
+    # Its OAuth callbacks have to be public, but its listener is loopback-only;
+    # Cloudflare mTLS keeps direct traffic from reaching the origin.
+    ${networkMap.piper.domain}.extraConfig = ''
+      import cloudflare-mtls
+
+      encode zstd gzip
+
+      reverse_proxy 127.0.0.1:${toString networkMap.piper.port} {
+        import client-ip
+      }
+    '';
+
     # Vaultwarden
     ${networkMap.vaultwarden.domain}.extraConfig = ''
       import cloudflare-mtls

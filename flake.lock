@@ -357,6 +357,7 @@
         "lanzaboote": "lanzaboote",
         "nix-index-database": "nix-index-database",
         "nixpkgs": "nixpkgs",
+        "tealfm-piper": "tealfm-piper",
         "tranquil-src": "tranquil-src"
       }
     },
@@ -393,6 +394,26 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "tealfm-piper": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1788373088,
+        "narHash": "sha256-n1G6nbz3Lt38RxP9nwCRLvx31WOO8Au15geyiAWKcAo=",
+        "owner": "teal-fm",
+        "repo": "piper",
+        "rev": "6ff8c772debd067d2255f254780d22486d99b07f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "teal-fm",
+        "repo": "piper",
         "type": "github"
       }
     },

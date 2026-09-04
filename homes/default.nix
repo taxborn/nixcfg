@@ -12,6 +12,7 @@
       stateVersion = "25.11";
       sessionPath = [ "$HOME/.local/bin" ];
       packages = with pkgs; [
+        atproto-goat
         cargo
         gcc
         ghostty.terminfo

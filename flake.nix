@@ -70,6 +70,11 @@
       flake = false;
     };
 
+    tealfm-piper = {
+      url = "github:teal-fm/piper";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:denful/import-tree";
   };

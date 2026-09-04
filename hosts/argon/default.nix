@@ -16,6 +16,11 @@
       backups.client = {
         enable = true;
 
+        # Piper tracks the listening history it will submit to teal.fm in
+        # SQLite. Dump the live database rather than archive its WAL files
+        # out of step with it.
+        sqliteDatabases.tealfm-piper = "/var/lib/tealfm-piper/piper.db";
+
         # Tranquil's repository store. A logical dump rather than the live data
         # directory, for the reason the option documents — and it is the whole
         # instance: every account's repo, its encrypted signing key, and the
@@ -25,6 +30,7 @@
       };
       forgejo.enable = true;
       glance.enable = true;
+      piper.enable = true;
       tranquil-pds.enable = true;
       vaultwarden.enable = true;
     };

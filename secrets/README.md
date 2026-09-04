@@ -22,6 +22,24 @@ Borg material is generated per host by the rules at the top of `secrets.nix`, so
 adding a host to the `hosts` list is all a new host's `borg/<host>/` passphrase
 and SSH key need.
 
+`piper.age` is a dotenv file for the teal.fm tracker on Argon. It must contain
+the ATProto confidential-client key and ID, your allowed DID, and the Spotify
+and Last.fm API credentials:
+
+```dotenv
+ATPROTO_CLIENT_SECRET_KEY=
+ATPROTO_CLIENT_SECRET_KEY_ID=
+ALLOWED_DIDS=did:plc:...
+SPOTIFY_CLIENT_ID=
+SPOTIFY_CLIENT_SECRET=
+LASTFM_API_KEY=
+```
+
+Generate the first value with `goat key generate -t P-256`; the key ID must be
+persistent and unique (a Unix timestamp is suitable). `ALLOWED_DIDS` is a
+space-separated allowlist and must include your DID, otherwise anyone with an
+ATProto account could sign in.
+
 `ssh_key.pub` and `signing-key.pub` files sit unencrypted beside their `.age`
 counterparts on purpose — public halves are not secret, and Helium's
 `server.authorizedKeys` and Forgejo's signing config read them from the repo.

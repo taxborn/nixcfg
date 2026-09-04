@@ -29,6 +29,34 @@ in
       packages = {
         braxton-is = inputs.braxton-is.packages.${system}.default;
 
+        # Build the flake input's checkout rather than the upstream
+        # `tealfm-piper` output, which pins an older commit in package.nix.
+        # That keeps this package at the revision locked in flake.lock.
+        #
+        # Upstream's Go module vendor hash applies to that older source only.
+        # Keep a local derivation so updates calculate their own fixed-output
+        # vendor dependency set and fail closed when it changes.
+        tealfm-piper = pkgs.buildGoModule {
+          pname = "tealfm-piper";
+          version = "0.0.11";
+          src = inputs.tealfm-piper;
+          vendorHash = "sha256-0CAKzBBARoHSqDv34Xx3Yek6r33Exhrhvn+FzGlby14=";
+
+          nativeBuildInputs = [ pkgs.tailwindcss_4 ];
+          env.CGO_ENABLED = 1;
+          subPackages = [ "cmd" ];
+
+          postBuild = ''
+            cp -r ./pages/templates $out/
+            cp -r ./pages/static $out/
+            tailwindcss -i $out/static/base.css -o $out/static/main.css -m
+          '';
+
+          postInstall = ''
+            mv $out/bin/cmd $out/bin/piper
+          '';
+        };
+
         # The server and the frontend are two derivations over one source tree
         # and have to move together: the server serves the frontend out of
         # `settings.frontend.dir`, so a skew between them is a broken web UI at
