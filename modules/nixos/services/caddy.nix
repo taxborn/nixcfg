@@ -77,6 +77,20 @@ in
       LAN or a bare public IP goes dark otherwise
     '';
 
+    tailnetOnly = lib.mkEnableOption ''
+      keeping 80/443 off the firewall entirely, leaving Caddy reachable over
+      the tailnet and nowhere else.
+
+      The opposite end of `cloudflareOnly`: that one narrows the two ports to
+      the edge, this one closes them. Nothing is punched through for the
+      tailnet because nothing needs to be — its interface is already trusted,
+      and accepted before the port rules are reached.
+
+      Costs the host HTTP-01, which needs an open 80 from anywhere. Every vHost
+      on a `tailnetOnly` host has to solve DNS-01 instead, and one that does not
+      fails issuance in a retry loop rather than loudly
+    '';
+
     directVHosts = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
@@ -98,21 +112,31 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    assertions = lib.optional cfg.cloudflareOnly {
-      assertion = unprotectedVHosts == [ ];
-      message = ''
-        These vHosts do not `import cloudflare-mtls`, so they answer to any
-        client that reaches the port, not just Cloudflare: ${lib.concatStringsSep ", " unprotectedVHosts}.
+    assertions =
+      lib.optional cfg.cloudflareOnly {
+        assertion = unprotectedVHosts == [ ];
+        message = ''
+          These vHosts do not `import cloudflare-mtls`, so they answer to any
+          client that reaches the port, not just Cloudflare: ${lib.concatStringsSep ", " unprotectedVHosts}.
 
-        If that is deliberate, list them in `directVHosts` and read what it
-        costs the rest of the host.
-      '';
-    };
+          If that is deliberate, list them in `directVHosts` and read what it
+          costs the rest of the host.
+        '';
+      }
+      ++ lib.optional cfg.tailnetOnly {
+        assertion = !cfg.cloudflareOnly;
+        message = ''
+          `cloudflareOnly` and `tailnetOnly` are two answers to the same question
+          about 80/443 — narrow them to Cloudflare's edge, or close them. Enabling
+          both silently gives you the second, plus an mTLS assertion about vHosts
+          no client outside the tailnet can reach.
+        '';
+      };
 
     age.secrets.tailscaleCaddyAuth.file = "${self}/secrets/tailscale/caddy.age";
 
     networking.firewall = lib.mkMerge [
-      (lib.mkIf (!edgeOnly) {
+      (lib.mkIf (!edgeOnly && !cfg.tailnetOnly) {
         allowedTCPPorts = [
           80
           443

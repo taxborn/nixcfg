@@ -25,6 +25,15 @@
         port = 3000;
       };
 
+      # Paperless-ngx, the one service not on Argon. Its record points at
+      # Helium's tailnet address rather than a routable one, so the name
+      # resolves for anyone and answers only on the tailnet — see
+      # hosts/helium/proxy.nix.
+      paperless = {
+        domain = "docs.biscuits.at";
+        port = 3004;
+      };
+
       # The atproto PDS. `domain` names the server itself; every account handle
       # is a further label under it (`alice.pds.biscuits.at`), which is why this
       # is the one entry here whose Caddy vhost comes as a pair. See

@@ -41,6 +41,12 @@ in
   "glance.age".publicKeys = hostKey "argon";
   "vaultwarden.age".publicKeys = hostKey "argon";
 
+  # Helium's, not Argon's — Paperless is the one service off the OVH box.
+  # PAPERLESS_ADMIN_PASSWORD and PAPERLESS_EMAIL_HOST_PASSWORD, as one
+  # environment file. The admin password is what creates the superuser on first
+  # start, so an empty file here is an instance with no way in.
+  "paperless.age".publicKeys = hostKey "helium";
+
   # The PDS's three cryptographic secrets and its Fastmail SMTP login, as one
   # environment file. `MASTER_KEY` is the load-bearing one: every account's
   # signing key is encrypted under it, so a lost copy is a lost instance and a
