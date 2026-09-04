@@ -1,12 +1,20 @@
 {
   config,
   lib,
+  pkgs,
   self,
   ...
 }:
 let
   cfg = config.myNixOS.services.tranquil-pds;
   networkMap = config.mySnippets.biscuits-at.networkMap;
+
+  # `main`, not the tagged release nixpkgs carries -- see the `tranquil-src`
+  # input in flake.nix for what that costs. Both halves are pinned from the
+  # same source tree on purpose: the server serves the frontend out of
+  # `settings.frontend.dir`, so letting one come from the flake and the other
+  # from nixpkgs is a version skew that only shows up as a broken web UI.
+  packages = self.packages.${pkgs.stdenv.hostPlatform.system};
 in
 {
   options.myNixOS.services.tranquil-pds.enable = lib.mkEnableOption "Tranquil AT Protocol PDS";
@@ -16,6 +24,7 @@ in
 
     services.tranquil-pds = {
       enable = true;
+      package = packages.tranquil-pds;
 
       # Postgres, not the embedded `tranquil-store`. Tranquil's own docs call
       # that one experimental with a risk of total data loss, and there is no
@@ -31,6 +40,8 @@ in
       environmentFiles = [ config.age.secrets.tranquilPds.path ];
 
       settings = {
+        frontend.dir = packages.tranquil-pds-frontend;
+
         server = {
           hostname = networkMap.pds.domain;
           port = networkMap.pds.port;

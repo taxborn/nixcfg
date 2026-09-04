@@ -356,7 +356,8 @@
         "import-tree": "import-tree",
         "lanzaboote": "lanzaboote",
         "nix-index-database": "nix-index-database",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "tranquil-src": "tranquil-src"
       }
     },
     "rust-overlay": {
@@ -393,6 +394,23 @@
         "owner": "nix-systems",
         "repo": "default",
         "type": "github"
+      }
+    },
+    "tranquil-src": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1788442629,
+        "narHash": "sha256-gwrttPSJDbMtbv1KbXXTc96+VnYaSL+HuzCG8APqs1o=",
+        "ref": "main",
+        "rev": "6750aeccafb87ee5683bc748cb9dd1f2d7854237",
+        "revCount": 545,
+        "type": "git",
+        "url": "https://tangled.org/did:plc:jj6ajj6duxnlthwtnob4qyuv"
+      },
+      "original": {
+        "ref": "main",
+        "type": "git",
+        "url": "https://tangled.org/did:plc:jj6ajj6duxnlthwtnob4qyuv"
       }
     }
   },

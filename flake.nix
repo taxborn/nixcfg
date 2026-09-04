@@ -51,6 +51,25 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Tranquil, tracking `main` instead of the tagged release nixpkgs carries.
+    # `flake = false` because upstream ships no flake.nix — this is a bare
+    # source tree that modules/flake/packages.nix hands to the nixpkgs
+    # derivations as `src`.
+    #
+    # Same deploy mechanism as braxton-is above: the revision in flake.lock is
+    # the revision Argon runs, so `nix flake update tranquil-src` is the
+    # upgrade and rolling back is rolling back the lock. Unlike a rollback of
+    # the site, though, a rollback here does not undo database migrations --
+    # Tranquil has none in the reverse direction. Take a dump first.
+    #
+    # tangled.org redirects to a knot host (knot1.tangled.sh) on fetch. git
+    # follows it; worth knowing when a fetch fails for reasons that look like
+    # DNS.
+    tranquil-src = {
+      url = "git+https://tangled.org/did:plc:jj6ajj6duxnlthwtnob4qyuv?ref=main";
+      flake = false;
+    };
+
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:denful/import-tree";
   };
