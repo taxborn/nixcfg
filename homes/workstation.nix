@@ -47,6 +47,7 @@ in
       bitwarden-desktop
       nautilus
       papers
+      opencode-desktop
       spotify
       vesktop
       vlc

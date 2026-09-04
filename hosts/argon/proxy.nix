@@ -3,14 +3,35 @@ let
   networkMap = config.mySnippets.biscuits-at.networkMap;
 in
 {
-  myNixOS.services.caddy.cloudflareOnly = true;
+  myNixOS.services.caddy = {
+    cloudflareOnly = true;
+
+    directVHosts = [
+      networkMap.pds.domain
+      "*.${networkMap.pds.domain}"
+    ];
+  };
 
   services.caddy.virtualHosts = {
+    # Git over SSH moved to the tailnet, but the zone's proxied wildcard still
+    # answers for this name, and Caddy holds no certificate for it — so
+    # Cloudflare fails the origin handshake and serves a 525. Redirect it
+    # rather than leave a hostname that only errors.
+    "git.biscuits.at".extraConfig = ''
+      import cloudflare-mtls
+
+      redir https://${networkMap.forgejo.domain}{uri} permanent
+    '';
+
     # Glance
     "biscuits.at".extraConfig = ''
+      import cloudflare-mtls
+
       redir https://${networkMap.glance.domain}{uri} permanent
     '';
     ${networkMap.glance.domain}.extraConfig = ''
+      import cloudflare-mtls
+
       reverse_proxy localhost:${toString networkMap.glance.port} {
         import client-ip
       }
@@ -18,14 +39,67 @@ in
 
     # Vaultwarden
     ${networkMap.vaultwarden.domain}.extraConfig = ''
+      import cloudflare-mtls
+
       encode zstd gzip
       reverse_proxy localhost:${toString networkMap.vaultwarden.port} {
         import client-ip
       }
     '';
 
+    # The atproto PDS, and every account handle issued under it. Two vhosts
+    # because a handle is a further label: `pds.biscuits.at` is the server and
+    # `alice.pds.biscuits.at` is an account, and Caddy matches the more specific
+    # site, so the wildcard only ever catches the latter.
+    #
+    # Both names are DNS-only records, the only ones in this zone that are —
+    # every other vhost here sits behind Cloudflare's proxy. Three reasons, any
+    # one of which is sufficient:
+    #
+    #   - The universal certificate covers `biscuits.at` and `*.biscuits.at`
+    #     and stops there. A proxied `alice.pds.biscuits.at` has no edge
+    #     certificate at all and dies at the handshake, which is every account
+    #     on the instance.
+    #   - `com.atproto.sync.subscribeRepos` is a long-lived WebSocket that
+    #     relays hold open through idle periods, and the proxy times those out.
+    #   - The free tier caps a request body at 100 MB. Blob uploads here are
+    #     allowed up to 10 GiB.
+    #
+    # Going direct means Caddy sees the real peer, so `client_ip` is already
+    # correct and the `client-ip` snippet the proxied vhosts need would only
+    # overwrite a good value with the same one.
+    ${networkMap.pds.domain}.extraConfig = ''
+      encode zstd gzip
+
+      reverse_proxy localhost:${toString networkMap.pds.port}
+    '';
+
+    # Let's Encrypt issues a wildcard over DNS-01 and no other challenge, so
+    # this is the one vhost that cannot use the HTTP-01 the rest fall back to.
+    # CF_API_TOKEN comes from Caddy's environmentFile and needs Zone:DNS:Edit
+    # plus Zone:Zone:Read on this zone.
+    "*.${networkMap.pds.domain}" = {
+      # The default log path is derived from the site address, which here
+      # contains a `*` — leaving it gives a real file in /var/log/caddy whose
+      # name is a glob metacharacter, waiting for the first person to write a
+      # loop over that directory.
+      logFormat = "output file /var/log/caddy/access-wildcard.${networkMap.pds.domain}.log";
+
+      extraConfig = ''
+        encode zstd gzip
+
+        tls {
+          dns cloudflare {env.CF_API_TOKEN}
+        }
+
+        reverse_proxy localhost:${toString networkMap.pds.port}
+      '';
+    };
+
     # Forgejo
     ${networkMap.forgejo.domain}.extraConfig = ''
+      import cloudflare-mtls
+
       encode zstd gzip
 
       request_body {

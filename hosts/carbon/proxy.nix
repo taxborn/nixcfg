@@ -11,6 +11,8 @@ in
     # record cannot pass the ACME challenge, so this vhost fails issuance in a
     # loop until the record is there.
     "www.${site.domain}".extraConfig = ''
+      import cloudflare-mtls
+
       redir https://${site.domain}{uri} permanent
     '';
 
@@ -18,6 +20,8 @@ in
     # Astro build — see the domain option in modules/nixos/services/braxton-is.nix
     # for why the two are set in separate repos and have to agree by hand.
     ${site.domain}.extraConfig = ''
+      import cloudflare-mtls
+
       encode zstd gzip
 
       header Strict-Transport-Security "max-age=31536000"

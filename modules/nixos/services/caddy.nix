@@ -8,11 +8,37 @@
 let
   cfg = config.myNixOS.services.caddy;
 
-  # https://www.cloudflare.com/ips-v4 / https://www.cloudflare.com/ips-v6
-  # Under `cloudflareOnly` these are the only addresses allowed to reach
-  # Caddy on 80/443: anyone else is talking to the origin directly, past the
-  # proxy and the WAF. Cloudflare publishes additions here, and a range we
-  # have not copied over yet is a partial outage that reads as their fault.
+  # Public half of the certificate Cloudflare presents on every origin pull.
+  # The private half lives only in Cloudflare; nothing here needs it, and
+  # rotating means generating a fresh pair, uploading it, and replacing this
+  # file. Adding another zone means uploading this same certificate to it.
+  originPullCert = "${self}/keys/cloudflare-origin-pull.pem";
+
+  unprotectedVHosts = lib.subtractLists cfg.directVHosts (
+    lib.attrNames (
+      lib.filterAttrs (
+        _: vhost: !lib.hasInfix "import cloudflare-mtls" vhost.extraConfig
+      ) config.services.caddy.virtualHosts
+    )
+  );
+
+  # The firewall works in addresses, not names, so 80/443 can only stay shut to
+  # the world while *every* vHost on the host is behind the proxy. One direct
+  # vHost and the ports have to answer everyone — which is the cost
+  # `directVHosts` is there to make explicit rather than accidental.
+  edgeOnly = cfg.cloudflareOnly && cfg.directVHosts == [ ];
+
+  # Under `cloudflareOnly` these are the only addresses allowed to reach Caddy
+  # on 80/443: anyone else is talking to the origin directly, past the proxy
+  # and the WAF. Cloudflare adds ranges from time to time, and one we have not
+  # copied over yet is a partial outage that reads as their fault, so this is
+  # a list to re-check rather than to trust. Refresh it with:
+  #
+  #   curl -s https://api.cloudflare.com/client/v4/ips \
+  #     | jq -r '.result.ipv4_cidrs[], .result.ipv6_cidrs[]'
+  #
+  # The same lists are published as plain text at https://www.cloudflare.com/ips-v4
+  # and https://www.cloudflare.com/ips-v6.
   cloudflareIPv4Ranges = [
     "173.245.48.0/20"
     "103.21.244.0/22"
@@ -50,13 +76,43 @@ in
       Only true where every vHost is proxied. A host serving anything on a
       LAN or a bare public IP goes dark otherwise
     '';
+
+    directVHosts = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      example = lib.literalExpression ''[ "pds.biscuits.at" ]'';
+      description = ''
+        vHosts reached straight from the internet rather than through
+        Cloudflare, exempting them from the `cloudflare-mtls` assertion.
+
+        Naming one costs the whole host its IP allowlist: 80/443 reopen to
+        everyone, because iptables cannot tell which name a connection is
+        about to ask for. The other vHosts keep the client-certificate half,
+        which is the half that actually authenticates, and lose the
+        belt-and-braces half.
+
+        Worth it only where the proxy cannot serve the name at all. The PDS is
+        the case this exists for — see hosts/argon/proxy.nix.
+      '';
+    };
   };
 
   config = lib.mkIf cfg.enable {
+    assertions = lib.optional cfg.cloudflareOnly {
+      assertion = unprotectedVHosts == [ ];
+      message = ''
+        These vHosts do not `import cloudflare-mtls`, so they answer to any
+        client that reaches the port, not just Cloudflare: ${lib.concatStringsSep ", " unprotectedVHosts}.
+
+        If that is deliberate, list them in `directVHosts` and read what it
+        costs the rest of the host.
+      '';
+    };
+
     age.secrets.tailscaleCaddyAuth.file = "${self}/secrets/tailscale/caddy.age";
 
     networking.firewall = lib.mkMerge [
-      (lib.mkIf (!cfg.cloudflareOnly) {
+      (lib.mkIf (!edgeOnly) {
         allowedTCPPorts = [
           80
           443
@@ -71,7 +127,7 @@ in
       # through. Without it a fail2ban ban landing mid-reload holds the
       # xtables lock, firewall-start exits non-zero under `sh -e`, and
       # firewall-stop then unhooks nixos-fw from INPUT entirely.
-      (lib.mkIf cfg.cloudflareOnly {
+      (lib.mkIf edgeOnly {
         extraCommands =
           lib.concatMapStrings (range: ''
             iptables -w -A nixos-fw -p tcp -s ${range} -m multiport --dports 80,443 -j nixos-fw-accept
@@ -107,6 +163,21 @@ in
           (client-ip) {
             header_up X-Forwarded-For {client_ip}
             header_up X-Real-IP {client_ip}
+          }
+        ''
+        # The IP allowlist only proves a request came from Cloudflare's
+        # network, which anyone with a Cloudflare account can arrange. This
+        # proves it came from *our* zone: no client certificate, no handshake.
+        # Every vHost has to import it, and the assertion below is what makes
+        # forgetting one a build failure rather than an open door.
+        + lib.optionalString cfg.cloudflareOnly ''
+          (cloudflare-mtls) {
+            tls {
+              client_auth {
+                mode require_and_verify
+                trust_pool file ${originPullCert}
+              }
+            }
           }
         '';
 

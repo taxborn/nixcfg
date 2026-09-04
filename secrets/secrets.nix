@@ -40,5 +40,11 @@ in
 
   "glance.age".publicKeys = hostKey "argon";
   "vaultwarden.age".publicKeys = hostKey "argon";
+
+  # The PDS's three cryptographic secrets and its Fastmail SMTP login, as one
+  # environment file. `MASTER_KEY` is the load-bearing one: every account's
+  # signing key is encrypted under it, so a lost copy is a lost instance and a
+  # leaked copy is every identity on it.
+  "tranquil-pds.age".publicKeys = hostKey "argon";
 }
 // borgSecrets

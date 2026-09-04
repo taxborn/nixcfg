@@ -25,6 +25,16 @@
         port = 3000;
       };
 
+      # The atproto PDS. `domain` names the server itself; every account handle
+      # is a further label under it (`alice.pds.biscuits.at`), which is why this
+      # is the one entry here whose Caddy vhost comes as a pair. See
+      # hosts/argon/proxy.nix for why those two records are the only ones in
+      # the zone that Cloudflare does not proxy.
+      pds = {
+        domain = "pds.biscuits.at";
+        port = 3003;
+      };
+
       vaultwarden = {
         domain = "vw.biscuits.at";
         port = 3001;
