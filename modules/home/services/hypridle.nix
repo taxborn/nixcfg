@@ -50,6 +50,7 @@ in
 
     services.hypridle = {
       enable = true;
+      systemdTarget = lib.mkIf config.wayland.windowManager.hyprland.enable "hyprland-session.target";
 
       settings = {
         # Three things lock this session: the idle listener below,
@@ -93,33 +94,24 @@ in
     };
 
     systemd.user.services = {
-      hypridle = {
-        Install.WantedBy = lib.mkForce (
-          lib.optional config.wayland.windowManager.hyprland.enable "hyprland-session.target"
-        );
-
-        Service = {
-          Environment = lib.mkForce [
-            "PATH=${
-              lib.makeBinPath (
-                (with pkgs; [
-                  bash
-                  brightnessctl
-                  hyprlock
-                  procps
-                  systemd
-                  uutils-coreutils-noprefix
-                ])
-                ++ lib.optional config.wayland.windowManager.hyprland.enable config.wayland.windowManager.hyprland.package
-              )
-            }"
-          ];
-
-          Restart = lib.mkForce "no";
-        };
-
-        Unit.BindsTo = lib.optional config.wayland.windowManager.hyprland.enable "hyprland-session.target";
-      };
+      # The commands in hypridle.conf run under the user manager, whose PATH
+      # need not match an interactive shell. Keep their executables explicit;
+      # Home Manager supplies the unit, session target and restart policy.
+      hypridle.Service.Environment = [
+        "PATH=${
+          lib.makeBinPath (
+            (with pkgs; [
+              bash
+              brightnessctl
+              procps
+              systemd
+              uutils-coreutils-noprefix
+            ])
+            ++ [ config.programs.hyprlock.package ]
+            ++ lib.optional config.wayland.windowManager.hyprland.enable config.wayland.windowManager.hyprland.package
+          )
+        }"
+      ];
 
       pipewire-inhibit-idle = {
         Unit = {
