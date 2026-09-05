@@ -79,8 +79,13 @@ of the same fact cannot drift:
 - `mySnippets.ssh.knownHosts` pins host keys, assembled from `../keys` and the
   tailnet map.
 
-> `mySnippets.tailnet.alwaysOn` and `.physicalDisks` are declared but read by
-> nothing. They describe a Prometheus server that is not in this repository.
+The old `alwaysOn` and `physicalDisks` options had no readers after monitoring
+went in `f4012fc`, so they were removed. If monitoring returns, preserve the
+reasoning before choosing its data model. Only Argon, Carbon and Helium should
+alert on absence. An offline workstation is normal. SMART monitoring belongs
+on Helium, Tungsten and Uranium, since the OVH guests expose virtual disks.
+Exporter enablement and scrape targets must agree, and the OVH hardware profile
+already disables `smartd` for the same reason.
 
 ## modules with their own README
 
