@@ -29,13 +29,12 @@ in
 
     port = lib.mkOption {
       type = lib.types.port;
-      default = 3003;
+      default = 3006;
       description = ''
         Loopback port the Node server listens on. Kept out of
         `mySnippets.biscuits-at.networkMap` because that map is scoped to
-        `biscuits.at` and this site is not on it. 3003 is the PDS's port in
-        that map, so the two collide by number and stay harmless only while
-        they run on separate hosts.
+        `biscuits.at` and this site is not on it. Reserve 3006 for this site
+        so moving it onto a host with the PDS does not collide with port 3003.
       '';
     };
   };

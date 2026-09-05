@@ -187,9 +187,7 @@ backend resolves Cloudflare's edge as the client.
 Services on `biscuits.at` take a port from the `300x` sequence, recorded in
 `networkMap`: 3000 glance, 3001 vaultwarden, 3002 forgejo, 3003 pds, 3004
 paperless, 3005 piper. `braxton-is` stays out of the map because it is on a
-different domain, and its default port is 3003 rather than the next free
-number, so it collides with the PDS and is only safe while the two run on
-separate hosts.
+different domain. It reserves port 3006 so it can share a host with the PDS.
 
 ### secrets are agenix, and the YubiKey is a recipient of everything
 

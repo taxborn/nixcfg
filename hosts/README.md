@@ -90,7 +90,7 @@ An Intel OVH VPS, `vps-2 2026` model.
 
 | service | vHost | port | notes |
 | --- | --- | --- | --- |
-| [braxton.is](../modules/nixos/services/braxton-is.nix) | `braxton.is` | 3003 | Astro SSR under `DynamicUser` |
+| [braxton.is](../modules/nixos/services/braxton-is.nix) | `braxton.is` | 3006 | Astro SSR under `DynamicUser` |
 
 Deploying the site means moving a flake input. `just deploy-site` bumps the
 `braxton-is` revision in `flake.lock` and rebuilds, so a rollback is a
