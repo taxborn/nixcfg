@@ -146,26 +146,25 @@ restore-dr host *repos="rsync":
                     echo "key authorizes it remotely. Covered by \`just restore-test helium\`."
                     continue
                 fi
-                # Dead as written. 058b04a moved every host to Tailscale SSH on
-                # 22, removing `backups.server.sshPort` along with the
-                # `--restrict-to-path` forced command that the non-default port
-                # existed to make bind, so the second `nix eval` below fails on
-                # an option that is gone. The `rsync` branch above is fine.
+                # Address from the flake, so it cannot drift from the modules.
+                # No port: 058b04a moved every host to Tailscale SSH on 22 and
+                # removed `backups.server.sshPort`, which had existed only to
+                # make a `--restrict-to-path` forced command bind. Tailscale SSH
+                # skips authorized_keys entirely, so a forced command pinned to
+                # a key never applies there, and confining this repository's key
+                # to one path again would cost a second sshd port again.
                 #
-                # Two things from the old comment still hold. The address comes
-                # from the flake so it cannot drift from the modules. And the
-                # port was not 22 precisely because Tailscale SSH skips
-                # authorized_keys entirely, so a forced command pinned to a key
-                # never applies there. Restricting this repository's key to one
-                # path again costs a second sshd port again.
+                # For the same reason the decrypted key above does not authorize
+                # this connection; the tailnet identity of whoever runs it does.
+                # What it proves is that the archive opens with the passphrase
+                # that host's key file carries, which is the half that a lost
+                # host actually needs.
                 if [ -z "$helium_ip" ]; then
                     helium_ip=$(cd "$root" && nix eval --raw \
                         .#nixosConfigurations.helium.config.mySnippets.tailnet.tailscaleIPs.helium)
-                    helium_port=$(cd "$root" && nix eval \
-                        .#nixosConfigurations.helium.config.myNixOS.services.backups.server.sshPort)
                 fi
                 # basePath is absolute, hence the doubled slash after the host.
-                repo_url="ssh://taxborn@$helium_ip:$helium_port//mnt/hdd/borg/{{host}}"
+                repo_url="ssh://taxborn@$helium_ip//mnt/hdd/borg/{{host}}"
                 remote=()
                 ;;
             *)
