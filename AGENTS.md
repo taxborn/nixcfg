@@ -21,8 +21,8 @@ You can evaluate and build. You cannot deploy, and you cannot read secrets.
 
 - `nix eval .#nixosConfigurations.<host>.config.<path>` is the fastest way to
   check that an option exists and resolves. Use it before claiming an option
-  path in a doc or a script; several already in the tree do not exist (see
-  [known drift](#known-drift)).
+  path in a doc or a script. Checking a related option can miss generated
+  settings, as the [GRUB review](#known-drift) showed.
 - `nix build .#nixosConfigurations.<host>.config.system.build.toplevel` builds a
   host in full. This is the real check that a change works.
 - `nix build .#braxton-is`, `.#tealfm-piper`, `.#tranquil-pds` build the
@@ -44,6 +44,9 @@ are running in. Editing a `.age` file is a task for the user.
 ## how to change things
 
 ### adding an option or a service
+
+Each host declares `nixpkgs.hostPlatform` in its own `default.nix`. CPU-vendor
+modules configure drivers and firmware, not the host architecture.
 
 Every module in this tree has the same shape, and matching it matters more than
 any individual preference:
@@ -125,6 +128,10 @@ Commit frequently with each substantive change, NEVER push without approval.
 
 ## comment style
 
+Apply unslop to new and rewritten prose. Use periods or commas instead of em
+dashes, and preserve technical reasoning when shortening comments. Existing
+prose does not need a punctuation-only rewrite.
+
 This repository comments heavily, and the comments are documentation rather
 than noise. The house style is narrow: explain why the obvious thing is wrong
 here. A comment that restates the code gets deleted. A comment recording that
@@ -172,55 +179,24 @@ or, worse, a silent hole:
 
 ## known drift
 
-Verified against the tree as of this writing. Do not propagate these into new
-code or docs, do not "fix" one by inventing the option it is missing, and do
-not read an inert setting as evidence that the thing it names exists:
+Reviewed on 2026-09-05. The fixes and decisions are recorded in the root
+[maintenance review](./README.md#maintenance-review). Do not reintroduce the
+removed settings from older commits. These retained cases are easy to misread:
 
-- `just runner-gc` evaluates
-  `myNixOS.services.forgejo.runner.{storeVolume,nixImage}`. The Forgejo runner
-  module was deleted in `f4012fc`; the recipe is dead and fails at `nix eval`.
-  It is kept on purpose and says so in its own comment: the pid-namespace
-  reasoning it carries is the expensive part, and a runner coming back would
-  need it.
-- `mySnippets.tailnet.alwaysOn` and `.physicalDisks` are read by nothing. The
-  monitoring module that read them went in `f4012fc`. Their descriptions say
-  that now, rather than describing a Prometheus server this repo does not have,
-  but the options themselves are still inert.
-- `modules/nixos/services/braxton-is.nix` defaults `port = 3003`, the same port
-  the PDS takes in `networkMap`. Harmless only while the two run on separate
-  hosts.
-- `modules/hardware/intel/cpu.nix` sets `nixpkgs.hostPlatform`, and nothing
-  else in the tree does. Every host's platform therefore depends on a
-  CPU-vendor module being enabled. All five enable it, so this holds only by
-  coincidence; a host with an AMD CPU would evaluate with no platform at all.
-- `modules/hardware/nvidia/gpu.nix` gates the i915 initrd module on
-  `myHardware.intel.cpu.enable`, while the comment above it explains the
-  ordering in terms of hybrid Intel+Nvidia *graphics*. Those are different
-  properties: uranium pairs an Intel CPU with an AMD GPU and no nvidia.
-- `modules/nixos/services/fail2ban.nix` sets `bantime-increment.overalljails`,
-  which has nothing to escalate across. `f4012fc` deleted the caddy-auth,
-  vaultwarden and forgejo jails, leaving sshd as the only jail declared here.
-- `modules/disko/btrfs-ovh.nix` declares a 2M EF02 BIOS-boot partition, but
-  `modules/nixos/programs/grub.nix` installs in EFI mode and no host sets
-  `boot.loader.grub.device`, so nothing ever writes BIOS-mode GRUB into it.
-- `modules/nixos/profiles/btrfs.nix` builds `btrfsFSDevices` with a
-  `mountPoint` field nothing downstream reads, and no host enables
-  `deduplicate`, so the whole beesd path is unexercised.
-- `modules/nixos/services/glance.nix` links to `https://i.biscuits.at`, an
-  Immich instance that has no module anywhere in this repo.
-- `homes/server.nix` installs `jdk_headless`, and `modules/home/services/mako.nix`
-  installs `mpv` and puts it on the unit's PATH. Nothing in the tree invokes
-  either; the mpv pair looks like the remains of a notification-sound setup.
-- `modules/home/services/mako.nix` and `modules/home/services/hypridle.nix`
-  hand-write systemd units (`Type = "dbus"` with `BusName`,
-  `Restart = mkForce "no"`, `BindsTo` on `hyprland-session.target`) that
-  override what home-manager generates. `882efdc` introduced them recording no
-  reason, and none has been reconstructed since.
-- Uranium and Tungsten carry no comments, which was deliberate: `50743d4` and
-  `83016a3`, both "docs: clean up excessive comments", removed the reasoning
-  for `aesni_intel` in the initrd and for `cpu-epp` over
-  `powerManagement.cpuFreqGovernor`. Both of those fail silently rather than
-  loudly, so the reasoning is worth rewriting if anyone reconstructs it.
+- The OVH EF02 partition is used. Disko derives
+  `boot.loader.grub.devices = [ "/dev/sda" ]` from it. NixOS installs BIOS
+  GRUB to that disk as well as EFI GRUB to the ESP. Checking only the singular
+  `boot.loader.grub.device` misses the generated install target.
+- Pinned home-manager configures Mako and registers its D-Bus package, but
+  creates no systemd unit. The local unit starts it with Hyprland, waits for
+  its bus name and stops it with the session. Hypridle does have an upstream
+  unit and uses `services.hypridle.systemdTarget` in the home configuration.
+- No host enables btrfs `deduplicate`. Its enabled branch was evaluated on
+  Uranium and creates one bees daemon per distinct filesystem, each with a
+  2 GiB hash table. Keep it opt-in until duplicate data justifies that cost.
+- The retired runner's GC and monitoring distinctions live in
+  [modules/README.md](./modules/README.md). There is no runnable `runner-gc`
+  recipe or configurable monitoring roster without their consumers.
 
 ## file map
 

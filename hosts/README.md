@@ -11,8 +11,6 @@ The roster lives in [`modules/flake/hosts.nix`](../modules/flake/hosts.nix),
 `mySnippets.tailnet.tailscaleIPs`. A host has to be in all three to be built,
 to hold secrets, and to be backed up.
 
-<!-- TODO: Images of each system, if applicable. -->
-
 ## at a glance
 
 | host | role | profile | tailnet | boot |

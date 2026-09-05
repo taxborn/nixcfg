@@ -34,10 +34,11 @@ keys/                  public keys: host roots, yubikey, the origin-pull cert
 scripts/               operational bash, invoked from the justfile
 ```
 
-`import-tree` picks up every file under `modules/`, so creating a file is the
-whole registration step. There is no import list to add it to. The only rosters
-that exist are the host list in `modules/flake/hosts.nix` and the one in
-`secrets/secrets.nix`.
+`import-tree` picks up Nix files under the hardware, NixOS, home, users and
+snippets module directories. Creating a module there is the registration step.
+Disk layouts are instantiated in `modules/flake/modules.nix`. Keep the host
+rosters in `modules/flake/hosts.nix`, `secrets/secrets.nix` and
+`mySnippets.tailnet.tailscaleIPs` in agreement.
 
 ## day to day
 
@@ -93,39 +94,30 @@ sudo sh -c 'for a in /sys/class/firmware-attributes/dell-wmi-sysman/attributes/*
 done'
 ```
 
-## todo
+## maintenance review
 
-Open work and unanswered questions. The [known drift][drift] list in AGENTS.md
-carries the detail on why each of these reads as load-bearing and is not.
+Reviewed on 2026-09-05 against the pinned inputs and evaluated host options.
+The original TODO and known-drift list produced these changes and decisions.
 
-[drift]: ./AGENTS.md#known-drift
-
-- Move `nixpkgs.hostPlatform` out of `modules/hardware/intel/cpu.nix`. Every
-  host's platform currently depends on a CPU-vendor module being enabled, which
-  holds only because all five enable it.
-- Key the i915 initrd gate in `modules/hardware/nvidia/gpu.nix` on the GPU
-  rather than on `myHardware.intel.cpu.enable`. The comment above it is about
-  graphics; the condition is about the CPU.
-- Rewrite the reasoning `50743d4` and `83016a3` removed from Uranium: why
-  `aesni_intel` belongs in the initrd, and why `cpu-epp` rather than
-  `powerManagement.cpuFreqGovernor`. Both fail silently, which is the bar the
-  comment style sets for keeping an explanation forever.
-- Record why `modules/home/services/mako.nix` and `hypridle.nix` hand-write
-  systemd units instead of taking home-manager's, or drop the overrides.
-  `882efdc` introduced them with no reason given.
-- Decide whether the Forgejo runner is coming back. If not, `just runner-gc`
-  and the pid-namespace note it carries can go.
-- Give Immich a `networkMap` entry if it is proxied from somewhere, or drop the
-  dashboard link in `modules/nixos/services/glance.nix`.
-- Drop either the EF02 BIOS-boot partition in `modules/disko/btrfs-ovh.nix` or
-  the header claiming it is used; GRUB installs in EFI mode here.
-- Remove the unread `mountPoint` field in `modules/nixos/profiles/btrfs.nix`,
-  and decide whether `deduplicate` is wanted, since no host enables it.
-- Drop `jdk_headless` from `homes/server.nix` and `mpv` from
-  `modules/home/services/mako.nix`, or record what uses them.
-- Settle the em dash question. The house voice uses them freely, most visibly
-  in `caddy.nix`; the prose pass that touched most of the tree removed them
-  only where a comment was being rewritten anyway, so the tree is mixed.
+| item | decision |
+| --- | --- |
+| host platform tied to Intel CPU | Each host now declares its architecture. All five still evaluate with the Intel CPU module disabled. |
+| i915 keyed on CPU | Gate it on Intel graphics. Checked both CPU/GPU combinations. |
+| braxton.is and PDS port collision | Reserve 3006 for the site. Its service and Caddy read the same option. |
+| Mako unit | Keep it. Pinned home-manager creates no unit. Document its D-Bus and session lifecycle, and restart on failure. |
+| Hypridle overrides | Use home-manager's session-target option and restart policy. Retain the PATH needed by idle commands. |
+| dead runner GC recipe | Remove the recipe and preserve the PID namespace and rootless Podman notes in [modules/](./modules/README.md#retired-runner). This does not decide whether a runner returns. |
+| unread monitoring options | Remove `alwaysOn` and `physicalDisks`. Preserve the liveness and SMART distinctions in [modules/](./modules/README.md#snippets-hold-data-no-config). |
+| fail2ban cross-jail escalation | Remove it. SSH is the only service jail; incremental bans and tailnet exemptions remain. |
+| OVH BIOS partition | Keep it. Disko derives the BIOS GRUB target from EF02, alongside the EFI install. The drift report missed `grub.devices`. |
+| btrfs device records | Replace the unused mount-point records with unique device paths. |
+| bees deduplication | Keep it disabled by default. Evaluating the enabled branch on Uranium produces three daemons and three 2 GiB hash tables. No measured space saving justifies enabling them. |
+| Immich dashboard link | Remove it. No module or proxy in this tree provides the service, and no external use was identified during review. |
+| server Java and Mako mpv | Remove them. No configured command uses either package. |
+| Uranium's deleted comments | Restore the initrd AES and HWP preference reasoning. The [kernel documentation](https://docs.kernel.org/admin-guide/pm/intel_pstate.html#active-mode-with-hwp) distinguishes the performance hint from the governor. |
+| Neovim/tmux navigation | Install the missing Neovim plugin and map normal-mode C-hjkl to its commands. |
+| em dashes | Apply unslop to new and rewritten prose. Keep unrelated punctuation cleanup out of functional changes. |
+| host photos | Drop the placeholder. Photos need actual host images and add no configuration or recovery instructions. |
 
 ## do not
 
