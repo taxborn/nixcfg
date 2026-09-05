@@ -123,10 +123,6 @@ carries the detail on why each of these reads as load-bearing and is not.
   and decide whether `deduplicate` is wanted, since no host enables it.
 - Drop `jdk_headless` from `homes/server.nix` and `mpv` from
   `modules/home/services/mako.nix`, or record what uses them.
-- Run `just --unstable --fmt` over the justfile. It has never been clean. Every
-  line it wants is `{{host}}` to `{{ host }}` spacing, nothing else, so the
-  reflow is safe and would stop burying real diffs. `just` is not in the
-  pre-commit set, so this stays a one-off rather than a hook.
 - Settle the em dash question. The house voice uses them freely, most visibly
   in `caddy.nix`; the prose pass that touched most of the tree removed them
   only where a comment was being rewritten anyway, so the tree is mixed.
