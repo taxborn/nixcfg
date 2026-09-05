@@ -98,7 +98,7 @@ done'
 
 Open work from the architecture review, in priority order.
 
-- [ ] Register database backup requirements in the service modules when the
+- [x] Register database backup requirements in the service modules when the
   backup client is enabled. Forgejo and Piper currently rely on dump settings
   in Argon's host config, which could be missed when moving either service.
   Keep repository and retention choices at the host level. Read the

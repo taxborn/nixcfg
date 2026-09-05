@@ -14,6 +14,18 @@ in
   options.myNixOS.services.piper.enable = lib.mkEnableOption "Piper teal.fm music tracker";
 
   config = lib.mkIf cfg.enable {
+    # Piper tracks the listening history it will submit to teal.fm in
+    # SQLite. Dump the live database rather than archive its WAL files
+    # out of step with it.
+    myNixOS.services.backups.client.sqliteDatabases.tealfm-piper =
+      lib.mkIf config.myNixOS.services.backups.client.enable
+        (
+          if config.services.tealfm-piper.settings.DB_PATH != null then
+            config.services.tealfm-piper.settings.DB_PATH
+          else
+            "${config.services.tealfm-piper.dataDir}/piper.db"
+        );
+
     # The upstream module renders `settings` to an environment file in the Nix
     # store, so provider credentials and Piper's ATProto private key must stay
     # in agenix. The service user is created by that upstream module.

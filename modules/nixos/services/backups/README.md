@@ -216,10 +216,15 @@ archive as borg writes it.
 | `postgresqlDumpAll = true` | PostgreSQL | `pg_dumpall` of every database | `/var/lib/postgresql` |
 | `sqliteDatabases.<name> = <path>` | SQLite | `sqlite3 <path> .dump` | `<path>*` |
 
-Argon takes both: `pg_dumpall` for Tranquil's repository store, and a SQLite
-dump of Piper's listening history at `/var/lib/tealfm-piper/piper.db`. Helium
-takes the PostgreSQL dump for Paperless. Carbon takes neither, having no
-database.
+Forgejo, Piper, Tranquil and Paperless register their dumps in their service
+modules whenever the backup client is enabled. Moving one of these services
+therefore carries its dump requirement with it. Repository and retention
+choices remain with the host. Forgejo and Piper read the database paths from
+their service configuration.
+
+Argon takes `pg_dumpall` for Tranquil and SQLite dumps for Forgejo and Piper.
+Helium takes the PostgreSQL dump for Paperless. Carbon takes neither, having
+no database.
 
 The SQLite exclude carries a trailing glob for a reason: `-wal` and `-shm` sit
 beside the database file and hold everything committed since the last

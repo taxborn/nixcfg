@@ -12,6 +12,11 @@ in
   options.myNixOS.services.paperless.enable = lib.mkEnableOption "Paperless-ngx document archive";
 
   config = lib.mkIf cfg.enable {
+    # Paperless keeps everything but the document files in postgres. Walking
+    # the live cluster archives a torn set of pages, so take a logical dump.
+    myNixOS.services.backups.client.postgresqlDumpAll =
+      lib.mkIf config.myNixOS.services.backups.client.enable true;
+
     age.secrets.paperless.file = "${self}/secrets/paperless.age";
 
     services.paperless = {
@@ -27,9 +32,7 @@ in
       # PostgreSQL rather than the default SQLite, and this is the moment to
       # decide: paperless migrates between engines only through a full document
       # export and re-import. Its own docs call SQLite the option for trying
-      # things out. Helium's backup client dumps the cluster, without which the
-      # archive holds a torn copy of a running database. See
-      # hosts/helium/default.nix.
+      # things out. The backup registration above follows this engine choice.
       database.createLocally = true;
 
       # `domain` is more than a link in emails. The NixOS module turns it into

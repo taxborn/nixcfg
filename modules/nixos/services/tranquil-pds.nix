@@ -20,6 +20,14 @@ in
   options.myNixOS.services.tranquil-pds.enable = lib.mkEnableOption "Tranquil AT Protocol PDS";
 
   config = lib.mkIf cfg.enable {
+    # Tranquil's repository store. A logical dump rather than the live data
+    # directory, for the reason the option documents, and it covers the
+    # whole instance: every account's repo, its encrypted signing key, and
+    # the firehose sequence live in postgres. Blobs do not. Those sit under
+    # /var/lib/tranquil-pds/blobs and ride along in the archive.
+    myNixOS.services.backups.client.postgresqlDumpAll =
+      lib.mkIf config.myNixOS.services.backups.client.enable true;
+
     age.secrets.tranquilPds.file = "${self}/secrets/tranquil-pds.age";
 
     services.tranquil-pds = {

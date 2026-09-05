@@ -14,29 +14,7 @@
   myNixOS = {
     profiles.server.enable = true;
     services = {
-      backups.client = {
-        enable = true;
-
-        # Forgejo keeps every account, SSH key, issue and pull request in
-        # SQLite, while the git objects themselves sit under
-        # /var/lib/forgejo/repositories and ride along in the archive. Being
-        # inside `paths` is not enough: the module runs the database in WAL
-        # mode, so archiving the live file takes a torn pair and a restore
-        # comes back holding the repositories with no forge around them.
-        sqliteDatabases.forgejo = "/var/lib/forgejo/data/forgejo.db";
-
-        # Piper tracks the listening history it will submit to teal.fm in
-        # SQLite. Dump the live database rather than archive its WAL files
-        # out of step with it.
-        sqliteDatabases.tealfm-piper = "/var/lib/tealfm-piper/piper.db";
-
-        # Tranquil's repository store. A logical dump rather than the live data
-        # directory, for the reason the option documents, and it covers the
-        # whole instance: every account's repo, its encrypted signing key, and
-        # the firehose sequence live in postgres. Blobs do not. Those sit under
-        # /var/lib/tranquil-pds/blobs and ride along in the archive.
-        postgresqlDumpAll = true;
-      };
+      backups.client.enable = true;
       forgejo.enable = true;
       glance.enable = true;
       piper.enable = true;
