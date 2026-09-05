@@ -93,6 +93,44 @@ sudo sh -c 'for a in /sys/class/firmware-attributes/dell-wmi-sysman/attributes/*
 done'
 ```
 
+## todo
+
+Open work and unanswered questions. The [known drift][drift] list in AGENTS.md
+carries the detail on why each of these reads as load-bearing and is not.
+
+[drift]: ./AGENTS.md#known-drift
+
+- Move `nixpkgs.hostPlatform` out of `modules/hardware/intel/cpu.nix`. Every
+  host's platform currently depends on a CPU-vendor module being enabled, which
+  holds only because all five enable it.
+- Key the i915 initrd gate in `modules/hardware/nvidia/gpu.nix` on the GPU
+  rather than on `myHardware.intel.cpu.enable`. The comment above it is about
+  graphics; the condition is about the CPU.
+- Rewrite the reasoning `50743d4` and `83016a3` removed from Uranium: why
+  `aesni_intel` belongs in the initrd, and why `cpu-epp` rather than
+  `powerManagement.cpuFreqGovernor`. Both fail silently, which is the bar the
+  comment style sets for keeping an explanation forever.
+- Record why `modules/home/services/mako.nix` and `hypridle.nix` hand-write
+  systemd units instead of taking home-manager's, or drop the overrides.
+  `882efdc` introduced them with no reason given.
+- Decide whether the Forgejo runner is coming back. If not, `just runner-gc`
+  and the pid-namespace note it carries can go.
+- Give Immich a `networkMap` entry if it is proxied from somewhere, or drop the
+  dashboard link in `modules/nixos/services/glance.nix`.
+- Drop either the EF02 BIOS-boot partition in `modules/disko/btrfs-ovh.nix` or
+  the header claiming it is used; GRUB installs in EFI mode here.
+- Remove the unread `mountPoint` field in `modules/nixos/profiles/btrfs.nix`,
+  and decide whether `deduplicate` is wanted, since no host enables it.
+- Drop `jdk_headless` from `homes/server.nix` and `mpv` from
+  `modules/home/services/mako.nix`, or record what uses them.
+- Run `just --unstable --fmt` over the justfile. It has never been clean. Every
+  line it wants is `{{host}}` to `{{ host }}` spacing, nothing else, so the
+  reflow is safe and would stop burying real diffs. `just` is not in the
+  pre-commit set, so this stays a one-off rather than a hook.
+- Settle the em dash question. The house voice uses them freely, most visibly
+  in `caddy.nix`; the prose pass that touched most of the tree removed them
+  only where a comment was being rewritten anyway, so the tree is mixed.
+
 ## do not
 
 Decisions that are cheap to forget and expensive to redo.
