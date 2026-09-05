@@ -94,6 +94,32 @@ sudo sh -c 'for a in /sys/class/firmware-attributes/dell-wmi-sysman/attributes/*
 done'
 ```
 
+## todo
+
+Open work from the architecture review, in priority order.
+
+- [ ] Register database backup requirements in the service modules when the
+  backup client is enabled. Forgejo and Piper currently rely on dump settings
+  in Argon's host config, which could be missed when moving either service.
+  Keep repository and retention choices at the host level. Read the
+  [backups README](./modules/nixos/services/backups/README.md) before changing
+  this integration.
+- [ ] Check agreement between the host roster, tailnet map and secret
+  recipients automatically. Make restore coverage explicit too; `restore-all`
+  currently exercises only the three servers. Start with assertions, and
+  consider a shared inventory only if it simplifies those checks.
+- [ ] Move host-specific disk layout instantiation and serial numbers out of
+  `modules/flake/modules.nix` and into the host directories. Extract the MX
+  Master button configuration from the workstation profile into a hardware
+  module, so the profile mostly selects modules.
+- [ ] Give `mySnippets.biscuits-at.networkMap` typed entries instead of
+  unrestricted attributes. Validate required fields and port types, reject
+  misspelled fields, and retain the shared service/proxy registry.
+- [ ] Give repeated architectural rules and operational explanations one
+  authoritative home across README, CONTEXT and AGENTS, with links elsewhere.
+  Move the completed maintenance table below into a dated review document.
+  Preserve the detailed backup and security reasoning when consolidating.
+
 ## maintenance review
 
 Reviewed on 2026-09-05 against the pinned inputs and evaluated host options.
