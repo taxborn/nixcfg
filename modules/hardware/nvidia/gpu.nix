@@ -4,7 +4,7 @@
   ...
 }:
 {
-  options.myHardware.nvidia.gpu.enable = lib.mkEnableOption "NVIDIA GPU configuration.";
+  options.myHardware.nvidia.gpu.enable = lib.mkEnableOption "NVIDIA GPU configuration";
 
   config = lib.mkIf config.myHardware.nvidia.gpu.enable {
     boot = {

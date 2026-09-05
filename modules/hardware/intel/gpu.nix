@@ -5,7 +5,7 @@
   ...
 }:
 {
-  options.myHardware.intel.gpu.enable = lib.mkEnableOption "Intel GPU configuration.";
+  options.myHardware.intel.gpu.enable = lib.mkEnableOption "Intel GPU configuration";
 
   config = lib.mkIf config.myHardware.intel.gpu.enable {
     hardware.graphics = {

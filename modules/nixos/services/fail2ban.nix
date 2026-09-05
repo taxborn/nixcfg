@@ -69,8 +69,15 @@ in
         overalljails = true;
       };
 
+      # The tailnet is the whole exemption. A public address stays bannable,
+      # including my own, which is the point of the jail. It costs no access,
+      # because tailnet SSH answers on a different address and that one is
+      # covered here.
       ignoreIP = tailnetRanges;
 
+      # The module declares the sshd jail itself, enabled and already pointed
+      # at the right port and filter, so all this does is tighten its retry
+      # budget below the global maxretry.
       jails.sshd.settings.maxretry = 3;
     };
   };

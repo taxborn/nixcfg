@@ -21,13 +21,14 @@
         unbind C-b
         bind C-a send-prefix
 
-        # Vim style pane selection
         bind h select-pane -L
         bind j select-pane -D
         bind k select-pane -U
         bind l select-pane -R
 
-        # Start windows and panes at 1, not 0
+        # `baseIndex` above numbers windows from 1; panes need saying
+        # separately. Renumbering then closes the gap a killed window leaves,
+        # so the numbers keep matching the keys on the row.
         set -g pane-base-index 1
         set-window-option -g pane-base-index 1
         set-option -g renumber-windows on

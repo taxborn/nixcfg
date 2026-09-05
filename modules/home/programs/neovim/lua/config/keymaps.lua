@@ -16,7 +16,9 @@ map("n", "<leader>wd", "<C-W>c", { desc = "Delete Window", remap = true })
 map("n", "<leader>w-", "<C-W>s", { desc = "Split Window Below", remap = true })
 map("n", "<leader>w|", "<C-W>v", { desc = "Split Window Right", remap = true })
 
--- TODO: switch with vim-tmux-navigator once installed
+-- TODO: hand these to vim-tmux-navigator once the nvim half is installed.
+-- tmux already loads its half (see modules/home/programs/tmux.nix), so today
+-- C-hjkl moves between nvim windows but never crosses out to a tmux pane.
 map("n", "<C-h>", "<C-w>h", { desc = "Go to Left Window", remap = true })
 map("n", "<C-j>", "<C-w>j", { desc = "Go to Lower Window", remap = true })
 map("n", "<C-k>", "<C-w>k", { desc = "Go to Upper Window", remap = true })
@@ -30,7 +32,8 @@ map("v", ">", ">gv")
 map("v", "p", '"_dP', opts) -- don't replace clipboard
 map("n", "<C-c>", ":%y+<CR>", opts) -- copy whole file to clipboard
 
--- Smart undo break-points (create undo points at logical stops)
+-- Undo break-points at punctuation, so one `u` after a long insert does not
+-- take the whole paragraph back.
 map("i", ",", ",<c-g>u")
 map("i", ".", ".<c-g>u")
 map("i", ";", ";<c-g>u")

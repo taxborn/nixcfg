@@ -28,7 +28,6 @@ let
       ''
         hl.config({
             decoration = {
-                -- Change transparency of unfocused windows on desktops
                 inactive_opacity = 0.90,
 
                 shadow = {

@@ -6,7 +6,14 @@
 {
   options.mySnippets.biscuits-at.networkMap = lib.mkOption {
     type = lib.types.attrs;
-    description = "Hostnames, ports, and vHosts for biscuits.at services.";
+    description = ''
+      Domain, port, and where relevant the SSH details for each biscuits.at
+      service.
+
+      There is exactly one of these on purpose. The service module and the
+      Caddy vhost read the same entry, so a port cannot be changed in one and
+      missed in the other. Never write a port literal into a vhost.
+    '';
 
     default = {
       forgejo = {

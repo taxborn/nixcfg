@@ -1,7 +1,4 @@
-# Helium Drive setup (`nvme list`)
-# Node                  Generic               SN                   Model                                    Namespace  Usage                      Format           FW Rev
-# --------------------- --------------------- -------------------- ---------------------------------------- ---------- -------------------------- ---------------- --------
-# /dev/nvme0n1          /dev/ng0n1            230347595111032      SPCC M.2 PCIe SSD                        0x1          2.05  TB /   2.05  TB    512   B +  0 B   VC2S038E
+# Helium's single 2 TB NVMe. Read the by-id path back with `nvme list`.
 let
   nvme0 = "/dev/disk/by-id/nvme-SPCC_M.2_PCIe_SSD_230347595111032";
 

@@ -39,9 +39,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # The website Carbon serves. Over HTTPS rather than the `forgejo:` remote
-    # the repo is cloned from day to day: the repository is public, and this way
-    # evaluating the flake does not require being on the tailnet.
+    # The website Carbon serves. The `forgejo:` SSH alias clones this same
+    # repository day to day. The URL here is HTTPS instead, because the
+    # repository is public and evaluating the flake should not require being on
+    # the tailnet.
     #
     # This is also the deploy mechanism. The revision in flake.lock is the
     # revision Carbon runs, so `just deploy-site` is a lock bump and a rebuild,
@@ -52,15 +53,15 @@
     };
 
     # Tranquil, tracking `main` instead of the tagged release nixpkgs carries.
-    # `flake = false` because upstream ships no flake.nix — this is a bare
-    # source tree that modules/flake/packages.nix hands to the nixpkgs
-    # derivations as `src`.
+    # `flake = false` because upstream ships no flake.nix. It is a bare source
+    # tree that modules/flake/packages.nix hands to the nixpkgs derivations as
+    # `src`.
     #
-    # Same deploy mechanism as braxton-is above: the revision in flake.lock is
-    # the revision Argon runs, so `nix flake update tranquil-src` is the
-    # upgrade and rolling back is rolling back the lock. Unlike a rollback of
-    # the site, though, a rollback here does not undo database migrations --
-    # Tranquil has none in the reverse direction. Take a dump first.
+    # Same deploy mechanism as braxton-is above. The revision in flake.lock is
+    # the revision Argon runs, so `nix flake update tranquil-src` is the upgrade
+    # and rolling back is rolling back the lock. The asymmetry with the site is
+    # the part to remember: a rollback here does not undo database migrations,
+    # and Tranquil has none in the reverse direction. Take a dump first.
     #
     # tangled.org redirects to a knot host (knot1.tangled.sh) on fetch. git
     # follows it; worth knowing when a fetch fails for reasons that look like

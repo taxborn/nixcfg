@@ -8,6 +8,11 @@ update host="":
     if [ -z "{{host}}" ]; then
         sudo nixos-rebuild switch --flake .
     else
+        # Every host alias in the ssh config opens tmux on a pty, which is what
+        # makes an interactive `ssh <host>` worth having and what makes it
+        # useless here. nixos-rebuild runs its own commands and reads their
+        # output, so both settings are overridden per-invocation rather than
+        # dropped from the config.
         NIX_SSHOPTS="-o RemoteCommand=none -o RequestTTY=no" \
             nixos-rebuild switch --flake .#{{host}} --target-host {{host}} --ask-sudo-password
     fi
@@ -38,20 +43,31 @@ check:
 clean:
     sudo nix-collect-garbage -d
 
-# Reclaim a runner's shared CI nix store (HOST must be idle; see README)
+# Reclaim a runner's shared CI nix store (dead: no runner module, see below)
 runner-gc host:
     #!/usr/bin/env bash
     set -euo pipefail
 
+    # Dead as written. f4012fc deleted the Forgejo runner module, so both
+    # `nix eval`s below fail on options that no longer exist. Kept for the
+    # procedure, which was the expensive part to work out; bringing the runner
+    # back means bringing `storeVolume` and `nixImage` back with it.
     attr=".#nixosConfigurations.{{host}}.config.myNixOS.services.forgejo.runner"
     volume=$(nix eval --raw "$attr.storeVolume")
     image=$(nix eval --raw "$attr.nixImage")
 
-    # Stopping the runner is the whole point rather than an inconvenience: a
-    # collection racing three concurrent jobs is exactly what the pid-namespace
-    # note in the runner module says not to do. It also means this can block for
-    # as long as `shutdown_timeout` if a job is mid-flight — run it when the
-    # forge is quiet.
+    # Stopping the runner is the whole point rather than an inconvenience. The
+    # reason used to live in the runner module, so it lives here now. Nix
+    # guards an in-flight build with a temproot named after its pid, and
+    # deletes any temproot whose pid is not live, on the grounds that two
+    # processes cannot share one. Concurrent jobs are separate containers with
+    # separate pid namespaces, all counting from 1 through the same steps, so
+    # two builds on one pid is ordinary rather than unlucky. The second deletes
+    # the first's roots, and a collector is then free to delete paths a live
+    # build is standing on.
+    #
+    # It also means this can block for as long as `shutdown_timeout` if a job
+    # is mid-flight, so run it when the forge is quiet.
     #
     # Rootless Podman is reached through the runner user's own runtime
     # directory, which exists between boots only because that user lingers.
@@ -130,11 +146,18 @@ restore-dr host *repos="rsync":
                     echo "key authorizes it remotely. Covered by \`just restore-test helium\`."
                     continue
                 fi
-                # This works only because the forced command pinned to {{host}}'s
-                # key restricts it to exactly this path. Address and port both
-                # come from the flake so they cannot drift from the modules —
-                # and the port is not 22 precisely so that the forced command is
-                # applied at all (Tailscale SSH would bypass it on 22).
+                # Dead as written. 058b04a moved every host to Tailscale SSH on
+                # 22, removing `backups.server.sshPort` along with the
+                # `--restrict-to-path` forced command that the non-default port
+                # existed to make bind, so the second `nix eval` below fails on
+                # an option that is gone. The `rsync` branch above is fine.
+                #
+                # Two things from the old comment still hold. The address comes
+                # from the flake so it cannot drift from the modules. And the
+                # port was not 22 precisely because Tailscale SSH skips
+                # authorized_keys entirely, so a forced command pinned to a key
+                # never applies there. Restricting this repository's key to one
+                # path again costs a second sshd port again.
                 if [ -z "$helium_ip" ]; then
                     helium_ip=$(cd "$root" && nix eval --raw \
                         .#nixosConfigurations.helium.config.mySnippets.tailnet.tailscaleIPs.helium)

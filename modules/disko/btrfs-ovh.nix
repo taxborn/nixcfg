@@ -21,7 +21,6 @@ in
         content = {
           type = "gpt";
           partitions = {
-            # Boot partitions
             boot = {
               name = "boot";
               size = "2M";

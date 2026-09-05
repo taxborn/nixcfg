@@ -7,7 +7,16 @@
 {
   options.mySnippets.ssh.knownHosts = lib.mkOption {
     type = lib.types.attrs;
-    description = "Default ssh known hosts.";
+    description = ''
+      Host key pins, one entry per host, listed under every name that host is
+      reached by: bare, `.local`, MagicDNS, and tailnet IP. known_hosts matches
+      per name, so a name left off this list is one that still falls back to
+      trust-on-first-use.
+
+      The key files are the same `keys/root_<host>.pub` that secrets/secrets.nix
+      encrypts to, so a host has one identity across ssh and agenix rather than
+      two that can drift.
+    '';
 
     default = {
       argon = {

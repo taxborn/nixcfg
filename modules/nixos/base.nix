@@ -39,10 +39,21 @@
     };
 
     services = {
+      # Monthly rather than the weekly default. Every btrfs mount in
+      # `modules/disko` carries `discard=async` and every LUKS volume allows
+      # discards, so extents are trimmed as they are freed and this pass mostly
+      # repeats that work. On Tungsten it still spent over two minutes of I/O
+      # finding leftovers. Kept rather than dropped because it covers the one
+      # thing async discard cannot, which is space the filesystem never
+      # allocated in the first place.
       fstrim = {
         enable = true;
         interval = "monthly";
       };
+      # Scrub and mdadm report damage that has already happened. SMART is the
+      # part that warns beforehand. `mkDefault` so the OVH profile can turn it
+      # off, where there is no SMART behind virtio and smartd fails to start
+      # rather than idling with nothing to register.
       smartd = {
         enable = lib.mkDefault true;
         autodetect = true;
@@ -56,6 +67,15 @@
       };
     };
 
+    # nsncd is ordered `Before=nss-lookup.target nss-user-lookup.target`, and
+    # both targets are restarted several times during boot as units that want
+    # them are pulled in. Each restart cycles nscd, four times inside five
+    # seconds on uranium, which is enough to trip systemd's default limit of
+    # five starts in ten seconds. The unit then latches failed with
+    # `start-limit-hit` and takes both targets down with it, so name service
+    # caching is gone for the rest of the boot. Nothing about that is loud. It
+    # is logged once, at boot, and `Restart=always` cannot recover a unit
+    # systemd has stopped issuing start jobs for.
     systemd.services.nscd.unitConfig.StartLimitIntervalSec = 0;
 
     environment = {

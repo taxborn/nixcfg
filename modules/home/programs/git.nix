@@ -20,6 +20,11 @@
         enable = true;
         lfs.enable = true;
 
+        # The primary key in keys/pgp.asc, which gpg.nix installs; gpg picks
+        # the signing subkey under it. The private half only exists on the
+        # YubiKey, and only a workstation runs an agent with the card in it
+        # (`myHome.programs.gpg.agent`), so a commit made on a server cannot
+        # sign and git refuses it rather than writing it unsigned.
         signing.key = "F22AFD6CFD66B874";
         signing.signByDefault = true;
 

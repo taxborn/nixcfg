@@ -8,6 +8,8 @@
       description = "Braxton";
       uid = 1000;
       isNormalUser = true;
+      # `mutableUsers = false` below, so `passwd` does not survive a rebuild
+      # and the hash has to be declared here to exist at all.
       hashedPassword = "$y$j9T$A0TNjHtgoYuPaVVUDMTg1/$c2X6a5BbYruE.WN0ko5uE3O.FTGDFeEWjFDxwL4YS28";
       extraGroups = [
         "networkmanager"

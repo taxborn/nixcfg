@@ -5,13 +5,13 @@
   ...
 }:
 let
-  # Compute a list of Btrfs file systems (with mountPoint and device)
+  # Keyed by device rather than by mount point. Every subvolume of one
+  # filesystem shows up in `fileSystems` under the same device, and bees works
+  # on the filesystem, so the mount list would name the same disk repeatedly.
   btrfsFSDevices =
     let
-      # Helper: does a device already appear in the accumulator?
       isDeviceInList = list: device: builtins.any (e: e.device == device) list;
 
-      # Helper: keep only the first occurrence of each device
       uniqueDeviceList = lib.foldl' (
         acc: e: if isDeviceInList acc e.device then acc else acc ++ [ e ]
       ) [ ];
@@ -22,7 +22,6 @@ let
       }) (lib.filterAttrs (_: fs: fs.fsType == "btrfs") config.fileSystems)
     );
 
-  # Create beesd.filesystems attrset keyed by device basename, with spec = device path
   beesdConfig = lib.listToAttrs (
     map (fs: {
       name = lib.strings.sanitizeDerivationName (baseNameOf fs.device);
@@ -44,7 +43,6 @@ let
 
   cfg = config.myNixOS.profiles.btrfs;
 
-  # Check if a btrfs /home entry exists
   hasHomeSubvolume =
     lib.hasAttr "/home" config.fileSystems && config.fileSystems."/home".fsType == "btrfs";
 
@@ -58,7 +56,12 @@ in
 {
   options.myNixOS.profiles.btrfs = {
     enable = lib.mkEnableOption "btrfs filesystem configuration";
-    deduplicate = lib.mkEnableOption "deduplicate btrfs filesystems";
+    deduplicate = lib.mkEnableOption ''
+      block-level deduplication with bees.
+
+      Each btrfs filesystem on the host gets its own 2 GiB hash table, mapped
+      for as long as the daemon runs
+    '';
 
     guiTools = lib.mkEnableOption ''
       graphical btrfs tooling (snapper-gui).

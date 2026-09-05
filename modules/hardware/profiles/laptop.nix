@@ -4,7 +4,7 @@
   ...
 }:
 {
-  options.myHardware.profiles.laptop.enable = lib.mkEnableOption "Laptop hardware configuration.";
+  options.myHardware.profiles.laptop.enable = lib.mkEnableOption "Laptop hardware configuration";
 
   config = lib.mkMerge [
     (lib.mkIf config.myHardware.profiles.laptop.enable {
@@ -57,7 +57,9 @@
           };
 
           prime.offload = {
-            # Remember to define nvidiaBusId and intelBusId/amdBusId in config.hardware.nvidia.prime.
+            # The bus IDs are per-machine and live in the host file,
+            # hosts/tungsten/default.nix. nixpkgs asserts on PRIME without
+            # them rather than guessing.
             enable = true;
             enableOffloadCmd = true;
           };

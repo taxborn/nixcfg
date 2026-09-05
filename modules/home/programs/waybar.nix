@@ -154,7 +154,6 @@ in
         * {
           font-family: "JetBrainsMonoNL NFM";
           font-size: 14px;
-          /* some reset */
           border: none;
           border-radius: 0px;
           padding: 0;

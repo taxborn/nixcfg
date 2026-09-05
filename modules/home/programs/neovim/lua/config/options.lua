@@ -56,6 +56,9 @@ opt.iskeyword:append("-") -- treat - as part of word
 opt.path:append("**") -- include subdirs as part of search
 opt.selection = "exclusive"
 opt.mouse = "a" -- enable mouse
+-- Over SSH the clipboard worth writing to is on the machine at the other end,
+-- so leave the registers unhooked there. `"+y` still reaches it through
+-- nvim's OSC 52 fallback, which `unnamedplus` would take out of the picture.
 opt.clipboard = vim.env.SSH_TTY and "" or "unnamedplus"
 opt.modifiable = true
 opt.encoding = "UTF-8"
@@ -95,7 +98,7 @@ opt.jumpoptions = "view"
 opt.laststatus = 3 -- global statusline
 opt.list = false
 opt.linebreak = true -- Wrap lines at convenient points
-opt.list = true -- Show some invisible characters (tabs...
+opt.list = true -- draw tabs and trailing whitespace
 opt.shiftround = true -- Round indent
 opt.shiftwidth = 2 -- Size of an indent
 opt.shortmess:append({ W = true, I = true, c = true, C = true })
