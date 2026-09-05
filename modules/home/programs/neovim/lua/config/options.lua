@@ -64,7 +64,18 @@ opt.modifiable = true
 opt.encoding = "UTF-8"
 
 opt.smoothscroll = true
-vim.wo.foldmethod = expr
+-- `expr` was unquoted here, so this assigned the value of an undefined
+-- global rather than the string. Neovim ships a treesitter foldexpr, and
+-- naming it is what makes `expr` mean anything; without one the method
+-- falls back to a foldexpr of 0 and no file ever folds. Filetypes with no
+-- parser installed get no folds, which is the graceful end of it.
+--
+-- `opt` rather than `vim.wo`: window-local only reaches the window that
+-- exists while this file runs, so every split opened afterwards kept the
+-- default.
+opt.foldmethod = "expr"
+opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+-- Open files unfolded. Folds are there to be asked for, not to greet you.
 opt.foldlevel = 99
 opt.formatoptions = "jcroqlnt"
 opt.grepformat = "%f:%l:%c:%m"
@@ -96,9 +107,7 @@ vim.g.trouble_lualine = true
 
 opt.jumpoptions = "view"
 opt.laststatus = 3 -- global statusline
-opt.list = false
 opt.linebreak = true -- Wrap lines at convenient points
 opt.list = true -- draw tabs and trailing whitespace
 opt.shiftround = true -- Round indent
-opt.shiftwidth = 2 -- Size of an indent
 opt.shortmess:append({ W = true, I = true, c = true, C = true })

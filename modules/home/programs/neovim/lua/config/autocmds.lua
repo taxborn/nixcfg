@@ -47,7 +47,15 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
 -- go to last loc when opening a buffer
 vim.api.nvim_create_autocmd("BufReadPost", {
   callback = function(event)
-    local exclude = { "gitcommit" } -- don't remember position in commit messages
+    -- A commit buffer is reused, so the mark is wherever the last message
+    -- happened to end and restoring it drops the cursor mid-sentence in a
+    -- fresh one. This filter was declared and never read, so that is what it
+    -- did until now.
+    local exclude = { "gitcommit" }
+    if vim.tbl_contains(exclude, vim.bo[event.buf].filetype) then
+      return
+    end
+
     local mark = vim.api.nvim_buf_get_mark(event.buf, '"')
     local lcount = vim.api.nvim_buf_line_count(event.buf)
     if mark[1] > 0 and mark[1] <= lcount then
