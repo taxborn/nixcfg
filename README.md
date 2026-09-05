@@ -104,7 +104,7 @@ Open work from the architecture review, in priority order.
   Keep repository and retention choices at the host level. Read the
   [backups README](./modules/nixos/services/backups/README.md) before changing
   this integration.
-- [ ] Check agreement between the host roster, tailnet map and secret
+- [x] Check agreement between the host roster, tailnet map and secret
   recipients automatically. Make restore coverage explicit too; `restore-all`
   currently exercises only the three servers. Start with assertions, and
   consider a shared inventory only if it simplifies those checks.

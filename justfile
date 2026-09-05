@@ -183,39 +183,6 @@ restore-dr host *repos="rsync":
     done
     exit $rc
 
-# Run every restore test across every host and repository (tiers 0-2)
+# Run every restore test across the evaluated backup-client roster (tiers 0-2)
 restore-all:
-    #!/usr/bin/env bash
-    # Interactive by nature: expect a yubikey touch per decrypt and a sudo
-    # prompt per host. Nothing here is safe to run unattended.
-    set -uo pipefail
-    declare -a results
-
-    run() {
-        local label="$1"; shift
-        echo
-        echo "############ $label"
-        if "$@"; then results+=("PASS  $label"); else results+=("FAIL  $label"); fi
-    }
-
-    run "tier 0  key material, all hosts"      just restore-keys
-    run "tier 1  argon  -> rsync + helium"     just restore-test argon
-    run "tier 1  carbon -> rsync + helium"     just restore-test carbon
-    run "tier 1  helium -> rsync + local"      just restore-test helium
-    run "tier 2  argon  from tungsten"         just restore-dr argon rsync helium
-    run "tier 2  carbon from tungsten"         just restore-dr carbon rsync helium
-    run "tier 2  helium from tungsten"         just restore-dr helium rsync
-
-    echo
-    echo "############ summary"
-    printf '%s\n' "${results[@]}"
-
-    # Deliberately not `printf ... | grep -q '^FAIL'`: grep exits at the first
-    # match and SIGPIPEs the producer, which under `pipefail` flips the status
-    # and lets a run with failures exit 0. The summary is short enough that it
-    # would not bite today, but it is the same trap that made the dump
-    # assertion in scripts/backup-restore-test.sh report false failures.
-    for result in "${results[@]}"; do
-        [[ $result == FAIL* ]] && exit 1
-    done
-    exit 0
+    bash scripts/restore-all.sh

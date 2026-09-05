@@ -289,9 +289,17 @@ Everything at once, from a workstation:
 just restore-all
 ```
 
-Runs all three tiers against all three hosts and both repositories, continues
-past failures rather than stopping at the first, and prints a pass/fail summary
-at the end. It is interactive by nature, a yubikey touch per decrypt and a sudo
+Reads `nix eval --json .#restoreCoverage` to cover every enabled backup client,
+including Tungsten and Uranium. Tier 1 exercises every configured repository,
+including Uranium's local SSD. Tier 2 exercises the remote repositories and
+prints an explicit skip reason for Helium's own local repository and Uranium's
+local SSD. New remote backends require support in `restore-dr`; new local
+repositories require a documented omission in `modules/flake/restore.nix`.
+
+Run with both workstations awake. For a tier 2 rehearsal of the workstation
+you are using, repeat that host's `restore-dr` from the other workstation so
+it holds none of the target's deployed secrets. The runner continues past
+failures and prints a pass/fail summary at the end. It is interactive by nature, a yubikey touch per decrypt and a sudo
 prompt per host, so it is not something to put on a timer. The individual
 recipes below are what to reach for when one line of that summary says `FAIL`.
 
