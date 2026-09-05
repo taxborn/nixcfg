@@ -1,25 +1,50 @@
 # agenix secrets
 
 [agenix](https://github.com/ryantm/agenix)-encrypted secrets. `secrets.nix` is
-the rule file: it maps each `.age` path to the set of public keys that may
-decrypt it. It is read by the `agenix` CLI only — the NixOS modules reference
-the `.age` files directly.
+the rule file, mapping each `.age` path to the set of public keys that may
+decrypt it. Only the `agenix` CLI reads it; the NixOS modules reference the
+`.age` files directly.
+
+## inventory
+
+| secret | recipients | what it holds |
+| --- | --- | --- |
+| `tailscale/auth.age` | all hosts | tailnet auth key |
+| `tailscale/caddy.age` | all hosts | Caddy's environment file, incl. `CF_API_TOKEN` for DNS-01 |
+| `borg/<host>/passphrase.age` | that host | borg repokey passphrase |
+| `borg/<host>/ssh_key.age` | that host | borg client SSH key |
+| `forgejo/mail.age` | argon | Fastmail SMTP password |
+| `forgejo/signing-key.age` | argon | SSH key Forgejo signs commits with |
+| `glance.age` | argon | dashboard secret key and user password |
+| `piper.age` | argon | ATProto client key, allowed DIDs, Spotify + Last.fm creds |
+| `tranquil-pds.age` | argon | `JWT_SECRET`, `DPOP_SECRET`, `MASTER_KEY`, SMTP login |
+| `vaultwarden.age` | argon | environment file |
+| `paperless.age` | helium | admin password and SMTP password |
+
+`MASTER_KEY` in `tranquil-pds.age` is the one to be most careful with. Every PDS
+account's signing key is encrypted under it, so losing a copy loses the instance
+and leaking a copy leaks every identity on it.
+
+Everything above is an environment file or a raw credential a service reads at
+runtime. None of it is rendered into `settings`, which would land the value in a
+world-readable file in the nix store.
 
 ## who can read what
 
 Recipients come from [`../keys/`](../keys). Two tiers:
 
-- **`keys`** — every host root key plus `yubikey_age.pub`. Used for secrets any
+- `keys` covers every host root key plus `yubikey_age.pub`. Used for secrets any
   host may need (`tailscale/*`).
-- **`hostKey <host>`** — that one host's root key plus `yubikey_age.pub`. Used
+- `hostKey <host>` covers that one host's root key plus `yubikey_age.pub`. Used
   for everything service- or host-specific.
 
-The yubikey is a recipient of everything, deliberately: it is the identity that
-makes a restore possible from a machine holding nothing else. See tier 0 of the
-[backups README](../modules/nixos/services/backups/README.md#testing-restore).
+The yubikey appears in both tiers on purpose. If a host is gone, that key is
+the only thing left that can open its archives, which is what tier 0 of the
+[backups README](../modules/nixos/services/backups/README.md#testing-restore)
+checks.
 
-Borg material is generated per host by the rules at the top of `secrets.nix`, so
-adding a host to the `hosts` list is all a new host's `borg/<host>/` passphrase
+The rules at the top of `secrets.nix` derive borg material per host, so adding a
+name to the `hosts` list is the only step a new host's `borg/<host>/` passphrase
 and SSH key need.
 
 `piper.age` is a dotenv file for the teal.fm tracker on Argon. It must contain
@@ -35,13 +60,13 @@ SPOTIFY_CLIENT_SECRET=
 LASTFM_API_KEY=
 ```
 
-Generate the first value with `goat key generate -t P-256`; the key ID must be
-persistent and unique (a Unix timestamp is suitable). `ALLOWED_DIDS` is a
+Generate the first value with `goat key generate -t P-256`. The key ID must be
+persistent and unique; a Unix timestamp works. `ALLOWED_DIDS` is a
 space-separated allowlist and must include your DID, otherwise anyone with an
 ATProto account could sign in.
 
-`ssh_key.pub` and `signing-key.pub` files sit unencrypted beside their `.age`
-counterparts on purpose — public halves are not secret, and Helium's
+`ssh_key.pub` and `signing-key.pub` sit unencrypted beside their `.age`
+counterparts on purpose. Public halves are not secret, and Helium's
 `server.authorizedKeys` and Forgejo's signing config read them from the repo.
 
 ## working with them
@@ -52,15 +77,15 @@ a rule name verbatim, so running from the repo root finds no matching rule.
 ```bash
 cd secrets
 
-agenix -e vaultwarden/mail.age    # create or edit
-agenix -d vaultwarden/mail.age    # print to stdout
+agenix -e forgejo/mail.age        # create or edit
+agenix -d forgejo/mail.age        # print to stdout
 agenix -r                         # rekey everything after changing recipients
 ```
 
 `agenix -e` decrypts an existing target before opening it, so to *replace* a
 secret wholesale, delete the `.age` file first rather than piping over it.
 
-Decrypting locally needs the yubikey identity passed explicitly —
+Decrypting locally needs the yubikey identity passed explicitly, because
 `age.identityPaths` is system-level and does not apply to the CLI:
 
 ```bash
@@ -77,9 +102,10 @@ material at once.
 2. Add `<host>` to the `hosts` list in `secrets.nix`.
 3. `agenix -r` to rekey, and rebuild the host.
 
-Until step 1 lands, a host is a recipient of nothing, and activation reports a
-failed decrypt for every secret its modules ask for. This is why the workstation
-bootstrap in [TODO.md](../TODO.md) is ordered the way it is.
+Step 1 has to land first, or the host is a recipient of nothing and activation
+fails on the first `.age` file it cannot decrypt. That is why the provisioning
+sequence in the [root README](../README.md#provisioning-a-new-host) puts the key
+collection between `nixos-anywhere` and the first real rebuild.
 
 Borg key material has its own provisioning sequence, in the
 [backups README](../modules/nixos/services/backups/README.md#provisioning-a-host).
