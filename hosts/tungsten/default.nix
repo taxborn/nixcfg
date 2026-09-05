@@ -5,6 +5,7 @@
     self.diskoConfigurations.btrfs-luks-raid1-tungsten
   ];
 
+  nixpkgs.hostPlatform = "x86_64-linux";
   networking.hostName = "tungsten";
   system.stateVersion = "25.11";
 
