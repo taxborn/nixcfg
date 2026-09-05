@@ -1,8 +1,8 @@
-{ modulesPath, self, ... }:
+{ modulesPath, ... }:
 
 {
   imports = [
-    self.diskoConfigurations.btrfs-ovh
+    ./disko.nix
     (modulesPath + "/profiles/qemu-guest.nix")
     ./proxy.nix
   ];

@@ -1,12 +1,11 @@
 {
-  self,
   lib,
   pkgs,
   ...
 }:
 {
   imports = [
-    self.diskoConfigurations.btrfs-luks-raid1-uranium
+    ./disko.nix
   ];
 
   home-manager.users.taxborn = {

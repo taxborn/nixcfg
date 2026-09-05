@@ -2,7 +2,7 @@
 
 {
   imports = [
-    self.diskoConfigurations.btrfs-helium
+    ./disko.nix
     ./external-hdd.nix
     ./proxy.nix
   ];

@@ -108,7 +108,7 @@ Open work from the architecture review, in priority order.
   recipients automatically. Make restore coverage explicit too; `restore-all`
   currently exercises only the three servers. Start with assertions, and
   consider a shared inventory only if it simplifies those checks.
-- [ ] Move host-specific disk layout instantiation and serial numbers out of
+- [x] Move host-specific disk layout instantiation and serial numbers out of
   `modules/flake/modules.nix` and into the host directories. Extract the MX
   Master button configuration from the workstation profile into a hardware
   module, so the profile mostly selects modules.
