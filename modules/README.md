@@ -88,3 +88,21 @@ of the same fact cannot drift:
   and borgmatic, provisioning a host into the backup set, and the three tiers of
   restore testing. It is the highest-consequence module here. Read it in full
   before editing.
+
+## retired runner
+
+The Forgejo runner module went in `f4012fc`. The old `just runner-gc` recipe
+queried its missing `storeVolume` and `nixImage` options, so it could not run.
+Do not restore the recipe without restoring a runner configuration.
+
+A runner that shares `/nix` between containers needs a deliberate GC procedure.
+Nix names temporary roots after process IDs. Separate PID namespaces can reuse
+the same IDs, so one container can remove another build's roots and let GC
+delete paths that build still uses. Stop the runner and wait for active jobs
+before collecting the shared store. Shutdown can take `shutdown_timeout`.
+Restart the runner even if collection fails.
+
+The retired setup used rootless Podman as `forgejo-runner`. Its commands needed
+that user's `XDG_RUNTIME_DIR`, `/run/user/<uid>`, and lingering kept the runtime
+directory available between logins. Recover the exact procedure from history
+only after checking the replacement runner's user, image and volume.

@@ -43,43 +43,6 @@ check:
 clean:
     sudo nix-collect-garbage -d
 
-# Reclaim a runner's shared CI nix store (dead: no runner module, see below)
-runner-gc host:
-    #!/usr/bin/env bash
-    set -euo pipefail
-
-    # Dead as written. f4012fc deleted the Forgejo runner module, so both
-    # `nix eval`s below fail on options that no longer exist. Kept for the
-    # procedure, which was the expensive part to work out; bringing the runner
-    # back means bringing `storeVolume` and `nixImage` back with it.
-    attr=".#nixosConfigurations.{{ host }}.config.myNixOS.services.forgejo.runner"
-    volume=$(nix eval --raw "$attr.storeVolume")
-    image=$(nix eval --raw "$attr.nixImage")
-
-    # Stopping the runner is the whole point rather than an inconvenience. The
-    # reason used to live in the runner module, so it lives here now. Nix
-    # guards an in-flight build with a temproot named after its pid, and
-    # deletes any temproot whose pid is not live, on the grounds that two
-    # processes cannot share one. Concurrent jobs are separate containers with
-    # separate pid namespaces, all counting from 1 through the same steps, so
-    # two builds on one pid is ordinary rather than unlucky. The second deletes
-    # the first's roots, and a collector is then free to delete paths a live
-    # build is standing on.
-    #
-    # It also means this can block for as long as `shutdown_timeout` if a job
-    # is mid-flight, so run it when the forge is quiet.
-    #
-    # Rootless Podman is reached through the runner user's own runtime
-    # directory, which exists between boots only because that user lingers.
-    ssh -t -o RemoteCommand=none {{ host }} "
-        set -euo pipefail
-        sudo systemctl stop forgejo-runner
-        trap 'sudo systemctl start forgejo-runner' EXIT
-        sudo -u forgejo-runner env XDG_RUNTIME_DIR=/run/user/\$(id -u forgejo-runner) \
-            podman run --rm -v '$volume:/nix' '$image' \
-            nix --extra-experimental-features nix-command store gc --print-live
-    "
-
 # Verify the yubikey can decrypt every host's borg secrets (restore tier 0)
 restore-keys:
     #!/usr/bin/env bash
