@@ -16,6 +16,14 @@
       backups.client = {
         enable = true;
 
+        # Forgejo keeps every account, SSH key, issue and pull request in
+        # SQLite, while the git objects themselves sit under
+        # /var/lib/forgejo/repositories and ride along in the archive. Being
+        # inside `paths` is not enough: the module runs the database in WAL
+        # mode, so archiving the live file takes a torn pair and a restore
+        # comes back holding the repositories with no forge around them.
+        sqliteDatabases.forgejo = "/var/lib/forgejo/data/forgejo.db";
+
         # Piper tracks the listening history it will submit to teal.fm in
         # SQLite. Dump the live database rather than archive its WAL files
         # out of step with it.
