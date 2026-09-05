@@ -5,7 +5,7 @@ age_identity := env("AGE_IDENTITY", "~/.config/age/yubikey-identity.txt")
 # Update a NixOS system (local by default, or HOST for a remote deploy)
 update host="":
     #!/usr/bin/env bash
-    if [ -z "{{host}}" ]; then
+    if [ -z "{{ host }}" ]; then
         sudo nixos-rebuild switch --flake .
     else
         # Every host alias in the ssh config opens tmux on a pty, which is what
@@ -14,7 +14,7 @@ update host="":
         # output, so both settings are overridden per-invocation rather than
         # dropped from the config.
         NIX_SSHOPTS="-o RemoteCommand=none -o RequestTTY=no" \
-            nixos-rebuild switch --flake .#{{host}} --target-host {{host}} --ask-sudo-password
+            nixos-rebuild switch --flake .#{{ host }} --target-host {{ host }} --ask-sudo-password
     fi
 
 # Deploy the current tip of braxton.is to Carbon
@@ -52,7 +52,7 @@ runner-gc host:
     # `nix eval`s below fail on options that no longer exist. Kept for the
     # procedure, which was the expensive part to work out; bringing the runner
     # back means bringing `storeVolume` and `nixImage` back with it.
-    attr=".#nixosConfigurations.{{host}}.config.myNixOS.services.forgejo.runner"
+    attr=".#nixosConfigurations.{{ host }}.config.myNixOS.services.forgejo.runner"
     volume=$(nix eval --raw "$attr.storeVolume")
     image=$(nix eval --raw "$attr.nixImage")
 
@@ -71,7 +71,7 @@ runner-gc host:
     #
     # Rootless Podman is reached through the runner user's own runtime
     # directory, which exists between boots only because that user lingers.
-    ssh -t -o RemoteCommand=none {{host}} "
+    ssh -t -o RemoteCommand=none {{ host }} "
         set -euo pipefail
         sudo systemctl stop forgejo-runner
         trap 'sudo systemctl start forgejo-runner' EXIT
@@ -89,8 +89,8 @@ restore-keys:
         host=$(basename "$dir")
         printf '%-10s passphrase %4s bytes | key %s\n' \
             "$host" \
-            "$(agenix -d "borg/$host/passphrase.age" -i {{age_identity}} | wc -c)" \
-            "$(agenix -d "borg/$host/ssh_key.age" -i {{age_identity}} | head -1)"
+            "$(agenix -d "borg/$host/passphrase.age" -i {{ age_identity }} | wc -c)" \
+            "$(agenix -d "borg/$host/ssh_key.age" -i {{ age_identity }} | head -1)"
     done
 
 # Canary round-trip through every repository on HOST (restore tier 1)
@@ -100,7 +100,7 @@ restore-test host:
     # Sent as a command argument rather than on stdin so the pty that `-t`
     # allocates for the sudo prompt cannot mangle the script.
     payload=$(base64 -w0 <scripts/backup-restore-test.sh)
-    ssh -t -o RemoteCommand=none {{host}} \
+    ssh -t -o RemoteCommand=none {{ host }} \
         "echo $payload | base64 -d | sudo bash"
 
 # Restore HOST's canary from each REPO using only the yubikey (restore tier 2)
@@ -123,9 +123,9 @@ restore-dr host *repos="rsync":
             ssh_key) out=$key ;;
             passphrase) out=$pass ;;
         esac
-        if ! (cd secrets && agenix -d "borg/{{host}}/$secret.age" -i {{age_identity}}) >"$out" \
+        if ! (cd secrets && agenix -d "borg/{{ host }}/$secret.age" -i {{ age_identity }}) >"$out" \
                 || [ ! -s "$out" ]; then
-            echo "FAIL — could not decrypt {{host}}'s $secret (wrong PIN?)" >&2
+            echo "FAIL — could not decrypt {{ host }}'s $secret (wrong PIN?)" >&2
             exit 1
         fi
     done
@@ -133,15 +133,15 @@ restore-dr host *repos="rsync":
     helium_ip=""
     rc=0
 
-    for repo in {{repos}}; do
-        echo "== {{host}} -> $repo"
+    for repo in {{ repos }}; do
+        echo "== {{ host }} -> $repo"
         case "$repo" in
             rsync)
-                repo_url="ssh://de4388@de4388.rsync.net/./borg/{{host}}"
+                repo_url="ssh://de4388@de4388.rsync.net/./borg/{{ host }}"
                 remote=(--remote-path borg14)
                 ;;
             helium)
-                if [ "{{host}}" = "helium" ]; then
+                if [ "{{ host }}" = "helium" ]; then
                     echo "SKIP — helium reaches its own repository by local path, so no"
                     echo "key authorizes it remotely. Covered by \`just restore-test helium\`."
                     continue
@@ -164,7 +164,7 @@ restore-dr host *repos="rsync":
                         .#nixosConfigurations.helium.config.mySnippets.tailnet.tailscaleIPs.helium)
                 fi
                 # basePath is absolute, hence the doubled slash after the host.
-                repo_url="ssh://taxborn@$helium_ip//mnt/hdd/borg/{{host}}"
+                repo_url="ssh://taxborn@$helium_ip//mnt/hdd/borg/{{ host }}"
                 remote=()
                 ;;
             *)
@@ -205,15 +205,15 @@ restore-dr host *repos="rsync":
         # trailing \r that command substitution does not strip. tr is the belt
         # to that braces, in case the config changes again.
         if live=$(ssh -o RemoteCommand=none -o RequestTTY=no -o BatchMode=yes \
-                {{host}} cat /var/lib/backup-canary 2>/dev/null | tr -d '\r'); then
+                {{ host }} cat /var/lib/backup-canary 2>/dev/null | tr -d '\r'); then
             if [ "$live" = "$restored" ]; then
-                echo "PASS $repo — matches {{host}}"
+                echo "PASS $repo — matches {{ host }}"
             else
-                echo "FAIL $repo — {{host}} has: $live"
+                echo "FAIL $repo — {{ host }} has: $live"
                 rc=1
             fi
         else
-            echo "PASS $repo — {{host}} unreachable, content above is the only assertion"
+            echo "PASS $repo — {{ host }} unreachable, content above is the only assertion"
         fi
         rm -rf "$dest"
         echo
