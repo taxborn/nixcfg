@@ -16,13 +16,11 @@ map("n", "<leader>wd", "<C-W>c", { desc = "Delete Window", remap = true })
 map("n", "<leader>w-", "<C-W>s", { desc = "Split Window Below", remap = true })
 map("n", "<leader>w|", "<C-W>v", { desc = "Split Window Right", remap = true })
 
--- TODO: hand these to vim-tmux-navigator once the nvim half is installed.
--- tmux already loads its half (see modules/home/programs/tmux.nix), so today
--- C-hjkl moves between nvim windows but never crosses out to a tmux pane.
-map("n", "<C-h>", "<C-w>h", { desc = "Go to Left Window", remap = true })
-map("n", "<C-j>", "<C-w>j", { desc = "Go to Lower Window", remap = true })
-map("n", "<C-k>", "<C-w>k", { desc = "Go to Upper Window", remap = true })
-map("n", "<C-l>", "<C-w>l", { desc = "Go to Right Window", remap = true })
+-- Match the tmux plugin so navigation can cross the editor's outer split.
+map("n", "<C-h>", "<cmd>TmuxNavigateLeft<CR>", { desc = "Go to Left Window" })
+map("n", "<C-j>", "<cmd>TmuxNavigateDown<CR>", { desc = "Go to Lower Window" })
+map("n", "<C-k>", "<cmd>TmuxNavigateUp<CR>", { desc = "Go to Upper Window" })
+map("n", "<C-l>", "<cmd>TmuxNavigateRight<CR>", { desc = "Go to Right Window" })
 
 map({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>", { desc = "Escape and Clear hlsearch" })
 
@@ -58,4 +56,3 @@ map("n", "<A-j>", "<cmd>execute 'move .+' . v:count1<cr>==", { desc = "Move Down
 map("n", "<A-k>", "<cmd>execute 'move .-' . (v:count1 + 1)<cr>==", { desc = "Move Up" })
 map("v", "<A-j>", ":<C-u>execute \"'<,'>move '>+\" . v:count1<cr>gv=gv", { desc = "Move Down" })
 map("v", "<A-k>", ":<C-u>execute \"'<,'>move '<-\" . (v:count1 + 1)<cr>gv=gv", { desc = "Move Up" })
-

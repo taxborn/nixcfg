@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 {
@@ -13,7 +14,9 @@
       vimAlias = true;
       withPython3 = false;
       withRuby = false;
+      plugins = [ pkgs.vimPlugins.vim-tmux-navigator ];
       initLua = ''
+        vim.g.tmux_navigator_no_mappings = 1
         require("config")
       '';
     };
