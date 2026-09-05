@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  self,
   ...
 }:
 
@@ -33,7 +34,7 @@
       scdaemonSettings.disable-ccid = true;
 
       publicKeys = [
-        { source = ../../../keys/pgp.asc; }
+        { source = "${self}/keys/pgp.asc"; }
       ];
 
       # Hardened defaults lifted from drduh's YubiKey guide. Each option is

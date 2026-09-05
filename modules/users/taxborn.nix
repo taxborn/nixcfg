@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, self, ... }:
 
 {
   programs.fish.enable = true;
@@ -17,7 +17,7 @@
         "wheel"
       ];
       openssh.authorizedKeys.keyFiles = [
-        ../../keys/yubikey.pub
+        "${self}/keys/yubikey.pub"
       ];
     };
     defaultUserShell = pkgs.fish;
