@@ -35,7 +35,7 @@
     assertions = [
       {
         assertion = config.myNixOS.services.tailscale.authKeyFile != null;
-        message = "config.tailscale.authKeyFile cannot be null.";
+        message = "myNixOS.services.tailscale.authKeyFile cannot be null.";
       }
     ];
 
@@ -46,10 +46,9 @@
     # tailnet without opening a port for it. One exception is worth
     # remembering. fail2ban hooks its chains on ahead of that accept, so its
     # ignoreIP, not this line, is what keeps a ban off the tailnet.
-    networking.firewall = {
-      allowedUDPPorts = [ config.services.tailscale.port ];
-      trustedInterfaces = [ config.services.tailscale.interfaceName ];
-    };
+    # Only the trusted interface here. The UDP port is `openFirewall` below,
+    # which sets this same list to this same value.
+    networking.firewall.trustedInterfaces = [ config.services.tailscale.interfaceName ];
 
     services.tailscale = {
       enable = true;
