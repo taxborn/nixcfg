@@ -104,13 +104,6 @@ in
                             title = "Paperless";
                             url = "https://${networkMap.paperless.domain}";
                           }
-                          {
-                            # Literal because Immich is not configured in this
-                            # repo, so there is no map entry to read. The other
-                            # links here must not follow this one.
-                            title = "Immich";
-                            url = "https://i.biscuits.at";
-                          }
                         ];
                       }
                     ];
