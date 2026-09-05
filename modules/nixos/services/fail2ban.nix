@@ -66,7 +66,6 @@ in
         enable = true;
         multipliers = "2 4 8 16 32 64";
         maxtime = "168h";
-        overalljails = true;
       };
 
       # The tailnet is the whole exemption. A public address stays bannable,
