@@ -8,8 +8,8 @@ agenix, and disko.
 
 | document | what it covers |
 | --- | --- |
-| [AGENTS.md](./AGENTS.md) | working in this repo: what to run, what not to run, the invariants, known drift |
-| [CONTEXT.md](./CONTEXT.md) | the vocabulary and the recurring practices: namespaces, snippets, profiles, restore tiers |
+| [AGENTS.md](./AGENTS.md) | working in this repo: what to run, what not to run, validation, permissions and comment policy |
+| [CONTEXT.md](./CONTEXT.md) | vocabulary, deployment model and network policy |
 | [hosts/](./hosts/README.md) | what each machine is and what it runs |
 | [modules/](./modules/README.md) | how the module system is laid out and how to add to it |
 | [secrets/](./secrets/README.md) | agenix rules, who can decrypt what, day-to-day commands |
@@ -25,20 +25,20 @@ modules/nixos/         myNixOS.*      system options
 modules/home/          myHome.*       home-manager options
 modules/hardware/      myHardware.*   CPU / GPU / chassis
 modules/snippets/      mySnippets.*   data-only registries, shared by both
-modules/disko/         disk layouts, instantiated per host in modules/flake
+modules/disko/         reusable disk layouts; hosts instantiate them
 modules/users/         the taxborn account
 homes/                 home-manager profiles: default, server, workstation
-hosts/<host>/          per-host config, plus proxy.nix where the host runs Caddy
+hosts/<host>/          per-host config, disko.nix and proxy.nix
 secrets/               agenix .age files and the secrets.nix rule file
 keys/                  public keys: host roots, yubikey, the origin-pull cert
 scripts/               operational bash, invoked from the justfile
+tests/                 evaluation regressions and mocked operational tests
+docs/reviews/          dated maintenance and architecture decisions
 ```
 
-`import-tree` picks up Nix files under the hardware, NixOS, home, users and
-snippets module directories. Creating a module there is the registration step.
-Disk layouts are instantiated in `modules/flake/modules.nix`. Keep the host
-rosters in `modules/flake/hosts.nix`, `secrets/secrets.nix` and
-`mySnippets.tailnet.tailscaleIPs` in agreement.
+See [module loading](./modules/README.md#how-a-module-gets-loaded) for imports
+and disk layout ownership, and [fleet agreement](./modules/README.md#fleet-agreement)
+for the checked rosters.
 
 ## day to day
 
@@ -51,7 +51,9 @@ just clean               # nix-collect-garbage -d
 ```
 
 The devShell installs the hook set through direnv, so a `cd` into the repo is
-the setup step. `nix flake check` evaluates every host and runs the same hooks.
+the setup step. `nix flake check` evaluates every host, runs those hooks, and
+checks database registration, fleet agreement, network types and the restore
+runner with mocked commands.
 
 Build a host without switching to it:
 
@@ -61,22 +63,27 @@ nix build .#nixosConfigurations.<host>.config.system.build.toplevel
 
 ## provisioning a new host
 
-1. create a generic host under [hosts/](./hosts) and add its name to the list in
-   [modules/flake/hosts.nix](modules/flake/hosts.nix) (reference commit [138a32e](https://github.com/taxborn/nixcfg/commit/138a32e6aebe9c11ce35fcecd2cd64acafc5337b))
-2. enable root login by an SSH key (I'd likely want to use my
-   [personal SSH key](./keys/yubikey.pub)) on the host
-3. `nix run github:nix-community/nixos-anywhere -- --flake .#<host-name> --target-host root@<ip address>`
-4. collect the installed host's `/etc/ssh/ssh_host_ed25519_key.pub` into
-   `keys/root_<host>.pub`, add the host to `secrets/secrets.nix`, and
-   `agenix -r`. see [secrets/](./secrets/README.md#adding-a-host)
-5. add the host to `mySnippets.tailnet.tailscaleIPs`, or it is neither addressed
-   by the fleet nor backed up
-6. generate its borg material and initialize its repositories. see the
-   [backups README](./modules/nixos/services/backups/README.md#provisioning-a-host)
+1. Install with a temporary standalone configuration that enables root login
+   with your [public SSH key](./keys/yubikey.pub). Keep this bootstrap
+   configuration outside the fleet until the installed host has its root key.
+   For example, run `nix run github:nix-community/nixos-anywhere -- --flake
+   <bootstrap-flake>#<host> --target-host root@<ip-address>`.
+2. Collect the installed host's `/etc/ssh/ssh_host_ed25519_key.pub` into
+   `keys/root_<host>.pub`.
+3. Add its final configuration and `disko.nix` under `hosts/<host>/`, then add
+   its name to `modules/flake/hosts.nix`, `secrets/secrets.nix` and
+   `mySnippets.tailnet.tailscaleIPs` together. Fleet assertions require agreement.
+4. Follow [secret operations](./secrets/README.md#working-with-them) to rekey
+   the shared secrets and register any service-specific recipients.
+5. Complete the key-material and authorization steps in
+   [backup provisioning](./modules/nixos/services/backups/README.md#provisioning-a-host)
+   before the first rebuild of the final configuration.
+6. Evaluate and build the host, then deploy it with `just update <host>` and
+   initialize its backup repositories as described in that guide.
 
-Steps 4 through 6 are in that order because agenix activation fails on a missing
-`.age` file. Until a host is a recipient, every rebuild reports a failed decrypt
-for every secret its modules ask for.
+The standalone installation makes the root key available before the final
+configuration requires it. Fleet assertions check file existence and recipient
+rules; activation still needs the encrypted files to have been rekeyed.
 
 ## references
 
@@ -94,56 +101,12 @@ sudo sh -c 'for a in /sys/class/firmware-attributes/dell-wmi-sysman/attributes/*
 done'
 ```
 
-## todo
+## reviews
 
-Open work from the architecture review, in priority order.
-
-- [x] Register database backup requirements in the service modules when the
-  backup client is enabled. Forgejo and Piper currently rely on dump settings
-  in Argon's host config, which could be missed when moving either service.
-  Keep repository and retention choices at the host level. Read the
-  [backups README](./modules/nixos/services/backups/README.md) before changing
-  this integration.
-- [x] Check agreement between the host roster, tailnet map and secret
-  recipients automatically. Make restore coverage explicit too; `restore-all`
-  currently exercises only the three servers. Start with assertions, and
-  consider a shared inventory only if it simplifies those checks.
-- [x] Move host-specific disk layout instantiation and serial numbers out of
-  `modules/flake/modules.nix` and into the host directories. Extract the MX
-  Master button configuration from the workstation profile into a hardware
-  module, so the profile mostly selects modules.
-- [ ] Give `mySnippets.biscuits-at.networkMap` typed entries instead of
-  unrestricted attributes. Validate required fields and port types, reject
-  misspelled fields, and retain the shared service/proxy registry.
-- [ ] Give repeated architectural rules and operational explanations one
-  authoritative home across README, CONTEXT and AGENTS, with links elsewhere.
-  Move the completed maintenance table below into a dated review document.
-  Preserve the detailed backup and security reasoning when consolidating.
-
-## maintenance review
-
-Reviewed on 2026-09-05 against the pinned inputs and evaluated host options.
-The original TODO and known-drift list produced these changes and decisions.
-
-| item | decision |
-| --- | --- |
-| host platform tied to Intel CPU | Each host now declares its architecture. All five still evaluate with the Intel CPU module disabled. |
-| i915 keyed on CPU | Gate it on Intel graphics. Checked both CPU/GPU combinations. |
-| braxton.is and PDS port collision | Reserve 3006 for the site. Its service and Caddy read the same option. |
-| Mako unit | Keep it. Pinned home-manager creates no unit. Document its D-Bus and session lifecycle, and restart on failure. |
-| Hypridle overrides | Use home-manager's session-target option and restart policy. Retain the PATH needed by idle commands. |
-| dead runner GC recipe | Remove the recipe and preserve the PID namespace and rootless Podman notes in [modules/](./modules/README.md#retired-runner). This does not decide whether a runner returns. |
-| unread monitoring options | Remove `alwaysOn` and `physicalDisks`. Preserve the liveness and SMART distinctions in [modules/](./modules/README.md#snippets-hold-data-no-config). |
-| fail2ban cross-jail escalation | Remove it. SSH is the only service jail; incremental bans and tailnet exemptions remain. |
-| OVH BIOS partition | Keep it. Disko derives the BIOS GRUB target from EF02, alongside the EFI install. The drift report missed `grub.devices`. |
-| btrfs device records | Replace the unused mount-point records with unique device paths. |
-| bees deduplication | Keep it disabled by default. Evaluating the enabled branch on Uranium produces three daemons and three 2 GiB hash tables. No measured space saving justifies enabling them. |
-| Immich dashboard link | Remove it. No module or proxy in this tree provides the service, and no external use was identified during review. |
-| server Java and Mako mpv | Remove them. No configured command uses either package. |
-| Uranium's deleted comments | Restore the initrd AES and HWP preference reasoning. The [kernel documentation](https://docs.kernel.org/admin-guide/pm/intel_pstate.html#active-mode-with-hwp) distinguishes the performance hint from the governor. |
-| Neovim/tmux navigation | Install the missing Neovim plugin and map normal-mode C-hjkl to its commands. |
-| em dashes | Apply unslop to new and rewritten prose. Keep unrelated punctuation cleanup out of functional changes. |
-| host photos | Drop the placeholder. Photos need actual host images and add no configuration or recovery instructions. |
+- [Maintenance review, 2026-09-05](./docs/reviews/2026-09-05-maintenance.md)
+  records fixes and retained settings from the pinned-input review.
+- [Architecture review, completed 2026-09-06](./docs/reviews/2026-09-06-architecture.md)
+  records the five tasks from `26a1827` and their implementation.
 
 ## do not
 

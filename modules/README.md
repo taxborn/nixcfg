@@ -15,7 +15,7 @@ custom option namespace; the rest are plumbing.
 
 ## how a module gets loaded
 
-Nothing loads it. `flake/modules.nix` hands each of `nixos`, `home`,
+`flake/modules.nix` hands each of `nixos`, `home`,
 `hardware`, `users`, and `snippets` to `import-tree`, which imports every `.nix`
 file beneath it. Creating the file is the whole registration step. There is no
 import list, and adding one would break the pattern rather than tidy it.
@@ -25,9 +25,13 @@ the option path. `nixos/services/forgejo/default.nix` declares
 `myNixOS.services.forgejo` because it says so, not because of where it sits.
 Keep the two aligned anyway; every file in here does.
 
-`disko/` and `flake/` are the exceptions. Disk layouts are parameterised
-functions, so `flake/modules.nix` instantiates them by hand with each host's
-`by-id` drive paths. `flake/` is itself the `import-tree` target of `flake.nix`.
+`disko/` and `flake/` are the exceptions. `flake/modules.nix` exports reusable
+disk layouts; `hosts/<host>/disko.nix` selects a layout and supplies its `by-id`
+drive paths. Helium's single-host layout lives there in full. `flake/` is itself
+the `import-tree` target of `flake.nix`.
+
+Each host declares `nixpkgs.hostPlatform` in its own `default.nix`. CPU-vendor
+modules configure drivers and firmware, not the architecture.
 
 ## the shape of a module
 
@@ -45,11 +49,15 @@ in
 }
 ```
 
-Every module aliases its own subtree as `cfg`. Every module takes `self` and
-never `inputs`, because `flake/hosts.nix` passes only the former in
+A module aliases its own subtree as `cfg`. System, home and hardware modules
+take `self`, never `inputs`, because `flake/hosts.nix` passes only the former in
 `specialArgs`. A package a module needs gets re-exported through
 `flake/packages.nix` rather than reached for directly. In-repo files are
 `"${self}/keys/foo.pub"`, not relative paths.
+
+Use `lib.mkDefault` for shared settings a host may override, such as locale,
+timezone or boot-loader choices. Reserve `lib.mkForce` for conflicting modules
+where one must win, such as lanzaboote disabling systemd-boot.
 
 Option descriptions carry the reasoning. See the comment style section of
 [AGENTS.md](../AGENTS.md#comment-style) for what that means in practice.
@@ -72,10 +80,13 @@ of the same fact cannot drift:
 
 - `mySnippets.biscuits-at.networkMap` holds domain, port, and SSH details per
   service. The Forgejo module and the SSH client config read the same port from
-  here. Never write a port literal into a Caddy vhost.
+  here. Entries require a nonempty `domain` and a `port` from 1 through 65535.
+  SSH entries require both `sshDomain` and `sshPort`. Unknown fields fail
+  evaluation. Add a service here and read the entry from both its module and
+  proxy; never write a port literal into a Caddy vhost.
 - `mySnippets.tailnet` holds the tailnet name and the hostname to Tailscale IP
-  map, which doubles as the fleet roster. `services/backups` addresses the
-  backup server through it, so a host absent from it is not backed up.
+  map. Backups use it to address the backup server, and fleet assertions
+  require its names to match the build roster.
 - `mySnippets.ssh.knownHosts` pins host keys, assembled from `../keys` and the
   tailnet map.
 
@@ -86,6 +97,24 @@ alert on absence. An offline workstation is normal. SMART monitoring belongs
 on Helium, Tungsten and Uranium, since the OVH guests expose virtual disks.
 Exporter enablement and scrape targets must agree, and the OVH hardware profile
 already disables `smartd` for the same reason.
+
+## fleet agreement
+
+The build roster in `flake/hosts.nix`, the tailnet map and the per-host borg
+rules in `secrets/secrets.nix` must contain the same names. `nixos/fleet.nix`
+asserts this on every host. It also checks that shared tailnet secret rules
+include every host and the recovery YubiKey, and that each configured age file
+exists with a rule naming its consuming host and the YubiKey.
+
+These checks inspect rules and public keys. They cannot prove that an encrypted
+file was rekeyed after its rule changed. Follow the [secrets procedure](../secrets/README.md#working-with-them)
+and run the [key recovery test](./nixos/services/backups/README.md#tier-0-key-material)
+after changing recipients.
+
+`nix eval --json .#restoreCoverage` lists every enabled backup client and each
+repository's restore coverage. `flake/restore.nix` derives this plan from the
+host configurations. See the [restore procedure](./nixos/services/backups/README.md#testing-restore)
+for local repository omissions and workstation rehearsals.
 
 ## modules with their own README
 

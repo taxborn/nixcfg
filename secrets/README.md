@@ -2,8 +2,9 @@
 
 [agenix](https://github.com/ryantm/agenix)-encrypted secrets. `secrets.nix` is
 the rule file, mapping each `.age` path to the set of public keys that may
-decrypt it. Only the `agenix` CLI reads it; the NixOS modules reference the
-`.age` files directly.
+decrypt it. agenix uses it to encrypt and rekey files. NixOS references the
+`.age` files directly and [fleet assertions](../modules/README.md#fleet-agreement)
+check their recipient rules before activation.
 
 ## inventory
 
@@ -97,15 +98,11 @@ material at once.
 
 ## adding a host
 
-1. Install the host, then collect its `/etc/ssh/ssh_host_ed25519_key.pub` into
-   `../keys/root_<host>.pub`.
-2. Add `<host>` to the `hosts` list in `secrets.nix`.
-3. `agenix -r` to rekey, and rebuild the host.
-
-Step 1 has to land first, or the host is a recipient of nothing and activation
-fails on the first `.age` file it cannot decrypt. That is why the provisioning
-sequence in the [root README](../README.md#provisioning-a-new-host) puts the key
-collection between `nixos-anywhere` and the first real rebuild.
+Follow the [provisioning sequence](../README.md#provisioning-a-new-host) for
+installation, root-key collection, roster registration and rekeying. The root
+key must exist before adding a recipient, and the encrypted files must be
+rekeyed before the host rebuilds. Changing a rule alone does not change who
+can decrypt an existing file.
 
 Borg key material has its own provisioning sequence, in the
 [backups README](../modules/nixos/services/backups/README.md#provisioning-a-host).

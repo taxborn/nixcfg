@@ -6,10 +6,10 @@ identity; role is a property of the config.
 
 Each host is one directory: `default.nix` for the machine itself, plus
 `proxy.nix` where it runs Caddy, and any other file the machine alone needs.
-The roster lives in [`modules/flake/hosts.nix`](../modules/flake/hosts.nix),
-[`secrets/secrets.nix`](../secrets/secrets.nix), and
-`mySnippets.tailnet.tailscaleIPs`. A host has to be in all three to be built,
-to hold secrets, and to be backed up.
+Disk selection and serial numbers live in `disko.nix` beside each host.
+See [fleet agreement](../modules/README.md#fleet-agreement) for the checked
+rosters and [provisioning](../README.md#provisioning-a-new-host) for the order
+in which a new host joins them.
 
 ## at a glance
 
@@ -72,7 +72,8 @@ the one `directVHosts` exception.
 | [Tranquil PDS](../modules/nixos/services/tranquil-pds.nix) | `pds.biscuits.at` + `*.pds.biscuits.at` | 3003 | ATProto PDS, PostgreSQL |
 | [Vaultwarden](../modules/nixos/services/vaultwarden.nix) | `vw.biscuits.at` | 3001 | |
 
-Backups take both a `pg_dumpall` (Tranquil) and a SQLite dump (Piper).
+The service modules register `pg_dumpall` for Tranquil and SQLite dumps for
+Forgejo and Piper when the backup client is enabled.
 
 The PDS is why the two `pds` records are the only DNS-only names in the zone.
 Cloudflare's universal certificate does not cover a second label,
