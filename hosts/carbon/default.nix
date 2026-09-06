@@ -16,6 +16,7 @@
     services = {
       backups.client.enable = true;
       braxton-is.enable = true;
+      forgejo-runner.enable = true;
     };
   };
 

@@ -125,6 +125,10 @@ for local repository omissions and workstation rehearsals.
 
 ## retired runner
 
+The replacement [Forgejo runner](./nixos/services/forgejo-runner/README.md)
+runs on Carbon with rootless Podman and v16 registration. It does not share a
+Nix store between jobs. The notes below describe the earlier setup.
+
 The Forgejo runner module went in `f4012fc`. The old `just runner-gc` recipe
 queried its missing `storeVolume` and `nixImage` options, so it could not run.
 Do not restore the recipe without restoring a runner configuration.

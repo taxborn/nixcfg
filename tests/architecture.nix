@@ -103,6 +103,33 @@ lib.runTests {
     expr = lib.mapAttrs (_: host: failures host.config) self.nixosConfigurations;
     expected = lib.genAttrs (builtins.attrNames self.nixosConfigurations) (_: [ ]);
   };
+  testRunnerPlacement = {
+    expr = lib.mapAttrs (
+      _: host: host.config.myNixOS.services.forgejo-runner.enable
+    ) self.nixosConfigurations;
+    expected = {
+      argon = false;
+      carbon = true;
+      helium = false;
+      tungsten = false;
+      uranium = false;
+    };
+  };
+  testRunnerRejectsForgeHost = {
+    expr = builtins.elem "Keep CI jobs off the host holding Forgejo's repositories and credentials." (
+      failures (extend [ { myNixOS.services.forgejo-runner.enable = true; } ])
+    );
+    expected = true;
+  };
+  testRunnerRejectsBackupHost = {
+    expr = builtins.elem "Keep CI jobs off the fleet's backup server." (
+      failures
+        (self.nixosConfigurations.helium.extendModules {
+          modules = [ { myNixOS.services.forgejo-runner.enable = true; } ];
+        }).config
+    );
+    expected = true;
+  };
   testMissingTailnetHost = {
     expr = builtins.elem "The NixOS host roster and tailnet map must contain the same hosts." (
       failures missingTailnet
