@@ -3,9 +3,43 @@
   lib,
   ...
 }:
+let
+  # Port zero chooses a listener at runtime, which a shared proxy registry cannot use.
+  portType = lib.types.ints.between 1 65535;
+in
 {
   options.mySnippets.biscuits-at.networkMap = lib.mkOption {
-    type = lib.types.attrs;
+    type = lib.types.attrsOf (
+      lib.types.submodule {
+        options = {
+          domain = lib.mkOption {
+            type = lib.types.nonEmptyStr;
+            description = "Public service name shared by the application and its Caddy vhost.";
+          };
+          port = lib.mkOption {
+            type = portType;
+            description = "Loopback HTTP port shared by the application and its Caddy proxy.";
+          };
+          sshDomain = lib.mkOption {
+            type = lib.types.nullOr lib.types.nonEmptyStr;
+            default = null;
+            description = "SSH clone hostname, set with sshPort so clients and the forge agree.";
+          };
+          sshPort = lib.mkOption {
+            type = lib.types.nullOr portType;
+            default = null;
+            description = "SSH clone port, separate from the HTTP listener.";
+          };
+        };
+      }
+    );
+    apply = lib.mapAttrs (
+      name: entry:
+      assert lib.assertMsg (
+        (entry.sshDomain == null) == (entry.sshPort == null)
+      ) "networkMap.${name}: set sshDomain and sshPort together.";
+      entry
+    );
     description = ''
       Domain, port, and where relevant the SSH details for each biscuits.at
       service.

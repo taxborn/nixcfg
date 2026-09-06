@@ -1,5 +1,18 @@
 { self, lib }:
 let
+  validNetwork =
+    value:
+    (builtins.tryEval (
+      builtins.deepSeq
+        (lib.evalModules {
+          modules = [
+            ../modules/snippets/networkMap.nix
+            ../modules/snippets/tailscale.nix
+            { mySnippets.biscuits-at.networkMap = lib.mkForce { test = value; }; }
+          ];
+        }).config.mySnippets.biscuits-at.networkMap
+        true
+    )).success;
   argon = self.nixosConfigurations.argon;
   extend = modules: (argon.extendModules { inherit modules; }).config;
   failures = config: map (a: a.message) (builtins.filter (a: !a.assertion) config.assertions);
@@ -32,6 +45,60 @@ let
   ];
 in
 lib.runTests {
+  testNetworkSchema = {
+    expr = map validNetwork [
+      {
+        domain = "test.biscuits.at";
+        port = 3000;
+      }
+      {
+        domain = "test.biscuits.at";
+        port = 3000;
+        sshDomain = "argon.test";
+        sshPort = 2222;
+      }
+      { port = 3000; }
+      { domain = "test.biscuits.at"; }
+      {
+        domain = "";
+        port = 3000;
+      }
+      {
+        domain = "test.biscuits.at";
+        port = "3000";
+      }
+      {
+        domain = "test.biscuits.at";
+        port = 0;
+      }
+      {
+        domain = "test.biscuits.at";
+        port = 65536;
+      }
+      {
+        domain = "test.biscuits.at";
+        port = 3000;
+        prot = 3001;
+      }
+      {
+        domain = "test.biscuits.at";
+        port = 3000;
+        sshPort = 2222;
+      }
+    ];
+    expected = [
+      true
+      true
+      false
+      false
+      false
+      false
+      false
+      false
+      false
+      false
+    ];
+  };
   testFleetAgrees = {
     expr = lib.mapAttrs (_: host: failures host.config) self.nixosConfigurations;
     expected = lib.genAttrs (builtins.attrNames self.nixosConfigurations) (_: [ ]);
