@@ -147,7 +147,12 @@ in
         NoNewPrivileges = true;
         PrivateTmp = true;
         ProtectSystem = "strict";
-        ProtectHome = true;
+        # ProtectHome=true also hides /run/user, including our rootless
+        # Podman socket. A tmpfs hides homes while a read-only bind exposes
+        # only this socket directory. Unix socket connections still work on
+        # a read-only mount, and binding the directory survives socket renewal.
+        ProtectHome = "tmpfs";
+        BindReadOnlyPaths = [ "/run/user/${toString uid}/podman" ];
         ReadWritePaths = [ stateDir ];
         MemoryMax = "512M";
       };
