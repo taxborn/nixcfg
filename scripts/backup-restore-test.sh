@@ -47,10 +47,15 @@ for cfg in /etc/borgmatic.d/*.yaml; do
     # On a host taking database dumps, the file check above is not enough to
     # call the archive good: the live database is excluded in favour of the
     # dump, so a hook that silently failed would leave an archive that restores
-    # cleanly and contains no database at all. Assert the dump is really in
-    # there. Which hooks to check is derived from the config rather than
-    # hardcoded, so a host without a database skips this and a host that grows
-    # a second engine is covered without touching this script.
+    # cleanly and contains no database at all. Assert the dumps are really in
+    # there. Both the hooks and the database names come from the config rather
+    # than being hardcoded, so a host that grows an engine, or another database
+    # on an engine it already has, is covered without touching this script.
+    #
+    # Per database and not merely per hook, which is the weaker check this
+    # replaces: argon dumped piper but not forgejo, and one live sqlite dump
+    # was enough to keep the hook looking healthy while forgejo's database was
+    # absent from every archive.
     listing=""
     for hook in postgresql sqlite; do
         grep -q "^${hook}_databases:" "$cfg" || continue
@@ -59,25 +64,54 @@ for cfg in /etc/borgmatic.d/*.yaml; do
         [ -n "$listing" ] ||
             listing=$(borgmatic list --repository "$repo" --archive latest 2>&1 || true)
 
-        # Here-string rather than a pipe into grep. `grep -q` exits at the
-        # first match, SIGPIPEing a producer still writing a listing far larger
-        # than the pipe buffer; under `pipefail` that makes the pipeline status
-        # 141 and inverts the assertion, reporting a dump that is present as
-        # missing. Not a race: borgmatic injects the dump patterns at the head
-        # of the pattern list, so the match is always in the first few lines
-        # and the producer always still has the rest of the archive to write.
-        if grep -q "${hook}_databases/" <<<"$listing"; then
-            echo "PASS $repo — $hook dump present"
-        else
-            echo "FAIL $repo — no $hook dump in the archive"
-            # The usual cause is an exclude swallowing borgmatic's staging
-            # directory (/run under systemd, /tmp when run by hand), which
-            # fails silently everywhere else. The dumps sort to the top of the
-            # listing, so that is the end worth showing — and it doubles as
-            # telling an eaten dump apart from a listing that errored outright.
-            head -5 <<<"$listing" | sed 's/^/       | /'
+        # Top-level keys start in column 0 and the list items under them start
+        # with `- `, so anchoring on both is enough to read the names out of
+        # this one block without a yaml parser.
+        names=$(awk -v hook="${hook}_databases:" '
+            /^[a-z_]+:/ { inblock = ($0 == hook) }
+            inblock && /^- name:/ { print $3 }
+        ' "$cfg")
+
+        # The block header is already known to be there, so parsing no names
+        # out of it means the layout moved under this awk rather than that the
+        # host has no databases. Fail rather than skip: a silent skip here is
+        # the same blind spot this check exists to close.
+        if [ -z "$names" ]; then
+            echo "FAIL $repo — ${hook}_databases in $cfg, but no names parsed from it"
             rc=1
+            continue
         fi
+
+        # Redirected rather than piped into the loop: a pipe would run the body
+        # in a subshell and `rc=1` would be discarded, turning every failure
+        # here into a pass.
+        while read -r name; do
+            # Here-string rather than a pipe into grep. `grep -q` exits at the
+            # first match, SIGPIPEing a producer still writing a listing far
+            # larger than the pipe buffer; under `pipefail` that makes the
+            # pipeline status 141 and inverts the assertion, reporting a dump
+            # that is present as missing. Not a race: borgmatic injects the
+            # dump patterns at the head of the pattern list, so the match is
+            # always in the first few lines and the producer always still has
+            # the rest of the archive to write.
+            #
+            # Anchored at the end so one name cannot satisfy another's
+            # assertion by being a suffix of it, which `piper` is of
+            # `tealfm-piper`.
+            if grep -qE "${hook}_databases/.*/${name}\$" <<<"$listing"; then
+                echo "PASS $repo — $hook dump $name"
+            else
+                echo "FAIL $repo — no $hook dump for $name in the archive"
+                # The usual cause is an exclude swallowing borgmatic's staging
+                # directory (/run under systemd, /tmp when run by hand), which
+                # fails silently everywhere else. The dumps sort to the top of
+                # the listing, so that is the end worth showing — and it
+                # doubles as telling an eaten dump apart from a listing that
+                # errored outright.
+                head -5 <<<"$listing" | sed 's/^/       | /'
+                rc=1
+            fi
+        done <<<"$names"
     done
     echo
 done

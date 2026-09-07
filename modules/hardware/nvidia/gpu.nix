@@ -4,14 +4,14 @@
   ...
 }:
 {
-  options.myHardware.nvidia.gpu.enable = lib.mkEnableOption "NVIDIA GPU configuration.";
+  options.myHardware.nvidia.gpu.enable = lib.mkEnableOption "NVIDIA GPU configuration";
 
   config = lib.mkIf config.myHardware.nvidia.gpu.enable {
     boot = {
       # i915 must load before the nvidia modules on hybrid Intel+Nvidia
       # systems, otherwise Electron/Chromium apps can stall for up to a
       # minute after boot. See https://wiki.hypr.land/Nvidia/
-      initrd.kernelModules = lib.optionals config.myHardware.intel.cpu.enable [ "i915" ];
+      initrd.kernelModules = lib.optionals config.myHardware.intel.gpu.enable [ "i915" ];
 
       # Stage 2 rather than the initrd, and that distinction is the whole point.
       # The udev rules that finegrained power management installs to flip the

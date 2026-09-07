@@ -1,12 +1,11 @@
 {
-  self,
   lib,
   pkgs,
   ...
 }:
 {
   imports = [
-    self.diskoConfigurations.btrfs-luks-raid1-uranium
+    ./disko.nix
   ];
 
   home-manager.users.taxborn = {
@@ -17,6 +16,7 @@
     myHome.services.hypridle.kbdBacklight = false;
   };
 
+  nixpkgs.hostPlatform = "x86_64-linux";
   networking.hostName = "uranium";
   system.stateVersion = "25.11";
 
@@ -37,6 +37,10 @@
   };
 
   boot = {
+    # Make accelerated AES available when stage 1 opens cryptroot. dm-crypt
+    # allocates its cipher then; loading a faster implementation after opening
+    # the mapping does not replace that cipher. A missing initrd module can
+    # therefore leave a working root filesystem on a slower implementation.
     initrd.availableKernelModules = [ "aesni_intel" ];
     kernelParams = [ "intel_iommu=on" ];
   };
@@ -69,6 +73,11 @@
     "d /games/steamapps/compatdata 0755 taxborn users -"
   ];
 
+  # With intel_pstate in active HWP mode, powersave still permits the full
+  # frequency range. Set the performance hint for this desktop without using
+  # the performance governor, which restricts HWP to the highest allowed
+  # P-state. These are separate controls despite sharing the word performance.
+  # https://docs.kernel.org/admin-guide/pm/intel_pstate.html#active-mode-with-hwp
   systemd.services.cpu-epp = {
     description = "Bias HWP toward performance rather than balance_performance";
     wantedBy = [ "multi-user.target" ];

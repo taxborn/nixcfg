@@ -15,6 +15,9 @@
         atproto-goat
         cargo
         gcc
+        # The terminfo entry, not the terminal. This profile is the servers'
+        # profile too, and ssh does not carry terminfo across, so without it a
+        # ghostty window that lands on a server has an unknown $TERM.
         ghostty.terminfo
         gnumake
         jq
@@ -46,7 +49,7 @@
       fish = {
         enable = true;
         interactiveShellInit = ''
-          set fish_greeting # Disable greeting
+          set fish_greeting # emptying it is what silences the greeting
         '';
       };
       home-manager.enable = true;
@@ -67,6 +70,9 @@
       yazi.enable = true;
     };
 
+    # `autoEnable` themes every program the catppuccin module knows about,
+    # which makes theming opt-out. A program that should keep its own colours
+    # turns `catppuccin.<program>.enable` off rather than being added here.
     catppuccin = {
       accent = "mauve";
       autoEnable = true;

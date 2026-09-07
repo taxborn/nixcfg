@@ -16,7 +16,7 @@ in
     # That address is also why the certificate has to come over DNS-01. HTTP-01
     # and TLS-ALPN both need Let's Encrypt to reach the host on a routable
     # address, and 100.64/10 is not one. CF_API_TOKEN comes from Caddy's
-    # environmentFile — the same token the PDS wildcard on Argon uses, and it
+    # environmentFile, the same token the PDS wildcard on Argon uses, which
     # already carries Zone:DNS:Edit on this zone.
     #
     # An explicit record beats the zone's proxied `*.biscuits.at`, so this name

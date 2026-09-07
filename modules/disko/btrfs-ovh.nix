@@ -1,5 +1,7 @@
-# Single-disk GPT + btrfs layout shared by the OVH VPSes (argon, carbon):
-# 2M EF02 BIOS-boot partition for OVH's legacy boot, 300M ESP, btrfs root.
+# Single-disk GPT + btrfs layout shared by Argon and Carbon.
+# Keep both boot paths. Disko sees EF02 and adds this disk to
+# boot.loader.grub.devices for a BIOS install. efiSupport also installs to the
+# 300M ESP, so enabling EFI does not make the 2M BIOS partition redundant.
 { lib, ... }:
 let
   defaultBtrfsOpts = [
@@ -21,7 +23,6 @@ in
         content = {
           type = "gpt";
           partitions = {
-            # Boot partitions
             boot = {
               name = "boot";
               size = "2M";

@@ -10,6 +10,11 @@
   config = lib.mkIf config.myHome.programs.yubikey.enable {
     home.packages = [ pkgs.yubikey-manager ];
 
+    # An age-plugin-yubikey stub identity, not a key: it names a serial and a
+    # slot, and the private half never leaves the card. That is why it can sit
+    # unencrypted in the repo and world-readable in the store.
+    # `age.identityPaths` in modules/nixos/profiles/workstation.nix names this
+    # path, so it is the route agenix takes to the card at activation.
     xdg.configFile."age/yubikey-identity.txt".text = ''
       #       Serial: 33852487, Slot: 1
       #         Name: age

@@ -17,64 +17,62 @@ drive over the tailnet.
 - passphrase and SSH key are per-host agenix secrets, readable only by that
   host's key (and my yubikey)
 - hosts running a database swap the live files for a consistent logical dump
-  inside every archive — `postgresqlDumpAll` for a cluster, `sqliteDatabases`
+  inside every archive, `postgresqlDumpAll` for a cluster and `sqliteDatabases`
   for a file (see [databases](#databases))
 
 The server's paths and the clients' targets both derive from one `backupServer`
 attrset at the top of `default.nix`. There is exactly one backup server, so
-those are constants rather than options — changing them in one place moves both
+those are constants rather than options. Changing them in one place moves both
 halves at once, and no host can set them out of sync.
 
 ### server side
 
-Helium serves repositories over SSH on the `taxborn` user. Each client's public
-key gets an `authorized_keys` entry with a forced command:
+Helium serves repositories over SSH on the `taxborn` user, on port 22, over the
+tailnet. Each client's borg public key is added to that user's
+`authorized_keys`, and `mySnippets.ssh.knownHosts` pins Helium's host key so a
+backup run cannot be asked to trust a new one.
 
-```
-command="…/borg serve --restrict-to-path /mnt/hdd/borg/<client>",restrict <key>
-```
+Every host reaches every other over Tailscale SSH, which answers 22 on the
+tailnet address and authorises by tailnet identity. That removes the two ports
+Helium would otherwise need. Nothing is added to `allowedTCPPorts`, and the
+tailscale interface is in `trustedInterfaces`, so the repositories are
+reachable from the tailnet and nowhere else.
 
-The forced command replaces whatever the client asks to run, so the key can do
-nothing but serve that one repository. `restrict` additionally drops pty
-allocation, port forwarding, agent forwarding, and user rc.
+> The keys are unconfined, and that is the current trade. Until `058b04a` each
+> entry carried a forced command,
+> `command="…/borg serve --restrict-to-path /mnt/hdd/borg/<client>",restrict`,
+> served on a non-default port so that real sshd, rather than Tailscale SSH,
+> was the thing reading `authorized_keys`. That went out along with the YubiKey
+> agent forwarding it was tangled up with, on the grounds that a single trusted
+> tailnet did not earn two extra sshd ports.
+>
+> Nothing in the config records what that cost, so it goes here. Any host's
+> borg key can now read and delete any *other* host's repository on Helium, and
+> a client compromised badly enough can reach a shell by tailnet identity and
+> wipe the drive outright. Every repository sits on an ntfs-3g mount with
+> `uid=1000,umask=0000`, so every archive is owned by `taxborn` and
+> world-writable. Two things keep that from being total: the off-site copy on
+> rsync.net, which has the same problem (see the
+> [note in tier 2](#tier-2-disaster-rehearsal)), and tier 0, which proves the
+> YubiKey alone can still open anything either copy holds.
+>
+> Restoring the restriction means bringing back both halves, a forced command
+> *and* a port that Tailscale SSH does not intercept, since on 22 the entry is
+> never consulted at all. Half of it is worse than none, because it reads as a
+> boundary and is not one.
 
-### why the borg port is not 22, and why Helium alone has no Tailscale SSH
-
-That forced command is only worth anything where sshd is the thing answering,
-and for a while here it was not. Both halves of this are deliberate:
-
-**Clients address Helium on `server.sshPort` (2222), not 22.** Tailscale SSH
-takes port 22 on the tailnet address and authorises by tailnet identity, never
-reading `authorized_keys` — so on 22 the `--restrict-to-path` restriction is
-simply not applied, whatever it says in the file. Tailscale intercepts only 22,
-so any other port is real sshd with the forced command in force. The port is
-absent from `allowedTCPPorts`; the tailscale interface is in
-`trustedInterfaces`, so it is reachable over the tailnet and nowhere else.
-
-**Helium sets `myNixOS.services.tailscale.enableSSH = false`.** The port move
-alone would not have been enough. Every repository lives on an ntfs-3g mount
-with `uid=1000,umask=0000`, so every archive is owned by `taxborn` and
-world-writable — a client that got compromised could ignore borg entirely, open
-a shell on 22 by tailnet identity, and delete the lot. Turning Tailscale SSH off
-here closes that path; Helium is the one host where a forced command is a
-security boundary rather than a convenience.
-
-Verify the distinction on any host — `"none"` means tailscaled answered and no
-`authorized_keys` was consulted:
+Check which of the two answered on any host. `"none"` means tailscaled answered
+and nothing read `authorized_keys`:
 
 ```bash
 ssh -v taxborn@<tailnet ip> id 2>&1 | grep 'Authenticated to'
 ```
 
-The consequence is that Helium is reachable only with a real SSH key
-(`keys/yubikey.pub`, already in its `authorized_keys`). Tailnet identity is no
-longer enough, so a machine with no key loaded cannot get in at all.
-
 `borg-repo-base.service` creates `/mnt/hdd/borg` at boot. It runs as `taxborn`
 and carries `RequiresMountsFor`, so it does nothing when the external drive is
-absent — the drive is mounted `nofail`, and `/mnt/hdd` itself is root-owned
-`0755`. That combination means a missing drive makes backups fail loudly instead
-of quietly filling Helium's root filesystem with archives.
+absent. The drive is mounted `nofail`, and `/mnt/hdd` itself is root-owned
+`0755`. Together that means a missing drive fails the backup outright rather
+than filling Helium's root filesystem with archives nobody would notice.
 
 > The pre-rebuild archives from the old config still sit in
 > `/mnt/hdd/borg-repos/`. They use different passphrases and keys, so nothing
@@ -83,8 +81,8 @@ of quietly filling Helium's root filesystem with archives.
 
 ## provisioning a host
 
-Order matters: the secrets have to exist before the host rebuilds, or
-activation fails on a missing `.age` file.
+The secrets have to exist before the host rebuilds, or activation fails on a
+missing `.age` file. So this order is not optional.
 
 ### 1. generate key material
 
@@ -97,7 +95,7 @@ openssl rand -base64 32 > /tmp/borg_passphrase
 
 `secrets/secrets.nix` already derives rules for every host in its `hosts` list,
 so nothing needs adding there for an existing host. Run from `secrets/`, not the
-repo root — agenix looks up the file argument as a rule name verbatim:
+repo root, since agenix looks up the file argument as a rule name verbatim:
 
 ```bash
 cd secrets
@@ -109,7 +107,8 @@ agenix -e borg/<hostname>/ssh_key.age < /tmp/borg_ssh_key
 `agenix -e` decrypts an existing target before writing, so to *replace* a secret,
 delete the `.age` file first rather than piping over it.
 
-The public key belongs in-repo — Helium's `server.authorizedKeys` reads it:
+The public key belongs in-repo, because Helium's `server.authorizedKeys` reads
+it:
 
 ```bash
 cp /tmp/borg_ssh_key.pub borg/<hostname>/ssh_key.pub
@@ -136,9 +135,8 @@ rm /tmp/rsync_authkeys
 
 ### 4. create the remote directory
 
-Borg will not create the repository's parent. Helium's is handled by
-`borg-repo-base.service`; rsync.net's restricted shell has no `mkdir`, so use
-sftp:
+Borg will not create the repository's parent. `borg-repo-base.service` handles
+Helium's; rsync.net's restricted shell has no `mkdir`, so use sftp:
 
 ```bash
 sftp rsync-backup
@@ -156,10 +154,9 @@ sudo nixos-rebuild switch --flake .#<hostname>
 
 ### 6. initialize the repositories
 
-Run on the host as root, once per repository. The first connection to each
-server has to accept its host key, which is why this step is interactive —
-Helium's key is already pinned via `mySnippets.ssh.knownHosts`, rsync.net's is
-not.
+Run on the host as root, once per repository. This step is interactive because
+the first connection to each server has to accept its host key. Helium's is
+already pinned via `mySnippets.ssh.knownHosts`; rsync.net's is not.
 
 ```bash
 sudo borgmatic repo-create --encryption repokey-blake2
@@ -195,7 +192,7 @@ sudo borgmatic extract --archive latest --path etc/ssh
 sudo systemctl status borgmatic.timer
 ```
 
-On Helium, the served repositories are inspectable directly:
+On Helium you can inspect the served repositories directly:
 
 ```bash
 sudo borg list /mnt/hdd/borg/argon
@@ -209,71 +206,77 @@ what lands in the archive is a torn mix of pages whose recoverability depends on
 where the commits happened to fall. It usually works, which is the dangerous
 part.
 
-So the live files are excluded and borgmatic's database hooks put a logical dump
-in the archive instead — taken through the database's own code, consistent by
-construction, streamed into each archive as it is written:
+So the module excludes the live files, and borgmatic's database hooks put a
+logical dump in the archive instead. The dump goes through the database's own
+code, which makes it consistent by construction, and it streams into each
+archive as borg writes it.
 
 | option | engine | dump | what it excludes |
 | --- | --- | --- | --- |
 | `postgresqlDumpAll = true` | PostgreSQL | `pg_dumpall` of every database | `/var/lib/postgresql` |
 | `sqliteDatabases.<name> = <path>` | SQLite | `sqlite3 <path> .dump` | `<path>*` |
 
-Carbon uses the SQLite hook, for Forgejo. Nothing uses the PostgreSQL one at the
-moment — Forgejo did until it moved to SQLite, and the option stays because the
-next service with a cluster behind it (Immich, Paperless) needs it.
+Forgejo, Piper, Tranquil and Paperless register their dumps in their service
+modules whenever the backup client is enabled. Moving one of these services
+therefore carries its dump requirement with it. Repository and retention
+choices remain with the host. Forgejo and Piper read the database paths from
+their service configuration.
+
+Argon takes `pg_dumpall` for Tranquil and SQLite dumps for Forgejo and Piper.
+Helium takes the PostgreSQL dump for Paperless. Carbon takes neither, having
+no database.
 
 The SQLite exclude carries a trailing glob for a reason: `-wal` and `-shm` sit
 beside the database file and hold everything committed since the last
 checkpoint. Archiving those out of step with the file they belong to is worse
 than archiving neither, because recovery reads the pair and trusts it.
 
-**An exclude can silently eat the dump.** borgmatic stages dumps on disk and
-hands borg the staging path as an extra source, so any exclude covering that
-path drops the database from the archive while everything still reports success.
-The path depends on how borgmatic was started — `/run/borgmatic` under the
-packaged unit (`RuntimeDirectory=borgmatic`), `/tmp` when run by hand, as the
-restore test does — so the module removes `/run`, `/tmp`, and `/var/tmp` from
-the exclude list on any host taking dumps. They were inert for file selection
-anyway, since `paths` never traverses them.
+An exclude can silently eat the dump. borgmatic stages dumps on disk and hands
+borg the staging path as an extra source, so any exclude covering that path
+drops the database from the archive while everything still reports success. The
+path depends on how borgmatic was started, `/run/borgmatic` under the packaged
+unit (`RuntimeDirectory=borgmatic`) and `/tmp` when run by hand as the restore
+test does, so the module removes `/run`, `/tmp`, and `/var/tmp` from the exclude
+list on any host taking dumps. They were inert for file selection anyway, since
+`paths` never traverses them.
 
-This is not hypothetical: it is exactly what happened on the first real run
-here, and nothing surfaced it except the dump assertion in the restore test.
-Anything that adds a database hook later — Immich, Paperless — inherits the
-same trap.
+That is not a hypothetical. It is what happened on the first real run here, and
+nothing surfaced it except the dump assertion in the restore test. Anything that
+adds a database hook later inherits the same problem.
 
-Details in the module that are load-bearing and worth not "cleaning up":
+Three details in the module that look like cleanup targets and are not:
 
-- The SQLite hook takes **no** `username`. borgmatic reads the file directly and
-  the unit already runs as root, so there is nothing to switch to. The nixpkgs
+- The SQLite hook takes no `username`. borgmatic reads the file directly and the
+  unit already runs as root, so there is nothing to switch to. The nixpkgs
   module fills in `sqlite_command` from `pkgs.sqlite` on its own.
-- The PostgreSQL dump, when something uses it again, must be declared as
-  `{ name = "all"; username = "postgres"; }` and nothing else. That precise
-  shape — a `username`, no `password`, no `pg_dump_command` — is what makes the
-  nixpkgs borgmatic module both wrap the dump in `sudo -u postgres` *and* relax
-  its own hardened unit (`NoNewPrivileges=false`, `CAP_SETUID`/`CAP_SETGID`) so
-  that switch is allowed. Writing the equivalent command by hand opts out of the
-  relaxation and the dump dies with `cannot set groups: Operation not
-  permitted`. Note the relaxation is keyed on the PostgreSQL hook alone, so a
-  host taking only SQLite dumps keeps the hardened unit — which is fine, and is
-  why the SQLite hook must not grow a `username`.
-- borgmatic runs one configuration per repository, so the dump is taken once
-  per target. That is a little redundant and entirely intentional: each archive
-  is independently complete.
+- The PostgreSQL dump must be declared as `{ name = "all"; username =
+  "postgres"; }` and nothing else. That precise shape, a `username`, no
+  `password`, no `pg_dump_command`, is what makes the nixpkgs borgmatic module
+  both wrap the dump in `sudo -u postgres` *and* relax its own hardened unit
+  (`NoNewPrivileges=false`, `CAP_SETUID`/`CAP_SETGID`) so that switch is
+  allowed. Writing the equivalent command by hand opts out of the relaxation and
+  the dump dies with `cannot set groups: Operation not permitted`. The
+  relaxation is keyed on the PostgreSQL hook alone, so a host taking only SQLite
+  dumps keeps the hardened unit, which is fine, and is why the SQLite hook must
+  not grow a `username`.
+- borgmatic runs one configuration per repository, so the dump is taken once per
+  target. That is a little redundant and entirely intentional: each archive is
+  independently complete.
 
 Restoring is a separate verb from extracting files:
 
 ```bash
-sudo borgmatic restore --archive latest                  # all databases
-sudo borgmatic restore --archive latest --database forgejo
+sudo borgmatic restore --archive latest                        # all databases
+sudo borgmatic restore --archive latest --database tealfm-piper
 ```
 
-For SQLite this **overwrites the live file at its configured path** — borgmatic
-removes it and replays the dump into a new one. Stop the service first, or it
+For SQLite this overwrites the live file at its configured path. borgmatic
+removes it and replays the dump into a new one, so stop the service first or it
 will be holding a database that no longer exists.
 
-This writes to the *live* cluster, so it is not something to run as a test —
-tier 1 below asserts the dump is present in the archive without touching the
-running database.
+This writes to the *live* cluster, so it is not something to run as a test. Tier
+1 below asserts the dump is present in the archive without touching the running
+database.
 
 ## testing restore
 
@@ -286,13 +289,21 @@ Everything at once, from a workstation:
 just restore-all
 ```
 
-Runs all three tiers against all three hosts and both repositories, continues
-past failures rather than stopping at the first, and prints a pass/fail summary
-at the end. It is interactive by nature — a yubikey touch per decrypt and a sudo
-prompt per host — so it is not something to put on a timer. The individual
+Reads `nix eval --json .#restoreCoverage` to cover every enabled backup client,
+including Tungsten and Uranium. Tier 1 exercises every configured repository,
+including Uranium's local SSD. Tier 2 exercises the remote repositories and
+prints an explicit skip reason for Helium's own local repository and Uranium's
+local SSD. New remote backends require support in `restore-dr`; new local
+repositories require a documented omission in `modules/flake/restore.nix`.
+
+Run with both workstations awake. For a tier 2 rehearsal of the workstation
+you are using, repeat that host's `restore-dr` from the other workstation so
+it holds none of the target's deployed secrets. The runner continues past
+failures and prints a pass/fail summary at the end. It is interactive by nature, a yubikey touch per decrypt and a sudo
+prompt per host, so it is not something to put on a timer. The individual
 recipes below are what to reach for when one line of that summary says `FAIL`.
 
-### tier 0 — key material
+### tier 0: key material
 
 ```bash
 just restore-keys
@@ -300,16 +311,16 @@ just restore-keys
 
 `secrets.nix` encrypts each host's passphrase and SSH key to that host's root
 key *plus* my yubikey, and nothing else. If a host is destroyed, the yubikey is
-the only thing left that can open its archives — so this is the highest-value
-check in the list, and it costs seconds. Run it from a workstation, not a
-server.
+the only thing left that can open its archives. That makes this the
+highest-value check in the list, and it costs seconds. Run it from a
+workstation, not a server.
 
-`agenix -d` only tries the default ssh keys on its own — `age.identityPaths` is
-a system-level setting and does not reach the CLI — so the recipes pass
-`-i ~/.config/age/yubikey-identity.txt`. Override with `AGE_IDENTITY` if the
-identity lives elsewhere.
+`agenix -d` only tries the default ssh keys on its own, because
+`age.identityPaths` is a system-level setting that does not reach the CLI, so
+the recipes pass `-i ~/.config/age/yubikey-identity.txt`. Override with
+`AGE_IDENTITY` if the identity lives elsewhere.
 
-### tier 1 — canary round-trip, per host, per repository
+### tier 1: canary round-trip, per host, per repository
 
 ```bash
 just restore-test argon
@@ -320,21 +331,27 @@ extracts that one file from *every* configured repository and diffs it against
 the original. Repositories are discovered from `/etc/borgmatic.d/`, so a third
 target is covered as soon as it deploys.
 
-On a host taking database dumps, the script additionally asserts that the
-archive really contains the matching `postgresql_databases/` or
-`sqlite_databases/` directory. Which hooks to check it reads out of the
-borgmatic config on disk, so a host that gains an engine is covered without the
-script changing. The canary check alone cannot catch a failed database hook: the
-live files are excluded either way, so an archive with no database in it
-restores files perfectly and has silently lost everything Forgejo stores outside
-the repositories themselves — users, keys, issues, and the mapping from a
-directory on disk to a repository anyone can see.
+On a host taking database dumps, the script also asserts that the archive really
+contains a dump for every configured database, by name. Both the hooks and the
+names are read out of the borgmatic config on disk, so a host that gains an
+engine, or another database on an engine it already has, is covered without the
+script changing.
+
+Per database rather than per engine, because per engine was the weaker check
+that let Argon archive piper and not forgejo: one live sqlite dump kept the
+hook looking healthy while the forge's database was absent from every archive.
+
+The canary check alone cannot catch a failed database hook. The live files are
+excluded either way, so an archive with no database in it restores files
+perfectly and has lost everything the PDS keeps in postgres: every account's
+repository, its encrypted signing key, and the firehose sequence. The blobs
+under `/var/lib/tranquil-pds/blobs` would come back fine, attached to nothing.
 
 The byte comparison is the assertion, not borg's exit code: an `--path` that
 matches nothing still exits 0 and leaves an empty destination. Three related
-traps, all baked into the script:
+traps, all handled in the script:
 
-- `--destination` must already exist — borgmatic chdirs into it rather than
+- `--destination` must already exist. borgmatic chdirs into it rather than
   creating it, and fails with `[Errno 2] No such file or directory` if absent.
 - extracting into a directory that already holds a previous run collides on
   `etc/static` (`[Errno 17] File exists`), because that symlink points into
@@ -343,7 +360,7 @@ traps, all baked into the script:
   first match, which SIGPIPEs a producer still writing an archive listing much
   larger than the pipe buffer; under `set -o pipefail` the pipeline then reports
   141 and the assertion inverts, calling a dump that is present missing. It is
-  not a race — borgmatic injects the dump patterns at the head of the pattern
+  not a race. borgmatic injects the dump patterns at the head of the pattern
   list, so the match is always in the first few lines of a listing with the
   whole of `/home`, `/var/lib`, and `/etc` still to come. `just restore-all`
   had the same shape in its summary, where the inversion would have hidden
@@ -351,8 +368,8 @@ traps, all baked into the script:
 
 Note that on Helium the `helium` repository is a local path, so that iteration
 exercises no SSH at all. Helium's role as a *server* is only covered when a
-client runs tier 1 — run it on Argon or Carbon to exercise the
-`--restrict-to-path` forced command.
+client runs tier 1. Run it on Argon or Carbon to exercise the ssh path, the host
+key pin, and the `authorized_keys` entry.
 
 The scheduled integrity checks can also be forced on demand, independent of
 their `frequency`. This reads the whole repository and is slow, which is why it
@@ -362,7 +379,7 @@ is not part of `restore-test`:
 sudo borgmatic check --repository rsync --force
 ```
 
-### tier 2 — disaster rehearsal
+### tier 2: disaster rehearsal
 
 Tier 1 runs on a healthy host that already has its own secrets mounted, which
 is not the scenario any of this insures against. Tier 2 restores a host's data
@@ -384,22 +401,22 @@ The decryption happens once regardless of how many repositories are named, since
 each `agenix -d` costs a yubikey touch. Naming both is strictly cheaper than two
 invocations.
 
-Reaching the Helium repository from a third machine works *because* of the
-forced command, not in spite of it: the key being used is the client's own, and
-`--restrict-to-path` confines it to exactly the repository being read. Both
-Helium's tailnet address and the borg port come from `nix eval` against the
-modules rather than literals, so the recipe cannot drift from them — and the
-port is non-default precisely so the forced command is applied at all.
+Reaching the Helium repository from a third machine goes over Tailscale SSH,
+which authorises by tailnet identity and never reads `authorized_keys`, so the
+decrypted borg key is not what opens the connection. What it proves is the half
+a lost host actually needs: that the archive decrypts with the passphrase that
+host's key file carries. Helium's tailnet address comes from `nix eval` against
+the modules rather than a literal, so the recipe cannot drift from them.
 
 `just restore-dr helium helium` is therefore impossible and exits with a note
-pointing elsewhere — Helium reaches its own repository by local path and holds
-no key entry for itself. Verify that one on the host:
+pointing elsewhere. Helium reaches its own repository by local path and holds no
+key entry for itself. Verify that one on the host:
 
 ```bash
 sudo borg list /mnt/hdd/borg/helium
 ```
 
-Doing it by hand, the two things that bite:
+Doing it by hand, three things bite:
 
 - `repo::` takes the archive *name*, not the ID. `borg list` prints name,
   timestamp, and ID; copying the wrong column gives `Archive … does not exist`.
@@ -409,10 +426,10 @@ Doing it by hand, the two things that bite:
   `-o RemoteCommand=none`, the same workaround `just update` uses for
   `nixos-rebuild`.
 - that same config sets `RequestTTY yes`, which allocates a pty whenever ssh
-  itself has a local tty — and a pty translates LF to CRLF. Reading a file that
+  itself has a local tty, and a pty translates LF to CRLF. Reading a file that
   way returns a trailing `\r` that command substitution does *not* strip, so a
   byte comparison fails against content that is visibly identical. Pass
-  `-o RequestTTY=no` **and** pipe through `tr -d '\r'`: the option loses to an
+  `-o RequestTTY=no` *and* pipe through `tr -d '\r'`: the option loses to an
   explicit `-t`/`-tt`, so neither alone is sufficient. This only reproduces from
   an interactive shell, which makes it easy to miss when testing from a script.
 
@@ -423,22 +440,26 @@ into `/nix/store` (`etc/static` among them), and a recovered host gets that
 directory regenerated by rebuilding from the flake. Extracting the archive's
 `/etc` over it fights nix rather than helping it. The order is:
 
-1. rebuild the host from the flake — this restores `/etc`, `/nix`, and every
+1. rebuild the host from the flake, which restores `/etc`, `/nix`, and every
    service's configuration
 2. restore only the state the flake cannot reproduce: `/var/lib` for service
    data, `/home` for everything else
 3. run that step as root with `--numeric-ids`, or ownership and modes come back
    wrong
 
-Tiers 1 and 2 extract as a single small file for speed, which deliberately does
+Tiers 1 and 2 extract a single small file for speed, which deliberately does
 *not* verify ownership. Once a service with real state exists, do one `sudo`
 restore of its `/var/lib` directory to confirm permissions survive the trip.
 
-> `authorized_keys` on rsync.net holds bare public keys with no forced command,
-> unlike Helium's `--restrict-to-path` entries. Any host's borg key can
-> therefore read *and delete* every other host's repository there, so one
-> compromised VPS can take out all three off-site copies. Worth closing with
-> `command="borg14 serve --restrict-to-path …"` entries.
+> Neither server confines a client's key today. `authorized_keys` on rsync.net
+> holds bare public keys, and Helium's have held bare keys since `058b04a`. Any
+> host's borg key can therefore read *and delete* every other host's repository
+> on either, so one compromised VPS can take out both copies of everything.
+> Tier 0 is what still stands behind that, since the YubiKey can open any
+> archive that survives, but the archives surviving is the assumption. Worth
+> closing on rsync.net with `command="borg14 serve --restrict-to-path …"`
+> entries, which needs nothing from this repo, and on Helium with the pair
+> described under [server side](#server-side).
 
 ## options
 
@@ -461,11 +482,11 @@ A directory containing `.nobackup` is skipped.
 `desktopExcludes` exists because the default excludes were written against
 servers, where `/home` holds a shell history and little else. Backing up the
 same three directories on a workstation ships browser caches, Electron app
-caches — which live under `.config`, not `.cache`, so they survive the obvious
-pattern — Steam runtimes, and every virtualenv and direnv on the machine. None
+caches (which live under `.config`, not `.cache`, so they survive the obvious
+pattern), Steam runtimes, and every virtualenv and direnv on the machine. None
 of it dedups well between runs and none of it is worth restoring.
 
-It is off by default and *not* implied by `profiles.workstation`: deciding what
+It is off by default and *not* implied by `profiles.workstation`. Deciding what
 under `/home` is disposable is a judgement about the host, and getting it wrong
 drops real data silently. `~/Downloads` is left in the archive for that reason.
 
@@ -478,7 +499,7 @@ data.
 
 | option | type | default | description |
 |--------|------|---------|-------------|
-| `enable` | bool | `false` | serve borg repositories over restricted SSH |
+| `enable` | bool | `false` | serve borg repositories over SSH |
 | `authorizedKeys` | attrsOf str | `{ }` | client hostname -> that host's borg SSH public key |
 
 ## enabling on a host
@@ -490,7 +511,7 @@ myNixOS.services.backups.client = {
 };
 ```
 
-Both repositories are added automatically —
+Both repositories are added automatically,
 `ssh://de4388@de4388.rsync.net/./borg/<hostname>` and
 `ssh://taxborn@<helium tailnet IP>//mnt/hdd/borg/<hostname>`. Naming an
 attribute replaces that target:

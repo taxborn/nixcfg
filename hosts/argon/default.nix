@@ -1,33 +1,20 @@
-{ modulesPath, self, ... }:
+{ modulesPath, ... }:
 
 {
   imports = [
-    self.diskoConfigurations.btrfs-ovh
+    ./disko.nix
     (modulesPath + "/profiles/qemu-guest.nix")
     ./proxy.nix
   ];
 
+  nixpkgs.hostPlatform = "x86_64-linux";
   networking.hostName = "argon";
   system.stateVersion = "25.11";
 
   myNixOS = {
     profiles.server.enable = true;
     services = {
-      backups.client = {
-        enable = true;
-
-        # Piper tracks the listening history it will submit to teal.fm in
-        # SQLite. Dump the live database rather than archive its WAL files
-        # out of step with it.
-        sqliteDatabases.tealfm-piper = "/var/lib/tealfm-piper/piper.db";
-
-        # Tranquil's repository store. A logical dump rather than the live data
-        # directory, for the reason the option documents — and it is the whole
-        # instance: every account's repo, its encrypted signing key, and the
-        # firehose sequence live in postgres. Blobs are not in here; they sit
-        # under /var/lib/tranquil-pds/blobs and ride along in the archive.
-        postgresqlDumpAll = true;
-      };
+      backups.client.enable = true;
       forgejo.enable = true;
       glance.enable = true;
       piper.enable = true;

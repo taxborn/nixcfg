@@ -18,14 +18,13 @@
       "umask=0000"
       "iocharset=utf8"
       # USB-attached spinning rust does not implement FITRIM, and fstrim exits
-      # 64 over the EREMOTEIO — after having already trimmed every other
-      # filesystem, so nothing actually goes untrimmed and the unit fails
-      # anyway. That is what kept fstrim.service permanently red here.
+      # 64 on the EREMOTEIO. It has already trimmed every other filesystem by
+      # then, so nothing goes untrimmed and the unit fails anyway. That is what
+      # kept fstrim.service permanently red here.
       "X-fstrim.notrim"
     ];
   };
 
-  # Ensure the mount point directory exists
   systemd.tmpfiles.rules = [
     "d /mnt/hdd 0755 root root -"
   ];

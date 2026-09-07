@@ -2,11 +2,12 @@
 
 {
   imports = [
-    self.diskoConfigurations.btrfs-helium
+    ./disko.nix
     ./external-hdd.nix
     ./proxy.nix
   ];
 
+  nixpkgs.hostPlatform = "x86_64-linux";
   networking.hostName = "helium";
   system.stateVersion = "25.11";
 
@@ -17,14 +18,7 @@
       paperless.enable = true;
 
       backups = {
-        client = {
-          enable = true;
-
-          # Paperless keeps everything but the document files in postgres, and
-          # borg walking a live cluster archives a torn set of pages. The dump
-          # is the difference between a backup of this host and a copy of it.
-          postgresqlDumpAll = true;
-        };
+        client.enable = true;
         server = {
           enable = true;
           authorizedKeys = {

@@ -96,7 +96,8 @@ let
   # except restoring — or the dump assertion in `scripts/backup-restore-test.sh`,
   # which is how this was caught.
   #
-  # Which path it uses depends on how borgmatic was started, so both have to go:
+  # Which path it uses depends on how borgmatic was started, so both have to
+  # go, and the list drops `/var/tmp` alongside them:
   #   /run  — the packaged unit sets RuntimeDirectory=borgmatic, giving
   #           /run/./borgmatic (the `/./` is borg's slashdot hack, so the
   #           archive stores it as plain `borgmatic/…`)
@@ -105,9 +106,9 @@ let
   #           by hand over ssh, exactly as the restore test does
   #
   # Dropping these is safe as long as `paths` stays below them, which it is:
-  # /home, /var/lib, and /etc never traverse /run or /tmp, so the excludes were
-  # inert for file selection and doing nothing but this harm. Revisit if a host
-  # ever backs up / or /var wholesale.
+  # /home, /var/lib, and /etc never traverse /run, /tmp, or /var/tmp, so the
+  # excludes were inert for file selection and doing nothing but this harm.
+  # Revisit if a host ever backs up / or /var wholesale.
   dumpStagingPaths = [
     "/run"
     "/tmp"

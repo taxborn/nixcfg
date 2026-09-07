@@ -7,6 +7,11 @@
     in
     inputs.nixpkgs.lib.genAttrs
       [
+        # One of three rosters that have to agree. This one decides what gets
+        # built; secrets/secrets.nix decides who may decrypt what, and
+        # mySnippets.tailnet.tailscaleIPs decides who is backed up. A host
+        # listed only here builds and then fails agenix activation on the first
+        # secret it is not a recipient of.
         "argon"
         "carbon"
         "helium"
@@ -45,6 +50,12 @@
             }
           ];
 
+          # `self` and nothing else. Every module in the tree is written
+          # against that one argument, so a package built from an input is
+          # re-exported through
+          # modules/flake/packages.nix and reached as
+          # `self.packages.<system>.<name>`. Widening this for one service
+          # would make `inputs` fair game everywhere.
           specialArgs = { inherit self; };
         }
       );

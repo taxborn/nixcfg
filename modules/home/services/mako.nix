@@ -9,7 +9,6 @@
 
   config = lib.mkIf config.myHome.services.mako.enable {
     home.packages = [
-      pkgs.mpv
       pkgs.libnotify
     ];
     services.mako = {
@@ -28,6 +27,9 @@
       };
     };
 
+    # Home Manager configures Mako and registers its D-Bus package, but does
+    # not create a user unit. Start it with Hyprland and stop it when that
+    # session disappears. Type=dbus waits for the notification bus name.
     systemd.user.services.mako = {
       Unit = {
         After = "graphical-session.target";
@@ -39,17 +41,10 @@
 
       Service = {
         BusName = "org.freedesktop.Notifications";
-        Environment = [
-          "PATH=${
-            lib.makeBinPath [
-              pkgs.bash
-              pkgs.mpv
-            ]
-          }"
-        ];
         ExecReload = "${lib.getExe' pkgs.mako "makoctl"} reload";
         ExecStart = "${lib.getExe pkgs.mako}";
-        Restart = lib.mkForce "no";
+        Restart = "on-failure";
+        RestartSec = 5;
         Type = "dbus";
       };
 

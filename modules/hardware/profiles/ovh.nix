@@ -63,6 +63,14 @@ in
           "virtio_scsi"
         ];
 
+        # These instances serve the public internet over long-haul paths,
+        # where a dropped packet is more often a blip than a sign of
+        # congestion, and cubic halves its window for both. BBR paces against
+        # measured bandwidth and RTT instead, with `fq` rather than the default
+        # `fq_codel` because BBR's pacing lives in that qdisc. Loaded
+        # explicitly because neither module comes up on its own here, and the
+        # sysctls below would otherwise name things the kernel does not know
+        # about.
         boot.kernelModules = [
           "tcp_bbr"
           "sch_fq"
@@ -74,6 +82,8 @@ in
         };
 
         myNixOS.programs.grub.enable = lib.mkDefault true;
+        # No SMART behind virtio. smartd is on by default in `nixos/base`, and
+        # with nothing to register it fails to start rather than idling.
         services.smartd.enable = false;
       }
 
@@ -85,6 +95,12 @@ in
           }
         ];
 
+        # NetworkManager otherwise auto-creates a "Wired connection N" for the
+        # device and activates it before `ensure-profiles` has written the
+        # profile below, and a reload does not move an already-active device,
+        # so the declarative profile ends up loaded but idle. Scoped to this
+        # interface rather than "*" because argon's IPv4 lives on a different
+        # NIC that still needs its auto-default.
         networking.networkmanager.settings.main.no-auto-default = cfg.ipv6.interface;
         networking.networkmanager.ensureProfiles.profiles.${cfg.ipv6.interface} = {
           connection = {

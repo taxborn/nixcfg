@@ -50,6 +50,8 @@
         ];
 
         auto_indent_on_paste = true;
+        # The binary is a store path, so Zed's updater has nothing it is
+        # allowed to write. Left on, it fails in a dialog every release.
         auto_update = false;
         autosave = "on_focus_change";
 

@@ -6,6 +6,12 @@ let
   # string. The short rev is what makes a `nixos-rebuild` diff legible.
   tranquilVersion = "0.6.6-unstable-${inputs.tranquil-src.shortRev}";
 
+  # Same problem, same shape. `github:teal-fm/piper` names no ref, so the input
+  # tracks the default branch while upstream's package.nix still says 0.0.11:
+  # every commit since built as that one version, and a `nixos-rebuild` diff
+  # showed nothing when piper moved.
+  piperVersion = "0.0.11-unstable-${inputs.tealfm-piper.shortRev}";
+
   # A flake input is an attrset of `outPath`, `rev`, `narHash` and friends --
   # it has no `name`, which the nixpkgs frontend derivation reaches for in its
   # own `sourceRoot`. Nix names a git checkout's store path `source`, and
@@ -38,7 +44,7 @@ in
         # vendor dependency set and fail closed when it changes.
         tealfm-piper = pkgs.buildGoModule {
           pname = "tealfm-piper";
-          version = "0.0.11";
+          version = piperVersion;
           src = inputs.tealfm-piper;
           vendorHash = "sha256-0CAKzBBARoHSqDv34Xx3Yek6r33Exhrhvn+FzGlby14=";
 

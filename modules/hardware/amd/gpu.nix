@@ -4,7 +4,7 @@
   ...
 }:
 {
-  options.myHardware.amd.gpu.enable = lib.mkEnableOption "AMD GPU configuration.";
+  options.myHardware.amd.gpu.enable = lib.mkEnableOption "AMD GPU configuration";
 
   config = lib.mkIf config.myHardware.amd.gpu.enable {
     environment.variables.VDPAU_DRIVER = "radeonsi";

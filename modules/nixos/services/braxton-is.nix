@@ -29,11 +29,12 @@ in
 
     port = lib.mkOption {
       type = lib.types.port;
-      default = 3003;
+      default = 3006;
       description = ''
-        Loopback port the Node server listens on. Continues the 300x sequence
-        in `mySnippets.biscuits-at.networkMap` — Forgejo holds 3002 — without
-        joining it, because that map is scoped to a domain this site is not on.
+        Loopback port the Node server listens on. Kept out of
+        `mySnippets.biscuits-at.networkMap` because that map is scoped to
+        `biscuits.at` and this site is not on it. Reserve 3006 for this site
+        so moving it onto a host with the PDS does not collide with port 3003.
       '';
     };
   };
@@ -46,9 +47,8 @@ in
       wants = [ "network-online.target" ];
 
       environment = {
-        # The two the standalone server reads for its listener. Bound to
-        # loopback so Caddy is the only route in, as with every other service
-        # on this host.
+        # Astro's standalone adapter reads these two for its listener. Loopback
+        # only, so Caddy is the sole route in.
         HOST = "127.0.0.1";
         PORT = toString cfg.port;
 
@@ -63,13 +63,11 @@ in
 
         DynamicUser = true;
 
-        # Astro's session store is a filesystem driver whose path is baked into
-        # the build as `.astro/session` — relative, and so resolved against
-        # whatever the process's working directory happens to be. Pointing that
-        # at the state directory is what keeps it off the read-only store. No
-        # route uses sessions yet; the ordering matters anyway, because the
-        # first one that does would otherwise fail at runtime rather than at
-        # build time.
+        # Astro bakes its session store path into the build as `.astro/session`,
+        # relative, so it resolves against whatever the working directory
+        # happens to be. Pointing that at the state directory keeps it off the
+        # read-only store. No route uses sessions yet, but the first one that
+        # does would fail at runtime rather than at build time.
         StateDirectory = stateDir;
         WorkingDirectory = "/var/lib/${stateDir}";
 
@@ -104,19 +102,19 @@ in
         ];
         UMask = "0077";
 
-        # No IP allowlist to go with these: the point of rendering server-side
-        # is the XRPC calls this makes out to atproto services, and which hosts
-        # those are is a per-request property of the records being resolved.
+        # No IPAddressAllow to go with these: the point of rendering
+        # server-side is the XRPC calls out to atproto services, and which
+        # hosts those are is a per-request property of the records being
+        # resolved.
         #
         # AF_NETLINK is not padding. Astro's listen banner calls
-        # `os.networkInterfaces()`, which is netlink underneath, and without it
-        # every single start logs an unhandled rejection —
-        # `uv_interface_addresses returned Unknown system error 97`, EAFNOSUPPORT
-        # wearing a hat. The server does come up regardless, which is the
-        # trap: it is a permanent ERROR line for a working service, and a stream
-        # of those is how a real one gets scrolled past. glibc also reaches for
-        # netlink to pick a source address in `getaddrinfo`, so denying it puts
-        # a foot in the outbound DNS path this depends on.
+        # `os.networkInterfaces()`, netlink underneath, and without it every
+        # start logs an unhandled rejection: `uv_interface_addresses returned
+        # Unknown system error 97`, which is EAFNOSUPPORT. The server comes up
+        # anyway, which is the trap. A permanent ERROR line on a working
+        # service is how a real one gets scrolled past. glibc also uses netlink
+        # to pick a source address in `getaddrinfo`, so denying it sits in the
+        # outbound DNS path this depends on.
         RestrictAddressFamilies = [
           "AF_UNIX"
           "AF_INET"

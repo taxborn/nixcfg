@@ -1,10 +1,11 @@
-{ self, pkgs, ... }:
+{ pkgs, ... }:
 
 {
   imports = [
-    self.diskoConfigurations.btrfs-luks-raid1-tungsten
+    ./disko.nix
   ];
 
+  nixpkgs.hostPlatform = "x86_64-linux";
   networking.hostName = "tungsten";
   system.stateVersion = "25.11";
 

@@ -6,10 +6,15 @@ let
     "tungsten"
     "uranium"
   ];
+  # The YubiKey, deliberately a recipient of every rule below. If a host is
+  # gone, it is the only key left that can open its archives.
   extras = [
     "yubikey_age"
   ];
 
+  # Two tiers of recipient. `keys` is every host root plus the YubiKey, for
+  # material any host might need; `hostKey` narrows to one host, and is the
+  # default for everything else.
   systemKeys = builtins.map (host: builtins.readFile ../keys/root_${host}.pub) hosts;
   extraKeys = builtins.map (key: builtins.readFile ../keys/${key}.pub) extras;
   keys = systemKeys ++ extraKeys;

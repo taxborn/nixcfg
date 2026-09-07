@@ -16,6 +16,12 @@
           tailscaleIPs = config.mySnippets.tailnet.tailscaleIPs;
           inherit (config.mySnippets.biscuits-at.networkMap) forgejo;
 
+          # One entry per host in the fleet roster, addressed by tailnet IP
+          # rather than by name. `tmux new -As0` attaches session 0 or creates
+          # it, so a dropped link leaves the work running and reconnecting
+          # lands back in it. The cost is that RemoteCommand takes the slot a
+          # command would use: `ssh helium uptime` refuses to run, and a
+          # one-shot needs `ssh -o RemoteCommand=none`.
           machine = name: ip: {
             ${name} = {
               Hostname = ip;

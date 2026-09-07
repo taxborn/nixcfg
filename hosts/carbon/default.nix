@@ -1,12 +1,13 @@
-{ modulesPath, self, ... }:
+{ modulesPath, ... }:
 
 {
   imports = [
-    self.diskoConfigurations.btrfs-ovh
+    ./disko.nix
     (modulesPath + "/profiles/qemu-guest.nix")
     ./proxy.nix
   ];
 
+  nixpkgs.hostPlatform = "x86_64-linux";
   networking.hostName = "carbon";
   system.stateVersion = "25.11";
 

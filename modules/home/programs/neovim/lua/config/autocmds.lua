@@ -2,7 +2,6 @@ local function augroup(name)
   return vim.api.nvim_create_augroup("user_" .. name, { clear = true })
 end
 
--- Check if we need to reload the file when it changed
 vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
   group = augroup("checktime"),
   callback = function()
@@ -12,7 +11,6 @@ vim.api.nvim_create_autocmd({ "FocusGained", "TermClose", "TermLeave" }, {
   end,
 })
 
--- Highlight on yank
 vim.api.nvim_create_autocmd("TextYankPost", {
   group = augroup("highlight_yank"),
   callback = function()
@@ -20,7 +18,6 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   end,
 })
 
--- resize splits if window got resized
 vim.api.nvim_create_autocmd({ "VimResized" }, {
   group = augroup("resize_splits"),
   callback = function()
@@ -30,7 +27,6 @@ vim.api.nvim_create_autocmd({ "VimResized" }, {
   end,
 })
 
--- wrap and check for spell in text filetypes
 vim.api.nvim_create_autocmd("FileType", {
   group = augroup("wrap_spell"),
   pattern = { "text", "plaintex", "typst", "gitcommit", "markdown" },
@@ -40,7 +36,6 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- Set filetype for .env and .env.* files
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
   group = augroup("env_filetype"),
   pattern = { "*.env", ".env.*" },
@@ -52,7 +47,15 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
 -- go to last loc when opening a buffer
 vim.api.nvim_create_autocmd("BufReadPost", {
   callback = function(event)
-    local exclude = { "gitcommit" } -- don't remember position in commit messages
+    -- A commit buffer is reused, so the mark is wherever the last message
+    -- happened to end and restoring it drops the cursor mid-sentence in a
+    -- fresh one. This filter was declared and never read, so that is what it
+    -- did until now.
+    local exclude = { "gitcommit" }
+    if vim.tbl_contains(exclude, vim.bo[event.buf].filetype) then
+      return
+    end
+
     local mark = vim.api.nvim_buf_get_mark(event.buf, '"')
     local lcount = vim.api.nvim_buf_line_count(event.buf)
     if mark[1] > 0 and mark[1] <= lcount then

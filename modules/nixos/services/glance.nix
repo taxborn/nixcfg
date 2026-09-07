@@ -18,6 +18,10 @@ in
       environmentFile = config.age.secrets.glance.path;
       enable = true;
       settings = {
+        # The `\${...}` escape keeps Nix from interpolating, so the literal
+        # reaches Glance, which expands it from the EnvironmentFile at runtime.
+        # Written any other way the values land in the settings JSON the module
+        # renders into the nix store.
         auth = {
           secret-key = "\${GLANCE_SECRET_KEY}";
           users.taxborn.password = "\${GLANCE_USER_PASSWORD}";
@@ -25,8 +29,12 @@ in
         server = {
           port = config.mySnippets.biscuits-at.networkMap.glance.port;
         };
+        # Catppuccin Mocha with the Mauve accent, typed out rather than
+        # inherited. This option takes raw HSL triples, and there is no
+        # `catppuccin.glance` module for the tree-wide `autoEnable` to find, so
+        # this is the one place the palette is written by hand. The bookmark
+        # group colours below are Blue and Pink out of the same palette.
         theme = {
-          # HSL values
           background-color = "240 21 15";
           contrast-multiplier = 1.2;
           primary-color = "267 84 81";
@@ -94,11 +102,7 @@ in
                           }
                           {
                             title = "Paperless";
-                            url = "https://docs.biscuits.at";
-                          }
-                          {
-                            title = "Immich";
-                            url = "https://i.biscuits.at";
+                            url = "https://${networkMap.paperless.domain}";
                           }
                         ];
                       }

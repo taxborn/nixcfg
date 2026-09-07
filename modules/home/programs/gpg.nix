@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  self,
   ...
 }:
 
@@ -24,55 +25,51 @@
   config = lib.mkIf config.myHome.programs.gpg.enable {
     programs.gpg = {
       enable = true;
+
+      # scdaemon's built-in CCID driver claims the USB device outright and
+      # holds it, which shuts out everything that reaches the card through
+      # pcscd: ykman, and age-plugin-yubikey, which is how every secret in this
+      # repo gets decrypted. Disabled, scdaemon goes through pcscd like they do
+      # and the three take turns. pcscd comes from myNixOS.services.yubikey.
       scdaemonSettings.disable-ccid = true;
+
       publicKeys = [
-        { source = ../../../keys/pgp.asc; }
+        { source = "${self}/keys/pgp.asc"; }
       ];
+
+      # Hardened defaults lifted from drduh's YubiKey guide. Each option is
+      # named in the GnuPG manual; only the ones with a consequence worth
+      # knowing are annotated below.
       # https://github.com/drduh/YubiKey-Guide/blob/master/config/gpg.conf
       # https://www.gnupg.org/documentation/manuals/gnupg/GPG-Options.html
       settings = {
-        # Use AES256, 192, or 128 as cipher
         personal-cipher-preferences = "AES256 AES192 AES";
-        # Use SHA512, 384, or 256 as digest
         personal-digest-preferences = "SHA512 SHA384 SHA256";
-        # Use ZLIB, BZIP2, ZIP, or no compression
         personal-compress-preferences = "ZLIB BZIP2 ZIP Uncompressed";
-        # Default preferences for new keys
         default-preference-list = "SHA512 SHA384 SHA256 AES256 AES192 AES ZLIB BZIP2 ZIP Uncompressed";
-        # SHA512 as digest to sign keys
         cert-digest-algo = "SHA512";
-        # SHA512 as digest for symmetric ops
         s2k-digest-algo = "SHA512";
-        # AES256 as cipher for symmetric ops
         s2k-cipher-algo = "AES256";
-        # UTF-8 support for compatibility
         charset = "utf-8";
-        # No comments in messages
         no-comments = true;
-        # No version in output
         no-emit-version = true;
-        # Disable banner
         no-greeting = true;
-        # Long key id format
         keyid-format = "0xlong";
-        # Display UID validity
         list-options = "show-uid-validity";
         verify-options = "show-uid-validity";
-        # Display all keys and their fingerprints
         with-fingerprint = true;
-        # Display key origins and updates
         with-key-origin = true;
-        # Cross-certify subkeys are present and valid
         require-cross-certification = true;
-        # Enforce memory locking to avoid accidentally swapping GPG memory to disk
+        # Refuse to run at all rather than fall back to unlocked memory, so a
+        # passphrase or a session key cannot reach swap.
         require-secmem = true;
-        # Disable caching of passphrase for symmetrical ops
         no-symkey-cache = true;
-        # Output ASCII instead of binary
         armor = true;
-        # Enable smartcard
         use-agent = true;
-        # Disable recipient key ID in messages (WARNING: breaks Mailvelope)
+        # Strips the recipient key id from the packet, so a message does not
+        # name who can open it. The cost is that a client which cannot try
+        # every private key it holds gives up instead: Mailvelope is the one
+        # that bit here.
         throw-keyids = true;
       };
     };

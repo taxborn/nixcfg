@@ -12,13 +12,21 @@ in
     enable = lib.mkEnableOption "hypridle idle/lock manager";
 
     autoSuspend = lib.mkOption {
-      description = "Whether to autosuspend on idle.";
+      description = ''
+        Keep the last step of the idle ladder, `systemctl suspend` at ten
+        minutes. Turning it off leaves the earlier ones in place: the screen
+        still locks at five minutes and blanks at six.
+      '';
       default = true;
       type = lib.types.bool;
     };
 
     kbdBacklight = lib.mkOption {
-      description = "Whether to dim the keyboard backlight on idle. Disable on devices without a kbd_backlight device (e.g. desktops).";
+      description = ''
+        Dim the keyboard backlight after 30 seconds. Off where there is no
+        `*::kbd_backlight` device for brightnessctl to find, which is every
+        desktop.
+      '';
       default = true;
       type = lib.types.bool;
     };
@@ -42,8 +50,14 @@ in
 
     services.hypridle = {
       enable = true;
+      systemdTarget = lib.mkIf config.wayland.windowManager.hyprland.enable "hyprland-session.target";
 
       settings = {
+        # Three things lock this session: the idle listener below,
+        # `before_sleep_cmd`, and the SUPER+SHIFT+L bind in the hyprland
+        # config. All three ask logind, and logind comes back here to
+        # `lock_cmd`, which is why the `pidof` guard only has to exist once.
+        # Without it a second request stacks another hyprlock on the first.
         general = {
           after_sleep_cmd = "hyprctl dispatch dpms on";
           lock_cmd = "pidof hyprlock || hyprlock --no-fade-in";
@@ -80,33 +94,24 @@ in
     };
 
     systemd.user.services = {
-      hypridle = {
-        Install.WantedBy = lib.mkForce (
-          lib.optional config.wayland.windowManager.hyprland.enable "hyprland-session.target"
-        );
-
-        Service = {
-          Environment = lib.mkForce [
-            "PATH=${
-              lib.makeBinPath (
-                (with pkgs; [
-                  bash
-                  brightnessctl
-                  hyprlock
-                  procps
-                  systemd
-                  uutils-coreutils-noprefix
-                ])
-                ++ lib.optional config.wayland.windowManager.hyprland.enable config.wayland.windowManager.hyprland.package
-              )
-            }"
-          ];
-
-          Restart = lib.mkForce "no";
-        };
-
-        Unit.BindsTo = lib.optional config.wayland.windowManager.hyprland.enable "hyprland-session.target";
-      };
+      # The commands in hypridle.conf run under the user manager, whose PATH
+      # need not match an interactive shell. Keep their executables explicit;
+      # Home Manager supplies the unit, session target and restart policy.
+      hypridle.Service.Environment = [
+        "PATH=${
+          lib.makeBinPath (
+            (with pkgs; [
+              bash
+              brightnessctl
+              procps
+              systemd
+              uutils-coreutils-noprefix
+            ])
+            ++ [ config.programs.hyprlock.package ]
+            ++ lib.optional config.wayland.windowManager.hyprland.enable config.wayland.windowManager.hyprland.package
+          )
+        }"
+      ];
 
       pipewire-inhibit-idle = {
         Unit = {

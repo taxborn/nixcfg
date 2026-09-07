@@ -1,12 +1,13 @@
 hl.window_rule({
-    -- Ignore maximize requests from all apps. You'll probably like this.
     name           = "suppress-maximize-events",
     match          = { class = ".*" },
     suppress_event = "maximize",
 })
 
 hl.window_rule({
-    -- Fix some dragging issues with XWayland
+    -- Keeps XWayland drag-and-drop working: the empty, untitled window a drag
+    -- puts up must not take focus. The match is narrow on purpose, since
+    -- no_focus on every classless window would be a much bigger rule.
     name     = "fix-xwayland-drags",
     match    = {
         class      = "^$",

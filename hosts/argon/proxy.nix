@@ -14,16 +14,15 @@ in
 
   services.caddy.virtualHosts = {
     # Git over SSH moved to the tailnet, but the zone's proxied wildcard still
-    # answers for this name, and Caddy holds no certificate for it — so
-    # Cloudflare fails the origin handshake and serves a 525. Redirect it
-    # rather than leave a hostname that only errors.
+    # answers for this name and Caddy holds no certificate for it, so
+    # Cloudflare fails the origin handshake and serves a 525. Redirecting beats
+    # leaving a hostname that only errors.
     "git.biscuits.at".extraConfig = ''
       import cloudflare-mtls
 
       redir https://${networkMap.forgejo.domain}{uri} permanent
     '';
 
-    # Glance
     "biscuits.at".extraConfig = ''
       import cloudflare-mtls
 
@@ -37,9 +36,8 @@ in
       }
     '';
 
-    # Piper is the per-account music tracker that submits records to teal.fm.
-    # Its OAuth callbacks have to be public, but its listener is loopback-only;
-    # Cloudflare mTLS keeps direct traffic from reaching the origin.
+    # Spotify and Last.fm hand their OAuth callbacks back to a public name,
+    # which is the only reason a loopback-only listener needs a vhost at all.
     ${networkMap.piper.domain}.extraConfig = ''
       import cloudflare-mtls
 
@@ -50,7 +48,6 @@ in
       }
     '';
 
-    # Vaultwarden
     ${networkMap.vaultwarden.domain}.extraConfig = ''
       import cloudflare-mtls
 
@@ -62,10 +59,10 @@ in
 
     # The atproto PDS, and every account handle issued under it. Two vhosts
     # because a handle is a further label: `pds.biscuits.at` is the server and
-    # `alice.pds.biscuits.at` is an account, and Caddy matches the more specific
+    # `alice.pds.biscuits.at` is an account. Caddy matches the more specific
     # site, so the wildcard only ever catches the latter.
     #
-    # Both names are DNS-only records, the only ones in this zone that are —
+    # Both names are DNS-only records, the only ones in this zone that are;
     # every other vhost here sits behind Cloudflare's proxy. Three reasons, any
     # one of which is sufficient:
     #
@@ -93,7 +90,7 @@ in
     # plus Zone:Zone:Read on this zone.
     "*.${networkMap.pds.domain}" = {
       # The default log path is derived from the site address, which here
-      # contains a `*` — leaving it gives a real file in /var/log/caddy whose
+      # contains a `*`. Leaving it gives a real file in /var/log/caddy whose
       # name is a glob metacharacter, waiting for the first person to write a
       # loop over that directory.
       logFormat = "output file /var/log/caddy/access-wildcard.${networkMap.pds.domain}.log";
@@ -109,7 +106,6 @@ in
       '';
     };
 
-    # Forgejo
     ${networkMap.forgejo.domain}.extraConfig = ''
       import cloudflare-mtls
 
