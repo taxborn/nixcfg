@@ -43,8 +43,32 @@ let
       services.tealfm-piper.settings.DB_PATH = "/var/lib/tealfm-piper/moved.db";
     }
   ];
+  movedRepositories = extend [
+    {
+      myNixOS.services.backups.client.repositories.rsync = lib.mkForce {
+        label = "rsync";
+        path = "ssh://backup@example.test/./moved/argon";
+        remotePath = "borg-custom";
+      };
+    }
+  ];
+  movedCoverage =
+    (import ../modules/flake/restore.nix {
+      self.nixosConfigurations.argon.config = movedRepositories;
+      inputs.nixpkgs.lib = lib;
+    }).flake.restoreCoverage;
 in
 lib.runTests {
+  testRestoreFollowsRepositorySettings = {
+    expr = movedCoverage.argon.rsync;
+    expected = {
+      path = "ssh://backup@example.test/./moved/argon";
+      remotePath = "borg-custom";
+      tier1 = true;
+      tier2 = true;
+      reason = null;
+    };
+  };
   testNetworkSchema = {
     expr = map validNetwork [
       {

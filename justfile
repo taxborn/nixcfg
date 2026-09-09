@@ -45,16 +45,7 @@ clean:
 
 # Verify the yubikey can decrypt every host's borg secrets (restore tier 0)
 restore-keys:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    cd secrets
-    for dir in borg/*/; do
-        host=$(basename "$dir")
-        printf '%-10s passphrase %4s bytes | key %s\n' \
-            "$host" \
-            "$(agenix -d "borg/$host/passphrase.age" -i {{ age_identity }} | wc -c)" \
-            "$(agenix -d "borg/$host/ssh_key.age" -i {{ age_identity }} | head -1)"
-    done
+    bash scripts/restore-keys.sh {{ age_identity }}
 
 # Canary round-trip through every repository on HOST (restore tier 1)
 restore-test host:
@@ -67,121 +58,9 @@ restore-test host:
         "echo $payload | base64 -d | sudo bash"
 
 # Restore HOST's canary from each REPO using only the yubikey (restore tier 2)
+[positional-arguments]
 restore-dr host *repos="rsync":
-    #!/usr/bin/env bash
-    # No -e: a failing repository must not skip the ones after it.
-    set -uo pipefail
-    umask 077
-    root=$PWD
-    key=/run/user/$(id -u)/borg-dr-key
-    pass=/run/user/$(id -u)/borg-dr-pass
-    trap 'shred -u "$key" "$pass" 2>/dev/null || true' EXIT
-
-    # Decrypted once for every repository, because each call costs a yubikey
-    # touch. agenix resolves its argument as a rule name verbatim, so this must
-    # run from secrets/. Check both: a failed decrypt still leaves an empty file
-    # behind, and every borg error downstream would then be a red herring.
-    for secret in ssh_key passphrase; do
-        case "$secret" in
-            ssh_key) out=$key ;;
-            passphrase) out=$pass ;;
-        esac
-        if ! (cd secrets && agenix -d "borg/{{ host }}/$secret.age" -i {{ age_identity }}) >"$out" \
-                || [ ! -s "$out" ]; then
-            echo "FAIL — could not decrypt {{ host }}'s $secret (wrong PIN?)" >&2
-            exit 1
-        fi
-    done
-
-    helium_ip=""
-    rc=0
-
-    for repo in {{ repos }}; do
-        echo "== {{ host }} -> $repo"
-        case "$repo" in
-            rsync)
-                repo_url="ssh://de4388@de4388.rsync.net/./borg/{{ host }}"
-                remote=(--remote-path borg14)
-                ;;
-            helium)
-                if [ "{{ host }}" = "helium" ]; then
-                    echo "SKIP — helium reaches its own repository by local path, so no"
-                    echo "key authorizes it remotely. Covered by \`just restore-test helium\`."
-                    continue
-                fi
-                # Address from the flake, so it cannot drift from the modules.
-                # No port: 058b04a moved every host to Tailscale SSH on 22 and
-                # removed `backups.server.sshPort`, which had existed only to
-                # make a `--restrict-to-path` forced command bind. Tailscale SSH
-                # skips authorized_keys entirely, so a forced command pinned to
-                # a key never applies there, and confining this repository's key
-                # to one path again would cost a second sshd port again.
-                #
-                # For the same reason the decrypted key above does not authorize
-                # this connection; the tailnet identity of whoever runs it does.
-                # What it proves is that the archive opens with the passphrase
-                # that host's key file carries, which is the half that a lost
-                # host actually needs.
-                if [ -z "$helium_ip" ]; then
-                    helium_ip=$(cd "$root" && nix eval --raw \
-                        .#nixosConfigurations.helium.config.mySnippets.tailnet.tailscaleIPs.helium)
-                fi
-                # basePath is absolute, hence the doubled slash after the host.
-                repo_url="ssh://taxborn@$helium_ip//mnt/hdd/borg/{{ host }}"
-                remote=()
-                ;;
-            *)
-                echo "FAIL — unknown repository '$repo' (expected: rsync, helium)" >&2
-                rc=1
-                continue
-                ;;
-        esac
-
-        dest=$(mktemp -d)
-        if ! archive=$(nix shell nixpkgs#borgbackup -c env \
-                BORG_PASSCOMMAND="cat $pass" BORG_RSH="ssh -i $key" \
-                borg list "${remote[@]}" --last 1 --format '{archive}{NL}' "$repo_url"); then
-            echo "FAIL $repo — could not list the repository"
-            rc=1
-            continue
-        fi
-        echo "latest archive: $archive"
-
-        if ! (cd "$dest" && nix shell nixpkgs#borgbackup -c env \
-                BORG_PASSCOMMAND="cat $pass" BORG_RSH="ssh -i $key" \
-                borg extract "${remote[@]}" "$repo_url::$archive" var/lib/backup-canary); then
-            echo "FAIL $repo — extract failed"
-            rc=1
-            continue
-        fi
-
-        restored=$(cat "$dest/var/lib/backup-canary" 2>/dev/null || true)
-        if [ -z "$restored" ]; then
-            echo "FAIL $repo — nothing restored"
-            rc=1
-            continue
-        fi
-        echo "restored: $restored"
-
-        # RequestTTY=no matters as much as RemoteCommand=none: the ssh config
-        # sets both, and reading through a pty translates LF to CRLF, leaving a
-        # trailing \r that command substitution does not strip. tr is the belt
-        # to that braces, in case the config changes again.
-        if live=$(ssh -o RemoteCommand=none -o RequestTTY=no -o BatchMode=yes \
-                {{ host }} cat /var/lib/backup-canary 2>/dev/null | tr -d '\r'); then
-            if [ "$live" = "$restored" ]; then
-                echo "PASS $repo — matches {{ host }}"
-            else
-                echo "FAIL $repo — {{ host }} has: $live"
-                rc=1
-            fi
-        else
-            echo "PASS $repo — {{ host }} unreachable, content above is the only assertion"
-        fi
-        rm -rf "$dest"
-        echo
-    done
-    exit $rc
+    bash scripts/restore-dr.sh {{ age_identity }} "$@"
 
 # Run every restore test across the evaluated backup-client roster (tiers 0-2)
 restore-all:
