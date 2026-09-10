@@ -11,9 +11,13 @@
           ];
           RESTORE_PLAN = pkgs.writeText "restore-plan.json" (builtins.toJSON self.restoreCoverage);
           RESTORE_RUNNER = ../../scripts/restore-all.sh;
+          RESTORE_KEYS = ../../scripts/restore-keys.sh;
+          RESTORE_DR = ../../scripts/restore-dr.sh;
         }
         ''
-          bash ${../../tests/restore-all.sh}
+          mkdir runner recipes
+          (cd runner && bash ${../../tests/restore-all.sh})
+          (cd recipes && bash ${../../tests/restore-recipes.sh})
           touch $out
         '';
     checks.architecture =

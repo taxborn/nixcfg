@@ -33,6 +33,7 @@ in
         remote || (localReasons.${host} or { }) ? ${name}
       ) "${host}/${name}: document why tier 2 omits this local repository.";
       {
+        inherit (repo) path remotePath;
         tier1 = true;
         tier2 = remote;
         reason = if remote then null else localReasons.${host}.${name};

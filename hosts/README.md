@@ -119,3 +119,5 @@ The external drive is NTFS, mounted `nofail` with `X-fstrim.notrim`. The
 `borg-repo-base` unit carries `RequiresMountsFor`, so backups fail outright when
 the drive is absent instead of filling the root filesystem with archives nobody
 notices.
+
+TODO: Look at formatting + btrfs for the external drive.

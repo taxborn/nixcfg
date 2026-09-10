@@ -317,8 +317,9 @@ workstation, not a server.
 
 `agenix -d` only tries the default ssh keys on its own, because
 `age.identityPaths` is a system-level setting that does not reach the CLI, so
-the recipes pass `-i ~/.config/age/yubikey-identity.txt`. Override with
-`AGE_IDENTITY` if the identity lives elsewhere.
+the recipes pass `-i ~/.config/age/yubikey-identity.txt`. Tier 0 checks decryption
+exit status, a nonempty passphrase, and an OpenSSH private-key header before
+reporting success. Override with `AGE_IDENTITY` if the identity lives elsewhere.
 
 ### tier 1: canary round-trip, per host, per repository
 
@@ -391,7 +392,14 @@ just restore-dr argon helium             # second copy, on Helium's drive
 just restore-dr argon rsync helium       # both, on one pair of yubikey touches
 ```
 
-Decrypts that host's key material to `/run/user/$UID` (tmpfs, `0700`, shredded
+Validates the requested host and repositories against `restoreCoverage` before
+decryption. Repository URLs and remote Borg executables come from that plan,
+so changing a backup destination also changes the rehearsal destination.
+Requests containing only local repositories print their skip reasons without
+decrypting anything.
+
+Decrypts that host's key material into a unique directory under
+`$XDG_RUNTIME_DIR` (normally `/run/user/$UID`, tmpfs, `0700`, shredded
 on exit), then for each named repository pulls the latest archive name, extracts
 the canary, and compares it against the live host if it is still reachable.
 Passing both repositories means the host is genuinely recoverable from either
@@ -405,8 +413,8 @@ Reaching the Helium repository from a third machine goes over Tailscale SSH,
 which authorises by tailnet identity and never reads `authorized_keys`, so the
 decrypted borg key is not what opens the connection. What it proves is the half
 a lost host actually needs: that the archive decrypts with the passphrase that
-host's key file carries. Helium's tailnet address comes from `nix eval` against
-the modules rather than a literal, so the recipe cannot drift from them.
+host's key file carries. Helium's full repository URL comes from the evaluated
+backup configuration, including its username, tailnet address and directory.
 
 `just restore-dr helium helium` is therefore impossible and exits with a note
 pointing elsewhere. Helium reaches its own repository by local path and holds no
