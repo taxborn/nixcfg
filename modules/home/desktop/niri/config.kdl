@@ -19,9 +19,13 @@ prefer-no-csd
 spawn-at-startup "noctalia"
 
 window-rule {
+    // Apps can restore a maximized state; keep gaps when they open.
+    open-maximized-to-edges false
+}
+
+window-rule {
     match app-id="^spotify$"
     open-maximized true
-    open-maximized-to-edges false
     open-fullscreen false
 }
 
