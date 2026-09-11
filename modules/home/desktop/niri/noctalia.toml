@@ -1,0 +1,6 @@
+[shell]
+polkit_agent = true
+
+[lockscreen]
+enabled = false
+lock_before_suspend = false

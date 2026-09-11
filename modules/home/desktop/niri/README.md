@@ -28,6 +28,10 @@ Edit [`config.kdl`](./config.kdl) for Niri. Home Manager installs it at
 
 Noctalia's settings under `~/.config/noctalia/` are writable. Use its settings
 UI to experiment. Application-specific Catppuccin themes remain managed by Nix.
+Home Manager copies [`noctalia.toml`](./noctalia.toml) to `config.toml` only when
+that file does not exist. The initial settings enable authentication prompts
+and disable the lockscreen, including locking before suspend. Noctalia's
+default idle timers are disabled. Later rebuilds preserve your settings.
 
 ## shortcuts
 
@@ -37,6 +41,8 @@ UI to experiment. Application-specific Catppuccin themes remain managed by Nix.
 | Super+B | Firefox |
 | Super+Z | Zed |
 | Super+R | Noctalia launcher |
+| MX Master thumb press | Noctalia launcher |
+| MX Master thumb swipe left / right | Previous / next workspace |
 | Super+Shift+/ | Show shortcut help |
 | Super+arrows or H/J/K/L | Focus columns and windows |
 | Super+Ctrl+arrows or H/J/K/L | Move columns and windows |
@@ -52,7 +58,8 @@ UI to experiment. Application-specific Catppuccin themes remain managed by Nix.
 
 The remaining navigation bindings follow Niri's packaged default config.
 Super+R replaces its forward preset-width shortcut; Super+Shift+R still cycles
-widths backward. No screenshot, lock or media shortcuts are configured yet.
+widths backward. Super+BracketLeft and Super+BracketRight change workspaces for
+the mouse gestures. No screenshot, lock or media shortcuts are configured yet.
 
 Validate the compositor file with `niri validate -c modules/home/desktop/niri/config.kdl`.
 Build both workstation toplevels before deploying. A successful build cannot

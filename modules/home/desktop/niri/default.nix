@@ -19,5 +19,15 @@ in
     ];
 
     xdg.configFile."niri/config.kdl".source = "${self}/modules/home/desktop/niri/config.kdl";
+
+    # A store symlink would make the settings UI read-only. Seed a regular
+    # file once, then leave subsequent edits to Noctalia and the user.
+    home.activation.seedNoctalia = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      if [[ ! -e ${lib.escapeShellArg "${config.xdg.configHome}/noctalia/config.toml"} && ! -L ${lib.escapeShellArg "${config.xdg.configHome}/noctalia/config.toml"} ]]; then
+        run ${lib.getExe' pkgs.coreutils "install"} -Dm600 \
+          ${self}/modules/home/desktop/niri/noctalia.toml \
+          ${lib.escapeShellArg "${config.xdg.configHome}/noctalia/config.toml"}
+      fi
+    '';
   };
 }

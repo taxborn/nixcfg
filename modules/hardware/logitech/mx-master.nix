@@ -12,8 +12,8 @@ in
 
     # The MX Master 3S thumb button emits no BTN_* event of its own. It is a
     # HID++ control that Logi Options+ would interpret, so there is nothing
-    # for Hyprland to bind until logid claims it and synthesises keys through
-    # uinput. Those combos are bound in the hyprland keybinds. Solaar's daemon
+    # for Niri to bind until logid claims it and synthesises keys through
+    # uinput. Those combos are bound in the Niri config. Solaar's daemon
     # must stay off; it drives HID++ on the same device and the two conflict.
     services.logiops = {
       enable = true;
@@ -49,7 +49,7 @@ in
                     };
                   }
                   {
-                    # Pressed without moving; SUPER + R is already the wofi bind.
+                    # Pressed without moving; Super+R opens Noctalia's launcher.
                     direction = "None";
                     mode = "OnRelease";
                     action = {
