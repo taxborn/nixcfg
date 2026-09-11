@@ -24,14 +24,6 @@
         enable = true;
         recommendedServices.enable = true;
       };
-      fish.loginShellInit = ''
-        # XDG_VTNR leaks into SSH sessions here, so key off the tty instead.
-        # niri-session opens a noninteractive login shell to import the environment.
-        # Only the original interactive login should launch the session.
-        if status is-interactive; and test -z "$WAYLAND_DISPLAY"; and test -z "$SSH_CONNECTION"; and test (tty) = /dev/tty1
-            exec ${lib.getExe' config.programs.niri.package "niri-session"}
-        end
-      '';
     };
 
     environment.sessionVariables.NIXOS_OZONE_WL = "1";

@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  osConfig,
   pkgs,
   self,
   ...
@@ -19,6 +20,15 @@ in
     ];
 
     xdg.configFile."niri/config.kdl".source = "${self}/modules/home/desktop/niri/config.kdl";
+
+    programs.fish.loginShellInit = ''
+      # XDG_VTNR leaks into SSH sessions here, so key off the tty instead.
+      # niri-session opens a noninteractive login shell to import the environment.
+      # Only the original interactive login should launch the session.
+      if status is-interactive; and test -z "$WAYLAND_DISPLAY"; and test -z "$SSH_CONNECTION"; and test (tty) = /dev/tty1
+          exec ${lib.getExe' osConfig.programs.niri.package "niri-session"}
+      end
+    '';
 
     # A store symlink would make the settings UI read-only. Seed a regular
     # file once, then leave subsequent edits to Noctalia and the user.
