@@ -101,23 +101,5 @@ ScrollView {
             text: "Battery " + Math.round((UPower.displayDevice?.percentage ?? 0) * 100) + "% · " + (UPower.onBattery ? "discharging" : "external power")
             color: Theme.green
         }
-        ShellText { text: "Now playing"; color: Theme.pink; font.pixelSize: 17 }
-        Repeater {
-            model: Mpris.players
-            ColumnLayout {
-                id: player
-                required property var modelData
-                Layout.fillWidth: true
-                ShellText { Layout.fillWidth: true; text: player.modelData.trackTitle || player.modelData.identity }
-                ShellText { Layout.fillWidth: true; text: player.modelData.trackArtist; color: Theme.muted }
-                Row {
-                    spacing: 6
-                    Chip { text: "󰒮"; enabled: player.modelData.canGoPrevious; onClicked: player.modelData.previous() }
-                    Chip { text: player.modelData.isPlaying ? "󰏤" : "󰐊"; enabled: player.modelData.canTogglePlaying; onClicked: player.modelData.togglePlaying() }
-                    Chip { text: "󰒭"; enabled: player.modelData.canGoNext; onClicked: player.modelData.next() }
-                }
-            }
-        }
-        ShellText { visible: Mpris.players.values.length === 0; text: "Nothing playing"; color: Theme.muted }
     }
 }

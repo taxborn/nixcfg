@@ -54,6 +54,9 @@ ColumnLayout {
             required property int index
             width: apps.width; height: 62; radius: 14
             color: ListView.isCurrentItem ? Theme.surface : "transparent"
+            scale: ListView.isCurrentItem ? 1 : 0.97
+            Behavior on color { ColorAnimation { duration: Theme.pressMs } }
+            Behavior on scale { NumberAnimation { duration: Theme.settleMs; easing.type: Easing.OutBack; easing.overshoot: Theme.overshoot } }
             RowLayout {
                 anchors.fill: parent; anchors.margins: 12; spacing: 14
                 Image {

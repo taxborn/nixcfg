@@ -21,6 +21,13 @@ PanelWindow {
         Column {
             id: notices
             width: parent.width; spacing: 10
+            add: Transition {
+                NumberAnimation { property: "x"; from: notices.width; duration: Theme.slideMs; easing.type: Easing.OutBack; easing.overshoot: Theme.overshoot }
+                NumberAnimation { property: "opacity"; from: 0; to: 1; duration: Theme.settleMs }
+            }
+            move: Transition {
+                NumberAnimation { properties: "x,y"; duration: Theme.settleMs; easing.type: Easing.OutBack; easing.overshoot: Theme.nudge }
+            }
             Repeater {
                 model: ShellState.toasts
                 NoticeCard {

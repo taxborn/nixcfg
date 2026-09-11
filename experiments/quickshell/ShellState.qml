@@ -67,6 +67,7 @@ Singleton {
         function launcher(): void { root.toggle("launcher"); }
         function dashboard(): void { root.toggle("dashboard"); }
         function notifications(): void { root.toggle("notifications"); }
+        function music(): void { root.toggle("music"); }
         function close(): void { root.popup = ""; }
     }
 }

@@ -6,8 +6,13 @@ Chip 1.0 Chip.qml
 Dashboard 1.0 Dashboard.qml
 Inbox 1.0 Inbox.qml
 ShellText 1.0 ShellText.qml
+Tip 1.0 Tip.qml
 Launcher 1.0 Launcher.qml
 Meter 1.0 Meter.qml
 NoticeCard 1.0 NoticeCard.qml
 Overlay 1.0 Overlay.qml
 Toasts 1.0 Toasts.qml
+singleton Spotify 1.0 Spotify.qml
+MusicBlip 1.0 MusicBlip.qml
+AudioVisualizer 1.0 AudioVisualizer.qml
+NowPlaying 1.0 NowPlaying.qml

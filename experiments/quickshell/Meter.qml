@@ -15,11 +15,11 @@ ColumnLayout {
     }
     Rectangle {
         Layout.fillWidth: true; implicitHeight: 6
-        radius: 3; color: Theme.surface
+        radius: 3; color: Theme.surface; clip: true
         Rectangle {
             width: parent.width * Math.max(0, Math.min(100, meter.value)) / 100
             height: parent.height; radius: 3; color: meter.accent
-            Behavior on width { NumberAnimation { duration: 300 } }
+            Behavior on width { NumberAnimation { duration: Theme.slideMs; easing.type: Easing.OutBack; easing.overshoot: Theme.nudge } }
         }
     }
 }

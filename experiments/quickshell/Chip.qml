@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Controls
 
 Rectangle {
     id: root
@@ -14,9 +13,9 @@ Rectangle {
     implicitHeight: 32
     radius: 12
     color: selected ? accent : mouse.containsMouse ? Theme.overlay : "transparent"
-    scale: mouse.pressed ? 0.94 : 1
-    Behavior on color { ColorAnimation { duration: 120 } }
-    Behavior on scale { NumberAnimation { duration: 100 } }
+    scale: mouse.pressed ? 0.88 : mouse.containsMouse ? 1.06 : 1
+    Behavior on color { ColorAnimation { duration: Theme.pressMs } }
+    Behavior on scale { NumberAnimation { duration: Theme.pressMs; easing.type: Easing.OutBack; easing.overshoot: Theme.overshoot } }
     ShellText {
         id: label
         anchors.centerIn: parent
@@ -32,7 +31,10 @@ Rectangle {
         onClicked: event => event.button === Qt.RightButton ? root.rightClicked() : root.clicked()
         onWheel: event => root.scrolled(event.angleDelta.y)
     }
-    ToolTip.visible: mouse.containsMouse && tip !== ""
-    ToolTip.delay: 500
-    ToolTip.text: tip
+    Tip {
+        target: root
+        active: mouse.containsMouse && root.tip !== ""
+        delay: 500
+        text: root.tip
+    }
 }

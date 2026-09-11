@@ -17,4 +17,13 @@ QtObject {
     readonly property string font: "JetBrainsMono Nerd Font"
     readonly property int radius: 20
     readonly property int barHeight: 54
+
+    // Motion. One vocabulary so every surface springs the same way.
+    // Easing.OutBack past its 1.70158 default is what reads as "bouncy":
+    // the value overshoots its target and settles back into it.
+    readonly property int pressMs: 140
+    readonly property int settleMs: 260
+    readonly property int slideMs: 380
+    readonly property real overshoot: 3.2
+    readonly property real nudge: 1.8
 }

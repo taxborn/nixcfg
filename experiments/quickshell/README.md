@@ -46,6 +46,10 @@ your normal PATH. Alternatively, use the pinned executable with
   network download rate, idle inhibitor, volume, battery and notification count.
   RAM and network move to the dashboard on narrower screens. The clock joins
   the right section when there is not room for a separate middle section.
+- A pulsing green blip beside the clock while Spotify is playing. Click it for
+  album art, track/artist/album details, a live audio visualizer, and previous,
+  play/pause and next controls. The panel stays open when paused; its Music tab
+  also lets you reopen it while Spotify is paused.
 - Application search by name, description and keywords. Arrow keys select,
   Enter launches, Escape closes. Terminal applications open in Ghostty.
 - Notification toasts and an inbox with actions, dismissal, clear-all and
@@ -71,14 +75,17 @@ QML changes and reloads them without a Nix rebuild.
 
 | File | Change here |
 | --- | --- |
-| `Theme.qml` | Colours, font, corner radius and bar height |
+| `Theme.qml` | Colours, font, corner radius, bar height and motion timings |
+| `Overlay.qml` | Popup card, its slide in from the top edge and the tab strip |
 | `Bar.qml` | Bar contents, spacing and responsive layout |
 | `Launcher.qml` | Search, application rows and terminal choice |
 | `Dashboard.qml` | Machine details and media controls |
+| `Spotify.qml`, `MusicBlip.qml`, `NowPlaying.qml` | Spotify detection, clock blip and player panel |
+| `AudioVisualizer.qml` | Live Spotify amplitude history |
 | `NoticeCard.qml`, `Inbox.qml`, `Toasts.qml` | Notification appearance |
 | `ShellState.qml` | Popup state, notification lifecycle and IPC |
 | `Stats.qml`, `stats.py` | Machine sampling and formatting |
-| `Chip.qml`, `ShellText.qml`, `Meter.qml` | Shared UI components |
+| `Chip.qml`, `ShellText.qml`, `Meter.qml`, `Tip.qml` | Shared UI components |
 
 Restart the trial after editing `stats.py`; Python is a persistent process and
 its source is not watched. To enable Quickshell's editor configuration generation:
@@ -100,11 +107,20 @@ You can also control the running shell from a second terminal:
 ./experiments/quickshell/run.sh ipc launcher
 ./experiments/quickshell/run.sh ipc dashboard
 ./experiments/quickshell/run.sh ipc notifications
+./experiments/quickshell/run.sh ipc music
 ./experiments/quickshell/run.sh ipc close
 ```
 
 `run.sh --plain` starts only Quickshell, without managing services or bindings.
 Use that only when you have already stopped the other notification server and bar.
+
+The Spotify component uses the desktop app's local MPRIS interface, with no
+account connection or API credentials. Its visualizer shows about two seconds of
+amplitude history from Spotify's PipeWire stream. It does not sample microphones
+or the full desktop mix. Sampling stops when the panel closes or playback pauses.
+If Spotify is playing remotely through Connect, the metadata and controls may
+still work, but there is no local audio to visualize. The panel shows that state.
+The blip follows the clock into the right section on narrow displays.
 
 ## Limits of this first version
 

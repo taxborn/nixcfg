@@ -10,7 +10,7 @@ if [[ ${1:-} == --plain ]]; then
     exec qs -p "$shell_dir"
 fi
 if [[ $# != 0 ]]; then
-    echo 'Usage: run.sh [--plain | ipc launcher | ipc dashboard | ipc notifications | ipc close]' >&2
+    echo 'Usage: run.sh [--plain | ipc launcher | ipc dashboard | ipc notifications | ipc music | ipc close]' >&2
     exit 2
 fi
 : "${HYPRLAND_INSTANCE_SIGNATURE:?Run this from a terminal inside Hyprland}"

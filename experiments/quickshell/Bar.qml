@@ -1,6 +1,5 @@
 pragma ComponentBehavior: Bound
 import QtQuick
-import QtQuick.Controls
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
@@ -64,18 +63,21 @@ PanelWindow {
     Rectangle {
         id: clockPill
         anchors.horizontalCenter: parent.horizontalCenter
-        y: 8; width: clockChip.width + 12; height: 38
+        y: 8; width: clockRow.width + 12; height: 38
         radius: Theme.radius; color: Theme.base
         border.color: Theme.surface
         // Keep the clock in the right group if the logical display is narrow.
         visible: leftPill.width + rightPill.width + width + 60 < bar.width
-        Chip {
-            id: clockChip
+        Row {
+            id: clockRow
             anchors.centerIn: parent
-            text: Qt.formatDateTime(clock.date, "ddd  HH:mm")
-            accent: Theme.pink
-            tip: Qt.formatDateTime(clock.date, "dddd, MMMM d, yyyy")
-            onClicked: ShellState.toggle("dashboard", bar.screen)
+            Chip {
+                text: Qt.formatDateTime(clock.date, "ddd  HH:mm")
+                accent: Theme.pink
+                tip: Qt.formatDateTime(clock.date, "dddd, MMMM d, yyyy")
+                onClicked: ShellState.toggle("dashboard", bar.screen)
+            }
+            MusicBlip { screen: bar.screen }
         }
     }
     Rectangle {
@@ -93,6 +95,10 @@ PanelWindow {
                 text: Qt.formatDateTime(clock.date, "HH:mm")
                 accent: Theme.pink
                 onClicked: ShellState.toggle("dashboard", bar.screen)
+            }
+            MusicBlip {
+                screen: bar.screen
+                visible: !clockPill.visible && Spotify.playing
             }
             Repeater {
                 model: SystemTray.items
@@ -117,8 +123,11 @@ PanelWindow {
                         }
                         onWheel: event => trayIcon.modelData.scroll(event.angleDelta.y, false)
                     }
-                    ToolTip.visible: trayMouse.containsMouse
-                    ToolTip.text: trayIcon.modelData.tooltipTitle || trayIcon.modelData.title
+                    Tip {
+                        target: trayIcon
+                        active: trayMouse.containsMouse
+                        text: trayIcon.modelData.tooltipTitle || trayIcon.modelData.title
+                    }
                 }
             }
             Chip {
