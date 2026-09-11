@@ -17,12 +17,14 @@ QtObject {
     readonly property color scrim: "#66000000"
     readonly property string font: "JetBrainsMono Nerd Font"
     readonly property int radius: 20
-    readonly property int barHeight: 54
 
     // The bar's floating groups. Pills centre themselves in the bar, so the
-    // two heights are the only thing deciding the gap above and below them.
+    // bar is the pill plus one margin above and below, and pillMargin alone
+    // decides the gap from a pill to the screen edge on all three sides.
+    // Hyprland's gaps_out should match it.
     readonly property int pillHeight: 38
-    readonly property int pillMargin: 10
+    readonly property int pillMargin: 12
+    readonly property int barHeight: pillHeight + pillMargin * 2
     readonly property int pillPadding: 12
 
     // Type scale. Sizes used in more than one place; one-offs stay inline.

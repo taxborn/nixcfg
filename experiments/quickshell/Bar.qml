@@ -13,6 +13,11 @@ PanelWindow {
     screen: modelData
     anchors { top: true; left: true; right: true }
     implicitHeight: Theme.barHeight
+    // Reserve up to the bottom of the pills, not the whole window. The strip
+    // below them is transparent, so handing it back to the tiler is what makes
+    // the gap under the bar equal to gaps_out instead of gaps_out plus it.
+    exclusionMode: ExclusionMode.Normal
+    exclusiveZone: Theme.barHeight - Theme.pillMargin
     color: "transparent"
     WlrLayershell.namespace: "quickshell-playground-bar"
     readonly property var monitor: Hyprland.monitorFor(screen)

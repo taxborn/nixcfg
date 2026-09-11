@@ -64,7 +64,7 @@ in
       settings = {
         mainBar = {
           position = "top";
-          margin = "8 8 0 8";
+          margin = "12 12 0 12";
           modules-left = [
             "hyprland/workspaces"
             "tray"

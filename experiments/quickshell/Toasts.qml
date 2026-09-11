@@ -8,7 +8,7 @@ PanelWindow {
     screen: ShellState.focusedScreen
     visible: Notices.toasts.length > 0 && ShellState.popup !== "notifications"
     anchors { top: true; right: true }
-    margins { top: Theme.barHeight + 8; right: 12 }
+    margins { top: Theme.barHeight; right: Theme.pillMargin }
     implicitWidth: 380
     implicitHeight: Math.min(notices.implicitHeight, (screen?.height ?? 900) - Theme.barHeight - 40)
     exclusionMode: ExclusionMode.Ignore
