@@ -118,9 +118,8 @@ for local repository omissions and workstation rehearsals.
 
 ## modules with their own README
 
-- [`home/desktop/quickshell/`](./home/desktop/quickshell/README.md) covers the
-  workstation shell: what it draws, how to edit the QML without a rebuild, and
-  why Waybar and Mako cannot run beside it.
+- [`home/desktop/niri/`](./home/desktop/niri/README.md) covers the minimal
+  Niri and Noctalia workstation session and its shortcuts.
 - [`nixos/services/backups/`](./nixos/services/backups/README.md) covers borg
   and borgmatic, provisioning a host into the backup set, and the three tiers of
   restore testing. It is the highest-consequence module here. Read it in full

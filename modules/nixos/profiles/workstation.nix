@@ -19,19 +19,16 @@
     boot.kernelPackages = pkgs.linuxPackages_latest;
 
     programs = {
-      hyprland.enable = true;
+      niri.enable = true;
       fish.loginShellInit = ''
         # XDG_VTNR leaks into SSH sessions here, so key off the tty instead.
-        if test -z "$WAYLAND_DISPLAY"; and test -z "$SSH_CONNECTION"; and test (tty) = /dev/tty1
-            start-hyprland
+        # niri-session opens a noninteractive login shell to import the environment.
+        # Only the original interactive login should launch the session.
+        if status is-interactive; and test -z "$WAYLAND_DISPLAY"; and test -z "$SSH_CONNECTION"; and test (tty) = /dev/tty1
+            exec ${lib.getExe' config.programs.niri.package "niri-session"}
         end
       '';
     };
-
-    # home-manager's programs.hyprlock only writes config; the PAM service is a
-    # NixOS concern. Without it hyprlock falls through to /etc/pam.d/other,
-    # which is pam_deny, so no password would ever unlock the screen.
-    security.pam.services.hyprlock = { };
 
     environment.sessionVariables.NIXOS_OZONE_WL = "1";
 

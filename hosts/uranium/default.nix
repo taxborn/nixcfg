@@ -13,7 +13,6 @@
       via
       prismlauncher
     ];
-    myHome.services.hypridle.kbdBacklight = false;
   };
 
   nixpkgs.hostPlatform = "x86_64-linux";

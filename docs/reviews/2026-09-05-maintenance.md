@@ -23,6 +23,12 @@ The original TODO and known-drift list produced these changes and decisions.
 | em dashes | Apply unslop to new and rewritten prose. Keep unrelated punctuation cleanup out of functional changes. |
 | host photos | Drop the placeholder. Photos need actual host images and add no configuration or recovery instructions. |
 
+## desktop follow-up, 2026-09-11
+
+The Niri and Noctalia migration removes Mako, Hypridle and their local units.
+The findings above describe the former desktop. Their unit-specific workarounds
+no longer apply. See the [new session notes](../../modules/home/desktop/niri/README.md).
+
 ## retained settings
 
 Retained settings that are easy to misread:

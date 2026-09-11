@@ -10,7 +10,7 @@
   config = lib.mkIf config.myNixOS.profiles.graphical-boot.enable {
     # `autologinOnce` rather than plain autologin. tty1 logs in once per boot,
     # which is all the fish login hook in `profiles/workstation.nix` needs to
-    # start Hyprland. Logging out after that lands on a password prompt rather
+    # start Niri. Logging out after that lands on a password prompt rather
     # than another free shell.
     services.getty = {
       autologinOnce = true;

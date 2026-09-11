@@ -11,8 +11,5 @@ result-*
 # in modules/flake/pre-commit.nix; this is only its generated form.
 .pre-commit-config.yaml
 
-# Quickshell's generated editor configuration and Python bytecode from running
-# the stats tests in the checkout. The former holds absolute paths that differ
-# between workstations.
-modules/home/desktop/quickshell/shell/.qmlls.ini
+# Python bytecode from local scripts and tests.
 __pycache__/
