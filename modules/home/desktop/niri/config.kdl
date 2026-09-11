@@ -41,6 +41,17 @@ window-rule {
     open-maximized-to-edges false
 }
 
+window-rule {
+    // pinentry-gnome3 renders through gcr-prompter, which opens unfocused.
+    // A focused fullscreen window covers unfocused floating ones, so a
+    // YubiKey touch prompt can pop up hidden behind a fullscreen terminal.
+    // Forcing focus here keeps it visible.
+    match app-id="^gcr-prompter$"
+
+    open-floating true
+    open-focused true
+}
+
 binds {
     XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%+" "--limit" "1.0"; }
     XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-"; }
