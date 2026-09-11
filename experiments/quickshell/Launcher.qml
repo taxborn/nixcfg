@@ -16,14 +16,20 @@ ColumnLayout {
     }
     function launch(index) {
         const app = matches[index];
-        if (!app) return;
+        if (!app) {
+            return;
+        }
+
         // Quickshell's execute() does not wrap Terminal=true desktop entries.
         if (app.runInTerminal) {
             Quickshell.execDetached({
                 command: ["ghostty", "-e"].concat(app.command),
                 workingDirectory: app.workingDirectory
             });
-        } else app.execute();
+        } else {
+            app.execute();
+        }
+
         ShellState.popup = "";
     }
     ShellText { text: "Launch something ✦"; color: Theme.pink; font.pixelSize: 20 }
@@ -66,7 +72,7 @@ ColumnLayout {
                 ColumnLayout {
                     Layout.fillWidth: true; spacing: 3
                     ShellText { Layout.fillWidth: true; text: entry.modelData.name; font.pixelSize: 15 }
-                    ShellText { Layout.fillWidth: true; text: entry.modelData.genericName || entry.modelData.comment; color: Theme.muted; font.pixelSize: 11 }
+                    ShellText { Layout.fillWidth: true; text: entry.modelData.genericName || entry.modelData.comment; color: Theme.muted; font.pixelSize: Theme.captionSize }
                 }
                 ShellText { text: "↗"; color: Theme.mauve }
             }
@@ -78,5 +84,5 @@ ColumnLayout {
         }
         ShellText { anchors.centerIn: parent; visible: apps.count === 0; text: "No applications found"; color: Theme.muted }
     }
-    ShellText { text: "↑ ↓ choose    Enter launch    Esc close"; color: Theme.muted; font.pixelSize: 11 }
+    ShellText { text: "↑ ↓ choose    Enter launch    Esc close"; color: Theme.muted; font.pixelSize: Theme.captionSize }
 }

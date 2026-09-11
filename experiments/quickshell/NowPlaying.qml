@@ -105,7 +105,7 @@ ColumnLayout {
     }
     ShellText {
         Layout.alignment: Qt.AlignHCenter
-        color: Theme.muted; font.pixelSize: 11
+        color: Theme.muted; font.pixelSize: Theme.captionSize
         text: !music.player ? "Waiting for Spotify" : !Spotify.playing ? "Paused" : visualizer.available ? "Live audio · Spotify" : "Waiting for local Spotify audio"
     }
     RowLayout {
@@ -113,19 +113,19 @@ ColumnLayout {
         spacing: 18
         Chip {
             text: "󰒮"; tip: "Previous track"; implicitWidth: 56; implicitHeight: 44
-            enabled: music.player?.canGoPrevious ?? false; opacity: enabled ? 1 : 0.3
+            enabled: music.player?.canGoPrevious ?? false
             onClicked: music.player.previous()
         }
         Chip {
             text: Spotify.playing ? "󰏤" : "󰐊"
             tip: Spotify.playing ? "Pause" : "Play"
             selected: true; accent: Theme.green; implicitWidth: 72; implicitHeight: 44
-            enabled: music.player?.canTogglePlaying ?? false; opacity: enabled ? 1 : 0.3
+            enabled: music.player?.canTogglePlaying ?? false
             onClicked: music.player.togglePlaying()
         }
         Chip {
             text: "󰒭"; tip: "Next track"; implicitWidth: 56; implicitHeight: 44
-            enabled: music.player?.canGoNext ?? false; opacity: enabled ? 1 : 0.3
+            enabled: music.player?.canGoNext ?? false
             onClicked: music.player.next()
         }
     }

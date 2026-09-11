@@ -12,6 +12,18 @@ PanelWindow {
     // The layer surface stays mapped until the slide out ends. Unmapping on
     // close instead would cut the animation after its first frame.
     property bool mapped: false
+    // Which component each tab shows. A lookup rather than a ternary chain,
+    // so adding a page is one line here and one Chip in the strip below.
+    readonly property var pages: ({
+        launcher: launcher,
+        dashboard: dashboard,
+        notifications: inbox,
+        music: nowPlaying
+    })
+    readonly property int cardWidth: 640
+    readonly property int cardHeight: 700
+    // The music page is shorter; its art and controls have a natural size.
+    readonly property int musicHeight: 640
     screen: ShellState.popupScreen ?? ShellState.focusedScreen
     visible: mapped
     anchors { top: true; bottom: true; left: true; right: true }
@@ -23,7 +35,10 @@ PanelWindow {
     Connections {
         target: ShellState
         function onPopupChanged() {
-            if (ShellState.popup === "") return;
+            if (ShellState.popup === "") {
+                return;
+            }
+
             window.page = ShellState.popup;
             window.mapped = true;
         }
@@ -36,7 +51,7 @@ PanelWindow {
     }
     Rectangle {
         anchors.fill: parent
-        color: "#66000000"
+        color: Theme.scrim
         opacity: window.shown ? 1 : 0
         Behavior on opacity { NumberAnimation { duration: Theme.settleMs } }
     }
@@ -44,8 +59,8 @@ PanelWindow {
     Rectangle {
         id: panel
         anchors.horizontalCenter: parent.horizontalCenter
-        width: Math.min(640, window.width - 40)
-        height: Math.min(window.page === "music" ? 640 : 700, window.height - 100)
+        width: Math.min(window.cardWidth, window.width - 40)
+        height: Math.min(window.page === "music" ? window.musicHeight : window.cardHeight, window.height - 100)
         // Drops in from above the top edge, overshoots its resting spot and
         // settles back. Closing pulls it back down before it snaps away.
         y: window.shown ? (window.height - height) / 2 : -height - 20
@@ -60,7 +75,9 @@ PanelWindow {
                 easing.type: window.shown ? Easing.OutBack : Easing.InBack
                 easing.overshoot: Theme.nudge
                 onRunningChanged: {
-                    if (!running && !window.shown) window.mapped = false;
+                    if (!running && !window.shown) {
+                        window.mapped = false;
+                    }
                 }
             }
         }
@@ -81,10 +98,14 @@ PanelWindow {
             Loader {
                 Layout.fillWidth: true; Layout.fillHeight: true
                 active: window.mapped
-                sourceComponent: window.page === "launcher" ? launcher : window.page === "dashboard" ? dashboard : window.page === "music" ? nowPlaying : inbox
+                sourceComponent: window.pages[window.page]
                 focus: true
+                // The launcher owns its own focus; it puts the caret in the
+                // search field, and stealing it back would eat the typing.
                 onLoaded: {
-                    if (window.page !== "launcher") forceActiveFocus();
+                    if (window.page !== "launcher") {
+                        forceActiveFocus();
+                    }
                 }
                 Keys.onEscapePressed: ShellState.popup = ""
             }

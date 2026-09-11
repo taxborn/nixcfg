@@ -8,18 +8,19 @@ ColumnLayout {
     RowLayout {
         Layout.fillWidth: true
         ShellText { text: "Little interruptions"; font.pixelSize: 20; color: Theme.pink; Layout.fillWidth: true }
-        Chip { text: "Clear"; onClicked: ShellState.dismissAll() }
+        Chip { text: "Clear"; onClicked: Notices.clear() }
     }
     Chip {
-        text: ShellState.quiet ? "Do not disturb · on" : "Do not disturb · off"
-        selected: ShellState.quiet
-        onClicked: ShellState.quiet = !ShellState.quiet
+        text: Notices.quiet ? "Do not disturb · on" : "Do not disturb · off"
+        selected: Notices.quiet
+        onClicked: Notices.quiet = !Notices.quiet
     }
     ListView {
         id: list
         Layout.fillHeight: true; Layout.fillWidth: true
         clip: true; spacing: 10
-        model: ShellState.notices.slice().reverse()
+        // Newest first, without reversing the store every other reader shares.
+        model: Notices.all.slice().reverse()
         ScrollBar.vertical: ScrollBar {}
         delegate: NoticeCard {
             required property var modelData

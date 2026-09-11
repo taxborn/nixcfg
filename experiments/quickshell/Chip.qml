@@ -14,6 +14,8 @@ Rectangle {
     radius: 12
     color: selected ? accent : mouse.containsMouse ? Theme.overlay : "transparent"
     scale: mouse.pressed ? 0.88 : mouse.containsMouse ? 1.06 : 1
+    // A disabled Chip still reads as a control, just an unavailable one.
+    opacity: enabled ? 1 : 0.3
     Behavior on color { ColorAnimation { duration: Theme.pressMs } }
     Behavior on scale { NumberAnimation { duration: Theme.pressMs; easing.type: Easing.OutBack; easing.overshoot: Theme.overshoot } }
     ShellText {

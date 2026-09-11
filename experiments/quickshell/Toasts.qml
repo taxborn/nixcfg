@@ -6,7 +6,7 @@ import Quickshell.Wayland
 PanelWindow {
     id: window
     screen: ShellState.focusedScreen
-    visible: ShellState.toasts.length > 0 && ShellState.popup !== "notifications"
+    visible: Notices.toasts.length > 0 && ShellState.popup !== "notifications"
     anchors { top: true; right: true }
     margins { top: Theme.barHeight + 8; right: 12 }
     implicitWidth: 380
@@ -29,7 +29,7 @@ PanelWindow {
                 NumberAnimation { properties: "x,y"; duration: Theme.settleMs; easing.type: Easing.OutBack; easing.overshoot: Theme.nudge }
             }
             Repeater {
-                model: ShellState.toasts
+                model: Notices.toasts
                 NoticeCard {
                     required property var modelData
                     width: notices.width

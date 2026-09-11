@@ -15,7 +15,7 @@ Rectangle {
         anchors { left: parent.left; right: parent.right; top: parent.top; margins: 14 }
         spacing: 8
         RowLayout {
-            ShellText { Layout.fillWidth: true; text: card.notification.appName || "Notification"; color: Theme.mauve; font.pixelSize: 11 }
+            ShellText { Layout.fillWidth: true; text: card.notification.appName || "Notification"; color: Theme.mauve; font.pixelSize: Theme.captionSize }
             Chip { text: "×"; implicitHeight: 24; tip: "Dismiss"; onClicked: card.notification.dismiss() }
         }
         ShellText { Layout.fillWidth: true; text: card.notification.summary; font.pixelSize: 15; font.bold: true; wrapMode: Text.Wrap; maximumLineCount: 3 }

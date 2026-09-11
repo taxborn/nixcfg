@@ -57,7 +57,7 @@ your normal PATH. Alternatively, use the pinned executable with
   QML reloads through Quickshell's notification tracking, but not a process restart.
 - A scrollable machine dashboard with per-core CPU load, memory, swap, filesystem
   usage, network transfer rates, GPU utilization and VRAM where exposed, hardware
-  temperatures, uptime, kernel version, battery status and media controls.
+  temperatures, uptime, kernel version and battery status.
 
 Click the CPU, RAM, network or clock to open the dashboard. Click the bell for
 the inbox, or right-click it to toggle do-not-disturb. The cup toggles idle
@@ -79,13 +79,14 @@ QML changes and reloads them without a Nix rebuild.
 | `Overlay.qml` | Popup card, its slide in from the top edge and the tab strip |
 | `Bar.qml` | Bar contents, spacing and responsive layout |
 | `Launcher.qml` | Search, application rows and terminal choice |
-| `Dashboard.qml` | Machine details and media controls |
+| `Dashboard.qml` | Machine details |
 | `Spotify.qml`, `MusicBlip.qml`, `NowPlaying.qml` | Spotify detection, clock blip and player panel |
 | `AudioVisualizer.qml` | Live Spotify amplitude history |
 | `NoticeCard.qml`, `Inbox.qml`, `Toasts.qml` | Notification appearance |
-| `ShellState.qml` | Popup state, notification lifecycle and IPC |
+| `ShellState.qml` | Which popup is open, on which screen, and IPC |
+| `Notices.qml` | Notification lifecycle, toast expiry and do-not-disturb |
 | `Stats.qml`, `stats.py` | Machine sampling and formatting |
-| `Chip.qml`, `ShellText.qml`, `Meter.qml`, `Tip.qml` | Shared UI components |
+| `Chip.qml`, `Pill.qml`, `ShellText.qml`, `Heading.qml`, `Meter.qml`, `Tip.qml` | Shared UI components |
 
 Restart the trial after editing `stats.py`; Python is a persistent process and
 its source is not watched. To enable Quickshell's editor configuration generation:

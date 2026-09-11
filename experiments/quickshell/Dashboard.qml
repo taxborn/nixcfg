@@ -2,54 +2,62 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import Quickshell
 import Quickshell.Services.UPower
-import Quickshell.Services.Mpris
 
 ScrollView {
     id: dashboard
     clip: true
     contentWidth: availableWidth
+    // A core tile is wide enough for "100%" and no wider, so a busy machine
+    // still fits its cores in a couple of rows.
+    readonly property int coreWidth: 43
+    readonly property int coreHeight: 28
+    readonly property real hotCelsius: 85
     ColumnLayout {
         width: dashboard.availableWidth
         spacing: 18
-        ShellText { text: "✦  " + (Stats.data.hostname ?? "Your machine"); font.pixelSize: 24; color: Theme.mauve }
+        ShellText { text: "✦  " + Stats.hostname; font.pixelSize: 24; color: Theme.mauve }
         ShellText {
             Layout.fillWidth: true
-            text: Stats.available ? "Up " + Math.floor((Stats.data.uptime ?? 0) / 3600) + "h " + Math.floor((Stats.data.uptime ?? 0) % 3600 / 60) + "m · Linux " + (Stats.data.kernel ?? "") : "Waiting for machine counters…"
+            text: Stats.available ? "Up " + Stats.uptimeText() + " · Linux " + Stats.kernel : "Waiting for machine counters…"
             color: Theme.muted
         }
         Meter {
             Layout.fillWidth: true; label: "CPU"; accent: Theme.blue
-            value: Stats.data.cpu ?? 0; detail: Stats.percent(Stats.data.cpu)
+            value: Stats.cpu ?? 0; detail: Stats.percent(Stats.cpu)
         }
         Flow {
             Layout.fillWidth: true; spacing: 5
             Repeater {
-                model: Stats.data.cores ?? []
+                model: Stats.cores
                 Rectangle {
                     required property var modelData
-                    required property int index
-                    width: 43; height: 28; radius: 8
+                    width: dashboard.coreWidth; height: dashboard.coreHeight; radius: 8
+                    // Load tints the tile rather than filling a bar, so a
+                    // thirty-core machine still reads at a glance.
                     color: Qt.rgba(0.54, 0.71, 0.98, 0.10 + (modelData ?? 0) / 140)
-                    ShellText { anchors.centerIn: parent; text: parent.modelData === null ? "—" : Math.round(parent.modelData) + "%"; font.pixelSize: 10 }
+                    ShellText {
+                        anchors.centerIn: parent
+                        text: parent.modelData === null ? "—" : Math.round(parent.modelData) + "%"
+                        font.pixelSize: 10
+                    }
                 }
             }
         }
-        ShellText { text: "Load  " + (Stats.data.load ?? []).map(n => n.toFixed(2)).join("  /  "); color: Theme.muted }
+        ShellText { text: "Load  " + Stats.load.map(n => n.toFixed(2)).join("  /  "); color: Theme.muted }
         Meter {
             Layout.fillWidth: true; label: "Memory"; accent: Theme.green
-            value: Stats.data.memory?.percent ?? 0
-            detail: Stats.bytes(Stats.data.memory?.used) + " / " + Stats.bytes(Stats.data.memory?.total)
+            value: Stats.memory?.percent ?? 0
+            detail: Stats.bytes(Stats.memory?.used) + " / " + Stats.bytes(Stats.memory?.total)
         }
         Meter {
             Layout.fillWidth: true; label: "Swap"; accent: Theme.peach
-            value: Stats.data.memory?.swapTotal ? 100 * Stats.data.memory.swapUsed / Stats.data.memory.swapTotal : 0
-            detail: Stats.bytes(Stats.data.memory?.swapUsed) + " / " + Stats.bytes(Stats.data.memory?.swapTotal)
+            value: Stats.swapPercent
+            detail: Stats.bytes(Stats.memory?.swapUsed) + " / " + Stats.bytes(Stats.memory?.swapTotal)
         }
-        ShellText { text: "Disks"; color: Theme.pink; font.pixelSize: 17 }
+        Heading { text: "Disks" }
         Repeater {
-            model: Stats.data.disks ?? []
+            model: Stats.disks
             Meter {
                 required property var modelData
                 Layout.fillWidth: true
@@ -57,19 +65,19 @@ ScrollView {
                 detail: Stats.bytes(modelData.used) + " / " + Stats.bytes(modelData.total)
             }
         }
-        ShellText { text: "Network · physical interfaces"; color: Theme.pink; font.pixelSize: 17 }
+        Heading { text: "Network · physical interfaces" }
         Repeater {
-            model: Stats.data.network ?? []
+            model: Stats.network
             ShellText {
                 required property var modelData
                 Layout.fillWidth: true
                 text: modelData.name + "    ↓ " + Stats.bytes(modelData.down) + "/s    ↑ " + Stats.bytes(modelData.up) + "/s"
             }
         }
-        ShellText { visible: !(Stats.data.network?.length); text: "No physical interfaces reported"; color: Theme.muted }
-        ShellText { text: "Graphics"; color: Theme.pink; font.pixelSize: 17 }
+        ShellText { visible: Stats.network.length === 0; text: "No physical interfaces reported"; color: Theme.muted }
+        Heading { text: "Graphics" }
         Repeater {
-            model: Stats.data.graphics ?? []
+            model: Stats.graphics
             ColumnLayout {
                 id: gpu
                 required property var modelData
@@ -85,17 +93,17 @@ ScrollView {
                 }
             }
         }
-        ShellText { text: "Temperatures"; color: Theme.pink; font.pixelSize: 17 }
+        Heading { text: "Temperatures" }
         Repeater {
-            model: Stats.data.temperatures ?? []
+            model: Stats.temperatures
             ShellText {
                 required property var modelData
                 Layout.fillWidth: true
                 text: modelData.name + "    " + modelData.value.toFixed(1) + " °C"
-                color: modelData.value >= 85 ? Theme.red : Theme.text
+                color: modelData.value >= dashboard.hotCelsius ? Theme.red : Theme.text
             }
         }
-        ShellText { visible: !(Stats.data.temperatures?.length); text: "No readable hardware sensors"; color: Theme.muted }
+        ShellText { visible: Stats.temperatures.length === 0; text: "No readable hardware sensors"; color: Theme.muted }
         ShellText {
             visible: UPower.displayDevice?.isLaptopBattery ?? false
             text: "Battery " + Math.round((UPower.displayDevice?.percentage ?? 0) * 100) + "% · " + (UPower.onBattery ? "discharging" : "external power")

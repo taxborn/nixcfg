@@ -14,9 +14,21 @@ QtObject {
     readonly property color green: "#a6e3a1"
     readonly property color blue: "#89b4fa"
     readonly property color red: "#f38ba8"
+    readonly property color scrim: "#66000000"
     readonly property string font: "JetBrainsMono Nerd Font"
     readonly property int radius: 20
     readonly property int barHeight: 54
+
+    // The bar's floating groups. Pills centre themselves in the bar, so the
+    // two heights are the only thing deciding the gap above and below them.
+    readonly property int pillHeight: 38
+    readonly property int pillMargin: 10
+    readonly property int pillPadding: 12
+
+    // Type scale. Sizes used in more than one place; one-offs stay inline.
+    readonly property int captionSize: 11
+    readonly property int bodySize: 13
+    readonly property int headingSize: 17
 
     // Motion. One vocabulary so every surface springs the same way.
     // Easing.OutBack past its 1.70158 default is what reads as "bouncy":
