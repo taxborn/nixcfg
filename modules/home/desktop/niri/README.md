@@ -37,6 +37,8 @@ default idle timers are disabled. Later rebuilds preserve your settings.
 
 | shortcut | action |
 | --- | --- |
+| Volume up / down | Adjust the default audio output by 5%, capped at 100% when raising |
+| Mute / microphone mute | Toggle the default output / microphone mute |
 | Super+Return | Ghostty |
 | Super+B | Firefox |
 | Super+Z | Zed |
@@ -59,7 +61,8 @@ default idle timers are disabled. Later rebuilds preserve your settings.
 The remaining navigation bindings follow Niri's packaged default config.
 Super+R replaces its forward preset-width shortcut; Super+Shift+R still cycles
 widths backward. Super+BracketLeft and Super+BracketRight change workspaces for
-the mouse gestures. No screenshot, lock or media shortcuts are configured yet.
+the mouse gestures. Audio keys use WirePlumber's `wpctl` and work while
+locked. No screenshot, lock or playback shortcuts are configured yet.
 
 Validate the compositor file with `niri validate -c modules/home/desktop/niri/config.kdl`.
 Build both workstation toplevels before deploying. A successful build cannot
