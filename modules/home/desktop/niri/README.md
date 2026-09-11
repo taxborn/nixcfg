@@ -37,37 +37,6 @@ that file does not exist. The initial settings enable authentication prompts
 and disable the lockscreen, including locking before suspend. Noctalia's
 default idle timers are disabled. Later rebuilds preserve your settings.
 
-## shortcuts
-
-| shortcut | action |
-| --- | --- |
-| Volume up / down | Adjust the default audio output by 5%, capped at 100% when raising |
-| Mute / microphone mute | Toggle the default output / microphone mute |
-| Super+Return | Ghostty |
-| Super+B | Firefox |
-| Super+Z | Zed |
-| Super+R | Noctalia launcher |
-| MX Master thumb press | Noctalia launcher |
-| MX Master thumb swipe left / right | Previous / next workspace |
-| Super+Shift+/ | Show shortcut help |
-| Super+arrows or H/J/K/L | Focus columns and windows |
-| Super+Ctrl+arrows or H/J/K/L | Move columns and windows |
-| Super+Shift+arrows or H/J/K/L | Focus a monitor |
-| Super+Page Up / Page Down | Change workspace |
-| Super+1 through 9 | Focus a workspace |
-| Super+Ctrl+1 through 9 | Move a column to a workspace |
-| Super+Q | Close a window |
-| Super+F / Super+Shift+F | Maximize a column / fullscreen |
-| Super+V | Toggle floating |
-| Super+O | Overview |
-| Super+Shift+E | Quit Niri |
-
-The remaining navigation bindings follow Niri's packaged default config.
-Super+R replaces its forward preset-width shortcut; Super+Shift+R still cycles
-widths backward. Super+BracketLeft and Super+BracketRight change workspaces for
-the mouse gestures. Audio keys use WirePlumber's `wpctl` and work while
-locked. No screenshot, lock or playback shortcuts are configured yet.
-
 Validate the compositor file with `niri validate -c modules/home/desktop/niri/config.kdl`.
 Build both workstation toplevels before deploying. A successful build cannot
 verify physical monitor modes, GPU rendering or application launches in a live
