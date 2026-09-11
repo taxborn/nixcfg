@@ -20,6 +20,10 @@
 
     programs = {
       niri.enable = true;
+      noctalia = {
+        enable = true;
+        recommendedServices.enable = true;
+      };
       fish.loginShellInit = ''
         # XDG_VTNR leaks into SSH sessions here, so key off the tty instead.
         # niri-session opens a noninteractive login shell to import the environment.

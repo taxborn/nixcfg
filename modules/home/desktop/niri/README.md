@@ -1,6 +1,10 @@
 # Niri and Noctalia
 
 Uranium and Tungsten use Niri with Noctalia v5 from the pinned nixpkgs.
+The NixOS Noctalia module installs the shell and enables its recommended
+NetworkManager, Bluetooth, UPower and power profile services.
+Tungsten keeps TuneD with its power-profiles compatibility service; Uranium
+uses power-profiles-daemon.
 Existing applications and their Catppuccin themes remain enabled. The old
 compositor, shell, screenshot script, clipboard picker and idle services are
 removed, along with desktop GTK, Qt, icon and cursor themes.
