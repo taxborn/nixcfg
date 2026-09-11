@@ -13,6 +13,7 @@ in
 
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
+      playerctl
       # Niri starts this on demand for existing X11 applications, including Steam.
       xwayland-satellite
     ];
