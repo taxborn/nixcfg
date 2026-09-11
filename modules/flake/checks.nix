@@ -20,6 +20,19 @@
           (cd recipes && bash ${../../tests/restore-recipes.sh})
           touch $out
         '';
+    # stats.py is a persistent process behind the Quickshell dashboard, so its
+    # counter math never fails loudly: a wrong number just renders. Run its
+    # regressions where the rest of the tree is checked.
+    checks.quickshell-stats =
+      pkgs.runCommand "quickshell-stats-checks"
+        {
+          nativeBuildInputs = [ pkgs.python3 ];
+          PYTHONPATH = ../home/desktop/quickshell/shell;
+        }
+        ''
+          python3 -m unittest discover -s ${../home/desktop/quickshell} -p 'test_*.py'
+          touch $out
+        '';
     checks.architecture =
       let
         failures = import ../../tests/architecture.nix {

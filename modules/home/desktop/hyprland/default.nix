@@ -83,11 +83,10 @@ in
     xdg.configFile."hypr/hyprpaper.conf".source = ./config/hyprpaper.conf;
 
     myHome = {
-      programs = {
-        waybar.enable = true;
-        wofi.enable = true;
-      };
-      services.mako.enable = true;
+      desktop.quickshell.enable = true;
+      # Quickshell's launcher replaces Wofi on SUPER + R, but the clipboard
+      # picker in myHome.programs.cliphist still renders through Wofi.
+      programs.wofi.enable = true;
     };
   };
 }

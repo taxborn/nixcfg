@@ -1,6 +1,6 @@
 local mainMod  = "SUPER"
 local terminal = "ghostty"
-local menu     = "wofi --show drun"
+local menu     = "qs -c taxborn ipc call shell launcher"
 
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("firefox"))
@@ -46,7 +46,7 @@ end
 -- MX Master 3S thumb button, via services.logiops. logid can only synthesise
 -- KEY_* events, so the gesture button types these combos through uinput and
 -- they arrive here like any keyboard bind. Swiping it left/right walks the
--- workspaces; a plain press types SUPER + R, which the wofi bind above already
+-- workspaces; a plain press types SUPER + R, which the launcher bind above already
 -- answers. F13-F17 are unavailable as targets -- see the Q11 note below.
 hl.bind(mainMod .. " + bracketleft", hl.dsp.focus({ workspace = "-1" }))
 hl.bind(mainMod .. " + bracketright", hl.dsp.focus({ workspace = "+1" }))

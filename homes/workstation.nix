@@ -106,9 +106,9 @@ in
       };
     };
 
-    # Also what gives the Waybar tray its icons: nm-applet publishes bare icon
-    # names with an empty IconThemePath, so they only resolve against a session
-    # icon theme. See modules/home/programs/waybar.nix.
+    # Also what gives the Quickshell tray its icons: nm-applet publishes bare
+    # icon names with an empty IconThemePath, so they only resolve against a
+    # session icon theme. See modules/home/desktop/quickshell/default.nix.
     gtk = {
       enable = true;
       theme = gtkTheme;
