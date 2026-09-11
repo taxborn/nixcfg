@@ -30,4 +30,10 @@ hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 1.39, bezier = "a
 hl.animation({ leaf = "workspaces", enabled = true, speed = 4, bezier = "workspaceBounce", style = "slide" })
 hl.animation({ leaf = "workspacesIn", enabled = true, speed = 4, bezier = "workspaceBounce", style = "slide" })
 hl.animation({ leaf = "workspacesOut", enabled = true, speed = 4, bezier = "workspaceBounce", style = "slide" })
+-- specialWorkspace inherits the sideways slide from workspaces, so the terminal
+-- and Discord scratchpads need their own leaves to drop in from the top.
+-- Hyprland reads the direction word as an edge, not as a heading: "top" enters
+-- from above, and leaving the same way it came in is "bottom".
+hl.animation({ leaf = "specialWorkspaceIn", enabled = true, speed = 4, bezier = "workspaceBounce", style = "slidevert top" })
+hl.animation({ leaf = "specialWorkspaceOut", enabled = true, speed = 4, bezier = "workspaceBounce", style = "slidevert bottom" })
 hl.animation({ leaf = "zoomFactor", enabled = true, speed = 7, bezier = "quick" })
