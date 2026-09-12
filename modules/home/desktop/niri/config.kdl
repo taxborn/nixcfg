@@ -61,6 +61,14 @@ binds {
     XF86AudioNext allow-when-locked=true repeat=false { spawn "playerctl" "next"; }
     XF86AudioPrev allow-when-locked=true repeat=false { spawn "playerctl" "previous"; }
 
+    // Noctalia owns the backlight and draws the OSD, so these go through it
+    // rather than brightnessctl. External monitors stay dark until DDC is
+    // wired up: Noctalia needs ddcutil plus hardware.i2c, neither present.
+    XF86MonBrightnessUp allow-when-locked=true { spawn "noctalia" "msg" "brightness-up"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "noctalia" "msg" "brightness-down"; }
+    XF86KbdBrightnessUp allow-when-locked=true { spawn "noctalia" "msg" "keyboard-backlight-up"; }
+    XF86KbdBrightnessDown allow-when-locked=true { spawn "noctalia" "msg" "keyboard-backlight-down"; }
+
     // xkb maps keycode 191 (F13) to the XF86Tools keysym, and niri matches on
     // keysyms. F14 through F18 are XF86Launch5 through XF86Launch9 the
     // same way. F19 is the first that keeps its own name.
