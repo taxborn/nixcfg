@@ -219,11 +219,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789071706,
-        "narHash": "sha256-S+oyh2YSP9V5bSjWbbK0N7GxdxxMwgBfUOtUdVcAWc4=",
+        "lastModified": 1789150619,
+        "narHash": "sha256-Vsgv5atXkGWOOdLOL8oQLnZSGt1h140synPfFdwbyjU=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "150f9ce4ddd41544ea42eb9d6043a75bd615fa24",
+        "rev": "e4345d5ae8aa1def34378d2a60ac5e6e4c8fd7c1",
         "type": "github"
       },
       "original": {
@@ -420,11 +420,11 @@
     "tranquil-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1788632216,
-        "narHash": "sha256-ikx62Zblmhd8iGbh388sZG0M0zTtsYdo3r36gucLzGQ=",
+        "lastModified": 1789156477,
+        "narHash": "sha256-dy5s9W7El9ygx8IFLbNessUjiq7b3IpFKjLeKfN740w=",
         "ref": "main",
-        "rev": "09ba5e4521ee2649f113da281ad150c08e48f9dd",
-        "revCount": 546,
+        "rev": "04689cbe251ecc3504667c988c8275c1fbeca646",
+        "revCount": 548,
         "type": "git",
         "url": "https://tangled.org/did:plc:jj6ajj6duxnlthwtnob4qyuv"
       },
