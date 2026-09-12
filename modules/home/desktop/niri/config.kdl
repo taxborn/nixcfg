@@ -61,6 +61,15 @@ binds {
     XF86AudioNext allow-when-locked=true repeat=false { spawn "playerctl" "next"; }
     XF86AudioPrev allow-when-locked=true repeat=false { spawn "playerctl" "previous"; }
 
+    // xkb maps keycode 191 (F13) to the XF86Tools keysym, and niri matches on
+    // keysyms. F14 through F18 are XF86Launch5 through XF86Launch9 the
+    // same way. F19 is the first that keeps its own name.
+    // Noctalia captures natively, so this needs no grim or slurp.
+    XF86Tools repeat=false { spawn "noctalia" "msg" "screenshot-region"; }
+    Ctrl+XF86Tools repeat=false { spawn "noctalia" "msg" "screenshot-fullscreen"; }
+    // Noctalia has no per-window capture, so this one stays on niri.
+    Alt+XF86Tools repeat=false { screenshot-window; }
+
     Mod+Return hotkey-overlay-title="Open Ghostty" { spawn "ghostty"; }
     Mod+B hotkey-overlay-title="Open Firefox" { spawn "firefox"; }
     Mod+Z hotkey-overlay-title="Open Zed" { spawn "zeditor"; }
