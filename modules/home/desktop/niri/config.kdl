@@ -67,8 +67,6 @@ binds {
     // Noctalia captures natively, so this needs no grim or slurp.
     XF86Tools repeat=false { spawn "noctalia" "msg" "screenshot-region"; }
     Ctrl+XF86Tools repeat=false { spawn "noctalia" "msg" "screenshot-fullscreen"; }
-    // Noctalia has no per-window capture, so this one stays on niri.
-    Alt+XF86Tools repeat=false { screenshot-window; }
 
     Mod+Return hotkey-overlay-title="Open Ghostty" { spawn "ghostty"; }
     Mod+B hotkey-overlay-title="Open Firefox" { spawn "firefox"; }
