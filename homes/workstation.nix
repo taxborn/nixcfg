@@ -13,6 +13,7 @@
     dconf = {
       enable = true;
     };
+
     programs = {
       claude-code.enable = true;
       firefox = {
@@ -34,13 +35,14 @@
     home.packages = with pkgs; [
       bitwarden-desktop
       bitwarden-cli
+      feh
+      librepods
       nautilus
-      papers
       opencode-desktop
+      papers
       spotify
       vesktop
       vlc
-      feh
     ];
 
     xdg.desktopEntries.lexidraw = {
