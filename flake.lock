@@ -30,11 +30,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789417939,
-        "narHash": "sha256-s6BZ+qNhS2j6xp7aP7nugPwFE3XPF1udtpRgsyN6rbs=",
+        "lastModified": 1789440093,
+        "narHash": "sha256-o9oLFC3Sj8GN9dPi+OSqeEcduF+H+SJ3IuzBbJZSdSs=",
         "ref": "refs/heads/main",
-        "rev": "306623ab139625e94a4ba3dc6e986b105022e825",
-        "revCount": 18,
+        "rev": "a5fea23adfb3cca3b6c859e434c7fdc9829cb566",
+        "revCount": 25,
         "type": "git",
         "url": "https://code.biscuits.at/braxton/braxton.is.git"
       },
@@ -219,11 +219,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789386765,
-        "narHash": "sha256-4hyLFBhzQC7+qPMELWc7J/sbdA6ckXZxXU9CYRsGhsc=",
+        "lastModified": 1789482455,
+        "narHash": "sha256-pD3qVlQ4mUCFoTWrYtxecpSitQMsgJvJIN0FUIDZoEU=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "87c391f49a34660de6010f35bb50fb1bf811be9f",
+        "rev": "efa3ccb4c3cc90d832eab232976379058fa75aa3",
         "type": "github"
       },
       "original": {

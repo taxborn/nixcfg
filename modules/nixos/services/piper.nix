@@ -46,12 +46,9 @@ in
         SERVER_PORT = networkMap.piper.port;
         SERVER_ROOT_URL = "https://${networkMap.piper.domain}";
 
-        # Piper's upstream dotenv template turns all providers on. Apple Music
-        # needs an additional Apple developer signing key, so keep it opt-in;
-        # Spotify and Last.fm are configured through piper.age.
-        ENABLE_SPOTIFY = "true";
-        ENABLE_LASTFM = "true";
-        ENABLE_APPLEMUSIC = "false";
+        ENABLE_SPOTIFY = true;
+        ENABLE_LASTFM = false;
+        ENABLE_APPLEMUSIC = false;
       };
     };
   };
