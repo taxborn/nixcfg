@@ -16,6 +16,7 @@
 
     programs = {
       claude-code.enable = true;
+      codex.enable = true;
       firefox = {
         enable = true;
         configPath = "${config.xdg.configHome}/mozilla/firefox";
