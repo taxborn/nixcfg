@@ -11,6 +11,9 @@
   networking.hostName = "helium";
   system.stateVersion = "25.11";
 
+  networking.firewall.allowedTCPPorts = [ 25565 ];
+  networking.firewall.allowedUDPPorts = [ 25565 ];
+
   myNixOS = {
     profiles.server.enable = true;
     programs.systemd-boot.enable = true;
