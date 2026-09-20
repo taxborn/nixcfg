@@ -22,6 +22,7 @@
         gnumake
         jq
         just
+        forgejo-cli
         ncdu
         nodejs
         p7zip
