@@ -30,7 +30,6 @@
         cli.enable = true;
       };
       obs-studio.enable = true;
-      t3code.enable = true;
     };
 
     home.packages = with pkgs; [
@@ -39,7 +38,6 @@
       feh
       librepods
       nautilus
-      opencode-desktop
       papers
       spotify
       vesktop
