@@ -14,9 +14,13 @@
   myNixOS = {
     profiles.server.enable = true;
     services = {
-      backups.client.enable = true;
+      backups.client = {
+        enable = true;
+        notify.enable = true;
+      };
       forgejo.enable = true;
       glance.enable = true;
+      ntfy.enable = true;
       piper.enable = true;
       tranquil-pds.enable = true;
       vaultwarden.enable = true;

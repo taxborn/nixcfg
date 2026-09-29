@@ -14,7 +14,10 @@
   myNixOS = {
     profiles.server.enable = true;
     services = {
-      backups.client.enable = true;
+      backups.client = {
+        enable = true;
+        notify.enable = true;
+      };
       braxton-is.enable = true;
       forgejo-runner.enable = true;
     };

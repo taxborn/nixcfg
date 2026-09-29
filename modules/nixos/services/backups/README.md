@@ -79,6 +79,19 @@ than filling Helium's root filesystem with archives nobody would notice.
 > here can append to them; they are read-only history until the rebuild settles
 > and they can be deleted.
 
+## notifications
+
+`client.notify.enable` sends an [ntfy](../ntfy.nix) message to
+`ntfy.biscuits.at` after each successful run. It is success only. A failed or
+wedged run sends nothing, so a host that stops reporting is the signal, and the
+absence is something a person has to notice. borgmatic runs once per
+repository, so each host sends one message per copy, labelled `rsync` or
+`helium`. Every host uses one write-only token from `secrets/ntfy/token.age`,
+so this needs the [ntfy secrets](../../../../secrets/README.md) to exist
+before the host rebuilds. Argon's ntfy state under `/var/lib/private/ntfy-sh`
+is excluded, since users and tokens come from the secret and the cache is
+disposable.
+
 ## provisioning a host
 
 The secrets have to exist before the host rebuilds, or activation fails on a

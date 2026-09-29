@@ -36,6 +36,19 @@ in
       }
     '';
 
+    # No `encode`: a subscription is a long-lived stream (SSE, JSON lines or
+    # WebSocket), and compressing one buffers it until the compressor has
+    # enough to flush, delaying the notification it exists to deliver.
+    # Cloudflare cuts a connection idle for 100 seconds, which ntfy's 45
+    # second keepalive stays well inside.
+    ${networkMap.ntfy.domain}.extraConfig = ''
+      import cloudflare-mtls
+
+      reverse_proxy 127.0.0.1:${toString networkMap.ntfy.port} {
+        import client-ip
+      }
+    '';
+
     # Spotify and Last.fm hand their OAuth callbacks back to a public name,
     # which is the only reason a loopback-only listener needs a vhost at all.
     ${networkMap.piper.domain}.extraConfig = ''

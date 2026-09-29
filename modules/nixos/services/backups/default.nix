@@ -8,6 +8,7 @@
 let
   cfg = config.myNixOS.services.backups;
   hostname = config.networking.hostName;
+  networkMap = config.mySnippets.biscuits-at.networkMap;
 
   # Helium keeps the second copy of every host's archives on its external drive.
   # Both halves of that arrangement read from here — the paths `borg serve` is
@@ -219,6 +220,20 @@ in
         '';
       };
 
+      notify = {
+        enable = lib.mkEnableOption "an ntfy message after each successful backup";
+
+        topic = lib.mkOption {
+          type = lib.types.str;
+          default = "backups";
+          description = ''
+            Topic the messages go to. The server's access rules in
+            `secrets/ntfy.age` name this topic, so changing it here without
+            changing them there gets every publish rejected with a 403.
+          '';
+        };
+      };
+
       repositories = lib.mkOption {
         type = lib.types.attrsOf repoOpts;
         default = { };
@@ -310,6 +325,15 @@ in
           file = "${self}/secrets/borg/${hostname}/ssh_key.age";
           mode = "0400";
         };
+      }
+      // lib.optionalAttrs cfg.client.notify.enable {
+        # One write-only token for every host rather than one each. It can
+        # publish to a single topic and read nothing, so a host leaking it
+        # allows fake "backup ok" messages and no more.
+        ntfyToken = {
+          file = "${self}/secrets/ntfy/token.age";
+          mode = "0400";
+        };
       };
 
       services.borgmatic = {
@@ -357,6 +381,32 @@ in
           }
           // lib.optionalAttrs (repo.remotePath != null) {
             remote_path = repo.remotePath;
+          }
+          // lib.optionalAttrs cfg.client.notify.enable {
+            # Success only, on purpose. borgmatic's default is to ping on
+            # failure, but a failure message needs the run to get as far as
+            # sending one, and the failures that matter here (a wedged borg, a
+            # host that is down) never do. A message that stops arriving is
+            # the signal, so the thing to send is the one that only a working
+            # backup can.
+            #
+            # borgmatic runs once per repository, so every host sends one
+            # message per copy. The label in the title is what tells the
+            # rsync.net one from Helium's.
+            ntfy = {
+              server = "https://${networkMap.ntfy.domain}";
+              inherit (cfg.client.notify) topic;
+              # An `access_token` rather than a username and password, so the
+              # credential is scoped to the one write-only user.
+              access_token = "{credential file ${config.age.secrets.ntfyToken.path}}";
+              states = [ "finish" ];
+              finish = {
+                title = "${hostname}: backup ok (${repo.label})";
+                message = "borgmatic finished a run against ${repo.label}.";
+                priority = "min";
+                tags = "white_check_mark";
+              };
+            };
           }
           // lib.optionalAttrs cfg.client.postgresqlDumpAll {
             # `username` with no `password` and no `pg_dump_command` is load

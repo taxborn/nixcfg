@@ -20,6 +20,8 @@ check their recipient rules before activation.
 | `piper.age` | argon | ATProto client key, allowed DIDs, Spotify + Last.fm creds |
 | `tranquil-pds.age` | argon | `JWT_SECRET`, `DPOP_SECRET`, `MASTER_KEY`, SMTP login |
 | `vaultwarden.age` | argon | environment file |
+| `ntfy.age` | argon | ntfy users, ACLs and tokens as an environment file |
+| `ntfy/token.age` | all hosts | write-only ntfy publisher token, read by every backup client |
 | `paperless.age` | helium | admin password and SMTP password |
 
 `MASTER_KEY` in `tranquil-pds.age` is the one to be most careful with. Every PDS
@@ -65,6 +67,24 @@ Generate the first value with `goat key generate -t P-256`. The key ID must be
 persistent and unique; a Unix timestamp works. `ALLOWED_DIDS` is a
 space-separated allowlist and must include your DID, otherwise anyone with an
 ATProto account could sign in.
+
+`ntfy.age` and `ntfy/token.age` share one token. The server provisions users
+from `ntfy.age`, and every backup client sends the same token from
+`ntfy/token.age`. Generate it with `nix run nixpkgs#ntfy-sh -- token generate`
+and create hashes with `nix run nixpkgs#ntfy-sh -- user hash`. Use single
+quotes, because bcrypt hashes contain `$`:
+
+```dotenv
+NTFY_AUTH_USERS='taxborn:<bcrypt hash>:admin,backups:<bcrypt hash>:user'
+NTFY_AUTH_ACCESS='backups:backups:write-only'
+NTFY_AUTH_TOKENS='backups:tk_<29 chars>:borgmatic'
+```
+
+`ntfy/token.age` holds only the `tk_...` string. The `backups` user is
+write-only on the `backups` topic, so a leaked token can send fake success
+messages and read nothing. `taxborn` is the login for the web app and phone.
+Rotating the token means editing both files, then rebuilding Argon before the
+other hosts, or their next run is rejected.
 
 `ssh_key.pub` and `signing-key.pub` sit unencrypted beside their `.age`
 counterparts on purpose. Public halves are not secret, and Helium's

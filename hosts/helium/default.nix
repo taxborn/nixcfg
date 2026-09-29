@@ -21,7 +21,10 @@
       paperless.enable = true;
 
       backups = {
-        client.enable = true;
+        client = {
+          enable = true;
+          notify.enable = true;
+        };
         server = {
           enable = true;
           authorizedKeys = {

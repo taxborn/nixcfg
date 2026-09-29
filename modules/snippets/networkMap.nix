@@ -85,6 +85,13 @@ in
         port = 3003;
       };
 
+      # Push notifications. 3006 is skipped because braxton-is reserves it, see
+      # modules/nixos/services/braxton-is.nix.
+      ntfy = {
+        domain = "ntfy.biscuits.at";
+        port = 3007;
+      };
+
       piper = {
         domain = "piper.biscuits.at";
         port = 3005;

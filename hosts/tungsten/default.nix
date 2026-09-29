@@ -16,6 +16,7 @@
     programs.lanzaboote.enable = true;
     services.backups.client = {
       enable = true;
+      notify.enable = true;
       desktopExcludes = true;
     };
   };

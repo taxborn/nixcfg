@@ -47,6 +47,15 @@ in
   "piper.age".publicKeys = hostKey "argon";
   "vaultwarden.age".publicKeys = hostKey "argon";
 
+  # The ntfy server's users, ACLs and tokens as one environment file. It holds
+  # the publisher token as well, so a token rotated in `ntfy/token.age` has to
+  # be rotated here too or every host's publish is rejected.
+  "ntfy.age".publicKeys = hostKey "argon";
+
+  # The write-only publisher token, on its own so that every backup client can
+  # read it without any of them being able to read the server's user database.
+  "ntfy/token.age".publicKeys = keys;
+
   # Helium's, not Argon's — Paperless is the one service off the OVH box.
   # PAPERLESS_ADMIN_PASSWORD and PAPERLESS_EMAIL_HOST_PASSWORD, as one
   # environment file. The admin password is what creates the superuser on first
