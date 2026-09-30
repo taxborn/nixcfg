@@ -32,6 +32,13 @@
           color.ui = true;
           github.user = "taxborn";
 
+          # Cloudflare rejects LFS uploads over 100 MB. Forgejo hands back
+          # upload hrefs on its public name whatever `lfs.url` says, so they
+          # have to be rewritten onto the tailnet vhost.
+          lfs.transfer.enablehrefrewrite = true;
+          url."https://${config.mySnippets.biscuits-at.networkMap.forgejo.sshDomain}/".insteadOf =
+            "https://${config.mySnippets.biscuits-at.networkMap.forgejo.domain}/";
+
           push.autoSetupRemote = true;
           init.defaultBranch = "main";
 

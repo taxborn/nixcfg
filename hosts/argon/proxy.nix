@@ -9,6 +9,7 @@ in
     directVHosts = [
       networkMap.pds.domain
       "*.${networkMap.pds.domain}"
+      networkMap.forgejo.sshDomain
     ];
   };
 
@@ -131,6 +132,27 @@ in
       reverse_proxy localhost:${toString networkMap.forgejo.port} {
         import client-ip
       }
+    '';
+
+    # The same Forgejo over the tailnet, so LFS uploads skip Cloudflare's
+    # 100 MB body cap. The certificate comes from tailscaled, because Let's
+    # Encrypt cannot validate a `ts.net` name.
+    #
+    # Port 443 is open to everyone here (the PDS), and this vhost has no mTLS,
+    # so the matcher is all that keeps the forge off the public address.
+    ${networkMap.forgejo.sshDomain}.extraConfig = ''
+      tls {
+        get_certificate tailscale
+      }
+
+      @offTailnet not remote_ip 100.64.0.0/10 fd7a:115c:a1e0::/48
+      abort @offTailnet
+
+      request_body {
+        max_size 2GB
+      }
+
+      reverse_proxy localhost:${toString networkMap.forgejo.port}
     '';
   };
 }
