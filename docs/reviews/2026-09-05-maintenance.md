@@ -31,7 +31,8 @@ no longer apply. See the [new session notes](../../modules/home/desktop/niri/REA
 
 ## retained settings
 
-Retained settings that are easy to misread:
+Retained settings that are easy to misread. The Mako and Hypridle bullet below
+is superseded by the desktop follow-up above.
 
 - The OVH EF02 partition is used. Disko derives
   `boot.loader.grub.devices = [ "/dev/sda" ]` from it. NixOS installs BIOS

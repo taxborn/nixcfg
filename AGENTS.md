@@ -8,8 +8,8 @@ tree and this file both assume.
 ## what this repository is
 
 A flake-parts NixOS configuration for a five-host homelab. It builds five
-`nixosConfigurations`, three of which are internet-facing servers running real
-services with real state: a git forge, a password manager, a document archive,
+`nixosConfigurations`, three of which are servers running real services with
+real state: a git forge, a password manager, a document archive,
 an ATProto PDS. A bad change here is not a failing test. It is a service that
 stops answering, or an archive that silently stops containing a database.
 
@@ -28,7 +28,8 @@ You can evaluate and build. You cannot deploy, and you cannot read secrets.
 - `nix build .#braxton-is`, `.#tealfm-piper`, `.#tranquil-pds` build the
   packages defined in `modules/flake/packages.nix`.
 - `nix flake check` evaluates every host, runs the pre-commit hook set over
-  the whole tree, and runs the architecture and mocked restore regressions.
+  the whole tree, and runs the architecture, Forgejo runner socket and mocked
+  restore regressions.
 - `just check` runs the hook set alone (`nixfmt`, `statix`, `deadnix`,
   `shellcheck`), which is faster and catches almost everything you will break.
 
@@ -132,8 +133,9 @@ before changing these settings:
 
 Read the [2026-09-05 maintenance review](./docs/reviews/2026-09-05-maintenance.md)
 before restoring removed settings or changing a retained one. It records the
-OVH GRUB targets, Mako and Hypridle units, opt-in bees deduplication, and the
-retired runner and monitoring decisions.
+OVH GRUB targets, opt-in bees deduplication, and the retired runner and
+monitoring decisions. Its Mako and Hypridle entries describe the desktop that
+Niri replaced.
 
 ## file map
 

@@ -90,8 +90,8 @@ of the same fact cannot drift:
 - `mySnippets.ssh.knownHosts` pins host keys, assembled from `../keys` and the
   tailnet map.
 
-The old `alwaysOn` and `physicalDisks` options had no readers after monitoring
-went in `f4012fc`, so they were removed. If monitoring returns, preserve the
+The old `alwaysOn` and `physicalDisks` options had no readers after `f4012fc`
+removed monitoring, so they were removed too. If monitoring returns, preserve the
 reasoning before choosing its data model. Only Argon, Carbon and Helium should
 alert on absence. An offline workstation is normal. SMART monitoring belongs
 on Helium, Tungsten and Uranium, since the OVH guests expose virtual disks.
@@ -124,6 +124,8 @@ for local repository omissions and workstation rehearsals.
   and borgmatic, provisioning a host into the backup set, and the three tiers of
   restore testing. It is the highest-consequence module here. Read it in full
   before editing.
+- [`nixos/services/forgejo-runner/`](./nixos/services/forgejo-runner/README.md)
+  covers the rootless Podman runner on Carbon, its registration and limits.
 
 ## retired runner
 
@@ -131,7 +133,7 @@ The replacement [Forgejo runner](./nixos/services/forgejo-runner/README.md)
 runs on Carbon with rootless Podman and v16 registration. It does not share a
 Nix store between jobs. The notes below describe the earlier setup.
 
-The Forgejo runner module went in `f4012fc`. The old `just runner-gc` recipe
+`f4012fc` deleted the earlier Forgejo runner module. Its old `just runner-gc` recipe
 queried its missing `storeVolume` and `nixImage` options, so it could not run.
 Do not restore the recipe without restoring a runner configuration.
 

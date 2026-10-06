@@ -21,8 +21,8 @@ in which a new host joins them.
 | [Tungsten](#tungsten) | laptop | `profiles.workstation` | `100.64.0.1` | lanzaboote |
 | [Uranium](#uranium) | desktop | `profiles.workstation` | `100.64.0.0` | lanzaboote |
 
-Every host backs up to two borg repositories, and Helium is the second of those
-two. See the [backups README](../modules/nixos/services/backups/README.md).
+Every host backs up to rsync.net and to Helium. Uranium adds a third repository
+on a local SSD. See the [backups README](../modules/nixos/services/backups/README.md).
 
 ## [Uranium](./uranium)
 
@@ -59,14 +59,14 @@ in Setup.
 An Intel OVH VPS, `vps-2020-elite-8-16-320` model.
 16 GB of RAM, 8 vCPUs, 320 GB of storage.
 
-Carries most of `biscuits.at`. Caddy is `cloudflareOnly`, with the PDS names as
-the one `directVHosts` exception.
+Carries most of `biscuits.at`. Caddy is `cloudflareOnly`, with the PDS names and
+Forgejo's tailnet name as the `directVHosts` exceptions.
 
 ### Services hosted
 
 | service | vHost | port | notes |
 | --- | --- | --- | --- |
-| [Forgejo](../modules/nixos/services/forgejo/default.nix) | `code.biscuits.at` | 3002 | SQLite; git over SSH on 2222, tailnet-only |
+| [Forgejo](../modules/nixos/services/forgejo/default.nix) | `code.biscuits.at` | 3002 | SQLite; git over SSH on 2222, tailnet-only; also served at `argon.<tailnet>` so LFS uploads skip Cloudflare's 100 MB cap |
 | [Glance](../modules/nixos/services/glance.nix) | `www.biscuits.at` | 3000 | dashboard; apex redirects here |
 | [ntfy](../modules/nixos/services/ntfy.nix) | `ntfy.biscuits.at` | 3007 | push notifications; backup success messages; deny-all, declarative users |
 | [Piper](../modules/nixos/services/piper.nix) | `piper.biscuits.at` | 3005 | teal.fm music tracker |

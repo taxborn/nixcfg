@@ -106,6 +106,8 @@ Caddy:
 `directVHosts` is the way around that, and it is expensive: naming one vhost
 reopens 80/443 to everyone for the whole host, because iptables cannot tell
 which name a connection is about to ask for. The PDS is the case it exists for.
+Argon also lists Forgejo's tailnet name, whose vhost has no mTLS and instead
+aborts any peer outside the tailnet ranges.
 
 The `client-ip` snippet is the other half. Caddy appends to `X-Forwarded-For`
 rather than replacing it and never sends `X-Real-IP`, so without it every

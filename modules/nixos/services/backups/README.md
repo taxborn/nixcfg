@@ -2,7 +2,7 @@
 
 borgmatic client and borg repository server, with agenix-managed secrets. Every
 host writes each archive to two places: rsync.net off-site, and Helium's external
-drive over the tailnet.
+drive over the tailnet. Uranium also writes to a local SSD.
 
 ## architecture
 
@@ -493,6 +493,8 @@ restore of its `/var/lib` directory to confirm permissions survive the trip.
 | `extraExcludes` | list of str | `[ ]` | exclude patterns on top of the defaults |
 | `desktopExcludes` | bool | `false` | also exclude a desktop `$HOME`'s caches and re-downloadable data |
 | `repositories` | attrsOf { path, label, remotePath? } | rsync.net + Helium | targets to back up to |
+| `notify.enable` | bool | `false` | send an ntfy message after each successful run |
+| `notify.topic` | str | `"backups"` | topic the messages go to; must match the ACL in `secrets/ntfy.age` |
 | `retention.keepDaily` | int | `7` | daily archives to keep |
 | `retention.keepWeekly` | int | `4` | weekly archives to keep |
 | `retention.keepMonthly` | int | `6` | monthly archives to keep |
