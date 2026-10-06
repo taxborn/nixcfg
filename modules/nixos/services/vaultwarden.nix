@@ -12,6 +12,15 @@ in
   options.myNixOS.services.vaultwarden.enable = lib.mkEnableOption "vaultwarden password manager";
 
   config = lib.mkIf cfg.enable {
+    # The vault is a SQLite file under /var/lib/vaultwarden, so being inside
+    # the backed-up `/var/lib` is not enough: archiving the live file, or its
+    # `-wal` and `-shm` companions, at different moments takes a torn pair. The
+    # dump goes through SQLite and sees one snapshot. The path is the
+    # nixpkgs module's data folder plus Vaultwarden's default database name,
+    # and `backupDir` stays null because borgmatic does this job instead.
+    myNixOS.services.backups.client.sqliteDatabases.vaultwarden =
+      lib.mkIf config.myNixOS.services.backups.client.enable "/var/lib/vaultwarden/db.sqlite3";
+
     age.secrets.vaultwarden.file = "${self}/secrets/vaultwarden.age";
 
     services.vaultwarden = {
