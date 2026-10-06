@@ -70,6 +70,11 @@
     services.speechd.enable = false;
     programs.nano.enable = false;
 
+    # NixOS ships perl, rsync and strace to every machine by default. Nothing
+    # here uses them directly, and anything that needs one pulls it in as a
+    # dependency. Add `strace` to the system packages when debugging a hang.
+    environment.defaultPackages = [ ];
+
     environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
     fonts.packages = with pkgs; [
