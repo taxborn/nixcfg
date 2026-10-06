@@ -25,7 +25,8 @@ Check each option with `nix eval` before adopting, and build `uranium` and
   needs a hibernation path that `noresume` and zram swap rule out.
 - kernel: `kptr_restrict`, `fs.protected_fifos` and `fs.protected_regular` at 2
   on all hosts.
-- `workstation`: `enableStrictShellChecks`, journald caps, `udisks2`, speechd
+- `base`: `enableStrictShellChecks` on every host, all five build clean.
+- `workstation`: journald caps, `udisks2`, speechd
   and nano off.
 
 ## atuin sync
@@ -41,8 +42,6 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 
 ## desktop and boot
 
-- [ ] Strict shell checks on servers too. Workstations pass, the backups
-      scripts are the likely failures.
 - [ ] initrd zstd `-19 -T0` if the ESP gets tight.
 - [ ] Empty `environment.defaultPackages` on workstations. It drops `strace`
       and `perl` too, so decide that deliberately.

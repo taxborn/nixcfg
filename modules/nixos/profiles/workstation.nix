@@ -35,10 +35,6 @@
     # long to start or stop. Servers keep the default, where a database
     # flushing on stop can legitimately take that long.
     systemd = {
-      # Runs shellcheck over every script NixOS generates for a unit, so a
-      # quoting mistake in an inline script fails the build rather than a boot.
-      enableStrictShellChecks = true;
-
       settings.Manager = {
         DefaultTimeoutStartSec = "15s";
         DefaultTimeoutStopSec = "15s";
