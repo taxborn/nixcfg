@@ -39,7 +39,20 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 
 ## open
 
-Nothing. Before any `just update` on a host running Postgres, compare
+- backups: restrict the borg keys. Helium accepts every host's key with no
+  `--append-only` or `--restrict-to-path`, and rsync.net holds bare keys, so
+  one compromised host can prune every copy, offsite included. Restrict the
+  rsync.net keys by hand and record here that it is done, since nothing in the
+  repo can confirm it. See the
+  [backups README](./modules/nixos/services/backups/README.md).
+- caddy: `secrets/tailscale/caddy.age` holds a Cloudflare `Zone:DNS:Edit`
+  token encrypted to all five hosts, but only argon and helium use DNS-01.
+  Narrow the recipients in `secrets/secrets.nix` and scope the token down.
+  Also check that `tailscale/auth.age` is a tagged or single-use key, and
+  review the tailnet ACLs for carbon, whose CI runner sits on a flat
+  `trustedInterfaces = tailscale0` network.
+
+Before any `just update` on a host running Postgres, compare
 `datcollversion` with `pg_database_collation_actual_version(oid)` in
 `pg_database`. A mismatch needs `REINDEX DATABASE` then `ALTER DATABASE ...
 REFRESH COLLATION VERSION` first. Argon needed it, Helium did not.
