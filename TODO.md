@@ -17,6 +17,11 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 - workstation home: `atuin` (local only), `lazygit`, `nix-your-shell`,
   `nix-output-monitor`, `dix`, `pwvucontrol`. `bat`, `direnv`, `eza` and
   `zoxide` were already there.
+- laptop: `tuned` battery detection and upower 20/5/2 were already the
+  defaults. Critical action is now `PowerOff`, since the `HybridSleep` default
+  needs a hibernation path that `noresume` and zram swap rule out.
+- kernel: `kptr_restrict`, `fs.protected_fifos` and `fs.protected_regular` at 2
+  on all hosts.
 - `workstation`: `enableStrictShellChecks`, journald caps, `udisks2`, speechd
   and nano off.
 
@@ -24,12 +29,10 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 
 - DNS needs nothing. The proxied `*.biscuits.at` CNAME already answers for
   `atuin.biscuits.at`, as it does for `vw` and `ntfy`.
-- [ ] Set `myNixOS.services.atuin.openRegistration = true` on argon, deploy,
-      run `atuin register` on a workstation, set it back to false, deploy again.
-- [ ] Confirm `atuin sync` works, then `atuin key` to carry the key to the
-      other workstation. Losing the key means the synced history is
-      unreadable.
-- [ ] Add Atuin to the Glance links if wanted.
+- Collation: a glibc bump makes Postgres refuse `CREATE DATABASE` from a
+  flagged `template1`. Argon is fixed. Helium will hit it on its next update,
+  run `REINDEX DATABASE` then `ALTER DATABASE ... REFRESH COLLATION VERSION`
+  for every database, with paperless stopped.
 - [ ] Restore test: confirm the `atuin` database is in the next archive from
       argon (`pg_dumpall` should carry it).
 
@@ -43,17 +46,6 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 - [ ] Empty `environment.defaultPackages` on workstations. It drops `strace`
       and `perl` too, so decide that deliberately.
 
-## laptop (`tungsten`)
-
-- [ ] `tuned.ppdSettings.main.battery_detection = true`.
-- [ ] `upower` low, critical and action percentages. Do not add a Hibernate
-      critical action without dropping `noresume`.
-
-## kernel
-
-- [ ] `fs.protected_fifos` and `fs.protected_regular` at 2, `kernel.kptr_restrict`
-      at 2. Live values are 1, 1 and 1. Stricter, with some risk to tools that
-      write into other users' files in `/tmp`.
 - Never add BPF JIT hardening on `uranium`. `scx_lavd` needs the JIT.
 
 ## nix settings

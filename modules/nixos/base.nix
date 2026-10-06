@@ -67,11 +67,21 @@
       };
     };
 
-    # Nothing here replaces a running kernel with kexec, and an attacker with
-    # root could use it to load one that skips the module and lockdown checks.
-    # One-way until the next boot. nixos-anywhere kexecs into an installer on a
-    # target that has no config of ours yet, so provisioning is unaffected.
-    boot.kernel.sysctl."kernel.kexec_load_disabled" = true;
+    boot.kernel.sysctl = {
+      # Nothing here replaces a running kernel with kexec, and an attacker with
+      # root could use it to load one that skips the module and lockdown checks.
+      # One-way until the next boot. nixos-anywhere kexecs into an installer on
+      # a target that has no config of ours yet, so provisioning is unaffected.
+      "kernel.kexec_load_disabled" = true;
+
+      # Stricter than the NixOS defaults of 1. Hides kernel pointers from root
+      # as well, and stops O_CREAT opens of other users' FIFOs and regular
+      # files in sticky world-writable directories. A tool that deliberately
+      # writes into another user's file in /tmp is the thing that breaks.
+      "kernel.kptr_restrict" = 2;
+      "fs.protected_fifos" = 2;
+      "fs.protected_regular" = 2;
+    };
 
     # nsncd is ordered `Before=nss-lookup.target nss-user-lookup.target`, and
     # both targets are restarted several times during boot as units that want

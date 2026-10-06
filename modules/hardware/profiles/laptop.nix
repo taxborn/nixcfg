@@ -15,7 +15,14 @@
         hardware.bolt.enable = true;
 
         tuned.enable = lib.mkDefault true;
-        upower.enable = true;
+        upower = {
+          enable = true;
+          # The default is HybridSleep, which writes RAM to swap before
+          # suspending. Hibernation is rejected on these machines (`noresume`,
+          # swap is zram), so a critical battery would try a resume path that
+          # cannot exist. Powering off at 2% is the honest option.
+          criticalPowerAction = "PowerOff";
+        };
       };
 
       # Intel's wifi parts ship with power_save=0 and handle runtime PM fine.
