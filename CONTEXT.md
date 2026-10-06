@@ -62,15 +62,19 @@ include `base`. Hardware profiles use the same pattern for chassis, such as
 
 ### the flake.lock revision *is* the deploy
 
-Two services are deployed by moving a flake input rather than by copying files:
+Three services are deployed by moving a flake input rather than by copying files:
 
 - `braxton-is`, where `just deploy-site` is `nix flake update braxton-is`, a
   commit, and a rebuild. Rolling the site back is rolling back a generation.
 - `tranquil-src`, where `nix flake update tranquil-src` is the PDS upgrade.
+- `tealfm-piper`, where `nix flake update tealfm-piper` is the Piper upgrade.
+  It tracks upstream's default branch, so every update takes whatever landed.
 
-The two are not symmetric, which is the part to remember. Rolling back the site
-is free. Rolling back the PDS does not undo database migrations, so take a dump
-first.
+The site is the odd one out, which is the part to remember. Rolling back the
+site is free. Rolling back the PDS does not undo database migrations, and
+Piper's SQLite schema may be upgraded on startup, so a rollback may not undo
+that either. Take a dump first for both. `borgmatic create` takes one for
+Piper and the PDS on Argon.
 
 ### comments that carry reasoning
 
