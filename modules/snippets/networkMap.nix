@@ -85,6 +85,12 @@ in
         port = 3003;
       };
 
+      # Shell history sync. 3006 is skipped for braxton-is and 3007 is ntfy.
+      atuin = {
+        domain = "atuin.biscuits.at";
+        port = 3008;
+      };
+
       # Push notifications. 3006 is skipped because braxton-is reserves it, see
       # modules/nixos/services/braxton-is.nix.
       ntfy = {

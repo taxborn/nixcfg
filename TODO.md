@@ -20,6 +20,19 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 - `workstation`: `enableStrictShellChecks`, journald caps, `udisks2`, speechd
   and nano off.
 
+## atuin sync
+
+- [ ] Add a DNS record for `atuin.biscuits.at` in Cloudflare, proxied like
+      `vw.biscuits.at`.
+- [ ] Set `myNixOS.services.atuin.openRegistration = true` on argon, deploy,
+      run `atuin register` on a workstation, set it back to false, deploy again.
+- [ ] Confirm `atuin sync` works, then `atuin key` to carry the key to the
+      other workstation. Losing the key means the synced history is
+      unreadable.
+- [ ] Add Atuin to the Glance links if wanted.
+- [ ] Restore test: confirm the `atuin` database is in the next archive from
+      argon (`pg_dumpall` should carry it).
+
 ## desktop and boot
 
 - [ ] Strict shell checks on servers too. Workstations pass, the backups

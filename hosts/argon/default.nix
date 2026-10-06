@@ -18,6 +18,7 @@
         enable = true;
         notify.enable = true;
       };
+      atuin.enable = true;
       forgejo.enable = true;
       glance.enable = true;
       ntfy.enable = true;

@@ -62,6 +62,16 @@ in
       }
     '';
 
+    ${networkMap.atuin.domain}.extraConfig = ''
+      import cloudflare-mtls
+
+      encode zstd gzip
+
+      reverse_proxy 127.0.0.1:${toString networkMap.atuin.port} {
+        import client-ip
+      }
+    '';
+
     ${networkMap.vaultwarden.domain}.extraConfig = ''
       import cloudflare-mtls
 

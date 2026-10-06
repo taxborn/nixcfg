@@ -15,12 +15,22 @@
     };
 
     programs = {
-      # Local history only. No `daemon` or sync is configured, so nothing
-      # leaves the machine until an account is logged in on purpose.
+      # Syncs to the self-hosted server on Argon. History is encrypted on this
+      # machine with a key that never leaves it, so the server stores
+      # ciphertext. `atuin register` once, then `atuin key` to carry the key to
+      # another machine. Until an account exists, `auto_sync` fails quietly
+      # and history stays local.
       atuin = {
         enable = true;
         enableFishIntegration = true;
+        settings = {
+          sync_address = "https://${config.mySnippets.biscuits-at.networkMap.atuin.domain}";
+          auto_sync = true;
+          sync_frequency = "5m";
+        };
       };
+      # Atuin owns Ctrl-R. fzf keeps Ctrl-T for files and Alt-C for directories.
+      fzf.historyWidget.command = "";
       claude-code.enable = true;
       codex.enable = true;
       firefox = {
