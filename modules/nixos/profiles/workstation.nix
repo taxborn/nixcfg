@@ -16,7 +16,28 @@
       "/home/taxborn/.config/age/yubikey-identity.txt"
     ];
 
-    boot.kernelPackages = pkgs.linuxPackages_latest;
+    # `mkDefault` so a host can fall back to an LTS kernel when a new release
+    # regresses on its hardware, without reaching for `mkForce`.
+    boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
+
+    # A hung unit on a desktop is a shutdown that sits at "a stop job is
+    # running" for the default 90 seconds. Nothing on a workstation needs that
+    # long to start or stop. Servers keep the default, where a database
+    # flushing on stop can legitimately take that long.
+    systemd = {
+      settings.Manager = {
+        DefaultTimeoutStartSec = "15s";
+        DefaultTimeoutStopSec = "15s";
+        DefaultTimeoutAbortSec = "15s";
+        DefaultDeviceTimeoutSec = "15s";
+      };
+      user.settings.Manager = {
+        DefaultTimeoutStartSec = "15s";
+        DefaultTimeoutStopSec = "15s";
+        DefaultTimeoutAbortSec = "15s";
+        DefaultDeviceTimeoutSec = "15s";
+      };
+    };
 
     programs = {
       niri.enable = true;
@@ -36,6 +57,33 @@
     ];
 
     services = {
+      # systemd-oomd (`profiles/swap.nix`) reacts to cgroup memory pressure,
+      # which can arrive after the desktop has already stalled on a nix build.
+      # earlyoom watches free memory and swap directly and acts before that. The
+      # `--avoid` list is the session and the things that cannot be restarted
+      # unnoticed. `--prefer` is what is cheap to lose. earlyoom matches the
+      # kernel `comm` name, which is truncated to 15 characters, so the patterns
+      # are anchored to that rather than the full command line. `-g` kills the
+      # whole process group, so a browser goes down with its renderers.
+      earlyoom = {
+        enable = true;
+        enableNotifications = true;
+        freeMemThreshold = 5;
+        freeMemKillThreshold = 2;
+        freeSwapThreshold = 5;
+        freeSwapKillThreshold = 2;
+        extraArgs = [
+          "-g"
+          "--avoid"
+          "'^(niri|noctalia-shell|quickshell|Xwayland|xwayland-satell.*|cryptsetup|dbus-.*|gpg-agent|ssh-agent|sshd|systemd|systemd-.*|ghostty|fish|n?vim)$'"
+          "--prefer"
+          "'^(Web Content|Isolated Web Co|firefox.*|chrom(e|ium).*|electron|java.*|.*\\.exe|nix|node|npm)$'"
+        ];
+      };
+      # earlyoom turns this on to deliver its notifications, while smartd (see
+      # `base.nix`) sets it false. The forwarder is harmless to smartd, which
+      # gains desktop notifications from it, so the workstation wins.
+      systembus-notify.enable = lib.mkForce true;
       blueman.enable = lib.mkIf config.hardware.bluetooth.enable true;
       fwupd.enable = true;
       gnome.gnome-keyring.enable = true;
