@@ -26,20 +26,20 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 - kernel: `kptr_restrict`, `fs.protected_fifos` and `fs.protected_regular` at 2
   on all hosts.
 - `workstation`: empty `environment.defaultPackages` (drops perl, rsync, strace).
+- atuin: argon's archive carries the `atuin` database. Verified by extracting
+  `borgmatic/postgresql_databases/localhost/all` and finding its `history` and
+  `users` tables.
 - `base`: `enableStrictShellChecks` on every host, all five build clean.
 - `workstation`: journald caps, `udisks2`, speechd
   and nano off.
 
-## atuin sync
+## open
 
-- DNS needs nothing. The proxied `*.biscuits.at` CNAME already answers for
-  `atuin.biscuits.at`, as it does for `vw` and `ntfy`.
-- Collation: a glibc bump makes Postgres refuse `CREATE DATABASE` from a
+- Helium collation: a glibc bump makes Postgres refuse `CREATE DATABASE` from a
   flagged `template1`. Argon is fixed. Helium will hit it on its next update,
   run `REINDEX DATABASE` then `ALTER DATABASE ... REFRESH COLLATION VERSION`
   for every database, with paperless stopped.
-- [ ] Restore test: confirm the `atuin` database is in the next archive from
-      argon (`pg_dumpall` should carry it).
+- Reboot uranium and tungsten, then check `bootctl list` for boot counting.
 
 ## notes
 
