@@ -36,6 +36,15 @@
       lanzaboote = {
         enable = true;
         configurationLimit = lib.mkDefault 10;
+
+        # New entries get three boot attempts. systemd-bless-boot marks one good
+        # once boot-complete.target is reached, and an entry that runs out of
+        # tries sorts last, so a generation that never finishes booting rolls
+        # back on its own. The catch is that a failed unit ordered before that
+        # target counts as a failed boot too, so a service that breaks on every
+        # start can quietly send a machine back to the previous generation.
+        # `bootctl list` shows the remaining tries.
+        bootCounting.initialTries = lib.mkDefault 3;
         pkiBundle = lib.mkDefault "/var/lib/sbctl";
         autoGenerateKeys.enable = lib.mkDefault true;
         autoEnrollKeys = {

@@ -17,6 +17,9 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 - workstation home: `atuin` (local only), `lazygit`, `nix-your-shell`,
   `nix-output-monitor`, `dix`, `pwvucontrol`. `bat`, `direnv`, `eza` and
   `zoxide` were already there.
+- boot: lanzaboote `bootCounting.initialTries = 3` on both workstations. The
+  boot editor was already off. After the first reboot, `bootctl list` should
+  show the new entry as good, not counting down.
 - laptop: `tuned` battery detection and upower 20/5/2 were already the
   defaults. Critical action is now `PowerOff`, since the `HybridSleep` default
   needs a hibernation path that `noresume` and zram swap rule out.
@@ -41,8 +44,6 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 - [ ] Strict shell checks on servers too. Workstations pass, the backups
       scripts are the likely failures.
 - [ ] initrd zstd `-19 -T0` if the ESP gets tight.
-- [ ] systemd-boot `bootCounting` and `editor = false`. Check lanzaboote support
-      first, `uranium` uses it.
 - [ ] Empty `environment.defaultPackages` on workstations. It drops `strace`
       and `perl` too, so decide that deliberately.
 
