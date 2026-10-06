@@ -7,6 +7,9 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 ## done
 
 - `workstation`: kernel behind `mkDefault`, 15s systemd timeouts, earlyoom.
+- nix: `keep-going`, `log-lines`, `warn-dirty`, `keep-outputs`,
+  `keep-derivations`, `accept-flake-config = false`, host-overridable
+  `min-free`/`max-free` (5G/20G on `uranium`).
 - `workstation`: `enableStrictShellChecks`, journald caps, `udisks2`, speechd
   and nano off.
 
@@ -39,11 +42,12 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 
 ## nix settings
 
-- [ ] `keep-going`, `log-lines = 30`, `warn-dirty = false`.
-- [ ] `keep-outputs` and `keep-derivations` for direnv roots.
-- [ ] `use-xdg-base-directories`, `flake-registry = ""`, `accept-flake-config = false`.
-- [ ] `auto-allocate-uids` with `cgroups`.
-- [ ] larger `min-free`/`max-free` (hers are 5G/20G) for `uranium`.
+- [ ] `use-xdg-base-directories` and `flake-registry = ""`. Skipped on purpose.
+      The first moves `~/.nix-profile` state, the second breaks short refs
+      like `templates#`. Decide if either is worth it.
+- [ ] `auto-allocate-uids` with `cgroups`. Her config only enables the
+      features without setting `auto-allocate-uids = true`, so it does nothing
+      there. NixOS also still creates `nixbld` users.
 
 ## software
 

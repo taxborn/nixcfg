@@ -35,6 +35,13 @@
     };
   };
 
+  # Large closures (games, toolchains) build here. Start collecting at 5 GiB
+  # free and stop at 20 GiB rather than stalling mid-build on a full store.
+  nix.settings = {
+    min-free = 5 * 1024 * 1024 * 1024;
+    max-free = 20 * 1024 * 1024 * 1024;
+  };
+
   boot = {
     # Make accelerated AES available when stage 1 opens cryptroot. dm-crypt
     # allocates its cipher then; loading a faster implementation after opening
