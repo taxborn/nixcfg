@@ -10,6 +10,9 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 - nix: `keep-going`, `log-lines`, `warn-dirty`, `keep-outputs`,
   `keep-derivations`, `accept-flake-config = false`, host-overridable
   `min-free`/`max-free` (5G/20G on `uranium`).
+- workstation home: `atuin` (local only), `lazygit`, `nix-your-shell`,
+  `nix-output-monitor`, `dix`, `pwvucontrol`. `bat`, `direnv`, `eza` and
+  `zoxide` were already there.
 - `workstation`: `enableStrictShellChecks`, journald caps, `udisks2`, speechd
   and nano off.
 
@@ -51,12 +54,10 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 
 ## software
 
-Check `homes/` first, some may already be there.
-
-- [ ] `nix-output-monitor`, `lix-diff` or `dix`.
-- [ ] `atuin`, `zoxide`, `eza`, `bat`, `nix-your-shell`, `lazygit`, `jj`.
-- [ ] `pwvucontrol`, `brightnessctl`.
-- [ ] `keep-sorted` pre-commit hook.
+- [ ] `jj`. Needs a name and email decided before enabling `programs.jujutsu`.
+- [ ] `keep-sorted` pre-commit hook. A no-op until package lists are annotated.
+- [ ] `brightnessctl` is deliberately absent, niri routes brightness through
+      Noctalia for DDC. Revisit only if that changes.
 
 ## evaluated and skipped for now
 

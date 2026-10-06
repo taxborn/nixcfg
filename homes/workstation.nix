@@ -15,11 +15,24 @@
     };
 
     programs = {
+      # Local history only. No `daemon` or sync is configured, so nothing
+      # leaves the machine until an account is logged in on purpose.
+      atuin = {
+        enable = true;
+        enableFishIntegration = true;
+      };
       claude-code.enable = true;
       codex.enable = true;
       firefox = {
         enable = true;
         configPath = "${config.xdg.configHome}/mozilla/firefox";
+      };
+      lazygit.enable = true;
+      # Keeps fish as the shell inside `nix develop` and `nix shell`, which
+      # otherwise drop into bash.
+      nix-your-shell = {
+        enable = true;
+        enableFishIntegration = true;
       };
       fish.shellAliases = {
         yk-restart = "gpg-connect-agent killagent /bye && gpg-connect-agent \"scd serialno\" \"learn --force\" /bye && gpg --card-status";
@@ -36,9 +49,12 @@
       bitwarden-desktop
       bitwarden-cli
       feh
+      dix # closure diff, run after a rebuild to see what changed
       librepods
       nautilus
+      nix-output-monitor
       papers
+      pwvucontrol
       spotify
       vesktop
       vlc
