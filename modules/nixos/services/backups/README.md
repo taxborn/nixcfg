@@ -78,11 +78,6 @@ absent. The drive is mounted `nofail`, and `/mnt/hdd` itself is root-owned
 `0755`. Together that means a missing drive fails the backup outright rather
 than filling Helium's root filesystem with archives nobody would notice.
 
-> The pre-rebuild archives from the old config still sit in
-> `/mnt/hdd/borg-repos/`. They use different passphrases and keys, so nothing
-> here can append to them; they are read-only history until the rebuild settles
-> and they can be deleted.
-
 ## notifications
 
 `client.notify.enable` sends an [ntfy](../ntfy.nix) message to
