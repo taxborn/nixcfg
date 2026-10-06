@@ -48,7 +48,17 @@
     # the mapping does not replace that cipher. A missing initrd module can
     # therefore leave a working root filesystem on a slower implementation.
     initrd.availableKernelModules = [ "aesni_intel" ];
-    kernelParams = [ "intel_iommu=on" ];
+    kernelParams = [
+      "intel_iommu=on"
+      # Nothing here is passed through to a VM, so devices need no translation.
+      # Identity-map them and keep the IOMMU for isolation without paying for
+      # DMA remapping on every transfer.
+      "iommu=pt"
+      # A desktop on mains power. Autosuspend is what makes the MX Master
+      # receiver, the QMK board and the YubiKey drop and re-enumerate. Costs
+      # battery, so not set on the laptop.
+      "usbcore.autosuspend=-1"
+    ];
   };
 
   myNixOS = {

@@ -7,6 +7,10 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 ## done
 
 - `workstation`: kernel behind `mkDefault`, 15s systemd timeouts, earlyoom.
+- kernel: THP `always`/`defer` on workstations, `kexec_load_disabled` on all
+  hosts, `iommu=pt` and `usbcore.autosuspend=-1` on `uranium`, boot cosmetics
+  in `graphical-boot`. `legacy_tiocsti` and `dmesg_restrict` were already at
+  the wanted values.
 - nix: `keep-going`, `log-lines`, `warn-dirty`, `keep-outputs`,
   `keep-derivations`, `accept-flake-config = false`, host-overridable
   `min-free`/`max-free` (5G/20G on `uranium`).
@@ -34,13 +38,9 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 
 ## kernel
 
-- [ ] THP via `boot.kernel.sysfs` (`enabled = always`, `defrag = defer`),
-      workstations only. It can hurt Postgres and Redis.
-- [ ] `usbcore.autosuspend=-1` on `uranium` only. Costs battery.
-- [ ] `iommu=pt` alongside `intel_iommu=on` if not doing passthrough.
-- [ ] sysctls: `dev.tty.legacy_tiocsti=0`, `kernel.kexec_load_disabled`,
-      `kernel.dmesg_restrict`, `fs.protected_*`. Some may be NixOS defaults.
-- [ ] boot cosmetics: `fbcon=nodefer`, `vt.global_cursor_default=0`, `logo.nologo`.
+- [ ] `fs.protected_fifos` and `fs.protected_regular` at 2, `kernel.kptr_restrict`
+      at 2. Live values are 1, 1 and 1. Stricter, with some risk to tools that
+      write into other users' files in `/tmp`.
 - Never add BPF JIT hardening on `uranium`. `scx_lavd` needs the JIT.
 
 ## nix settings

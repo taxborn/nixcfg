@@ -27,6 +27,12 @@
         "boot.shell_on_fail"
         "udev.log_priority=3"
         "rd.systemd.show_status=auto"
+        # Without these the penguin logo, a blinking text cursor, and a framebuffer
+        # console that takes the screen back from Plymouth all show up between
+        # the splash and the compositor.
+        "logo.nologo"
+        "vt.global_cursor_default=0"
+        "fbcon=nodefer"
       ];
 
       loader.timeout = 0;

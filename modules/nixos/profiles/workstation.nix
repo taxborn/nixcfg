@@ -20,6 +20,16 @@
     # regresses on its hardware, without reaching for `mkForce`.
     boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
 
+    # The kernel default is `madvise`, so only programs that ask get huge pages.
+    # `always` hands them to games and builds without each one opting in, and
+    # `defer` keeps the allocator from stalling a frame to compact memory for
+    # one. Workstations only. Databases on the servers (Postgres, Redis) do
+    # worse with it on.
+    boot.kernel.sysfs.kernel.mm.transparent_hugepage = {
+      enabled = "always";
+      defrag = "defer";
+    };
+
     # A hung unit on a desktop is a shutdown that sits at "a stop job is
     # running" for the default 90 seconds. Nothing on a workstation needs that
     # long to start or stop. Servers keep the default, where a database

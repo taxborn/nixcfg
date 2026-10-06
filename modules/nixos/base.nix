@@ -67,6 +67,12 @@
       };
     };
 
+    # Nothing here replaces a running kernel with kexec, and an attacker with
+    # root could use it to load one that skips the module and lockdown checks.
+    # One-way until the next boot. nixos-anywhere kexecs into an installer on a
+    # target that has no config of ours yet, so provisioning is unaffected.
+    boot.kernel.sysctl."kernel.kexec_load_disabled" = true;
+
     # nsncd is ordered `Before=nss-lookup.target nss-user-lookup.target`, and
     # both targets are restarted several times during boot as units that want
     # them are pulled in. Each restart cycles nscd, four times inside five
