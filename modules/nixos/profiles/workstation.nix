@@ -25,6 +25,10 @@
     # long to start or stop. Servers keep the default, where a database
     # flushing on stop can legitimately take that long.
     systemd = {
+      # Runs shellcheck over every script NixOS generates for a unit, so a
+      # quoting mistake in an inline script fails the build rather than a boot.
+      enableStrictShellChecks = true;
+
       settings.Manager = {
         DefaultTimeoutStartSec = "15s";
         DefaultTimeoutStopSec = "15s";
@@ -46,6 +50,19 @@
         recommendedServices.enable = true;
       };
     };
+
+    # Journals on a workstation are for the current boot's debugging, not an
+    # audit trail. Servers keep the default, where history matters.
+    services.journald.settings.Journal = {
+      SystemMaxUse = "100M";
+      RuntimeMaxUse = "50M";
+      SystemMaxFileSize = "50M";
+    };
+
+    # Pulls in a speech dispatcher closure of several hundred MiB that nothing
+    # here uses. Browsers keep a minimal copy regardless.
+    services.speechd.enable = false;
+    programs.nano.enable = false;
 
     environment.sessionVariables.NIXOS_OZONE_WL = "1";
 
@@ -88,6 +105,7 @@
       fwupd.enable = true;
       gnome.gnome-keyring.enable = true;
       gvfs.enable = true; # Mount, trash, etc.
+      udisks2.enable = true; # Automount for USB drives, which gvfs hands off to.
       libinput.enable = true;
 
     };

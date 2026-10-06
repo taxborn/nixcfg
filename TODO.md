@@ -7,17 +7,18 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 ## done
 
 - `workstation`: kernel behind `mkDefault`, 15s systemd timeouts, earlyoom.
+- `workstation`: `enableStrictShellChecks`, journald caps, `udisks2`, speechd
+  and nano off.
 
 ## desktop and boot
 
-- [ ] `systemd.enableStrictShellChecks`. Expect existing scripts (backups) to fail.
-- [ ] journald size caps on non-servers (100M system, 50M runtime).
-- [ ] `services.udisks2.enable` for USB automount.
+- [ ] Strict shell checks on servers too. Workstations pass, the backups
+      scripts are the likely failures.
 - [ ] initrd zstd `-19 -T0` if the ESP gets tight.
 - [ ] systemd-boot `bootCounting` and `editor = false`. Check lanzaboote support
       first, `uranium` uses it.
-- [ ] `services.speechd.enable = false`, `programs.nano.enable = false`, empty
-      `environment.defaultPackages`.
+- [ ] Empty `environment.defaultPackages` on workstations. It drops `strace`
+      and `perl` too, so decide that deliberately.
 
 ## laptop (`tungsten`)
 
