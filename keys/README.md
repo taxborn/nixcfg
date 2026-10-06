@@ -16,8 +16,8 @@ of the repo rather than through agenix.
 
 `yubikey.pub` is an SSH key and `yubikey_age.pub` is an age recipient. Same
 piece of hardware, different layers: the first gets a shell, the second decrypts
-a secret. Losing one is a different kind of bad day than losing the other, so
-both are recorded here.
+a secret. Losing one has different consequences from losing the other, so both
+are recorded here.
 
 `yubikey_age.pub` is a recipient of every secret on purpose. If a host burns
 down, that key is the only thing left that can open its archives. Tier 0 of the

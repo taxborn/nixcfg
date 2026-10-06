@@ -1,8 +1,8 @@
 # hosts
 
 The main configuration for each host in my homelab, one directory per machine.
-Hosts are named after chemical elements. The name carries no meaning beyond
-identity; role is a property of the config.
+Hosts are named after chemical elements, as explained in
+[CONTEXT.md](../CONTEXT.md#hosts-are-chemical-elements).
 
 Each host is one directory: `default.nix` for the machine itself, plus
 `proxy.nix` where it runs Caddy, and any other file the machine alone needs.
@@ -34,8 +34,8 @@ i7-13700K CPU, 32 GB of RAM, AMD RX 7900 XT GPU. 2x2TB NVME drives.
 
 LUKS-on-RAID1 across the pair, plus two companion drives outside the mirror: a
 512 GB NVMe for the Steam library and a 250 GB SATA SSD holding a third, local
-borg repository. Neither earns a place on the mirror, since what lands on them
-is either reproducible or already redundant. Keeping them off it also keeps
+borg repository. Neither is on the mirror, since what lands on them is either
+reproducible or already redundant. Keeping them off it also keeps
 them out of the root array's snapshot scope.
 
 Steam, gamemode, and the `scx_lavd` scheduler. `/games/steamapps/compatdata` is

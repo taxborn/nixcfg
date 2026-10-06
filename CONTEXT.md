@@ -84,8 +84,7 @@ The root [README.md](./README.md) ends with a list of decisions that are cheap
 to forget and expensive to redo, mostly Tungsten BIOS attributes whose obvious
 setting locks the machine out of its own root filesystem, plus two features
 (hibernation, fingerprint) that were investigated and rejected. Treat it as
-append-only. The alternative to writing an entry there is rediscovering it the
-hard way.
+append-only. A decision that never gets an entry has to be rediscovered.
 
 ### everything binds loopback, and Caddy is the only way in
 

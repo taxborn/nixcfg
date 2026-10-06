@@ -117,8 +117,8 @@ agenix -e borg/<hostname>/passphrase.age < /tmp/borg_passphrase
 agenix -e borg/<hostname>/ssh_key.age < /tmp/borg_ssh_key
 ```
 
-`agenix -e` decrypts an existing target before writing, so to *replace* a secret,
-delete the `.age` file first rather than piping over it.
+To *replace* a secret rather than edit it, delete the `.age` file first. See
+[working with them](../../../../secrets/README.md#working-with-them).
 
 The public key belongs in-repo, because Helium's `server.authorizedKeys` reads
 it:
@@ -293,8 +293,8 @@ database.
 
 ## testing restore
 
-A backup that has never been restored is a hypothesis. Three tiers, cheapest
-first; each one proves something the tier below it does not.
+A backup is untested until someone restores it. There are three tiers, cheapest
+first, and each proves something the tier below it does not.
 
 Everything at once, from a workstation:
 
@@ -328,10 +328,9 @@ the only thing left that can open its archives. That makes this the
 highest-value check in the list, and it costs seconds. Run it from a
 workstation, not a server.
 
-`agenix -d` only tries the default ssh keys on its own, because
-`age.identityPaths` is a system-level setting that does not reach the CLI, so
-the recipes pass `-i ~/.config/age/yubikey-identity.txt`. Tier 0 checks decryption
-exit status, a nonempty passphrase, and an OpenSSH private-key header before
+The recipes pass the YubiKey identity to `agenix -d` explicitly, for the reason
+given in the [secrets guide](../../../../secrets/README.md#working-with-them).
+Tier 0 checks decryption exit status, a nonempty passphrase, and an OpenSSH private-key header before
 reporting success. Override with `AGE_IDENTITY` if the identity lives elsewhere.
 
 ### tier 1: canary round-trip, per host, per repository
