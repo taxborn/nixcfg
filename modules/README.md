@@ -87,8 +87,8 @@ of the same fact cannot drift:
 - `mySnippets.tailnet` holds the tailnet name and the hostname to Tailscale IP
   map. Backups use it to address the backup server, and fleet assertions
   require its names to match the build roster.
-- `mySnippets.ssh.knownHosts` pins host keys, assembled from `../keys` and the
-  tailnet map.
+- `mySnippets.ssh.knownHosts` pins host keys. Each entry is written by hand, reading
+  `../keys/root_<host>.pub` and the tailnet map.
 
 The old `alwaysOn` and `physicalDisks` options had no readers after `f4012fc`
 removed monitoring, so they were removed too. If monitoring returns, preserve the

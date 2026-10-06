@@ -5,7 +5,8 @@ The NixOS Noctalia module installs the shell and enables its recommended
 NetworkManager, Bluetooth, UPower and power profile services.
 Tungsten keeps TuneD with its power-profiles compatibility service; Uranium
 uses power-profiles-daemon.
-Existing applications and their Catppuccin themes remain enabled.
+Existing applications and their Catppuccin themes remain enabled. Desktop GTK,
+Qt, icon and cursor themes are not configured.
 
 ## session
 

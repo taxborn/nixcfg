@@ -8,9 +8,8 @@ tree and this file both assume.
 ## what this repository is
 
 A flake-parts NixOS configuration for a five-host homelab. It builds five
-`nixosConfigurations`, three of which are servers running real services with
-real state: a git forge, a password manager, a document archive,
-an ATProto PDS. A bad change here is not a failing test. It is a service that
+`nixosConfigurations`, three of which are servers. Argon holds a git forge, a
+password manager and an ATProto PDS, and Helium holds a document archive. A bad change here is not a failing test. It is a service that
 stops answering, or an archive that silently stops containing a database.
 
 Nothing here is deployed by CI. Deploys are a person running `just update`.

@@ -73,6 +73,9 @@ nix build .#nixosConfigurations.<host>.config.system.build.toplevel
 3. Add its final configuration and `disko.nix` under `hosts/<host>/`, then add
    its name to `modules/flake/hosts.nix`, `secrets/secrets.nix` and
    `mySnippets.tailnet.tailscaleIPs` together. Fleet assertions require agreement.
+   Also add an entry to `mySnippets.ssh.knownHosts` in
+   `modules/snippets/sshKnownHosts.nix`. No assertion checks it, and a missing
+   host falls back to trust-on-first-use.
 4. Follow [secret operations](./secrets/README.md#working-with-them) to rekey
    the shared secrets and register any service-specific recipients.
 5. Complete the key-material and authorization steps in
