@@ -22,8 +22,8 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 
 ## atuin sync
 
-- [ ] Add a DNS record for `atuin.biscuits.at` in Cloudflare, proxied like
-      `vw.biscuits.at`.
+- DNS needs nothing. The proxied `*.biscuits.at` CNAME already answers for
+  `atuin.biscuits.at`, as it does for `vw` and `ntfy`.
 - [ ] Set `myNixOS.services.atuin.openRegistration = true` on argon, deploy,
       run `atuin register` on a workstation, set it back to false, deploy again.
 - [ ] Confirm `atuin sync` works, then `atuin key` to carry the key to the
