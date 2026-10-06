@@ -67,10 +67,6 @@
       };
     };
 
-    # Runs shellcheck over every script NixOS generates for a unit, so a
-    # quoting mistake in an inline script fails the build rather than a boot.
-    systemd.enableStrictShellChecks = true;
-
     boot.kernel.sysctl = {
       # Nothing here replaces a running kernel with kexec, and an attacker with
       # root could use it to load one that skips the module and lockdown checks.

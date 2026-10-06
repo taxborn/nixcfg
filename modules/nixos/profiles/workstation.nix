@@ -35,6 +35,14 @@
     # long to start or stop. Servers keep the default, where a database
     # flushing on stop can legitimately take that long.
     systemd = {
+      # Runs shellcheck over every script NixOS generates for a unit, and also
+      # makes each one `set -o nounset`. Workstations only. On Helium it broke
+      # paperless-scheduler, whose pre-start reads $CREDENTIALS_DIRECTORY, a
+      # variable systemd does not set there. Shellcheck cannot see that, so
+      # every host built clean and the failure only showed at activation. Do
+      # not enable it on a server without reading each generated script.
+      enableStrictShellChecks = true;
+
       settings.Manager = {
         DefaultTimeoutStartSec = "15s";
         DefaultTimeoutStopSec = "15s";

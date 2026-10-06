@@ -31,7 +31,9 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 - atuin: argon's archive carries the `atuin` database. Verified by extracting
   `borgmatic/postgresql_databases/localhost/all` and finding its `history` and
   `users` tables.
-- `base`: `enableStrictShellChecks` on every host, all five build clean.
+- `workstation`: `enableStrictShellChecks`. Tried on every host and reverted
+  for servers, see the comment in `workstation.nix`. A clean build is not
+  evidence: `nounset` broke `paperless-scheduler` on Helium at activation.
 - `workstation`: journald caps, `udisks2`, speechd
   and nano off.
 
