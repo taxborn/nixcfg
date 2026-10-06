@@ -39,10 +39,10 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 
 ## open
 
-- Helium collation: a glibc bump makes Postgres refuse `CREATE DATABASE` from a
-  flagged `template1`. Argon is fixed. Helium will hit it on its next update,
-  run `REINDEX DATABASE` then `ALTER DATABASE ... REFRESH COLLATION VERSION`
-  for every database, with paperless stopped.
+Nothing. Before any `just update` on a host running Postgres, compare
+`datcollversion` with `pg_database_collation_actual_version(oid)` in
+`pg_database`. A mismatch needs `REINDEX DATABASE` then `ALTER DATABASE ...
+REFRESH COLLATION VERSION` first. Argon needed it, Helium did not.
 
 ## notes
 
