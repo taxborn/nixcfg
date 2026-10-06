@@ -18,8 +18,10 @@ Check each option with `nix eval` before adopting, and build `uranium` and
   `nix-output-monitor`, `dix`, `pwvucontrol`. `bat`, `direnv`, `eza` and
   `zoxide` were already there.
 - boot: lanzaboote `bootCounting.initialTries = 3` on both workstations. The
-  boot editor was already off. After the first reboot, `bootctl list` should
-  show the new entry as good, not counting down.
+  boot editor was already off. Verified on both after a reboot:
+  `systemd-bless-boot` marks the booted entry good and strips its `+N` suffix,
+  while unbooted entries such as tungsten's `nvidia-sync` specialisation keep
+  `tries: 3 left`. The rollback path itself is untested.
 - laptop: `tuned` battery detection and upower 20/5/2 were already the
   defaults. Critical action is now `PowerOff`, since the `HybridSleep` default
   needs a hibernation path that `noresume` and zram swap rule out.
@@ -39,7 +41,6 @@ Check each option with `nix eval` before adopting, and build `uranium` and
   flagged `template1`. Argon is fixed. Helium will hit it on its next update,
   run `REINDEX DATABASE` then `ALTER DATABASE ... REFRESH COLLATION VERSION`
   for every database, with paperless stopped.
-- Reboot uranium and tungsten, then check `bootctl list` for boot counting.
 
 ## notes
 
