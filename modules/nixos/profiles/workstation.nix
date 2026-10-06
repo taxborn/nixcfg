@@ -75,9 +75,9 @@
         extraArgs = [
           "-g"
           "--avoid"
-          "'^(niri|noctalia-shell|quickshell|Xwayland|xwayland-satell.*|cryptsetup|dbus-.*|gpg-agent|ssh-agent|sshd|systemd|systemd-.*|ghostty|fish|n?vim)$'"
+          "^(niri|noctalia-shell|quickshell|Xwayland|xwayland-satell.*|cryptsetup|dbus-.*|gpg-agent|ssh-agent|sshd|systemd|systemd-.*|ghostty|fish|n?vim)$"
           "--prefer"
-          "'^(Web Content|Isolated Web Co|firefox.*|chrom(e|ium).*|electron|java.*|.*\\.exe|nix|node|npm)$'"
+          "^(Web Content|Isolated Web Co|firefox.*|chrom(e|ium).*|electron|java.*|.*[.]exe|nix|node|npm)$"
         ];
       };
       # earlyoom turns this on to deliver its notifications, while smartd (see
