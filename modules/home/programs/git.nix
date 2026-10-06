@@ -1,6 +1,8 @@
 {
   config,
   lib,
+  pkgs,
+  self,
   ...
 }:
 {
@@ -58,5 +60,19 @@
 
       lazygit.enable = true;
     };
+
+    # The upstream theme still has `gui.authorColors` at the top level. Lazygit
+    # migrates it to `gui.theme.authorColors` on every start and tries to write
+    # the result back, which fails on the read-only store path that
+    # LG_CONFIG_FILE points at. Migrate it at build time instead. Drop this once
+    # catppuccin/lazygit ships the new layout.
+    catppuccin.sources.lazygit = pkgs.runCommand "catppuccin-lazygit-migrated" { } ''
+      cp -r ${(import self.inputs.catppuccin { inherit pkgs; }).packages.lazygit} $out
+      chmod -R u+w $out
+      for f in $out/*/*.yml; do
+        ${lib.getExe pkgs.yq-go} -i \
+          '.gui.theme.authorColors = .gui.authorColors | del(.gui.authorColors)' "$f"
+      done
+    '';
   };
 }
