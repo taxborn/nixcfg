@@ -25,15 +25,13 @@
       piper.enable = true;
       tranquil-pds.enable = true;
       vaultwarden.enable = true;
-      minecraft.servers.mnb.directory = "/home/taxborn/public/mnb";
+      minecraft.servers.mnb = {
+        directory = "/home/taxborn/public/mnb";
+        # For friends, so it is reachable without the tailnet.
+        openFirewall = true;
+      };
     };
   };
-
-  # Minecraft, for friends. The one deliberate public port outside Caddy. The
-  # minecraft module runs the server but opens nothing, so the port is opened
-  # here and nothing proxies it.
-  networking.firewall.allowedTCPPorts = [ 25565 ];
-  networking.firewall.allowedUDPPorts = [ 25565 ];
 
   myHardware = {
     intel.cpu.enable = true;

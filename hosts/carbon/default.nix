@@ -20,15 +20,13 @@
       };
       braxton-is.enable = true;
       forgejo-runner.enable = true;
-      minecraft.servers.mavs-updated.directory = "/home/taxborn/public/mavs-updated";
+      minecraft.servers.mavs-updated = {
+        directory = "/home/taxborn/public/mavs-updated";
+        # For friends, so it is reachable without the tailnet.
+        openFirewall = true;
+      };
     };
   };
-
-  # Minecraft, for friends. The one deliberate public port outside Caddy. The
-  # minecraft module runs the server but opens nothing, so the port is opened
-  # here and nothing proxies it.
-  networking.firewall.allowedTCPPorts = [ 25565 ];
-  networking.firewall.allowedUDPPorts = [ 25565 ];
 
   myHardware = {
     intel.cpu.enable = true;

@@ -74,6 +74,25 @@ in
               ];
               description = "Arguments for the JVM, matching the pack's `variables.txt`.";
             };
+            openFirewall = lib.mkOption {
+              type = lib.types.bool;
+              default = false;
+              description = ''
+                Open `port` to the internet, TCP and UDP. Minecraft speaks its own
+                protocol, so Caddy cannot front it and this is a deliberate
+                exception to the loopback-only rule. UDP is for voice chat mods and
+                Bedrock-style clients. Closed by default.
+              '';
+            };
+            port = lib.mkOption {
+              type = lib.types.port;
+              default = 25565;
+              description = ''
+                Port the server listens on. Nothing here writes it into
+                `server.properties`, so it must match `server-port` there. Only
+                `openFirewall` reads it.
+              '';
+            };
             stopTimeout = lib.mkOption {
               type = lib.types.str;
               default = "5min";
@@ -90,6 +109,15 @@ in
   };
 
   config = lib.mkIf (cfg.servers != { }) {
+    networking.firewall =
+      let
+        exposed = lib.filter (server: server.openFirewall) (lib.attrValues cfg.servers);
+      in
+      {
+        allowedTCPPorts = map (server: server.port) exposed;
+        allowedUDPPorts = map (server: server.port) exposed;
+      };
+
     systemd.sockets = lib.mapAttrs' (
       name: server:
       lib.nameValuePair "minecraft-${name}" {

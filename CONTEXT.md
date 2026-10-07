@@ -93,7 +93,8 @@ append-only. A decision that never gets an entry has to be rediscovered.
 
 ### everything binds loopback, and Caddy is the only way in
 
-No service module opens a firewall port. Services listen on `127.0.0.1` and
+No service module opens a firewall port unless the host opts in, and the only
+one that offers it is Minecraft, which Caddy cannot front. Services listen on `127.0.0.1` and
 Caddy reverse-proxies them. Two mutually exclusive postures decide what reaches
 Caddy:
 
