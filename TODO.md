@@ -31,6 +31,13 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 - atuin: argon's archive carries the `atuin` database. Verified by extracting
   `borgmatic/postgresql_databases/localhost/all` and finding its `history` and
   `users` tables.
+- vaultwarden: argon's archive carries the `vaultwarden` SQLite dump. Verified
+  with `borgmatic list --archive latest --find vaultwarden`, which found
+  `borgmatic/sqlite_databases/localhost/vaultwarden`. It had been archived as
+  live files before. The dump itself was listed, not extracted and opened.
+- argon: removed the retired runner's `/var/lib/forgejo-runner`. Its Nix store
+  volume was still being backed up and made borg warn about special files. Old
+  archives keep carrying it until they age out of retention.
 - `workstation`: `enableStrictShellChecks`. Tried on every host and reverted
   for servers, see the comment in `workstation.nix`. A clean build is not
   evidence: `nounset` broke `paperless-scheduler` on Helium at activation.
