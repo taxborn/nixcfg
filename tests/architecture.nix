@@ -190,6 +190,11 @@ lib.runTests {
         name = "tealfm-piper";
         path = "/var/lib/tealfm-piper/moved.db";
       }
+      {
+        # a fixed path, so it does not move with the other two
+        name = "vaultwarden";
+        path = "/var/lib/vaultwarden/db.sqlite3";
+      }
     ]);
   };
 }
