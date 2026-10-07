@@ -2,16 +2,9 @@
 # Keep both boot paths. Disko sees EF02 and adds this disk to
 # boot.loader.grub.devices for a BIOS install. efiSupport also installs to the
 # 300M ESP, so enabling EFI does not make the 2M BIOS partition redundant.
-{ lib, ... }:
+{ lib, self, ... }:
 let
-  defaultBtrfsOpts = [
-    "compress=zstd:1"
-    "discard=async"
-    "noatime"
-    "rw"
-    "space_cache=v2"
-    "ssd"
-  ];
+  defaultBtrfsOpts = import "${self}/modules/disko/btrfs-opts.nix";
 in
 {
   disko.devices = {

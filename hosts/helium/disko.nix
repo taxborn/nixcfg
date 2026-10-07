@@ -1,15 +1,9 @@
 # Helium's single 2 TB NVMe. Find the by-id path with `ls -l /dev/disk/by-id`.
+{ self, ... }:
 let
   nvme0 = "/dev/disk/by-id/nvme-SPCC_M.2_PCIe_SSD_230347595111032";
 
-  defaultBtrfsOpts = [
-    "compress=zstd:1"
-    "discard=async"
-    "noatime"
-    "rw"
-    "space_cache=v2"
-    "ssd"
-  ];
+  defaultBtrfsOpts = import "${self}/modules/disko/btrfs-opts.nix";
 in
 {
   disko.devices = {

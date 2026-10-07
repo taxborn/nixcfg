@@ -27,19 +27,13 @@
 {
   config,
   lib,
+  self,
   ...
 }:
 let
   fallbackMountPoint = "/boot-fallback";
 
-  defaultBtrfsOpts = [
-    "compress=zstd:1"
-    "discard=async"
-    "noatime"
-    "rw"
-    "space_cache=v2"
-    "ssd"
-  ];
+  defaultBtrfsOpts = import "${self}/modules/disko/btrfs-opts.nix";
 
   # The companions take the same options minus compression, plus `nofail`.
   # Everything that lands on them arrives compressed already — game assets ship
