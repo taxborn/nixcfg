@@ -117,9 +117,12 @@ server, reaching its own repository by local path rather than ssh'ing to itself.
 | [Paperless-ngx](../modules/nixos/services/paperless.nix) | `docs.biscuits.at` | 3004 | PostgreSQL; public A record pointing at a tailnet address |
 | [borg repositories](../modules/nixos/services/backups/README.md) | | ssh | `/mnt/hdd/borg/<host>` for every other host |
 
-The external drive is NTFS, mounted `nofail` with `X-fstrim.notrim`. The
-`borg-repo-base` unit carries `RequiresMountsFor`, so backups fail outright when
+The external drive is btrfs, mounted `nofail,noatime` with `X-fstrim.notrim`.
+It is deliberately not snapshotted, and has no compression: borg archives are
+already versioned, encrypted and compressed, so snapshots would only pin the
+segments `borg prune` deletes and `compress` would only cost CPU. The
+repositories live in a `borg` subvolume owned by `taxborn`. It has to be
+created by hand, since a fresh btrfs root is `root:root` and `borg-repo-base`
+runs as `taxborn`. The `borg-repo-base` unit carries `RequiresMountsFor`, so backups fail outright when
 the drive is absent instead of filling the root filesystem with archives nobody
 notices.
-
-TODO: Look at formatting + btrfs for the external drive.

@@ -1,22 +1,11 @@
-{ pkgs, ... }:
-{
-  environment.systemPackages = with pkgs; [
-    ntfs3g
-  ];
-
+_: {
   fileSystems."/mnt/hdd" = {
     device = "/dev/disk/by-id/usb-WD_My_Book_25ED_575835324443304A30443532-0:0-part1";
-    fsType = "ntfs3";
-    noCheck = true;
+    fsType = "btrfs";
     options = [
       "defaults"
       "nofail"
-      "user"
-      "exec"
-      "uid=1000"
-      "gid=100"
-      "umask=0000"
-      "iocharset=utf8"
+      "noatime"
       # USB-attached spinning rust does not implement FITRIM, and fstrim exits
       # 64 on the EREMOTEIO. It has already trimmed every other filesystem by
       # then, so nothing goes untrimmed and the unit fails anyway. That is what
