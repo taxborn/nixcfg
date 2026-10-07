@@ -126,9 +126,9 @@ the drive is absent instead of filling the root filesystem with archives nobody
 notices.
 
 The filesystem layout is not declared anywhere in Nix, so a new or reformatted
-drive needs this by hand. Run it as the borg-serving user, and do not run borg
-against the repositories as root afterwards, which leaves a repository's
-`config` unreadable to the forced `borg serve` (see
+drive needs this by hand. Afterwards, do not run borg against the repositories
+as root, which leaves a repository's `config` unreadable to the forced
+`borg serve` (see
 [operating](../modules/nixos/services/backups/README.md#operating)):
 
 ```bash
