@@ -14,6 +14,9 @@
           "flakes"
           "nix-command"
         ];
+        # `@wheel` can set substituters and import unsigned paths, which is
+        # root-equivalent. Fine for a single-admin fleet, wrong if wheel ever
+        # holds anyone else.
         trusted-users = [
           "root"
           "@wheel"
@@ -43,6 +46,8 @@
         # large closures overrides them.
         min-free = lib.mkDefault (1 * 1024 * 1024 * 1024);
         max-free = lib.mkDefault (5 * 1024 * 1024 * 1024);
+        # A third-party cache. Its key is trusted to sign any path this host
+        # will accept, so removing the cache means removing the key too.
         substituters = [
           "https://cache.nixos.org"
           "https://nix-community.cachix.org"
@@ -61,7 +66,7 @@
       };
 
       extraOptions = ''
-        download-buffer-size = ${toString (256 * 1024 * 1024)}  # 256 MiB
+        download-buffer-size = ${toString (256 * 1024 * 1024)}
       '';
 
       optimise = {

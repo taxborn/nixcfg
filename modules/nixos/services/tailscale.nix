@@ -46,8 +46,8 @@
     # tailnet without opening a port for it. One exception is worth
     # remembering. fail2ban hooks its chains on ahead of that accept, so its
     # ignoreIP, not this line, is what keeps a ban off the tailnet.
-    # Only the trusted interface here. The UDP port is `openFirewall` below,
-    # which sets this same list to this same value.
+    # Only the trusted interface here. `openFirewall` below opens the UDP port
+    # and does not touch this list.
     networking.firewall.trustedInterfaces = [ config.services.tailscale.interfaceName ];
 
     services.tailscale = {
@@ -80,7 +80,12 @@
         "${config.myNixOS.services.tailscale.operator}"
       ];
 
+      # Opens Tailscale's UDP port to the internet so peers can connect
+      # directly instead of through a relay.
       openFirewall = true;
+      # Enables IP forwarding so any host can advertise subnet routes or act as
+      # an exit node. Whether one does is decided by the tailnet ACLs, which
+      # live outside this repo.
       useRoutingFeatures = "both";
     };
   };

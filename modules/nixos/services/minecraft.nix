@@ -68,6 +68,8 @@ in
               default = [
                 "-Xmx5G"
                 "-Xms5G"
+                # Log4Shell (CVE-2021-44228) mitigation for pack versions whose
+                # bundled log4j predates the fix.
                 "-Dlog4j2.formatMsgNoLookups=true"
               ];
               description = "Arguments for the JVM, matching the pack's `variables.txt`.";
