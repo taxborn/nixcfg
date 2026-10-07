@@ -6,6 +6,7 @@
   ...
 }:
 let
+  cfg = config.myNixOS.services.forgejo;
   networkMap = config.mySnippets.biscuits-at.networkMap;
 
   appName = "Biscuits' Forge";
@@ -18,7 +19,7 @@ in
 {
   options.myNixOS.services.forgejo.enable = lib.mkEnableOption "Forgejo git forge";
 
-  config = lib.mkIf config.myNixOS.services.forgejo.enable {
+  config = lib.mkIf cfg.enable {
     # Forgejo keeps every account, SSH key, issue and pull request in
     # SQLite, while the git objects themselves sit under
     # /var/lib/forgejo/repositories and ride along in the archive. Being

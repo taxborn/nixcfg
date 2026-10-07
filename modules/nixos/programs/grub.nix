@@ -3,10 +3,13 @@
   lib,
   ...
 }:
+let
+  cfg = config.myNixOS.programs.grub;
+in
 {
   options.myNixOS.programs.grub.enable = lib.mkEnableOption "boot with grub";
 
-  config = lib.mkIf config.myNixOS.programs.grub.enable {
+  config = lib.mkIf cfg.enable {
     boot.loader.grub = {
       enable = true;
       efiSupport = true;

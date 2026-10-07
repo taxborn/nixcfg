@@ -4,10 +4,13 @@
   pkgs,
   ...
 }:
+let
+  cfg = config.myNixOS.programs.lanzaboote;
+in
 {
   options.myNixOS.programs.lanzaboote.enable = lib.mkEnableOption "secure boot with lanzaboote";
 
-  config = lib.mkIf config.myNixOS.programs.lanzaboote.enable {
+  config = lib.mkIf cfg.enable {
     boot = {
       # The workstation layout enrolls a FIDO2 key against the LUKS volume and
       # asks for it through crypttab options, which only the systemd initrd

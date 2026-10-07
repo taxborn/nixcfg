@@ -4,6 +4,9 @@
   self,
   ...
 }:
+let
+  cfg = config.myNixOS.services.tailscale;
+in
 {
   options.myNixOS.services.tailscale = {
     enable = lib.mkEnableOption "Tailscale VPN service";
@@ -31,10 +34,10 @@
     };
   };
 
-  config = lib.mkIf config.myNixOS.services.tailscale.enable {
+  config = lib.mkIf cfg.enable {
     assertions = [
       {
-        assertion = config.myNixOS.services.tailscale.authKeyFile != null;
+        assertion = cfg.authKeyFile != null;
         message = "myNixOS.services.tailscale.authKeyFile cannot be null.";
       }
     ];
@@ -52,7 +55,7 @@
 
     services.tailscale = {
       enable = true;
-      inherit (config.myNixOS.services.tailscale) authKeyFile;
+      inherit (cfg) authKeyFile;
 
       # `tailscale set`, not `tailscale up`. The autoconnect unit only runs
       # `up` when the backend reports NeedsLogin, NeedsMachineAuth or Stopped;
@@ -75,9 +78,9 @@
       # `--operator` has the same latent problem, being applied only on first
       # join. It has never changed, so it has never mattered; move it up to
       # `extraSetFlags` if it ever does.
-      extraUpFlags = lib.optionals (config.myNixOS.services.tailscale.operator != null) [
+      extraUpFlags = lib.optionals (cfg.operator != null) [
         "--operator"
-        "${config.myNixOS.services.tailscale.operator}"
+        "${cfg.operator}"
       ];
 
       # Opens Tailscale's UDP port to the internet so peers can connect

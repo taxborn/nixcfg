@@ -4,10 +4,13 @@
   lib,
   ...
 }:
+let
+  cfg = config.myNixOS.profiles.graphical-boot;
+in
 {
   options.myNixOS.profiles.graphical-boot.enable = lib.mkEnableOption "non-text boot experience";
 
-  config = lib.mkIf config.myNixOS.profiles.graphical-boot.enable {
+  config = lib.mkIf cfg.enable {
     # `autologinOnce` rather than plain autologin. tty1 logs in once per boot,
     # which is all the fish login hook in `profiles/workstation.nix` needs to
     # start Niri. Logging out after that lands on a password prompt rather

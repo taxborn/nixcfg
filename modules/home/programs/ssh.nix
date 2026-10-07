@@ -3,10 +3,13 @@
   lib,
   ...
 }:
+let
+  cfg = config.myHome.programs.ssh;
+in
 {
   options.myHome.programs.ssh.enable = lib.mkEnableOption "openssh user configuration";
 
-  config = lib.mkIf config.myHome.programs.ssh.enable {
+  config = lib.mkIf cfg.enable {
     programs.ssh = {
       enable = true;
       enableDefaultConfig = false;

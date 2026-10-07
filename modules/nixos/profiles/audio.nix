@@ -4,10 +4,13 @@
   pkgs,
   ...
 }:
+let
+  cfg = config.myNixOS.profiles.audio;
+in
 {
   options.myNixOS.profiles.audio.enable = lib.mkEnableOption "audio support";
 
-  config = lib.mkIf config.myNixOS.profiles.audio.enable {
+  config = lib.mkIf cfg.enable {
     security.rtkit.enable = true;
 
     services.pipewire = {

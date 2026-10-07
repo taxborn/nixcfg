@@ -4,11 +4,14 @@
   lib,
   ...
 }:
+let
+  cfg = config.myNixOS.services.yubikey;
+in
 {
   options.myNixOS.services.yubikey.enable =
     lib.mkEnableOption "smartcard access to the YubiKey, and an `age` that can decrypt with it";
 
-  config = lib.mkIf config.myNixOS.services.yubikey.enable {
+  config = lib.mkIf cfg.enable {
     # `age` execs the plugin as a separate binary, found by name on PATH. This
     # is the copy a person gets at a shell, for `agenix -d -i` against the
     # yubikey identity. The wrapper below is the copy activation gets.

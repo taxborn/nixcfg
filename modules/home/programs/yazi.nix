@@ -1,8 +1,11 @@
 { lib, config, ... }:
+let
+  cfg = config.myHome.programs.yazi;
+in
 {
   options.myHome.programs.yazi.enable = lib.mkEnableOption "yazi file manager";
 
-  config = lib.mkIf config.myHome.programs.yazi.enable {
+  config = lib.mkIf cfg.enable {
     programs.yazi = {
       enable = true;
       shellWrapperName = "y";

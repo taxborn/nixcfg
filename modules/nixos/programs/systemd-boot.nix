@@ -3,10 +3,13 @@
   lib,
   ...
 }:
+let
+  cfg = config.myNixOS.programs.systemd-boot;
+in
 {
   options.myNixOS.programs.systemd-boot.enable = lib.mkEnableOption "systemd bootloader";
 
-  config = lib.mkIf config.myNixOS.programs.systemd-boot.enable {
+  config = lib.mkIf cfg.enable {
     boot = {
       initrd.systemd.enable = lib.mkDefault true;
 

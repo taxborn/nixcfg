@@ -5,10 +5,13 @@
   self,
   ...
 }:
+let
+  cfg = config.myHome.programs.git;
+in
 {
   options.myHome.programs.git.enable = lib.mkEnableOption "git version control";
 
-  config = lib.mkIf config.myHome.programs.git.enable {
+  config = lib.mkIf cfg.enable {
     programs = {
       # `navigate` rebinds n/N in the pager to jump between files rather than
       # search hits, which is the only way a large diff is readable without

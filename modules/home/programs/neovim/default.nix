@@ -4,10 +4,13 @@
   pkgs,
   ...
 }:
+let
+  cfg = config.myHome.programs.neovim;
+in
 {
   options.myHome.programs.neovim.enable = lib.mkEnableOption "neovim lua configuration";
 
-  config = lib.mkIf config.myHome.programs.neovim.enable {
+  config = lib.mkIf cfg.enable {
     programs.neovim = {
       enable = true;
       defaultEditor = true;

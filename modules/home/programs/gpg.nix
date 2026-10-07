@@ -5,7 +5,9 @@
   self,
   ...
 }:
-
+let
+  cfg = config.myHome.programs.gpg;
+in
 {
   options.myHome.programs.gpg = {
     enable = lib.mkEnableOption "gpg config";
@@ -22,7 +24,7 @@
     };
   };
 
-  config = lib.mkIf config.myHome.programs.gpg.enable {
+  config = lib.mkIf cfg.enable {
     programs.gpg = {
       enable = true;
 
@@ -76,7 +78,7 @@
 
     # https://github.com/drduh/YubiKey-Guide/blob/master/config/gpg-agent.conf
     # https://www.gnupg.org/documentation/manuals/gnupg/Agent-Options.html
-    services.gpg-agent = lib.mkIf config.myHome.programs.gpg.agent.enable {
+    services.gpg-agent = lib.mkIf cfg.agent.enable {
       enable = true;
       enableSshSupport = true;
 

@@ -5,10 +5,13 @@
   pkgs,
   ...
 }:
+let
+  cfg = config.myNixOS.profiles.workstation;
+in
 {
   options.myNixOS.profiles.workstation.enable = lib.mkEnableOption "workstation configuration";
 
-  config = lib.mkIf config.myNixOS.profiles.workstation.enable {
+  config = lib.mkIf cfg.enable {
     home-manager.users.taxborn.imports = [ self.homeModules.profile-workstation ];
 
     age.identityPaths = [

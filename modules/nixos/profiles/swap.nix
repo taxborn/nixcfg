@@ -3,10 +3,13 @@
   lib,
   ...
 }:
+let
+  cfg = config.myNixOS.profiles.swap;
+in
 {
   options.myNixOS.profiles.swap.enable = lib.mkEnableOption "swap and oomd configurations";
 
-  config = lib.mkIf config.myNixOS.profiles.swap.enable {
+  config = lib.mkIf cfg.enable {
     systemd.oomd = {
       enableRootSlice = true;
       enableSystemSlice = true;

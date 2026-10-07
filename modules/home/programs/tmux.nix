@@ -4,10 +4,13 @@
   config,
   ...
 }:
+let
+  cfg = config.myHome.programs.tmux;
+in
 {
   options.myHome.programs.tmux.enable = lib.mkEnableOption "enable tmux";
 
-  config = lib.mkIf config.myHome.programs.tmux.enable {
+  config = lib.mkIf cfg.enable {
     programs.tmux = {
       enable = true;
       mouse = true;

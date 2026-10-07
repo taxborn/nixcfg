@@ -4,10 +4,13 @@
   pkgs,
   ...
 }:
+let
+  cfg = config.myNixOS.programs.nix;
+in
 {
   options.myNixOS.programs.nix.enable = lib.mkEnableOption "sane nix configuration";
 
-  config = lib.mkIf config.myNixOS.programs.nix.enable {
+  config = lib.mkIf cfg.enable {
     nix = {
       settings = {
         experimental-features = [

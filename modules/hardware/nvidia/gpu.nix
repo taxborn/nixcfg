@@ -3,10 +3,13 @@
   lib,
   ...
 }:
+let
+  cfg = config.myHardware.nvidia.gpu;
+in
 {
   options.myHardware.nvidia.gpu.enable = lib.mkEnableOption "NVIDIA GPU configuration";
 
-  config = lib.mkIf config.myHardware.nvidia.gpu.enable {
+  config = lib.mkIf cfg.enable {
     boot = {
       # i915 must load before the nvidia modules on hybrid Intel+Nvidia
       # systems, otherwise Electron/Chromium apps can stall for up to a

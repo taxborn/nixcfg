@@ -3,11 +3,14 @@
   lib,
   ...
 }:
+let
+  cfg = config.myHardware.profiles.laptop;
+in
 {
   options.myHardware.profiles.laptop.enable = lib.mkEnableOption "Laptop hardware configuration";
 
   config = lib.mkMerge [
-    (lib.mkIf config.myHardware.profiles.laptop.enable {
+    (lib.mkIf cfg.enable {
       services = {
         # Thunderbolt ships at security level `user`, meaning devices stay
         # unauthorized until something grants it. Nothing does without boltd, so
@@ -43,55 +46,47 @@
       };
     })
 
-    (lib.mkIf
-      ((lib.elem "kvm-intel" config.boot.kernelModules) && config.myHardware.profiles.laptop.enable)
-      {
-        services.thermald.enable = true;
-      }
-    )
+    (lib.mkIf ((lib.elem "kvm-intel" config.boot.kernelModules) && cfg.enable) {
+      services.thermald.enable = true;
+    })
 
-    (lib.mkIf
-      (
-        (lib.elem "nvidia" config.services.xserver.videoDrivers) && config.myHardware.profiles.laptop.enable
-      )
-      {
+    (lib.mkIf ((lib.elem "nvidia" config.services.xserver.videoDrivers) && cfg.enable) {
+      hardware.nvidia = {
+        dynamicBoost.enable = lib.mkDefault true;
+
+        powerManagement = {
+          enable = true;
+          finegrained = true;
+        };
+
+        prime.offload = {
+          # The bus IDs are per-machine and live in the host file,
+          # hosts/tungsten/default.nix. nixpkgs asserts on PRIME without
+          # them rather than guessing.
+          enable = true;
+          enableOffloadCmd = true;
+        };
+      };
+
+      specialisation.nvidia-sync.configuration = {
+        environment.etc."specialisation".text = "nvidia-sync";
+
         hardware.nvidia = {
-          dynamicBoost.enable = lib.mkDefault true;
-
           powerManagement = {
-            enable = true;
-            finegrained = true;
+            enable = lib.mkForce false;
+            finegrained = lib.mkForce false;
           };
 
-          prime.offload = {
-            # The bus IDs are per-machine and live in the host file,
-            # hosts/tungsten/default.nix. nixpkgs asserts on PRIME without
-            # them rather than guessing.
-            enable = true;
-            enableOffloadCmd = true;
-          };
-        };
-
-        specialisation.nvidia-sync.configuration = {
-          environment.etc."specialisation".text = "nvidia-sync";
-
-          hardware.nvidia = {
-            powerManagement = {
+          prime = {
+            offload = {
               enable = lib.mkForce false;
-              finegrained = lib.mkForce false;
+              enableOffloadCmd = lib.mkForce false;
             };
 
-            prime = {
-              offload = {
-                enable = lib.mkForce false;
-                enableOffloadCmd = lib.mkForce false;
-              };
-
-              sync.enable = lib.mkForce true;
-            };
+            sync.enable = lib.mkForce true;
           };
         };
-      }
-    )
+      };
+    })
   ];
 }

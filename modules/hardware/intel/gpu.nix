@@ -4,10 +4,13 @@
   pkgs,
   ...
 }:
+let
+  cfg = config.myHardware.intel.gpu;
+in
 {
   options.myHardware.intel.gpu.enable = lib.mkEnableOption "Intel GPU configuration";
 
-  config = lib.mkIf config.myHardware.intel.gpu.enable {
+  config = lib.mkIf cfg.enable {
     hardware.graphics = {
       enable = true;
 

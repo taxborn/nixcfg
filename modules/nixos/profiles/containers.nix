@@ -4,10 +4,13 @@
   pkgs,
   ...
 }:
+let
+  cfg = config.myNixOS.profiles.containers;
+in
 {
   options.myNixOS.profiles.containers.enable = lib.mkEnableOption "rootless container runtime";
 
-  config = lib.mkIf config.myNixOS.profiles.containers.enable {
+  config = lib.mkIf cfg.enable {
     virtualisation.podman = {
       enable = true;
 

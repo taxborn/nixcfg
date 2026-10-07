@@ -3,10 +3,13 @@
   lib,
   ...
 }:
+let
+  cfg = config.myHardware.amd.gpu;
+in
 {
   options.myHardware.amd.gpu.enable = lib.mkEnableOption "AMD GPU configuration";
 
-  config = lib.mkIf config.myHardware.amd.gpu.enable {
+  config = lib.mkIf cfg.enable {
     environment.variables.VDPAU_DRIVER = "radeonsi";
 
     # Unlock amdgpu OverDrive (undervolt / fan curves / power limits via

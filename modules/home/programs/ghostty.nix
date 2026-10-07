@@ -3,10 +3,13 @@
   lib,
   ...
 }:
+let
+  cfg = config.myHome.programs.ghostty;
+in
 {
   options.myHome.programs.ghostty.enable = lib.mkEnableOption "Ghostty terminal";
 
-  config = lib.mkIf config.myHome.programs.ghostty.enable {
+  config = lib.mkIf cfg.enable {
     programs.ghostty = {
       enable = true;
       enableFishIntegration = true;
