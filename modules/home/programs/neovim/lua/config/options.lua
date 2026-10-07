@@ -40,7 +40,8 @@ opt.writebackup = false
 opt.swapfile = false
 opt.undofile = true
 opt.undolevels = 10000
-opt.undodir = vim.fn.expand("~/.config/nvim/undodir")
+local undodir = vim.fn.expand("~/.config/nvim/undodir")
+opt.undodir = undodir
 opt.updatetime = 300
 opt.timeoutlen = 300
 opt.ttimeoutlen = 0
@@ -97,13 +98,9 @@ opt.redrawtime = 10000
 opt.maxmempattern = 20000
 
 -- Create undo directory if it doesn't exist
-local undodir = vim.fn.expand("~/.config/nvim/undodir")
 if vim.fn.isdirectory(undodir) == 0 then
   vim.fn.mkdir(undodir, "p")
 end
-
-vim.g.autoformat = true
-vim.g.trouble_lualine = true
 
 opt.jumpoptions = "view"
 opt.laststatus = 3 -- global statusline
