@@ -81,6 +81,9 @@ in
           "net.core.default_qdisc" = "fq";
         };
 
+        # The shared layout installs both BIOS and EFI GRUB (EF02 plus the ESP
+        # in modules/disko/btrfs-ovh.nix), so the hardware profile picks the
+        # loader and hosts do not repeat it.
         myNixOS.programs.grub.enable = lib.mkDefault true;
         # No SMART behind virtio. smartd is on by default in `nixos/base`, and
         # with nothing to register it fails to start rather than idling.

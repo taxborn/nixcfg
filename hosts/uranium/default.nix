@@ -8,6 +8,8 @@
     ./disko.nix
   ];
 
+  # Apps only this machine wants. The shared workstation home cannot vary per
+  # host, so the host adds to it.
   home-manager.users.taxborn = {
     home.packages = with pkgs; [
       via

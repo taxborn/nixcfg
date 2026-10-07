@@ -29,7 +29,7 @@ in
         Unix user handed control of tailscaled, so `tailscale status` and the
         rest of the CLI work without sudo. Null leaves them root-only.
       '';
-      default = "taxborn";
+      default = null;
       type = lib.types.nullOr lib.types.str;
     };
   };

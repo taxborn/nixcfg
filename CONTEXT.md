@@ -149,6 +149,8 @@ written by hand, because that module takes raw colours.
 
 Follow the [provisioning sequence](./README.md#provisioning-a-new-host).
 Host-specific disk layouts and drive `by-id` paths live in `hosts/<host>/disko.nix`;
-shared layouts live in `modules/disko`. Workstations use LUKS on mdraid RAID1,
+shared layouts live in `modules/disko`. The boot loader follows the
+hardware: the OVH profile selects GRUB, workstations enable lanzaboote, and
+Helium enables systemd-boot in its own host file. Workstations use LUKS on mdraid RAID1,
 unlocked by a FIDO2 YubiKey, under lanzaboote-signed Secure Boot. Read the
 [BIOS decisions](./README.md#do-not) before reinstalling one.
