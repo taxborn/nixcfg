@@ -45,6 +45,13 @@ Check each option with `nix eval` before adopting, and build `uranium` and
   are not recorded here. The keys are not append-only, so a host can still
   prune its own repository, and port 22 still reaches a shell by tailnet
   identity until the tailnet ACLs say otherwise.
+- backups: the five rsync.net borg keys carry
+  `command="borg14 serve --restrict-to-path /data1/home/de4388/borg/<host>",restrict`
+  by hand, so a compromised host can no longer touch another host's offsite
+  repository. Done on 2026-10-06. A backup to rsync.net and
+  `just restore-dr` for argon passed afterward. The refusal of a key on another
+  host's repository was not recorded as tested, and the keys are not
+  append-only.
 - `workstation`: `enableStrictShellChecks`. Tried on every host and reverted
   for servers, see the comment in `workstation.nix`. A clean build is not
   evidence: `nounset` broke `paperless-scheduler` on Helium at activation.
@@ -53,10 +60,6 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 
 ## open
 
-- backups: restrict the rsync.net borg keys by hand, with
-  `command="borg14 serve --restrict-to-path …"` entries, and record here that
-  it is done, since nothing in the repo can confirm it. See the
-  [backups README](./modules/nixos/services/backups/README.md).
 - caddy: `secrets/tailscale/caddy.age` holds a Cloudflare `Zone:DNS:Edit`
   token encrypted to all five hosts, but only argon and helium use DNS-01.
   Narrow the recipients in `secrets/secrets.nix` and scope the token down.

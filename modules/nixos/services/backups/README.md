@@ -60,10 +60,12 @@ reachable from the tailnet and nowhere else.
 > anything listens there, and notifications are success-only, so the failure
 > is silent.
 >
-> rsync.net's `authorized_keys` holds bare public keys, so one compromised
-> VPS can take out both copies of everything. That one can be closed with
-> `command="borg14 serve --restrict-to-path …"` entries, which needs nothing
-> from this repo. It is a manual step on rsync.net, tracked in `TODO.md`.
+> rsync.net's `authorized_keys` carries the same confinement, one entry per
+> host: `command="borg14 serve --restrict-to-path
+> /data1/home/de4388/borg/<host>",restrict ssh-ed25519 … borg-<host>`. Nothing
+> in this repo can confirm that, since the file lives on rsync.net and is
+> edited by hand. A host added without the prefix is unrestricted there, with
+> no error to say so. The operator's own `yubikey` entry stays bare.
 
 Check that the forced command is what answers on 2200. This must not print the
 output of `id`. Expect it to hang waiting for borg protocol input, or to exit
@@ -144,11 +146,14 @@ myNixOS.services.backups.server.authorizedKeys.<hostname> =
 ```
 
 rsync.net's restricted shell blocks redirection (`>`/`>>`), so edit its
-`authorized_keys` by round-tripping it over scp:
+`authorized_keys` by round-tripping it over scp. The entry carries a forced
+command that confines the key to its own repository, so a new host is never
+added bare:
 
 ```bash
 scp rsync-backup:.ssh/authorized_keys /tmp/rsync_authkeys
-cat /tmp/borg_ssh_key.pub >> /tmp/rsync_authkeys
+printf 'command="borg14 serve --restrict-to-path /data1/home/de4388/borg/%s",restrict %s\n' \
+    <hostname> "$(cat /tmp/borg_ssh_key.pub)" >> /tmp/rsync_authkeys
 scp /tmp/rsync_authkeys rsync-backup:.ssh/authorized_keys
 rm /tmp/rsync_authkeys
 ```
