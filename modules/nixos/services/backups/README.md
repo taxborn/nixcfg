@@ -52,9 +52,9 @@ reachable from the tailnet and nowhere else.
 > wipe the drive, which only the tailnet ACLs can stop. Those live outside this
 > repo, so check them. The keys are also not append-only, so a compromised host
 > can still prune its own repository. Append-only would stop client-side prune
-> and compact from reclaiming space, so it was left off. Every repository sits
-> on an ntfs-3g mount with `uid=1000,umask=0000`, so file permissions are no
-> boundary, and the forced command is the only one.
+> and compact from reclaiming space, so it was left off. Every repository is
+> owned by `taxborn` on one btrfs filesystem, and every key serves as that user,
+> so file permissions are no boundary, and the forced command is the only one.
 >
 > Deploy Helium before any client. A client rebuilt first points at 2200 before
 > anything listens there, and notifications are success-only, so the failure
@@ -207,6 +207,13 @@ Run as root; configs live in `/etc/borgmatic.d/`, one file per repository.
 Subcommands are borgmatic 2.x, and `--repository <label>` narrows any of them to
 a single target.
 
+Start manual backups with `sudo borgmatic create --verbosity 1 --list`, always.
+Not `borg create` directly, and not `systemctl start` on the timer's unit. The
+borgmatic config is what carries the excludes, the database dumps and the
+repository list, and `--verbosity 1 --list` is what shows which files went in
+and whether a dump was staged, since a run that silently dropped something
+still exits successfully.
+
 ```bash
 sudo borgmatic create --verbosity 1 --list   # back up now
 sudo borgmatic repo-list                     # archives per repository
@@ -217,10 +224,16 @@ sudo borgmatic extract --archive latest --path etc/ssh
 sudo systemctl status borgmatic.timer
 ```
 
-On Helium you can inspect the served repositories directly:
+On Helium you can inspect the served repositories directly. Run borg as
+`taxborn`, not root. Opening a repository rewrites its `config`, and a root run
+leaves it `root:root 0600`, after which the client's forced `borg serve` (which
+runs as `taxborn`) fails with `Permission denied: …/config` while the archives
+look fine. The NTFS mount's `uid=1000` option used to mask this. If it happens,
+`sudo chown -R taxborn:users /mnt/hdd/borg` repairs it.
 
 ```bash
-sudo borg list /mnt/hdd/borg/argon
+sudo -u taxborn borg list /mnt/hdd/borg/argon
+sudo -u taxborn borg check --repository-only /mnt/hdd/borg/argon
 ```
 
 ## databases
@@ -448,6 +461,9 @@ key entry for itself. Verify that one on the host:
 ```bash
 sudo borg list /mnt/hdd/borg/helium
 ```
+
+Helium's own repository is the exception to running as `taxborn`: borgmatic
+writes it as root over a local path, and nothing serves it over ssh.
 
 Doing it by hand, three things bite:
 
