@@ -24,7 +24,6 @@
       kernelParams = [
         "quiet"
         "splash"
-        "boot.shell_on_fail"
         "udev.log_priority=3"
         "rd.systemd.show_status=auto"
         # Without these the penguin logo, a blinking text cursor, and a framebuffer
@@ -35,6 +34,9 @@
         "fbcon=nodefer"
       ];
 
+      # Zero hides the boot menu, it does not remove it. systemd-boot still
+      # shows the menu when a key is held during boot, which is how to pick an
+      # older generation by hand. Boot counting rolls back on its own without it.
       loader.timeout = 0;
 
       plymouth = {
