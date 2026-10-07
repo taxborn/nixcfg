@@ -121,8 +121,30 @@ The external drive is btrfs, mounted `nofail,noatime` with `X-fstrim.notrim`.
 It is deliberately not snapshotted, and has no compression: borg archives are
 already versioned, encrypted and compressed, so snapshots would only pin the
 segments `borg prune` deletes and `compress` would only cost CPU. The
-repositories live in a `borg` subvolume owned by `taxborn`. It has to be
-created by hand, since a fresh btrfs root is `root:root` and `borg-repo-base`
-runs as `taxborn`. The `borg-repo-base` unit carries `RequiresMountsFor`, so backups fail outright when
+`borg-repo-base` unit carries `RequiresMountsFor`, so backups fail outright when
 the drive is absent instead of filling the root filesystem with archives nobody
 notices.
+
+The filesystem layout is not declared anywhere in Nix, so a new or reformatted
+drive needs this by hand. Run it as the borg-serving user, and do not run borg
+against the repositories as root afterwards, which leaves a repository's
+`config` unreadable to the forced `borg serve` (see
+[operating](../modules/nixos/services/backups/README.md#operating)):
+
+```bash
+D=/dev/disk/by-id/usb-WD_My_Book_25ED_575835324443304A30443532-0:0
+sudo sgdisk --zap-all $D && sudo sgdisk -n1:0:0 -t1:8300 -c1:borg $D
+sudo mkfs.btrfs -L borg ${D}-part1
+sudo mount -o noatime ${D}-part1 /mnt/hdd
+sudo btrfs subvolume create /mnt/hdd/borg
+sudo chown -R taxborn:users /mnt/hdd/borg
+sudo chmod -R go-rwx /mnt/hdd/borg
+```
+
+The `chown` is needed because a fresh btrfs root is `root:root` and
+`borg-repo-base` runs as `taxborn`. The `chmod` is the only thing keeping other
+local users, such as a compromised service account, from deleting every host's
+archives. Nothing else enforces it, so it is lost on a reformat or a restore
+that copies modes from somewhere else (rsync from NTFS brought `0777`). After a
+restore, rerun both and confirm with `find /mnt/hdd/borg -maxdepth 2 -user
+root`, which should print nothing.
