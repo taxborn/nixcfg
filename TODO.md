@@ -46,11 +46,13 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 
 ## open
 
-- backups: restrict the borg keys. Helium accepts every host's key with no
-  `--append-only` or `--restrict-to-path`, and rsync.net holds bare keys, so
-  one compromised host can prune every copy, offsite included. Restrict the
-  rsync.net keys by hand and record here that it is done, since nothing in the
-  repo can confirm it. See the
+- backups: restrict the rsync.net borg keys by hand, with
+  `command="borg14 serve --restrict-to-path …"` entries, and record here that
+  it is done, since nothing in the repo can confirm it. Helium's keys are now
+  confined to their own repo on port 2200. After deploying Helium first, then
+  each client, check that a backup reaches Helium on 2200 and that
+  `just restore-dr` still passes. Port 22 stays open to a compromised host by
+  tailnet identity until the tailnet ACLs say otherwise. See the
   [backups README](./modules/nixos/services/backups/README.md).
 - caddy: `secrets/tailscale/caddy.age` holds a Cloudflare `Zone:DNS:Edit`
   token encrypted to all five hosts, but only argon and helium use DNS-01.

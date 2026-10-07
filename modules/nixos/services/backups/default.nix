@@ -19,6 +19,11 @@ let
     host = "helium";
     user = "taxborn";
     basePath = "/mnt/hdd/borg";
+    # Real sshd, not Tailscale SSH. Tailscale answers 22 on the tailnet address
+    # and authorises by tailnet identity, so an `authorized_keys` entry there is
+    # never read and its forced command never runs. Anything that has to be
+    # confined to one repository has to arrive on a port Tailscale leaves alone.
+    port = 2200;
   };
 
   # Paths that are reproducible, volatile, or already represented elsewhere in
@@ -282,7 +287,8 @@ in
         '';
         description = ''
           Client hostname -> that host's borg SSH public key, authorized for
-          the backup user.
+          the backup user. Each key is confined to `borg serve` on that
+          client's own repository.
         '';
       };
     };
@@ -311,8 +317,18 @@ in
               # the leading slash of basePath is what makes this absolute.
               "ssh://${backupServer.user}@${
                 config.mySnippets.tailnet.tailscaleIPs.${backupServer.host}
-              }/${backupServer.basePath}/${hostname}";
+              }:${toString backupServer.port}/${backupServer.basePath}/${hostname}";
         };
+      };
+
+      # known_hosts matches a non-default port as `[name]:port`, so the pin the
+      # snippet holds for port 22 does not cover this one, and the first backup
+      # would stop at an unknown host key.
+      programs.ssh.knownHosts."${backupServer.host}-borg" = {
+        hostNames = [
+          "[${config.mySnippets.tailnet.tailscaleIPs.${backupServer.host}}]:${toString backupServer.port}"
+        ];
+        publicKeyFile = "${self}/keys/root_${backupServer.host}.pub";
       };
 
       age.secrets = {
@@ -511,8 +527,30 @@ in
         };
       };
 
+      # Listens beside 22 on every interface. `openFirewall` would put both in
+      # the firewall, so it is off and 22 stays open through `programs.ssh`
+      # instead. That leaves this port reachable over `tailscale0`, a trusted
+      # interface, and nowhere else.
+      services.openssh = {
+        openFirewall = false;
+        ports = [
+          22
+          backupServer.port
+        ];
+      };
+
+      # Each client key can run `borg serve` on its own repository and nothing
+      # else, whatever command it asks for. `restrict` drops the pty,
+      # forwarding and agent access the entry would otherwise grant. The full
+      # store path is needed because a forced command runs without the system
+      # PATH.
+      #
+      # This confines a key arriving on `backupServer.port`. It does not stop a
+      # compromised host reaching a shell on 22 by tailnet identity, which only
+      # the tailnet ACLs can close.
       users.users.${backupServer.user}.openssh.authorizedKeys.keys = lib.mapAttrsToList (
-        _client: pubkey: lib.trim pubkey
+        client: pubkey:
+        ''command="${lib.getExe pkgs.borgbackup} serve --restrict-to-path ${backupServer.basePath}/${client}",restrict ${lib.trim pubkey}''
       ) cfg.server.authorizedKeys;
     })
   ];

@@ -59,10 +59,10 @@ for repo in "${repos[@]}"; do
     remote=()
     [ -z "$remote_path" ] || remote=(--remote-path "$remote_path")
 
-    # Helium uses Tailscale SSH on 22, which skips authorized_keys. The
-    # operator's tailnet identity authorizes this connection, not the decrypted
-    # borg key. This tests that a lost host's passphrase opens its archive.
-    # Confining keys with forced commands would require a separate sshd port.
+    # Helium's repositories are served on a separate sshd port, where the
+    # decrypted borg key is read and confined to `borg serve` on its own
+    # repository. So this tests the key's forced command as well as the
+    # passphrase: a lost host's credentials have to open its archive.
     dest=$(mktemp -d "$scratch/extract.XXXXXXXX") || { rc=1; continue; }
     if ! archive=$(nix shell nixpkgs#borgbackup -c env \
             BORG_PASSCOMMAND="cat $pass" BORG_RSH="ssh -i $key" \

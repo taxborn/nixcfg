@@ -27,46 +27,54 @@ halves at once, and no host can set them out of sync.
 
 ### server side
 
-Helium serves repositories over SSH on the `taxborn` user, on port 22, over the
-tailnet. Each client's borg public key is added to that user's
-`authorized_keys`, and `mySnippets.ssh.knownHosts` pins Helium's host key so a
-backup run cannot be asked to trust a new one.
+Helium serves repositories over SSH on the `taxborn` user, on port 2200, over
+the tailnet. Each client's borg public key is added to that user's
+`authorized_keys`, and the backups module pins Helium's host key for that port
+so a backup run cannot be asked to trust a new one.
 
 Every host reaches every other over Tailscale SSH, which answers 22 on the
-tailnet address and authorises by tailnet identity. That removes the two ports
-Helium would otherwise need. Nothing is added to `allowedTCPPorts`, and the
+tailnet address and authorises by tailnet identity. That is why the borg keys
+need a port of their own. Nothing is added to `allowedTCPPorts`, and the
 tailscale interface is in `trustedInterfaces`, so the repositories are
 reachable from the tailnet and nowhere else.
 
-> The keys are unconfined, and that is the current trade. Until `058b04a` each
-> entry carried a forced command,
-> `command="…/borg serve --restrict-to-path /mnt/hdd/borg/<client>",restrict`,
-> served on a non-default port so that real sshd, rather than Tailscale SSH,
-> was the thing reading `authorized_keys`. That went out along with the YubiKey
-> agent forwarding it was tangled up with, on the grounds that a single trusted
-> tailnet did not earn two extra sshd ports.
+> Each client key is confined to `borg serve --restrict-to-path
+> /mnt/hdd/borg/<client>` by a forced command, with `restrict`. It is served on
+> port 2200 from real sshd, because on 22 Tailscale SSH answers and never reads
+> `authorized_keys`. That port is not in the firewall, so it is reachable over
+> `tailscale0` only. Clients use `ssh://…:2200//mnt/hdd/borg/<client>`, and the
+> backups module pins Helium's host key for `[ip]:2200`, since known_hosts
+> matches a non-default port separately from 22.
 >
-> Nothing in the config records what that cost, so it goes here. Any host's
-> borg key can now read and delete any *other* host's repository on Helium, and
-> a client compromised badly enough can reach a shell by tailnet identity and
-> wipe the drive outright. Every repository sits on an ntfs-3g mount with
-> `uid=1000,umask=0000`, so every archive is owned by `taxborn` and
-> world-writable. Two things keep that from being total: the off-site copy on
-> rsync.net, which has the same problem (below), and tier 0, which proves the
-> YubiKey alone can still open anything either copy holds.
+> What this closes: a host's borg key can no longer read or delete another
+> host's repository. What it does not: port 22 is still there. A host
+> compromised badly enough can reach a shell on Helium by tailnet identity and
+> wipe the drive, which only the tailnet ACLs can stop. Those live outside this
+> repo, so check them. The keys are also not append-only, so a compromised host
+> can still prune its own repository. Append-only would stop client-side prune
+> and compact from reclaiming space, so it was left off. Every repository sits
+> on an ntfs-3g mount with `uid=1000,umask=0000`, so file permissions are no
+> boundary, and the forced command is the only one.
 >
-> Restoring the restriction means bringing back both halves, a forced command
-> *and* a port that Tailscale SSH does not intercept, since on 22 the entry is
-> never consulted at all. Half of it is worse than none, because it reads as a
-> boundary and is not one.
+> Deploy Helium before any client. A client rebuilt first points at 2200 before
+> anything listens there, and notifications are success-only, so the failure
+> is silent.
 >
-> rsync.net's `authorized_keys` holds bare public keys too, so one compromised
+> rsync.net's `authorized_keys` holds bare public keys, so one compromised
 > VPS can take out both copies of everything. That one can be closed with
 > `command="borg14 serve --restrict-to-path …"` entries, which needs nothing
-> from this repo.
+> from this repo. It is a manual step on rsync.net, tracked in `TODO.md`.
+
+Check that the forced command is what answers on 2200. This must not print the
+output of `id`. Expect it to hang waiting for borg protocol input, or to exit
+with a protocol error, and interrupt it if it hangs:
+
+```bash
+ssh -i <borg key> -p 2200 taxborn@<helium tailnet ip> id
+```
 
 Check which of the two answered on any host. `"none"` means tailscaled answered
-and nothing read `authorized_keys`:
+and nothing read `authorized_keys`, which is what 22 should say:
 
 ```bash
 ssh -v taxborn@<tailnet ip> id 2>&1 | grep 'Authenticated to'
