@@ -4,33 +4,33 @@ opt.number = true
 opt.relativenumber = true
 opt.cursorline = true
 opt.wrap = false
-opt.scrolloff = 10 -- keep 10 lines above/below the cursor
-opt.sidescrolloff = 8 -- keep 8 columns to the left/right of cursor
+opt.scrolloff = 10
+opt.sidescrolloff = 8
 
 -- indentation
-opt.tabstop = 2 -- tab width
-opt.shiftwidth = 2 -- indent width
+opt.tabstop = 2
+opt.shiftwidth = 2
 opt.softtabstop = 2
-opt.expandtab = true -- spaces instead of tabs
-opt.smartindent = true -- autoindenting
-opt.autoindent = true -- copy indent from previous line?
+opt.expandtab = true
+opt.smartindent = true
+opt.autoindent = true
 
 -- search settings
 opt.ignorecase = true
-opt.smartcase = true -- case sensitive if I use caps
+opt.smartcase = true
 opt.hlsearch = false
 opt.incsearch = true
 
 -- visual settings
-opt.termguicolors = true -- 24-bit color
+opt.termguicolors = true
 opt.signcolumn = "yes"
 opt.showmatch = true
 opt.matchtime = 2
 opt.cmdheight = 1
 opt.showmode = false
-opt.pumheight = 10 -- popup menu height
-opt.pumblend = 10 -- popup menu transparency
-opt.winblend = 0 -- floating window transparency
+opt.pumheight = 10
+opt.pumblend = 10
+opt.winblend = 0
 opt.confirm = true
 opt.ruler = false
 
@@ -53,9 +53,9 @@ opt.errorbells = false
 opt.backspace = "indent,eol,start"
 opt.autochdir = false
 opt.iskeyword:append("-") -- treat - as part of word
-opt.path:append("**") -- include subdirs as part of search
+opt.path:append("**")
 opt.selection = "exclusive"
-opt.mouse = "a" -- enable mouse
+opt.mouse = "a"
 -- Over SSH the clipboard worth writing to is on the machine at the other end,
 -- so leave the registers unhooked there. `"+y` still reaches it through
 -- nvim's OSC 52 fallback, which `unnamedplus` would take out of the picture.
@@ -107,7 +107,7 @@ vim.g.trouble_lualine = true
 
 opt.jumpoptions = "view"
 opt.laststatus = 3 -- global statusline
-opt.linebreak = true -- Wrap lines at convenient points
-opt.list = true -- draw tabs and trailing whitespace
-opt.shiftround = true -- Round indent
+opt.linebreak = true
+opt.list = true
+opt.shiftround = true
 opt.shortmess:append({ W = true, I = true, c = true, C = true })

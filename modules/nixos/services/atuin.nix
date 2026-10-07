@@ -35,8 +35,6 @@ in
       # Loopback, so Caddy is the only route in. This is also the module's
       # default, written out so the bind address is visible next to the port.
       host = "127.0.0.1";
-      # The default firewall stance is closed, and so is this. The port is
-      # never opened, only Caddy reaches it.
       openFirewall = false;
     };
   };

@@ -85,7 +85,7 @@ in
         port = 3003;
       };
 
-      # Shell history sync. 3006 is skipped for braxton-is and 3007 is ntfy.
+      # Shell history sync.
       atuin = {
         domain = "atuin.biscuits.at";
         port = 3008;

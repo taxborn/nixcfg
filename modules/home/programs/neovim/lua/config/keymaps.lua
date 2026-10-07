@@ -24,11 +24,12 @@ map("n", "<C-l>", "<cmd>TmuxNavigateRight<CR>", { desc = "Go to Right Window" })
 
 map({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>", { desc = "Escape and Clear hlsearch" })
 
-map("v", "<", "<gv") -- stay in visual mode during indent
+-- The defaults leave visual mode after one shift, so repeating needs `gv`.
+map("v", "<", "<gv")
 map("v", ">", ">gv")
 
 map("v", "p", '"_dP', opts) -- don't replace clipboard
-map("n", "<C-c>", ":%y+<CR>", opts) -- copy whole file to clipboard
+map("n", "<C-c>", ":%y+<CR>", opts)
 
 -- Undo break-points at punctuation, so one `u` after a long insert does not
 -- take the whole paragraph back.

@@ -74,9 +74,7 @@ in
       # covered here.
       ignoreIP = tailnetRanges;
 
-      # The module declares the sshd jail itself, enabled and already pointed
-      # at the right port and filter, so all this does is tighten its retry
-      # budget below the global maxretry.
+      # Tighter than the global maxretry. The module already declares the jail.
       jails.sshd.settings.maxretry = 3;
     };
   };

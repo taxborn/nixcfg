@@ -123,7 +123,7 @@
       blueman.enable = lib.mkIf config.hardware.bluetooth.enable true;
       fwupd.enable = true;
       gnome.gnome-keyring.enable = true;
-      gvfs.enable = true; # Mount, trash, etc.
+      gvfs.enable = true;
       udisks2.enable = true; # Automount for USB drives, which gvfs hands off to.
       libinput.enable = true;
 
