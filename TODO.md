@@ -38,6 +38,13 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 - argon: removed the retired runner's `/var/lib/forgejo-runner`. Its Nix store
   volume was still being backed up and made borg warn about special files. Old
   archives keep carrying it until they age out of retention.
+- backups: each host's borg key is confined to `borg serve --restrict-to-path`
+  on its own repository on Helium, served on port 2200. Backups to Helium
+  worked from every host after deploying Helium first, and `just restore-dr`
+  for argon passed through the forced command. Other hosts' `restore-dr` runs
+  are not recorded here. The keys are not append-only, so a host can still
+  prune its own repository, and port 22 still reaches a shell by tailnet
+  identity until the tailnet ACLs say otherwise.
 - `workstation`: `enableStrictShellChecks`. Tried on every host and reverted
   for servers, see the comment in `workstation.nix`. A clean build is not
   evidence: `nounset` broke `paperless-scheduler` on Helium at activation.
@@ -48,11 +55,7 @@ Check each option with `nix eval` before adopting, and build `uranium` and
 
 - backups: restrict the rsync.net borg keys by hand, with
   `command="borg14 serve --restrict-to-path …"` entries, and record here that
-  it is done, since nothing in the repo can confirm it. Helium's keys are now
-  confined to their own repo on port 2200. After deploying Helium first, then
-  each client, check that a backup reaches Helium on 2200 and that
-  `just restore-dr` still passes. Port 22 stays open to a compromised host by
-  tailnet identity until the tailnet ACLs say otherwise. See the
+  it is done, since nothing in the repo can confirm it. See the
   [backups README](./modules/nixos/services/backups/README.md).
 - caddy: `secrets/tailscale/caddy.age` holds a Cloudflare `Zone:DNS:Edit`
   token encrypted to all five hosts, but only argon and helium use DNS-01.
