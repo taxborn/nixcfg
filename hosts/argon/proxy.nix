@@ -32,7 +32,7 @@ in
     ${networkMap.glance.domain}.extraConfig = ''
       import cloudflare-mtls
 
-      reverse_proxy localhost:${toString networkMap.glance.port} {
+      reverse_proxy 127.0.0.1:${toString networkMap.glance.port} {
         import client-ip
       }
     '';
@@ -76,7 +76,7 @@ in
       import cloudflare-mtls
 
       encode zstd gzip
-      reverse_proxy localhost:${toString networkMap.vaultwarden.port} {
+      reverse_proxy 127.0.0.1:${toString networkMap.vaultwarden.port} {
         import client-ip
       }
     '';
@@ -105,7 +105,7 @@ in
     ${networkMap.pds.domain}.extraConfig = ''
       encode zstd gzip
 
-      reverse_proxy localhost:${toString networkMap.pds.port}
+      reverse_proxy 127.0.0.1:${toString networkMap.pds.port}
     '';
 
     # Let's Encrypt issues a wildcard over DNS-01 and no other challenge, so
@@ -126,7 +126,7 @@ in
           dns cloudflare {env.CF_API_TOKEN}
         }
 
-        reverse_proxy localhost:${toString networkMap.pds.port}
+        reverse_proxy 127.0.0.1:${toString networkMap.pds.port}
       '';
     };
 
@@ -139,7 +139,7 @@ in
         max_size 2GB
       }
 
-      reverse_proxy localhost:${toString networkMap.forgejo.port} {
+      reverse_proxy 127.0.0.1:${toString networkMap.forgejo.port} {
         import client-ip
       }
     '';
@@ -162,7 +162,7 @@ in
         max_size 2GB
       }
 
-      reverse_proxy localhost:${toString networkMap.forgejo.port}
+      reverse_proxy 127.0.0.1:${toString networkMap.forgejo.port}
     '';
   };
 }

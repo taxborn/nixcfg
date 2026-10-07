@@ -28,7 +28,7 @@ in
       header Content-Security-Policy "frame-ancestors 'none'"
       header X-Frame-Options "DENY"
 
-      reverse_proxy localhost:${toString site.port} {
+      reverse_proxy 127.0.0.1:${toString site.port} {
         import client-ip
       }
     '';

@@ -28,7 +28,7 @@ in
         dns cloudflare {env.CF_API_TOKEN}
       }
 
-      reverse_proxy localhost:${toString networkMap.paperless.port}
+      reverse_proxy 127.0.0.1:${toString networkMap.paperless.port}
     '';
   };
 }
