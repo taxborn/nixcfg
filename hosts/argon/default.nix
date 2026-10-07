@@ -25,11 +25,13 @@
       piper.enable = true;
       tranquil-pds.enable = true;
       vaultwarden.enable = true;
+      minecraft.servers.mnb.directory = "/home/taxborn/public/mnb";
     };
   };
 
-  # Minecraft, for friends. The one deliberate public port outside Caddy, and
-  # no module in this repo serves it, so nothing here binds or proxies it.
+  # Minecraft, for friends. The one deliberate public port outside Caddy. The
+  # minecraft module runs the server but opens nothing, so the port is opened
+  # here and nothing proxies it.
   networking.firewall.allowedTCPPorts = [ 25565 ];
   networking.firewall.allowedUDPPorts = [ 25565 ];
 
