@@ -11,8 +11,9 @@
   networking.hostName = "helium";
   system.stateVersion = "25.11";
 
-  # Minecraft, for friends. The one deliberate public port outside Caddy, and
-  # no module in this repo serves it, so nothing here binds or proxies it.
+  # Minecraft, for friends. The one deliberate public port outside Caddy.
+  # Helium enables no Minecraft server, so nothing listens here yet, and
+  # nothing proxies it.
   networking.firewall.allowedTCPPorts = [ 25565 ];
   networking.firewall.allowedUDPPorts = [ 25565 ];
 

@@ -52,7 +52,7 @@ and SSH key need.
 
 `piper.age` is a dotenv file for the teal.fm tracker on Argon. It must contain
 the ATProto confidential-client key and ID, your allowed DID, and the Spotify
-and Last.fm API credentials:
+API credentials. Last.fm is disabled (`ENABLE_LASTFM = false` in `piper.nix`):
 
 ```dotenv
 ATPROTO_CLIENT_SECRET_KEY=
@@ -60,7 +60,6 @@ ATPROTO_CLIENT_SECRET_KEY_ID=
 ALLOWED_DIDS=did:plc:...
 SPOTIFY_CLIENT_ID=
 SPOTIFY_CLIENT_SECRET=
-LASTFM_API_KEY=
 ```
 
 Generate the first value with `goat key generate -t P-256`. The key ID must be

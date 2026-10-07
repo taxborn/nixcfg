@@ -75,8 +75,9 @@ REFRESH COLLATION VERSION` first. Argon needed it, Helium did not.
 ## notes
 
 - Never add BPF JIT hardening on `uranium`. `scx_lavd` needs the JIT.
-- `brightnessctl` is deliberately absent, niri routes brightness through
-  Noctalia for DDC. Revisit only if that changes.
+- `brightnessctl` is installed on tungsten only, in the host file. Niri routes
+  brightness keys through Noctalia, so the package is for manual use on the
+  laptop panel. External monitors need DDC, which is not wired up.
 
 ## evaluated and skipped for now
 

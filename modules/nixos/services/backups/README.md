@@ -256,13 +256,14 @@ archive as borg writes it.
 | `postgresqlDumpAll = true` | PostgreSQL | `pg_dumpall` of every database | `/var/lib/postgresql` |
 | `sqliteDatabases.<name> = <path>` | SQLite | `sqlite3 <path> .dump` | `<path>*` |
 
-Forgejo, Piper, Tranquil and Paperless register their dumps in their service
-modules whenever the backup client is enabled. Moving one of these services
+Forgejo, Piper, Vaultwarden, Atuin, Tranquil and Paperless register their
+dumps in their service modules whenever the backup client is enabled. Moving one of these services
 therefore carries its dump requirement with it. Repository and retention
 choices remain with the host. Forgejo and Piper read the database paths from
 their service configuration.
 
-Argon takes `pg_dumpall` for Tranquil and SQLite dumps for Forgejo and Piper.
+Argon takes `pg_dumpall` for Tranquil and Atuin, and SQLite dumps for Forgejo,
+Piper and Vaultwarden.
 Helium takes the PostgreSQL dump for Paperless. Carbon takes neither, having
 no database.
 
@@ -556,7 +557,7 @@ myNixOS.services.backups.client = {
 
 Both repositories are added automatically,
 `ssh://de4388@de4388.rsync.net/./borg/<hostname>` and
-`ssh://taxborn@<helium tailnet IP>//mnt/hdd/borg/<hostname>`. Naming an
+`ssh://taxborn@<helium tailnet IP>:2200//mnt/hdd/borg/<hostname>`. Naming an
 attribute replaces that target:
 
 ```nix
