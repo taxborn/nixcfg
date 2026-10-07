@@ -54,7 +54,9 @@ reachable from the tailnet and nowhere else.
 > can still prune its own repository. Append-only would stop client-side prune
 > and compact from reclaiming space, so it was left off. Every repository is
 > owned by `taxborn` on one btrfs filesystem, and every key serves as that user,
-> so file permissions are no boundary, and the forced command is the only one.
+> so file permissions are no boundary between repositories, and the forced
+> command is the only one. They do keep other local users out: the tree is
+> `0700`, so a compromised service account on Helium cannot delete archives.
 >
 > Deploy Helium before any client. A client rebuilt first points at 2200 before
 > anything listens there, and notifications are success-only, so the failure
