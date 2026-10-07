@@ -54,8 +54,6 @@ in
         };
       };
 
-      # github.user is already set above, but gh itself was only ever reachable
-      # from inside t3code's wrapper PATH, never from a shell.
       gh = {
         enable = true;
         settings.git_protocol = "ssh";
