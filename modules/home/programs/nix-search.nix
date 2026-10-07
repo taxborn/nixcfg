@@ -29,15 +29,13 @@ let
   };
 in
 {
-  imports = [ self.inputs.nix-index-database.homeModules.nix-index ];
-
   options.myHome.programs.nix-search.enable =
     lib.mkEnableOption "nixpkgs, NixOS and home-manager search tooling";
 
   config = lib.mkMerge [
     {
-      # Importing the database module above is what makes nix-locate usable at
-      # all, but it also switches `programs.nix-index` on with `mkDefault`. This
+      # The database module, loaded for every home by `flake/hosts.nix`, is what
+      # makes nix-locate usable at all, but it also switches `programs.nix-index` on with `mkDefault`. This
       # file reaches every home through `homeModules.default`, so it takes a
       # plain definition here to outrank that default and keep the ~100 MiB
       # index out of the servers' closures.

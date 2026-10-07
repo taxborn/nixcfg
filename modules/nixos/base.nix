@@ -99,7 +99,7 @@ in
     environment = {
       etc."nixos".source = self;
       systemPackages = with pkgs; [
-        self.inputs.agenix.packages.${pkgs.stdenv.hostPlatform.system}.default
+        self.packages.${pkgs.stdenv.hostPlatform.system}.agenix
         btop
         wget
         git

@@ -51,8 +51,11 @@ in
 
 A module aliases its own subtree as `cfg`. System, home and hardware modules
 take `self`, never `inputs`, because `flake/hosts.nix` passes only the former in
-`specialArgs`. A package a module needs gets re-exported through
-`flake/packages.nix` rather than reached for directly. In-repo files are
+`specialArgs`. A package built from an input gets re-exported through
+`flake/packages.nix` and reached as `self.packages.<system>.<name>`. An input's
+modules are wired in by `flake/hosts.nix`, not imported from a module. Only an
+input's source tree, which is not a package, is read as `self.inputs.<name>`,
+as `nix-search.nix` does to point manix at this flake's nixpkgs. In-repo files are
 `"${self}/keys/foo.pub"`, not relative paths.
 
 Use `lib.mkDefault` for shared settings a host may override, such as locale,

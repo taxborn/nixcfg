@@ -34,6 +34,12 @@ in
     {
       packages = {
         braxton-is = inputs.braxton-is.packages.${system}.default;
+        agenix = inputs.agenix.packages.${system}.default;
+
+        # The upstream lazygit theme, which `modules/home/programs/git.nix`
+        # rewrites at build time. catppuccin/nix is not a flake that exposes
+        # this under `packages`, so it is imported against nixpkgs here.
+        catppuccin-lazygit = (import inputs.catppuccin { inherit pkgs; }).packages.lazygit;
 
         # Build the flake input's checkout rather than the upstream
         # `tealfm-piper` output, which pins an older commit in package.nix.

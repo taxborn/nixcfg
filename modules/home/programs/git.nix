@@ -68,7 +68,7 @@ in
     # LG_CONFIG_FILE points at. Migrate it at build time instead. Drop this once
     # catppuccin/lazygit ships the new layout.
     catppuccin.sources.lazygit = pkgs.runCommand "catppuccin-lazygit-migrated" { } ''
-      cp -r ${(import self.inputs.catppuccin { inherit pkgs; }).packages.lazygit} $out
+      cp -r ${self.packages.${pkgs.stdenv.hostPlatform.system}.catppuccin-lazygit} $out
       chmod -R u+w $out
       for f in $out/*/*.yml; do
         ${lib.getExe pkgs.yq-go} -i \
