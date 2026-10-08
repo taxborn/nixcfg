@@ -93,13 +93,12 @@ of the same fact cannot drift:
 - `mySnippets.ssh.knownHosts` pins host keys. Each entry is written by hand, reading
   `../keys/root_<host>.pub` and the tailnet map.
 
-The old `alwaysOn` and `physicalDisks` options had no readers after `f4012fc`
-removed monitoring, so they were removed too. If monitoring returns, preserve the
-reasoning before choosing its data model. Only Argon, Carbon and Helium should
-alert on absence. An offline workstation is normal. SMART monitoring belongs
-on Helium, Tungsten and Uranium, since the OVH guests expose virtual disks.
-Exporter enablement and scrape targets must agree, and the OVH hardware profile
-already disables `smartd` for the same reason.
+- `mySnippets.monitoring` holds the monitoring server's hostname, the exporter
+  and store ports, and the two roster lists that refine what happens to a host.
+  `alwaysOn` hosts alert on absence (Argon, Carbon, Helium). An offline
+  workstation is normal. `physicalDisks` hosts run SMART monitoring (Helium,
+  Tungsten, Uranium), since the OVH guests expose virtual disks. The client
+  module asserts `physicalDisks` agrees with `services.smartd.enable`.
 
 ## fleet agreement
 
@@ -127,6 +126,9 @@ for local repository omissions and workstation rehearsals.
   and borgmatic, provisioning a host into the backup set, and the three tiers of
   restore testing. It is the highest-consequence module here. Read it in full
   before editing.
+- [`nixos/services/monitoring/`](./nixos/services/monitoring/README.md) covers
+  the Prometheus, Loki and Grafana stack on Helium and the exporters and Alloy
+  on every host.
 - [`nixos/services/forgejo-runner/`](./nixos/services/forgejo-runner/README.md)
   covers the rootless Podman runner on Carbon, its registration and limits.
 

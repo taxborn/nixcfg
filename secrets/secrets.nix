@@ -56,6 +56,11 @@ in
   # read it without any of them being able to read the server's user database.
   "ntfy/token.age".publicKeys = keys;
 
+  # Grafana's admin password on Helium, declared rather than
+  # seeded so a rebuild can reproduce the login.
+  "grafana/admin-password.age".publicKeys = hostKey "helium";
+  "grafana/secret-key.age".publicKeys = hostKey "helium";
+
   # Helium's, not Argon's — Paperless is the one service off the OVH box.
   # PAPERLESS_ADMIN_PASSWORD and PAPERLESS_EMAIL_HOST_PASSWORD, as one
   # environment file. The admin password is what creates the superuser on first

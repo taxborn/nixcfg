@@ -3,7 +3,7 @@ let
   networkMap = config.mySnippets.biscuits-at.networkMap;
 in
 {
-  # Helium serves one name and it is not meant for the internet, so the two
+  # Helium serves two names and neither is meant for the internet, so the two
   # ports stay shut and the tailnet interface is the whole front door.
   myNixOS.services.caddy.tailnetOnly = true;
 
@@ -29,6 +29,19 @@ in
       }
 
       reverse_proxy 127.0.0.1:${toString networkMap.paperless.port}
+    '';
+
+    # Grafana. Same arrangement as Paperless above: a public record holding
+    # Helium's tailnet address, a real certificate over DNS-01, and no
+    # `cloudflare-mtls` because the name never reaches Cloudflare's edge.
+    ${networkMap.grafana.domain}.extraConfig = ''
+      encode zstd gzip
+
+      tls {
+        dns cloudflare {env.CF_API_TOKEN}
+      }
+
+      reverse_proxy 127.0.0.1:${toString networkMap.grafana.port}
     '';
   };
 }

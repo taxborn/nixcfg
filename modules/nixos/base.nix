@@ -36,6 +36,7 @@ in
         ssh.enable = true;
       };
       services = {
+        monitoring.client.enable = true;
         tailscale.enable = true;
       };
     };

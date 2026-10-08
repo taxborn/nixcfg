@@ -98,6 +98,14 @@ in
         port = 3007;
       };
 
+      # Grafana, on Helium next to Paperless. Same trick as `paperless`: a
+      # public record holding a tailnet address, so it resolves for anyone and
+      # answers only on the tailnet. See hosts/helium/proxy.nix.
+      grafana = {
+        domain = "grafana.biscuits.at";
+        port = 3009;
+      };
+
       piper = {
         domain = "piper.biscuits.at";
         port = 3005;

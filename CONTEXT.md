@@ -128,7 +128,7 @@ asserts coverage; it rejects uncovered IPv6 addresses too.
 
 Services on `biscuits.at` take a port from the `300x` sequence, recorded in
 `networkMap`: 3000 glance, 3001 vaultwarden, 3002 forgejo, 3003 pds, 3004
-paperless, 3005 piper, 3007 ntfy, 3008 atuin. `braxton-is` stays out of the map because it is on a
+paperless, 3005 piper, 3007 ntfy, 3008 atuin, 3009 grafana. `braxton-is` stays out of the map because it is on a
 different domain. It reserves port 3006 so it can share a host with the PDS.
 
 ### secrets and recovery

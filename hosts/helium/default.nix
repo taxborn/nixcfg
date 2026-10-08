@@ -15,6 +15,7 @@
     profiles.server.enable = true;
     programs.systemd-boot.enable = true;
     services = {
+      monitoring.server.enable = true;
       paperless.enable = true;
 
       backups = {
