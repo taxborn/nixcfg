@@ -43,5 +43,16 @@ in
 
       reverse_proxy 127.0.0.1:${toString networkMap.grafana.port}
     '';
+
+    # AdGuard Home's UI. Same arrangement as Grafana above.
+    ${networkMap.adguard.domain}.extraConfig = ''
+      encode zstd gzip
+
+      tls {
+        dns cloudflare {env.CF_API_TOKEN}
+      }
+
+      reverse_proxy 127.0.0.1:${toString networkMap.adguard.port}
+    '';
   };
 }
