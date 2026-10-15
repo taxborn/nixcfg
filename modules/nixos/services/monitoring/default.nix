@@ -11,7 +11,7 @@ let
   inherit (monitoring) ports;
 
   hostname = config.networking.hostName;
-  hostIP = tailnet.tailscaleIPs.${hostname} or null;
+  hostIP = config.myNixOS.services.tailscale.address;
   serverIP = tailnet.tailscaleIPs.${monitoring.server} or null;
 
   hasSmart = lib.elem hostname monitoring.physicalDisks;
@@ -22,24 +22,9 @@ let
   # tailnet and from nothing else. Loopback is not an option when the point is
   # that another host scrapes it.
   #
-  # The cost is a startup ordering problem, handled by `tailnetBind` below.
-  tailnetBind = {
-    # `network.target` is up long before tailscaled has authenticated and
-    # assigned an address, so a unit binding a 100.64/10 address can lose that
-    # race on a cold boot. This orders the first attempt after tailscaled,
-    # which usually wins it.
-    after = [ "tailscaled.service" ];
-
-    # The ordering is not a guarantee: `tailscaled.service` being started does
-    # not mean an address has been assigned. A losing attempt dies with
-    # EADDRNOTAVAIL and the unit's restart policy retries it, but systemd's
-    # default limit of five starts in ten seconds latches the unit failed after
-    # a few seconds and leaves it dead until someone notices. Dropping the limit
-    # turns a permanent failure into a few seconds of retrying at boot. It also
-    # covers a laptop that boots before it has ever joined the tailnet.
-    unitConfig.StartLimitIntervalSec = 0;
-    serviceConfig.RestartSec = 5;
-  };
+  # The cost is a startup ordering problem, handled by
+  # `myNixOS.services.tailscale.bindOrdering`, which documents the race.
+  inherit (config.myNixOS.services.tailscale) bindOrdering;
 in
 {
   options.myNixOS.services.monitoring.client = {
@@ -133,8 +118,8 @@ in
     };
 
     systemd.services = {
-      prometheus-node-exporter = tailnetBind;
-      prometheus-smartctl-exporter = lib.mkIf hasSmart tailnetBind;
+      prometheus-node-exporter = bindOrdering;
+      prometheus-smartctl-exporter = lib.mkIf hasSmart bindOrdering;
     };
 
     services.alloy.enable = cfg.logs;

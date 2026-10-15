@@ -24,9 +24,7 @@ in
     ${networkMap.paperless.domain}.extraConfig = ''
       encode zstd gzip
 
-      tls {
-        dns cloudflare {env.CF_API_TOKEN}
-      }
+      import cloudflare-dns
 
       reverse_proxy 127.0.0.1:${toString networkMap.paperless.port}
     '';
@@ -37,9 +35,7 @@ in
     ${networkMap.grafana.domain}.extraConfig = ''
       encode zstd gzip
 
-      tls {
-        dns cloudflare {env.CF_API_TOKEN}
-      }
+      import cloudflare-dns
 
       reverse_proxy 127.0.0.1:${toString networkMap.grafana.port}
     '';
@@ -48,9 +44,7 @@ in
     ${networkMap.adguard.domain}.extraConfig = ''
       encode zstd gzip
 
-      tls {
-        dns cloudflare {env.CF_API_TOKEN}
-      }
+      import cloudflare-dns
 
       reverse_proxy 127.0.0.1:${toString networkMap.adguard.port}
     '';

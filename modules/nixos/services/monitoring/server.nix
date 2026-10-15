@@ -13,7 +13,7 @@ let
   grafana = config.mySnippets.biscuits-at.networkMap.grafana;
 
   hostname = config.networking.hostName;
-  serverIP = tailnet.tailscaleIPs.${hostname} or null;
+  serverIP = config.myNixOS.services.tailscale.address;
 
   # Where the bridge's credential file is generated, see `alertmanager-ntfy-auth`.
   ntfyAuthFile = "/run/alertmanager-ntfy-auth/auth.yml";
@@ -289,13 +289,8 @@ in
 
       # Loki binds a tailnet address, so it loses the same cold-boot race the
       # exporters do, and its unit orders on `network-online.target`, which is
-      # reached well before tailscaled has an address to hand out. Same
-      # treatment, documented in default.nix.
-      loki = {
-        after = [ "tailscaled.service" ];
-        unitConfig.StartLimitIntervalSec = 0;
-        serviceConfig.RestartSec = 5;
-      };
+      # reached well before tailscaled has an address to hand out.
+      loki = config.myNixOS.services.tailscale.bindOrdering;
     };
 
     # ---------------------------------------------------------------------- Loki

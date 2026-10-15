@@ -6,12 +6,9 @@
 let
   cfg = config.myNixOS.services.fail2ban;
 
-  # Tailscale's CGNAT block and its ULA prefix. A ban that lands on either is
-  # a ban on the path used to lift the ban.
-  tailnetRanges = [
-    "100.64.0.0/10"
-    "fd7a:115c:a1e0::/48"
-  ];
+  # A ban that lands inside either range is a ban on the path used to lift the
+  # ban.
+  tailnetRanges = config.mySnippets.tailnet.ranges;
 
   isIPv4 = addr: !(lib.hasInfix ":" addr);
 

@@ -193,6 +193,18 @@ in
             header_up X-Real-IP {client_ip}
           }
         ''
+        # The DNS-01 solver for vHosts Let's Encrypt cannot reach over HTTP-01:
+        # names that resolve to a tailnet address, and the PDS wildcard.
+        # CF_API_TOKEN comes from `environmentFile` above. Defined
+        # unconditionally, since an unused snippet costs nothing and the
+        # `tailnetOnly` hosts are the ones that use it.
+        + ''
+          (cloudflare-dns) {
+            tls {
+              dns cloudflare {env.CF_API_TOKEN}
+            }
+          }
+        ''
         # The IP allowlist only proves a request came from Cloudflare's
         # network, which anyone with a Cloudflare account can arrange. This
         # proves it came from *our* zone: no client certificate, no handshake.

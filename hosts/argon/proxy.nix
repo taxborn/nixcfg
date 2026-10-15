@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, lib, ... }:
 let
   networkMap = config.mySnippets.biscuits-at.networkMap;
 in
@@ -122,9 +122,7 @@ in
       extraConfig = ''
         encode zstd gzip
 
-        tls {
-          dns cloudflare {env.CF_API_TOKEN}
-        }
+        import cloudflare-dns
 
         reverse_proxy 127.0.0.1:${toString networkMap.pds.port}
       '';
@@ -155,7 +153,7 @@ in
         get_certificate tailscale
       }
 
-      @offTailnet not remote_ip 100.64.0.0/10 fd7a:115c:a1e0::/48
+      @offTailnet not remote_ip ${lib.concatStringsSep " " config.mySnippets.tailnet.ranges}
       abort @offTailnet
 
       request_body {

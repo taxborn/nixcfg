@@ -15,6 +15,20 @@
       type = lib.types.str;
     };
 
+    ranges = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [
+        "100.64.0.0/10"
+        "fd7a:115c:a1e0::/48"
+      ];
+      description = ''
+        Tailscale's CGNAT block and its ULA prefix. A remote address inside
+        either is a tailnet peer. `services.fail2ban` exempts them from bans
+        and asserts they cover `tailscaleIPs`, and Argon's tailnet-only Forgejo
+        vhost aborts any peer outside them, so the two cannot drift apart.
+      '';
+    };
+
     tailscaleIPs = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;
       description = ''

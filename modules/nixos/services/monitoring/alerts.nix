@@ -64,6 +64,25 @@ let
             };
           }
           {
+            alert = "BackupStale";
+            # SystemdUnitFailed cannot see this. A timer that stops firing, or
+            # one whose unit file never made it onto the host, leaves no failed
+            # unit behind, and the archive silently ages. Keyed on the timer's
+            # last trigger rather than the service's, because a service that
+            # ran and failed is already that rule's job. Restricted to the
+            # `node` job: a laptop that was shut for two days is not a missed
+            # backup. A timer that has never fired reports 0, which reads as
+            # maximally stale and is what a first backup that never happened
+            # should look like.
+            expr = ''time() - node_systemd_timer_last_trigger_seconds{job="node", name="borgmatic.timer"} > 36 * 3600'';
+            for = "30m";
+            labels.severity = "warning";
+            annotations = {
+              summary = "no backup on {{ $labels.instance }} for 36 hours";
+              description = "borgmatic.timer last fired more than 36 hours ago on {{ $labels.instance }}.";
+            };
+          }
+          {
             alert = "MemoryPressure";
             expr = "node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes < 0.10";
             for = "15m";

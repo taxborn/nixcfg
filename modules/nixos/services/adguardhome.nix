@@ -6,9 +6,8 @@
 let
   cfg = config.myNixOS.services.adguardhome;
   networkMap = config.mySnippets.biscuits-at.networkMap;
-  tailnet = config.mySnippets.tailnet;
-  hostname = config.networking.hostName;
-  tailnetIP = tailnet.tailscaleIPs.${hostname} or null;
+  tailscale = config.myNixOS.services.tailscale;
+  tailnetIP = tailscale.address;
 in
 {
   options.myNixOS.services.adguardhome.enable = lib.mkEnableOption "AdGuard Home DNS ad blocker";
@@ -74,9 +73,12 @@ in
     # The tailnet address only exists once tailscaled is Running. Without this
     # ordering AdGuard races it at boot, fails to bind and exhausts its start
     # limit, leaving every tailnet device with no DNS until someone notices.
-    systemd.services.adguardhome = {
-      after = [ "tailscaled-autoconnect.service" ];
-      wants = [ "tailscaled-autoconnect.service" ];
+    #
+    # The nixpkgs unit sets its own StartLimitIntervalSec and RestartSec, so
+    # the shared values have to be forced.
+    systemd.services.adguardhome = lib.recursiveUpdate tailscale.bindOrdering {
+      unitConfig.StartLimitIntervalSec = lib.mkForce 0;
+      serviceConfig.RestartSec = lib.mkForce 5;
     };
 
     # Declared above, so the state directory holds only the query log and
