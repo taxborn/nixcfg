@@ -1,4 +1,6 @@
-# AGENTS.md
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 Operating notes for coding agents working in this repository. Read
 [CONTEXT.md](./CONTEXT.md) alongside this. It defines the vocabulary
@@ -9,10 +11,26 @@ tree and this file both assume.
 
 A flake-parts NixOS configuration for a five-host homelab. It builds five
 `nixosConfigurations`, three of which are servers. Argon holds a git forge, a
-password manager and an ATProto PDS, and Helium holds a document archive. A bad change here is not a failing test. It is a service that
-stops answering, or an archive that silently stops containing a database.
+password manager and an ATProto PDS, and Helium holds a document archive.
+
+A bad change here is not a failing test. It is a service that stops
+answering, or an archive that silently stops containing a database.
 
 Nothing here is deployed by CI. Deploys are a person running `just update`.
+
+## commands
+
+```
+just check                                   # nixfmt, statix, deadnix, shellcheck
+nix flake check                              # all hosts + hooks + regressions
+nix build .#nixosConfigurations.<host>.config.system.build.toplevel
+nix eval .#nixosConfigurations.<host>.config.<path>
+nix build .#checks.x86_64-linux.<name>       # one regression
+```
+
+Hosts: `argon`, `carbon`, `helium`, `tungsten`, `uranium`. Check names:
+`architecture`, `forgejo-runner-socket`, `pre-commit`, `restore-coverage`,
+`restore-runner`.
 
 ## what you can and cannot do
 
