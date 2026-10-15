@@ -66,7 +66,7 @@ in
         port = 3000;
       };
 
-      # Paperless-ngx, the one service not on Argon. Its record points at
+      # Paperless-ngx, one of the services on Helium. Its record points at
       # Helium's tailnet address rather than a routable one, so the name
       # resolves for anyone and answers only on the tailnet — see
       # hosts/helium/proxy.nix.

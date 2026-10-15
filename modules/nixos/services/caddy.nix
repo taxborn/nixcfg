@@ -168,7 +168,7 @@ in
         enableReload = false;
         # Despite the name, this file also carries CF_API_TOKEN. Every vhost
         # that cannot use HTTP-01 solves DNS-01 with that token, which is
-        # Helium's only certificate and Argon's PDS wildcard, so rewriting the
+        # every certificate on Helium and Argon's PDS wildcard, so rewriting the
         # secret as a bare auth key fails their next renewal.
         environmentFile = config.age.secrets.tailscaleCaddyAuth.path;
 

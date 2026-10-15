@@ -3,7 +3,7 @@ let
   networkMap = config.mySnippets.biscuits-at.networkMap;
 in
 {
-  # Helium serves two names and neither is meant for the internet, so the two
+  # Nothing Helium serves is meant for the internet, so the two
   # ports stay shut and the tailnet interface is the whole front door.
   myNixOS.services.caddy.tailnetOnly = true;
 

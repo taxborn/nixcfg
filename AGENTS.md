@@ -132,8 +132,9 @@ before changing these settings:
 
 Read the [2026-09-05 maintenance review](./docs/reviews/2026-09-05-maintenance.md)
 before restoring removed settings or changing a retained one. It records the
-OVH GRUB targets, opt-in bees deduplication, and the retired runner and
-monitoring decisions. Its Mako and Hypridle entries describe the desktop that
+OVH GRUB targets, opt-in bees deduplication, and the retired runner decision.
+Its monitoring decision was reversed when the stack returned, see the
+follow-up at the end. Its Mako and Hypridle entries describe the desktop that
 Niri replaced.
 
 ## file map

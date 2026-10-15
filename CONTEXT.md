@@ -49,7 +49,7 @@ module shape, import rules and use of `self`.
 A snippet declares data without setting configuration. Service modules, Caddy
 and SSH clients read the same registry rather than copying ports or hostnames.
 The [snippet registry](./modules/README.md#snippets-hold-data-no-config) describes
-the three namespaces and their consumers.
+the registry namespaces and their consumers.
 
 ### profile
 
@@ -128,8 +128,8 @@ asserts coverage; it rejects uncovered IPv6 addresses too.
 
 Services on `biscuits.at` take a port from the `300x` sequence, recorded in
 `networkMap`: 3000 glance, 3001 vaultwarden, 3002 forgejo, 3003 pds, 3004
-paperless, 3005 piper, 3007 ntfy, 3008 atuin, 3009 grafana. `braxton-is` stays out of the map because it is on a
-different domain. It reserves port 3006 so it can share a host with the PDS.
+paperless, 3005 piper, 3007 ntfy, 3008 atuin, 3009 grafana, 3010 adguard.
+`braxton-is` stays out of the map because it is on a different domain. It reserves port 3006 so it can share a host with the PDS.
 
 ### secrets and recovery
 

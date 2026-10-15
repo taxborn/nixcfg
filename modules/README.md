@@ -92,7 +92,6 @@ of the same fact cannot drift:
   require its names to match the build roster.
 - `mySnippets.ssh.knownHosts` pins host keys. Each entry is written by hand, reading
   `../keys/root_<host>.pub` and the tailnet map.
-
 - `mySnippets.monitoring` holds the monitoring server's hostname, the exporter
   and store ports, and the two roster lists that refine what happens to a host.
   `alwaysOn` hosts alert on absence (Argon, Carbon, Helium). An offline

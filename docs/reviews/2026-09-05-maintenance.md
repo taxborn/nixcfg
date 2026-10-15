@@ -48,3 +48,11 @@ is superseded by the desktop follow-up above.
 - The retired runner's GC and monitoring distinctions live in
   [modules/README.md](../../modules/README.md). There is no runnable `runner-gc`
   recipe or configurable monitoring roster without their consumers.
+
+## monitoring follow-up, 2026-10-15
+
+Commit `9729fb7` brought Prometheus, Loki and Grafana back on Helium, and with
+them `mySnippets.monitoring.alwaysOn` and `physicalDisks`. The "unread
+monitoring options" row above described the earlier tree. Both lists now have
+readers again: the server splits scrape jobs on `alwaysOn`, and the client
+asserts `physicalDisks` against `services.smartd.enable`.
