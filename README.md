@@ -46,7 +46,6 @@ for the checked rosters.
 just update              # rebuild this machine
 just update <host>       # rebuild a remote host over ssh
 just check               # run every pre-commit hook over the whole tree
-just deploy-site         # bump the braxton.is lock and rebuild carbon
 just clean               # nix-collect-garbage -d
 ```
 

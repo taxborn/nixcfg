@@ -17,24 +17,6 @@ update host="":
             nixos-rebuild switch --flake .#{{ host }} --target-host {{ host }} --ask-sudo-password
     fi
 
-# Deploy the current tip of braxton.is to Carbon
-deploy-site:
-    #!/usr/bin/env bash
-    set -euo pipefail
-
-    # The whole deploy is this lock bump: the revision pinned here is the
-    # revision Carbon serves, so the site rolls back the way anything else on
-    # these machines does, by rolling back a generation.
-    nix flake update braxton-is
-
-    # Guarded so re-running when the site has not moved redeploys rather than
-    # failing on an empty commit.
-    if ! git diff --quiet flake.lock; then
-        git commit -m "chore(site): bump braxton.is" flake.lock
-    fi
-
-    just update carbon
-
 # Run every pre-commit hook over the whole tree, not just the staged files
 check:
     nix develop --command pre-commit run --all-files

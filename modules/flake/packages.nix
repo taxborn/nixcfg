@@ -20,20 +20,15 @@ let
   frontendRoot = "source/frontend";
 in
 {
-  # Re-exported so the NixOS module can reach it as
-  # `self.packages.<system>.braxton-is`. Every module in this repo takes `self`
-  # and none take `inputs` — `modules/flake/hosts.nix` passes only the former in
-  # `specialArgs` — and going through here keeps that true rather than widening
-  # the argument every module is written against for the sake of one service.
-  #
-  # It also means `nix build .#braxton-is` works from this repo, which is the
-  # smoke test worth running before a deploy: it builds exactly what the unit on
-  # Carbon will execute.
+  # Packages are defined here, and not in the modules that use them, because
+  # every module in this repo takes `self` and none take `inputs`.
+  # `modules/flake/hosts.nix` passes only the former in `specialArgs`, and
+  # reaching `self.packages.<system>` keeps that true rather than widening the
+  # argument every module is written against.
   perSystem =
     { system, pkgs, ... }:
     {
       packages = {
-        braxton-is = inputs.braxton-is.packages.${system}.default;
         agenix = inputs.agenix.packages.${system}.default;
 
         # The upstream lazygit theme, which `modules/home/programs/git.nix`

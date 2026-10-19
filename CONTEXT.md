@@ -15,7 +15,7 @@ beyond identity; role is a property of the config. Roughly:
 | host | what it is | role |
 | --- | --- | --- |
 | argon | OVH VPS | server, most of `biscuits.at` |
-| carbon | OVH VPS | server, `braxton.is` |
+| carbon | OVH VPS | server, Forgejo runner |
 | helium | Intel NUC at home | server, backup target, Paperless |
 | tungsten | Dell XPS 15 9520 | workstation (laptop) |
 | uranium | desktop PC | workstation |
@@ -28,8 +28,6 @@ tailnet map and secret rules in agreement. Host details live in
 
 - `biscuits.at` is the homelab's service domain. Everything in
   `mySnippets.biscuits-at.networkMap` lives under it.
-- `braxton.is` is the personal website, served from Carbon out of a separate
-  repository pinned as a flake input.
 - `taxborn.com` is the identity. `hello@taxborn.com` is the actual mailbox and
   the Fastmail login; `infra@biscuits.at` is a *sending identity* that services
   use as their `From`. Every service that sends mail relays through Fastmail on
@@ -62,10 +60,8 @@ include `base`. Hardware profiles use the same pattern for chassis, such as
 
 ### the flake.lock revision *is* the deploy
 
-Three services are deployed by moving a flake input rather than by copying files:
+Two services are deployed by moving a flake input rather than by copying files:
 
-- `braxton-is`, where `just deploy-site` is `nix flake update braxton-is`, a
-  commit, and a rebuild. Rolling the site back is rolling back a generation.
 - `tranquil-src`, where `nix flake update tranquil-src` is the PDS upgrade.
 - `tealfm-piper`, where `nix flake update tealfm-piper` is the Piper upgrade.
   It tracks upstream's default branch, so every update takes whatever landed.
@@ -128,8 +124,7 @@ asserts coverage; it rejects uncovered IPv6 addresses too.
 
 Services on `biscuits.at` take a port from the `300x` sequence, recorded in
 `networkMap`: 3000 glance, 3001 vaultwarden, 3002 forgejo, 3003 pds, 3004
-paperless, 3005 piper, 3007 ntfy, 3008 atuin, 3009 grafana, 3010 adguard.
-`braxton-is` stays out of the map because it is on a different domain. It reserves port 3006 so it can share a host with the PDS.
+paperless, 3005 piper, 3007 ntfy, 3008 atuin, 3009 grafana, 3010 adguard. 3006 is unassigned.
 
 ### secrets and recovery
 

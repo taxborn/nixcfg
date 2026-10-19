@@ -42,7 +42,7 @@ You can evaluate and build. You cannot deploy, and you cannot read secrets.
   settings, as the [GRUB review](#known-drift) showed.
 - `nix build .#nixosConfigurations.<host>.config.system.build.toplevel` builds a
   host in full. This is the real check that a change works.
-- `nix build .#braxton-is`, `.#tealfm-piper`, `.#tranquil-pds` build the
+- `nix build .#tealfm-piper`, `.#tranquil-pds` build the
   packages defined in `modules/flake/packages.nix`.
 - `nix flake check` evaluates every host, runs the pre-commit hook set over
   the whole tree, and runs the architecture, Forgejo runner socket and mocked
@@ -50,7 +50,7 @@ You can evaluate and build. You cannot deploy, and you cannot read secrets.
 - `just check` runs the hook set alone (`nixfmt`, `statix`, `deadnix`,
   `shellcheck`), which is faster and catches almost everything you will break.
 
-Do not run `nixos-rebuild`, `just update`, `just deploy-site`, or any `just
+Do not run `nixos-rebuild`, `just update`, or any `just
 restore-*` recipe. The rebuild recipes switch a live system. The restore recipes
 are interactive by construction, needing a YubiKey touch per decrypt and a sudo
 prompt per host. Propose them, do not run them.

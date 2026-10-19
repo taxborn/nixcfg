@@ -91,8 +91,8 @@ in
         port = 3008;
       };
 
-      # Push notifications. 3006 is skipped because braxton-is reserves it, see
-      # modules/nixos/services/braxton-is.nix.
+      # Push notifications. 3006 is skipped. braxton-is used it until the site was
+      # removed, and the port stays unassigned.
       ntfy = {
         domain = "ntfy.biscuits.at";
         port = 3007;

@@ -91,14 +91,10 @@ An Intel OVH VPS, `vps-2 2026` model.
 
 | service | vHost | port | notes |
 | --- | --- | --- | --- |
-| [braxton.is](../modules/nixos/services/braxton-is.nix) | `braxton.is` | 3006 | Astro SSR under `DynamicUser` |
 | [Forgejo runner](../modules/nixos/services/forgejo-runner/README.md) | | | trusted repositories, rootless Podman, one concurrent job |
 
-Deploying the site means moving a flake input. `just deploy-site` bumps the
-`braxton-is` revision in `flake.lock` and rebuilds, so a rollback is a
-generation rollback. Nothing on this host is in the backup set beyond the
-defaults. There is no database, and the state directory holds only expendable
-sessions.
+Nothing on this host is in the backup set beyond the defaults. It has no
+database.
 
 ## [Helium](./helium)
 

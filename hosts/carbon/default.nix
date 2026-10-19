@@ -4,7 +4,6 @@
   imports = [
     ./disko.nix
     (modulesPath + "/profiles/qemu-guest.nix")
-    ./proxy.nix
   ];
 
   nixpkgs.hostPlatform = "x86_64-linux";
@@ -18,7 +17,6 @@
         enable = true;
         notify.enable = true;
       };
-      braxton-is.enable = true;
       forgejo-runner.enable = true;
       minecraft.servers.mavs-updated = {
         directory = "/home/taxborn/public/mavs-updated";
