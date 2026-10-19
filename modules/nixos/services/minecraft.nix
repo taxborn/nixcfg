@@ -9,6 +9,7 @@ let
   systemctl = lib.getExe' config.systemd.package "systemctl";
   backupsOn = config.myNixOS.services.backups.client.enable;
   unitOf = name: "minecraft-${name}.service";
+  exposedServers = lib.filterAttrs (_: server: server.openFirewall) cfg.servers;
 
   stdinOf = name: "/run/minecraft-${name}.stdin";
 
@@ -111,12 +112,44 @@ in
   config = lib.mkIf (cfg.servers != { }) {
     networking.firewall =
       let
-        exposed = lib.filter (server: server.openFirewall) (lib.attrValues cfg.servers);
+        exposed = lib.attrValues exposedServers;
       in
       {
         allowedTCPPorts = map (server: server.port) exposed;
         allowedUDPPorts = map (server: server.port) exposed;
       };
+
+    # A scanner on the public port sends a truncated handshake. Netty fails to
+    # decode it, prints the stack trace to STDERR and logs the peer as
+    # `lost connection: Internal Exception: ...DecoderException`. Real clients
+    # that drop or time out log a different reason with no DecoderException, so
+    # this line is the scanner's alone. fail2ban only needs to exist where the
+    # port is exposed, and the global ignoreIP keeps the tailnet out of it.
+    environment.etc = lib.mapAttrs' (
+      name: _:
+      lib.nameValuePair "fail2ban/filter.d/minecraft-${name}.conf" {
+        text = ''
+          [Definition]
+          failregex = ^.*: /<ADDR>:\d+ lost connection: Internal Exception: io\.netty\.handler\.codec\.DecoderException
+          ignoreregex =
+        '';
+      }
+    ) exposedServers;
+
+    services.fail2ban.jails = lib.mapAttrs' (
+      name: server:
+      lib.nameValuePair "minecraft-${name}" {
+        settings = {
+          enabled = true;
+          filter = "minecraft-${name}";
+          backend = "systemd";
+          journalmatch = "_SYSTEMD_UNIT=${unitOf name}";
+          port = toString server.port;
+          maxretry = 3;
+          findtime = "1h";
+        };
+      }
+    ) exposedServers;
 
     systemd.sockets = lib.mapAttrs' (
       name: server:
