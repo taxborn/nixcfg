@@ -7,11 +7,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790734419,
-        "narHash": "sha256-n7wew722m1OTBT9DOIMxNX/NF4zfsSUABAO5eW3wikE=",
+        "lastModified": 1792369191,
+        "narHash": "sha256-Ptf4Drj8JYQDpNGEo9o+Tc7+hyjYxe+zrYO3J4jrYT4=",
         "owner": "ryantm",
         "repo": "agenix",
-        "rev": "3daa710894355fa2fad8243380af373a2b4046ef",
+        "rev": "847720f0e73a77ce6503b63fba6c357c742c28a7",
         "type": "github"
       },
       "original": {
@@ -153,11 +153,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792098797,
-        "narHash": "sha256-u4DIIZgznEGzByxXrxWCXK19VcMtTBmi/M9gZ7Jk9bM=",
+        "lastModified": 1792438393,
+        "narHash": "sha256-C9hsBAUY/K7W7+CBSRdrT7XaX/ulVm3RuRBJNjmEM/A=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "640725978b99076e18e069f6e7d2959124584f8f",
+        "rev": "b74e23e34d3172802fdd60d4a1a01978f95e1898",
         "type": "github"
       },
       "original": {
@@ -338,11 +338,11 @@
     "tranquil-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1792324958,
-        "narHash": "sha256-QbncR2z9GhxKKbbCf6a5Ph4lLi4OYWjRN49s7+5q7Uc=",
+        "lastModified": 1792342938,
+        "narHash": "sha256-WbLGAYc9SuHuikXP/q8sgCiAG/4w6FnJc4yNMVy8/tQ=",
         "ref": "main",
-        "rev": "da1aed0ed8cc24c98a8b892f57cd8eb09f0f9d9a",
-        "revCount": 639,
+        "rev": "e2ce36dc6dd0f0e2ccc3f932fe66d97eda159b2b",
+        "revCount": 640,
         "type": "git",
         "url": "https://tangled.org/did:plc:jj6ajj6duxnlthwtnob4qyuv"
       },
