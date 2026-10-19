@@ -54,7 +54,23 @@ in
       '';
     };
 
+    minecraftHosts = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [
+        "argon"
+        "carbon"
+      ];
+      description = ''
+        Hosts running `myNixOS.services.minecraft` servers. Each runs a status
+        exporter and a process exporter beside them, and the monitoring server
+        scrapes both. The Minecraft module asserts that a host with servers is
+        listed here, since an unlisted one would export metrics nothing collects.
+      '';
+    };
+
     ports = {
+      minecraftExporter = mkPort "mc-monitor's status exporter, on each Minecraft host's tailnet address." 9150;
+      processExporter = mkPort "process-exporter, on each Minecraft host's tailnet address. Its upstream default." 9256;
       nodeExporter = mkPort "node_exporter, bound to each host's tailnet address." 9100;
       smartctlExporter = mkPort "smartctl_exporter, bound to each host's tailnet address." 9633;
       prometheus = mkPort "Prometheus, loopback on the server." 9090;

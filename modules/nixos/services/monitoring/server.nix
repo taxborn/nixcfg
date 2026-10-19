@@ -87,8 +87,10 @@ in
         '';
       }
       {
-        assertion = lib.all (h: lib.elem h allHosts) (monitoring.alwaysOn ++ monitoring.physicalDisks);
-        message = "mySnippets.monitoring.alwaysOn and physicalDisks may only name hosts in mySnippets.tailnet.tailscaleIPs.";
+        assertion = lib.all (h: lib.elem h allHosts) (
+          monitoring.alwaysOn ++ monitoring.physicalDisks ++ monitoring.minecraftHosts
+        );
+        message = "mySnippets.monitoring.alwaysOn, physicalDisks and minecraftHosts may only name hosts in mySnippets.tailnet.tailscaleIPs.";
       }
     ];
 
@@ -171,6 +173,19 @@ in
           # just stores the same numbers repeatedly.
           scrape_interval = "5m";
           static_configs = mkTargets ports.smartctlExporter monitoring.physicalDisks;
+        }
+        {
+          # Players, latency and health from a status ping, see the Minecraft
+          # module. Absent entirely on a host with no servers, so the target
+          # list is empty rather than pointing at a port nothing opened.
+          job_name = "minecraft";
+          static_configs = mkTargets ports.minecraftExporter monitoring.minecraftHosts;
+        }
+        {
+          # Resident memory and CPU of the server JVM. The status ping cannot
+          # see either.
+          job_name = "minecraft-process";
+          static_configs = mkTargets ports.processExporter monitoring.minecraftHosts;
         }
         {
           # Prometheus's own health. Cheap, and the only way to notice that

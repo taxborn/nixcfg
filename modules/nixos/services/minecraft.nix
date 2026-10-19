@@ -11,6 +11,12 @@ let
   unitOf = name: "minecraft-${name}.service";
   exposedServers = lib.filterAttrs (_: server: server.openFirewall) cfg.servers;
 
+  monitoring = config.mySnippets.monitoring;
+  hostIP = config.myNixOS.services.tailscale.address;
+  inherit (config.myNixOS.services.tailscale) bindOrdering;
+  hostname = config.networking.hostName;
+  metricsOn = config.myNixOS.services.monitoring.client.enable && hostIP != null;
+
   stdinOf = name: "/run/minecraft-${name}.stdin";
 
   # The console is a FIFO, so `stop` can be written by a script and by hand. The
@@ -110,6 +116,17 @@ in
   };
 
   config = lib.mkIf (cfg.servers != { }) {
+    assertions = [
+      {
+        assertion = lib.elem hostname monitoring.minecraftHosts;
+        message = ''
+          ${hostname} runs Minecraft servers but is not in
+          mySnippets.monitoring.minecraftHosts, so the monitoring server never
+          scrapes the exporters below and the Minecraft dashboard stays empty.
+        '';
+      }
+    ];
+
     networking.firewall =
       let
         exposed = lib.attrValues exposedServers;
@@ -150,6 +167,22 @@ in
         };
       }
     ) exposedServers;
+
+    # Heap size is no use as a memory graph: `-Xms` equals `-Xmx`, so it is flat
+    # from the first second. Resident set size is what grows past it (metaspace,
+    # thread stacks, mod native allocations) and what the OOM killer reads,
+    # which is why process-exporter is here at all. `minecraft-exporter` below
+    # covers players, latency and health.
+    services.prometheus.exporters.process = lib.mkIf metricsOn {
+      enable = true;
+      listenAddress = hostIP;
+      port = monitoring.ports.processExporter;
+      settings.process_names = lib.mapAttrsToList (name: server: {
+        name = "minecraft-${name}";
+        comm = [ "java" ];
+        cmdline = [ ".*-jar ${lib.escapeRegex server.jar}.*" ];
+      }) cfg.servers;
+    };
 
     systemd.sockets = lib.mapAttrs' (
       name: server:
@@ -201,6 +234,37 @@ in
           };
         }
       ) cfg.servers
+      // lib.optionalAttrs metricsOn {
+        # Players, latency and health come from a status ping, the same one the
+        # multiplayer menu sends, so this needs no mod and no `enable-query`.
+        prometheus-process-exporter = bindOrdering;
+        minecraft-exporter = lib.recursiveUpdate bindOrdering {
+          description = "Minecraft status exporter";
+          wantedBy = [ "multi-user.target" ];
+          serviceConfig = {
+            ExecStart = "${lib.getExe pkgs.mc-monitor} export-for-prometheus -port ${toString monitoring.ports.minecraftExporter} -servers ${
+              lib.concatMapStringsSep "," (server: "127.0.0.1:${toString server.port}") (
+                lib.attrValues cfg.servers
+              )
+            }";
+            Restart = "on-failure";
+            DynamicUser = true;
+            # mc-monitor has no listen-address flag, so it binds every interface
+            # and the unit has to do what the flag would. Loopback is the ping to
+            # the server, the tailnet range is Prometheus. Nothing else gets a
+            # byte in, whatever the firewall says about the public address.
+            IPAddressDeny = "any";
+            IPAddressAllow = [
+              "localhost"
+              "100.64.0.0/10"
+            ];
+            NoNewPrivileges = true;
+            ProtectSystem = "strict";
+            ProtectHome = true;
+            PrivateTmp = true;
+          };
+        };
+      }
       // lib.optionalAttrs backupsOn {
         # A running world is not a consistent backup: region files are rewritten
         # while borg reads them. Stop every server for the nightly run and bring

@@ -8,7 +8,7 @@ every host. Alerts arrive as ntfy pushes through Argon's ntfy.
 | `default.nix` | the client: node_exporter, smartctl_exporter, Alloy |
 | `server.nix` | Prometheus, Alertmanager, the ntfy bridge, Loki, Grafana |
 | `alerts.nix` | the alert rules |
-| `dashboards.nix` | the four provisioned dashboards |
+| `dashboards.nix` | the provisioned dashboards |
 
 The earlier version of this stack lived on Argon and was removed in `f4012fc`.
 This one keeps its design and moves the server, so most of the reasoning in the
@@ -44,6 +44,7 @@ process binds. Ports live in `mySnippets.monitoring.ports`, and Grafana's is in
 | Loki | `<helium tailnet IP>:3100` | the tailnet, for every Alloy |
 | node_exporter | `<host tailnet IP>:9100` | the tailnet |
 | smartctl_exporter | `<host tailnet IP>:9633` | the tailnet |
+| mc-monitor, process-exporter | `<host tailnet IP>:9150`, `:9256` | the tailnet. mc-monitor binds every interface, so its unit denies all but loopback and the tailnet range. |
 
 **Accepted, not overlooked:** Loki runs with `auth_enabled = false`, so any
 tailnet peer can push logs under any label. That is the same trust boundary as
@@ -71,8 +72,12 @@ touching this, reboot a host and confirm the exporter comes back by itself.
 
 Provisioned from the store with `allowUiUpdates = false`, so an edit in the
 browser is discarded on restart. Editing a dashboard means editing
-`dashboards.nix`. There are four: Fleet Overview, Node Exporter Full (grafana.com
-1860, pinned by hash), Disk & SMART, and Logs with host and unit variables.
+`dashboards.nix`. There are five: Fleet Overview, Node Exporter Full (grafana.com
+1860, pinned by hash), Disk & SMART, Logs with host and unit variables, and
+Minecraft for `mavs-updated`. The Minecraft metric names come from mc-monitor and
+process-exporter documentation and were not checked against a live server, so
+after the first deploy look at `curl <host tailnet IP>:9150/metrics` and fix
+any panel that reads No data.
 
 Bumping Node Exporter Full:
 

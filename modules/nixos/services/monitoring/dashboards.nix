@@ -202,6 +202,18 @@ let
       }
     );
 
+  # Shared by the log panels that are not the generic Logs dashboard's.
+  logOptions = {
+    showTime = true;
+    showLabels = false;
+    showCommonLabels = false;
+    wrapLogMessage = true;
+    prettifyLogMessage = false;
+    enableLogDetails = true;
+    dedupStrategy = "none";
+    sortOrder = "Descending";
+  };
+
   # --------------------------------------------------------- upstream dashboards
 
   # Fetched at build time against a pinned revision and hash, rather than
@@ -868,11 +880,268 @@ let
     ];
   };
 
+  # ------------------------------------------------------------------ minecraft
+
+  # The journal label Alloy derives from the unit name. Hardcoded because the
+  # dashboard is for one server, and a second one gets its own copy rather than
+  # a variable nobody would ever change.
+  #
+  # Every metric selector below carries `instance="carbon"` too. Argon runs its
+  # own Minecraft server, so unscoped sums would add its players to this one.
+  mcUnit = "minecraft-mavs-updated.service";
+  mcLogs = ''{unit="${mcUnit}"}'';
+
+  minecraft = mkDashboard {
+    uid = "minecraft-mavs-updated";
+    title = "Minecraft: mavs-updated";
+    description = "Players, memory and the server console for mavs-updated on Carbon.";
+    tags = [
+      "minecraft"
+      "logs"
+    ];
+    from = "now-3h";
+    refresh = "30s";
+
+    templating = [
+      {
+        name = "search";
+        label = "Contains";
+        type = "textbox";
+        query = "";
+        current = {
+          text = "";
+          value = "";
+        };
+      }
+    ];
+
+    panels = [
+      (stat {
+        title = "Server up";
+        description = "1 when the status ping succeeds, 0 when it does not. A server still loading its world reads 0.";
+        gridPos = {
+          h = 4;
+          w = 4;
+          x = 0;
+          y = 0;
+        };
+        targets = [ { expr = ''min(minecraft_status_healthy{instance="carbon"}) or vector(0)''; } ];
+        thresholds = steps [
+          (step "red" null)
+          (step "green" 1)
+        ];
+      })
+
+      (stat {
+        title = "Players online";
+        gridPos = {
+          h = 4;
+          w = 4;
+          x = 4;
+          y = 0;
+        };
+        targets = [ { expr = ''sum(minecraft_status_players_online_count{instance="carbon"})''; } ];
+        thresholds = steps [ (step "blue" null) ];
+      })
+
+      (stat {
+        title = "Memory (RSS)";
+        gridPos = {
+          h = 4;
+          w = 4;
+          x = 8;
+          y = 0;
+        };
+        unit = "bytes";
+        decimals = 1;
+        targets = [
+          {
+            expr = ''namedprocess_namegroup_memory_bytes{instance="carbon", groupname="minecraft-mavs-updated", memtype="resident"}'';
+          }
+        ];
+        thresholds = steps [ (step "blue" null) ];
+      })
+
+      (stat {
+        title = "Ping latency";
+        gridPos = {
+          h = 4;
+          w = 4;
+          x = 12;
+          y = 0;
+        };
+        unit = "s";
+        decimals = 3;
+        targets = [ { expr = ''max(minecraft_status_response_time_seconds{instance="carbon"})''; } ];
+        thresholds = steps [
+          (step "green" null)
+          (step "yellow" 0.5)
+          (step "red" 2)
+        ];
+      })
+
+      (stat {
+        title = "Uptime";
+        gridPos = {
+          h = 4;
+          w = 4;
+          x = 16;
+          y = 0;
+        };
+        unit = "s";
+        targets = [
+          {
+            expr = ''time() - namedprocess_namegroup_oldest_start_time_seconds{instance="carbon", groupname="minecraft-mavs-updated"}'';
+          }
+        ];
+        thresholds = steps [ (step "blue" null) ];
+      })
+
+      (stat {
+        title = "Restarts in 24h";
+        description = "Counts the process start time changing, so a crash loop shows here before anything else.";
+        gridPos = {
+          h = 4;
+          w = 4;
+          x = 20;
+          y = 0;
+        };
+        targets = [
+          {
+            expr = ''changes(namedprocess_namegroup_oldest_start_time_seconds{instance="carbon", groupname="minecraft-mavs-updated"}[24h]) or vector(0)'';
+          }
+        ];
+        thresholds = steps [
+          (step "green" null)
+          (step "yellow" 1)
+          (step "red" 3)
+        ];
+      })
+
+      (ts {
+        title = "Players online";
+        gridPos = {
+          h = 8;
+          w = 12;
+          x = 0;
+          y = 4;
+        };
+        min = 0;
+        decimals = 0;
+        targets = [
+          {
+            expr = ''sum(minecraft_status_players_online_count{instance="carbon"})'';
+            legend = "online";
+          }
+          {
+            expr = ''sum(minecraft_status_players_max_count{instance="carbon"})'';
+            legend = "max";
+          }
+        ];
+      })
+
+      (ts {
+        title = "Memory";
+        description = "Heap is pinned by -Xms equal to -Xmx, so resident memory is the number that moves.";
+        gridPos = {
+          h = 8;
+          w = 12;
+          x = 12;
+          y = 4;
+        };
+        unit = "bytes";
+        min = 0;
+        targets = [
+          {
+            expr = ''namedprocess_namegroup_memory_bytes{instance="carbon", groupname="minecraft-mavs-updated"}'';
+            legend = "{{memtype}}";
+          }
+        ];
+      })
+
+      (ts {
+        title = "CPU";
+        description = "Cores' worth of CPU time. One thread dominates a Minecraft tick, so a pegged 1.0 means the server is lagging.";
+        gridPos = {
+          h = 7;
+          w = 12;
+          x = 0;
+          y = 12;
+        };
+        unit = "short";
+        min = 0;
+        targets = [
+          {
+            expr = ''sum(rate(namedprocess_namegroup_cpu_seconds_total{instance="carbon", groupname="minecraft-mavs-updated"}[2m]))'';
+            legend = "cores";
+          }
+        ];
+      })
+
+      (ts {
+        title = "Log volume by level";
+        gridPos = {
+          h = 7;
+          w = 12;
+          x = 12;
+          y = 12;
+        };
+        ds = lokiDs;
+        min = 0;
+        custom = {
+          drawStyle = "bars";
+          fillOpacity = 60;
+          stacking.mode = "normal";
+          lineWidth = 0;
+        };
+        targets = [
+          {
+            expr = ''sum by (level) (count_over_time(${mcLogs} |~ "(?i)$search" [$__auto]))'';
+            legend = "{{level}}";
+          }
+        ];
+      })
+
+      (mkPanel {
+        type = "logs";
+        title = "Joins, leaves and chat";
+        gridPos = {
+          h = 8;
+          w = 24;
+          x = 0;
+          y = 19;
+        };
+        ds = lokiDs;
+        options = logOptions;
+        targets = [
+          {
+            expr = ''${mcLogs} |~ "joined the game|left the game|<[^>]+> |lost connection"'';
+          }
+        ];
+      })
+
+      (mkPanel {
+        type = "logs";
+        title = "Console";
+        gridPos = {
+          h = 22;
+          w = 24;
+          x = 0;
+          y = 27;
+        };
+        ds = lokiDs;
+        options = logOptions;
+        targets = [ { expr = ''${mcLogs} |~ "(?i)$search"''; } ];
+      })
+    ];
+  };
+
   dashboards = {
     "node-exporter-full" = nodeExporterFull;
     "fleet-overview" = fleetOverview;
     "disk-smart" = diskSmart;
     "logs" = logs;
+    "minecraft-mavs-updated" = minecraft;
   };
 in
 {
