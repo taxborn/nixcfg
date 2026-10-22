@@ -84,7 +84,7 @@ in
           # `outputHashes` entry for every one of them.
           cargoDeps = pkgs.rustPlatform.fetchCargoVendor {
             src = inputs.tranquil-src;
-            hash = "sha256-fjT0cAt7lPD0O2PGNT604dRIczerKjExJvU/L3Yul3c=";
+            hash = "sha256-K4wTFCEozwqAoaFFPhN6ZgonPB1FBuFDT9mjNHumHcs=";
           };
         });
 
