@@ -3,6 +3,7 @@
 {
   imports = [
     ./disko.nix
+    ./proxy.nix
     (modulesPath + "/profiles/qemu-guest.nix")
   ];
 
@@ -17,6 +18,7 @@
         enable = true;
         notify.enable = true;
       };
+      braxton-is.enable = true;
       forgejo-runner.enable = true;
       minecraft.servers.mavs-updated = {
         directory = "/home/taxborn/public/mavs-updated";

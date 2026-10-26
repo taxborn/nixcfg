@@ -15,7 +15,7 @@ beyond identity; role is a property of the config. Roughly:
 | host | what it is | role |
 | --- | --- | --- |
 | argon | OVH VPS | server, most of `biscuits.at` |
-| carbon | OVH VPS | server, Forgejo runner |
+| carbon | OVH VPS | server, Forgejo runner, `braxton.is` |
 | helium | Intel NUC at home | server, backup target, Paperless |
 | tungsten | Dell XPS 15 9520 | workstation (laptop) |
 | uranium | desktop PC | workstation |
@@ -124,7 +124,8 @@ asserts coverage; it rejects uncovered IPv6 addresses too.
 
 Services on `biscuits.at` take a port from the `300x` sequence, recorded in
 `networkMap`: 3000 glance, 3001 vaultwarden, 3002 forgejo, 3003 pds, 3004
-paperless, 3005 piper, 3007 ntfy, 3008 atuin, 3009 grafana, 3010 adguard. 3006 is unassigned.
+paperless, 3005 piper, 3006 braxton-is, 3007 ntfy, 3008 atuin, 3009 grafana, 3010 adguard.
+`braxton-is` is the one entry on a different domain (`braxton.is`).
 
 ### secrets and recovery
 

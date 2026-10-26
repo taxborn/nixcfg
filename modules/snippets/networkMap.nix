@@ -91,8 +91,14 @@ in
         port = 3008;
       };
 
-      # Push notifications. 3006 is skipped. braxton-is used it until the site was
-      # removed, and the port stays unassigned.
+      # The personal website, on Carbon. Not under `biscuits.at`, but it shares
+      # the registry so the module and the vhost read one port.
+      braxton-is = {
+        domain = "braxton.is";
+        port = 3006;
+      };
+
+      # Push notifications.
       ntfy = {
         domain = "ntfy.biscuits.at";
         port = 3007;
