@@ -51,6 +51,9 @@
       obsidian = {
         enable = true;
         cli.enable = true;
+        # electron 43.8.3 breaks the renderer preload (webFrame, "reading
+        # 'defineProperty'") and the window never opens. 43.7.11 and 44 are fine.
+        package = pkgs.obsidian.override { electron = pkgs.electron_44; };
       };
       obs-studio.enable = true;
     };
