@@ -12,12 +12,6 @@ in
 
   config = lib.mkIf cfg.enable {
     boot = {
-      # The workstation layout enrolls a FIDO2 key against the LUKS volume and
-      # asks for it through crypttab options, which only the systemd initrd
-      # reads. Without this the key is ignored and boot falls back to the
-      # passphrase set at install time. See modules/disko/btrfs-luks-raid1.nix.
-      initrd.systemd.enable = lib.mkDefault true;
-
       loader = {
         efi.canTouchEfiVariables = lib.mkDefault true;
 
