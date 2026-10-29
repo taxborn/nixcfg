@@ -95,6 +95,14 @@ in
       atkinson-hyperlegible-next
     ];
 
+    # The NL variant drops JetBrains Mono's ligatures. `NFM` is the Nerd Font
+    # Mono family, which keeps glyphs single-width for terminals.
+    fonts.fontconfig.defaultFonts = {
+      sansSerif = [ "Atkinson Hyperlegible Next" ];
+      serif = [ "Atkinson Hyperlegible Next" ];
+      monospace = [ "JetBrainsMonoNL NFM" ];
+    };
+
     services = {
       # systemd-oomd (`profiles/swap.nix`) reacts to cgroup memory pressure,
       # which can arrive after the desktop has already stalled on a nix build.
