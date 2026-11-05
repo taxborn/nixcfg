@@ -227,11 +227,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1793540411,
-        "narHash": "sha256-fiPJ88izTVucjeo2EQ3jk4aWmLg03I1D4vxnX2QjEgE=",
+        "lastModified": 1793726008,
+        "narHash": "sha256-jQp1wKvbwWdLBASTXkSi/VYmDJ5AbBi1WvcMt9HWJC8=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "0bb2eedc20e4739f29e8045034f2828ad7054f8f",
+        "rev": "1d060086d60cb76a40cf37109f979d88a5bd6396",
         "type": "github"
       },
       "original": {
@@ -338,11 +338,11 @@
     "tranquil-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1793703881,
-        "narHash": "sha256-dqWtGCWeeQYO/L+gRgIwVLQL9h/5VIgHruugoSSjitc=",
+        "lastModified": 1793817194,
+        "narHash": "sha256-Q/F0ZlQ0bOrTbSPfKt/qFYYfBLlh/uf1TZ13A7iMK9I=",
         "ref": "main",
-        "rev": "7f7cf7166d605309b9e5b6fd7990f983f34fed96",
-        "revCount": 653,
+        "rev": "c0a067b365d296da620d41092b1474dafa465090",
+        "revCount": 665,
         "type": "git",
         "url": "https://tangled.org/did:plc:jj6ajj6duxnlthwtnob4qyuv"
       },
