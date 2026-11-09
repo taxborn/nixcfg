@@ -58,7 +58,7 @@ in
     services.tangled.spindle = {
       enable = true;
       keyPath = config.age.secrets.tangledSpindleKey.path;
-      contact.email = "hello@taxborn.com";
+      contact.email = "atproto@biscuits.at";
 
       server = {
         hostname = networkMap.spindle.domain;

@@ -46,7 +46,7 @@ in
         };
 
         atproto.plc_directory = "https://plc.directory";
-        contact.email = "hello@taxborn.com";
+        contact.email = "atproto@biscuits.at";
 
         # The default, spelled out: closed means only admins create
         # repositories. `open` lets any atproto account host on this disk.
