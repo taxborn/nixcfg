@@ -82,10 +82,13 @@ in
 
       # `restrict` drops the pty, forwarding and agent access. The store path
       # is needed because a forced command runs without the system PATH. The
-      # key lives in Forgejo's secrets for this one repository and nowhere else.
+      # private half is the DEPLOY_SSH_KEY secret on braxton.is's Tangled
+      # spindle and nowhere else.
       #
-      # This confines the key. It does not close a shell on 22 reachable by
-      # tailnet identity, which only the tailnet ACLs can do.
+      # The spindle reaches this over Carbon's public address, because its
+      # microVMs cannot route to the tailnet. Port 22 was already open to the
+      # world, so that adds no exposure: the key could always be presented from
+      # anywhere, and this line is what confines it.
       openssh.authorizedKeys.keys = [
         ''command="${lib.getExe deploy}",restrict ${lib.trim (builtins.readFile "${self}/keys/braxton-is-deploy.pub")}''
       ];
