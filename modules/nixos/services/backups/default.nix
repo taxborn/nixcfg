@@ -9,6 +9,7 @@ let
   cfg = config.myNixOS.services.backups;
   hostname = config.networking.hostName;
   networkMap = config.mySnippets.biscuits-at.networkMap;
+  addr = config.myNixOS.services.tailscale.address;
 
   # Helium keeps the second copy of every host's archives on its external drive.
   # Both halves of that arrangement read from here — the paths `borg serve` is
@@ -527,17 +528,56 @@ in
         };
       };
 
-      # Listens beside 22 on every interface. `openFirewall` would put both in
-      # the firewall, so it is off and 22 stays open through `programs.ssh`
-      # instead. That leaves this port reachable over `tailscale0`, a trusted
-      # interface, and nowhere else.
+      # 22 keeps listening on every interface, as before. 2200 binds the
+      # tailnet address alone, so it exists nowhere else even if the firewall
+      # is ever opened or `tailscale0` stops being trusted. The closed firewall
+      # used to be the only thing keeping it there. `openFirewall` stays off
+      # because it would open both ports, and 22 stays open through
+      # `programs.ssh` instead.
+      #
+      # An explicit port on any `listenAddresses` entry replaces sshd's
+      # wildcard listener, so 22 has to be listed for both families or it
+      # would vanish. `ports` stays at 22 so a stray `Port` line cannot put
+      # 2200 back on the wildcard.
       services.openssh = {
         openFirewall = false;
-        ports = [
-          22
-          backupServer.port
+        ports = [ 22 ];
+        listenAddresses = [
+          {
+            addr = "0.0.0.0";
+            port = 22;
+          }
+          {
+            addr = "[::]";
+            port = 22;
+          }
+          {
+            inherit addr;
+            inherit (backupServer) port;
+          }
         ];
       };
+
+      # The tailnet address only exists once tailscaled is Running. sshd carries
+      # on with the listeners that did bind, so losing the race at boot leaves
+      # 22 answering and 2200 dead, and every client's backup refused with
+      # notifications success-only. The nixpkgs unit sets its own restart
+      # policy, so the shared values are forced.
+      systemd.services.sshd = lib.recursiveUpdate config.myNixOS.services.tailscale.bindOrdering {
+        unitConfig.StartLimitIntervalSec = lib.mkForce 0;
+        serviceConfig.RestartSec = lib.mkForce 5;
+      };
+
+      assertions = [
+        {
+          assertion = config.services.tailscale.enable && addr != null;
+          message = ''
+            myNixOS.services.backups.server binds the borg port to this host's
+            tailnet address and nowhere else, so the host has to run Tailscale
+            and appear in mySnippets.tailnet.tailscaleIPs.
+          '';
+        }
+      ];
 
       # Each client key can run `borg serve` on its own repository and nothing
       # else, whatever command it asks for. `restrict` drops the pty,

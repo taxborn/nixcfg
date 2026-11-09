@@ -41,7 +41,8 @@ reachable from the tailnet and nowhere else.
 > Each client key is confined to `borg serve --restrict-to-path
 > /mnt/hdd/borg/<client>` by a forced command, with `restrict`. It is served on
 > port 2200 from real sshd, because on 22 Tailscale SSH answers and never reads
-> `authorized_keys`. That port is not in the firewall, so it is reachable over
+> `authorized_keys`. That port is not in the firewall and sshd binds it to the
+> tailnet address alone (`listenAddresses`), so it is reachable over
 > `tailscale0` only. Clients use `ssh://…:2200//mnt/hdd/borg/<client>`, and the
 > backups module pins Helium's host key for `[ip]:2200`, since known_hosts
 > matches a non-default port separately from 22.

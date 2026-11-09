@@ -7,12 +7,32 @@
 let
   cfg = config.myNixOS.services.tangled.knot;
   networkMap = config.mySnippets.biscuits-at.networkMap;
+  tailscale = config.myNixOS.services.tailscale;
+  tailnetIP = tailscale.address;
 in
 {
   options.myNixOS.services.tangled.knot.enable =
     lib.mkEnableOption "Tangled knot, the git server behind knot.biscuits.at";
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = config.services.tailscale.enable && tailnetIP != null;
+        message = ''
+          myNixOS.services.tangled.knot binds its SSH server to this host's
+          tailnet address and nowhere else, so the host has to run Tailscale
+          and appear in mySnippets.tailnet.tailscaleIPs.
+        '';
+      }
+    ];
+
+    # The tailnet address only exists once tailscaled is Running. The nixpkgs
+    # unit sets its own start limit, so the shared values are forced.
+    systemd.services.knot-rs = lib.recursiveUpdate tailscale.bindOrdering {
+      unitConfig.StartLimitIntervalSec = lib.mkForce 0;
+      serviceConfig.RestartSec = lib.mkForce 5;
+    };
+
     # KNOT_MASTER_KEY, as an environment file. It unseals the knot's signing
     # keys in /var/lib/knot/sealed-keys, and the two only work as a pair: lose
     # the key and the knot loses control of every repository's identity, leak
@@ -30,9 +50,9 @@ in
       environmentFile = config.age.secrets.tangledKnot.path;
 
       # Upstream defaults this to true, which opens the SSH port to the world.
-      # Git over SSH is tailnet-only, as Forgejo's is, and the closed firewall
-      # is what keeps it there: the listener binds every interface. Opening it
-      # would also need a fail2ban jail, since this is the knot's own SSH
+      # Git over SSH is tailnet-only, as Forgejo's is. The listener binds the
+      # tailnet address, with this closed firewall as a second layer. Opening
+      # it would also need a fail2ban jail, since this is the knot's own SSH
       # server and not OpenSSH.
       openFirewall = false;
 
@@ -42,7 +62,7 @@ in
           # The knot advertises the first admin as its owner.
           admins = [ config.myNixOS.services.tangled.owner ];
           listen_addr = "127.0.0.1:${toString networkMap.knot.port}";
-          ssh_listen_addr = "[::]:${toString networkMap.knot.sshPort}";
+          ssh_listen_addr = "${tailnetIP}:${toString networkMap.knot.sshPort}";
         };
 
         atproto.plc_directory = "https://plc.directory";
