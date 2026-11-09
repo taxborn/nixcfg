@@ -26,11 +26,9 @@
       tangled.knot.enable = true;
       tranquil-pds.enable = true;
       vaultwarden.enable = true;
-      minecraft.servers.mnb = {
-        directory = "/home/taxborn/public/mnb";
-        # For friends, so it is reachable without the tailnet.
-        openFirewall = true;
-      };
+      # For friends, so it is reachable without the tailnet. The world lives in
+      # the module's default, /var/lib/minecraft/mnb.
+      minecraft.servers.mnb.openFirewall = true;
     };
   };
 

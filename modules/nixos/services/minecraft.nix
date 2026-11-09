@@ -17,6 +17,18 @@ let
   hostname = config.networking.hostName;
   metricsOn = config.myNixOS.services.monitoring.client.enable && hostIP != null;
 
+  # One account for every server, and never a person's. The servers take
+  # connections from the internet and load third-party mods, so whatever runs
+  # them is the account an exploit lands in. They ran as `taxborn` while the
+  # packs lived in that home directory. That account is in `wheel`, which
+  # `programs/nix.nix` lists in `trusted-users`, and a trusted user is
+  # root-equivalent. A constant and not an option, so a host cannot set it back.
+  user = "minecraft";
+
+  # Under /var/lib on purpose. It is one of the backup client's default
+  # `paths`, so a world placed here is archived without the host naming it.
+  stateDir = "/var/lib/minecraft";
+
   stdinOf = name: "/run/minecraft-${name}.stdin";
 
   # The console is a FIFO, so `stop` can be written by a script and by hand. The
@@ -50,67 +62,72 @@ in
         reference for the flags below.
       '';
       type = lib.types.attrsOf (
-        lib.types.submodule {
-          options = {
-            directory = lib.mkOption {
-              type = lib.types.path;
-              description = "Directory holding the server jar, `world/` and `server.properties`.";
+        lib.types.submodule (
+          { name, ... }:
+          {
+            options = {
+              directory = lib.mkOption {
+                type = lib.types.path;
+                default = "${stateDir}/${name}";
+                defaultText = lib.literalExpression ''"/var/lib/minecraft/''${name}"'';
+                description = ''
+                  Directory holding the server jar, `world/` and `server.properties`.
+                  The `minecraft` user must own everything in it. The module
+                  creates the directory itself and nothing inside it.
+
+                  It is the only path the unit can write, and `/home` is hidden
+                  from the server, so a pack cannot stay in a home directory. When
+                  the backup client is on, an assertion requires it to sit under
+                  one of the client's `paths`.
+                '';
+              };
+              jar = lib.mkOption {
+                type = lib.types.str;
+                default = "fabric-server-launcher.jar";
+                description = "Launcher jar, relative to `directory`.";
+              };
+              jvmArgs = lib.mkOption {
+                type = lib.types.listOf lib.types.str;
+                default = [
+                  "-Xmx5G"
+                  "-Xms5G"
+                  # Log4Shell (CVE-2021-44228) mitigation for pack versions whose
+                  # bundled log4j predates the fix.
+                  "-Dlog4j2.formatMsgNoLookups=true"
+                ];
+                description = "Arguments for the JVM, matching the pack's `variables.txt`.";
+              };
+              openFirewall = lib.mkOption {
+                type = lib.types.bool;
+                default = false;
+                description = ''
+                  Open `port` to the internet, TCP and UDP. Minecraft speaks its own
+                  protocol, so Caddy cannot front it and this is a deliberate
+                  exception to the loopback-only rule. UDP is for voice chat mods and
+                  Bedrock-style clients. Closed by default.
+                '';
+              };
+              port = lib.mkOption {
+                type = lib.types.port;
+                default = 25565;
+                description = ''
+                  Port the server listens on. Nothing here writes it into
+                  `server.properties`, so it must match `server-port` there. Only
+                  `openFirewall` reads it.
+                '';
+              };
+              stopTimeout = lib.mkOption {
+                type = lib.types.str;
+                default = "5min";
+                description = ''
+                  How long a `stop` may take before systemd kills the server. A
+                  modded world saves slowly, and a kill during the save is the
+                  failure this bound exists to avoid, so it is generous.
+                '';
+              };
             };
-            user = lib.mkOption {
-              type = lib.types.str;
-              default = "taxborn";
-              description = ''
-                User the server runs as. It must own `directory`. The existing
-                packs live in `taxborn`'s home, so that is the default until the
-                data moves somewhere a service account can own.
-              '';
-            };
-            jar = lib.mkOption {
-              type = lib.types.str;
-              default = "fabric-server-launcher.jar";
-              description = "Launcher jar, relative to `directory`.";
-            };
-            jvmArgs = lib.mkOption {
-              type = lib.types.listOf lib.types.str;
-              default = [
-                "-Xmx5G"
-                "-Xms5G"
-                # Log4Shell (CVE-2021-44228) mitigation for pack versions whose
-                # bundled log4j predates the fix.
-                "-Dlog4j2.formatMsgNoLookups=true"
-              ];
-              description = "Arguments for the JVM, matching the pack's `variables.txt`.";
-            };
-            openFirewall = lib.mkOption {
-              type = lib.types.bool;
-              default = false;
-              description = ''
-                Open `port` to the internet, TCP and UDP. Minecraft speaks its own
-                protocol, so Caddy cannot front it and this is a deliberate
-                exception to the loopback-only rule. UDP is for voice chat mods and
-                Bedrock-style clients. Closed by default.
-              '';
-            };
-            port = lib.mkOption {
-              type = lib.types.port;
-              default = 25565;
-              description = ''
-                Port the server listens on. Nothing here writes it into
-                `server.properties`, so it must match `server-port` there. Only
-                `openFirewall` reads it.
-              '';
-            };
-            stopTimeout = lib.mkOption {
-              type = lib.types.str;
-              default = "5min";
-              description = ''
-                How long a `stop` may take before systemd kills the server. A
-                modded world saves slowly, and a kill during the save is the
-                failure this bound exists to avoid, so it is generous.
-              '';
-            };
-          };
-        }
+          }
+        )
       );
     };
   };
@@ -125,7 +142,39 @@ in
           scrapes the exporters below and the Minecraft dashboard stays empty.
         '';
       }
-    ];
+    ]
+    # The borgmatic hook at the bottom stops the servers so the archive holds
+    # an idle world. That is wasted on a world borg never walks, and a
+    # directory outside the client's `paths` is one with no backup and nothing
+    # to say so.
+    ++ lib.optional backupsOn {
+      assertion = lib.all (
+        server:
+        lib.any (
+          path: lib.hasPrefix "${path}/" "${server.directory}/"
+        ) config.myNixOS.services.backups.client.paths
+      ) (lib.attrValues cfg.servers);
+      message = ''
+        Every myNixOS.services.minecraft server directory on ${hostname} must
+        sit under one of myNixOS.services.backups.client.paths, or its world
+        is not archived.
+      '';
+    };
+
+    users.groups.${user} = { };
+    users.users.${user} = {
+      isSystemUser = true;
+      group = user;
+      home = stateDir;
+    };
+
+    # 0750 keeps other local accounts out of the worlds and whitelists. Only
+    # the directories are created. A server's files arrive by hand, and
+    # `ConditionPathExists` on the unit covers the time before they do.
+    systemd.tmpfiles.rules = [
+      "d ${stateDir} 0750 ${user} ${user} -"
+    ]
+    ++ lib.mapAttrsToList (_: server: "d ${server.directory} 0750 ${user} ${user} -") cfg.servers;
 
     networking.firewall =
       let
@@ -184,15 +233,17 @@ in
       }) cfg.servers;
     };
 
+    # Owned by the service account, so writing `stop` by hand now takes
+    # `sudo -u minecraft` or root.
     systemd.sockets = lib.mapAttrs' (
-      name: server:
+      name: _:
       lib.nameValuePair "minecraft-${name}" {
         bindsTo = [ (unitOf name) ];
         socketConfig = {
           ListenFIFO = stdinOf name;
           SocketMode = "0660";
-          SocketUser = server.user;
-          SocketGroup = config.users.users.${server.user}.group;
+          SocketUser = user;
+          SocketGroup = user;
           RemoveOnStop = true;
           FlushPending = true;
         };
@@ -216,6 +267,15 @@ in
           # connected. The new definition lands on the next start or reboot.
           restartIfChanged = false;
 
+          # The module creates `directory` empty, and a server's files are
+          # copied in by hand. Without this a host deployed before its world
+          # arrives runs java against a missing jar every thirty seconds,
+          # forever: `Restart=on-failure` never gives up, so the unit never
+          # reaches `failed` and nothing alerts on the loop. A skipped unit is
+          # quiet for the same reason, so check `systemctl status` after
+          # moving a world in.
+          unitConfig.ConditionPathExists = "${server.directory}/${server.jar}";
+
           serviceConfig = {
             ExecStart = "${lib.getExe' pkgs.jdk17_headless "java"} ${lib.escapeShellArgs server.jvmArgs} -jar ${server.jar} nogui";
             ExecStop = "${stopScript name} $MAINPID";
@@ -224,13 +284,58 @@ in
             # A crash or an OOM kill comes back on its own.
             Restart = "on-failure";
             RestartSec = "30s";
-            User = server.user;
+            User = user;
+            Group = user;
             WorkingDirectory = server.directory;
             StandardInput = "socket";
             StandardOutput = "journal";
             StandardError = "journal";
+
+            # The server directory is the only thing on the host this process
+            # can write, and `/home` and `/root` do not exist for it. `ExecStop`
+            # still reaches the console: the FIFO sits on the read-only `/run`,
+            # and the kernel checks a mount's write access for regular files
+            # and directories, not for a FIFO.
+            ProtectSystem = "strict";
+            ProtectHome = true;
+            ReadWritePaths = [ server.directory ];
+            UMask = "0027";
+
+            CapabilityBoundingSet = [ "" ];
+            LockPersonality = true;
             NoNewPrivileges = true;
+            PrivateDevices = true;
             PrivateTmp = true;
+            ProtectClock = true;
+            ProtectControlGroups = true;
+            ProtectHostname = true;
+            ProtectKernelLogs = true;
+            ProtectKernelModules = true;
+            ProtectKernelTunables = true;
+            ProtectProc = "invisible";
+            RemoveIPC = true;
+            RestrictNamespaces = true;
+            RestrictRealtime = true;
+            RestrictSUIDSGID = true;
+            SystemCallArchitectures = "native";
+
+            # AF_UNIX is how glibc reaches nscd for user and host lookups.
+            # AF_NETLINK is how the JVM enumerates interfaces before it binds,
+            # the same call `braxton-is.nix` documents for Node.
+            RestrictAddressFamilies = [
+              "AF_UNIX"
+              "AF_INET"
+              "AF_INET6"
+              "AF_NETLINK"
+            ];
+
+            # Two options left off on purpose. `MemoryDenyWriteExecute` kills
+            # any JIT: HotSpot writes machine code into memory and then runs
+            # it, so the JVM aborts at startup. `SystemCallFilter` is off
+            # because mods ship their own native libraries, and a filtered
+            # call is a SIGSYS in the middle of a session that no build or
+            # evaluation can predict. Add one only after watching a real pack
+            # run under it.
           };
         }
       ) cfg.servers
