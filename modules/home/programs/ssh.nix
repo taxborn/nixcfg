@@ -57,7 +57,16 @@ in
           # with no port and the public name. That name is proxied by
           # Cloudflare, which carries no SSH, so the alias sends it to the
           # knot's tailnet listener instead. Other people clone over HTTPS.
+          #
+          # `tangled` is the short form, matching `forgejo` above:
+          # `git clone tangled:<handle or did>/repo`. The knot takes either as
+          # the owner.
           ${knot.domain} = {
+            Hostname = knot.sshDomain;
+            User = "git";
+            Port = knot.sshPort;
+          };
+          tangled = {
             Hostname = knot.sshDomain;
             User = "git";
             Port = knot.sshPort;
