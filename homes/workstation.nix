@@ -32,7 +32,6 @@
       # Atuin owns Ctrl-R. fzf keeps Ctrl-T for files and Alt-C for directories.
       fzf.historyWidget.command = "";
       claude-code.enable = true;
-      codex.enable = true;
       firefox = {
         enable = true;
         configPath = "${config.xdg.configHome}/mozilla/firefox";
