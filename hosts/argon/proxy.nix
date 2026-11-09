@@ -142,6 +142,19 @@ in
       }
     '';
 
+    # Tangled's knot. Proxied like the rest, which costs it pushes and LFS
+    # objects over 100 MB through HTTPS. Pushes go over tailnet SSH instead.
+    # No CORS headers here: the knot sets its own, and upstream warns that
+    # adding them at the proxy breaks it. No `encode` either, since git packs
+    # are already compressed and `/events` is a stream that spindles hold open.
+    ${networkMap.knot.domain}.extraConfig = ''
+      import cloudflare-mtls
+
+      reverse_proxy 127.0.0.1:${toString networkMap.knot.port} {
+        import client-ip
+      }
+    '';
+
     # The same Forgejo over the tailnet, so LFS uploads skip Cloudflare's
     # 100 MB body cap. The certificate comes from tailscaled, because Let's
     # Encrypt cannot validate a `ts.net` name.

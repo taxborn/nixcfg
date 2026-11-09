@@ -23,6 +23,7 @@
       glance.enable = true;
       ntfy.enable = true;
       piper.enable = true;
+      tangled.knot.enable = true;
       tranquil-pds.enable = true;
       vaultwarden.enable = true;
       minecraft.servers.mnb = {

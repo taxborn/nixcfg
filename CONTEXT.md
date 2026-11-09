@@ -124,7 +124,8 @@ asserts coverage; it rejects uncovered IPv6 addresses too.
 
 Services on `biscuits.at` take a port from the `300x` sequence, recorded in
 `networkMap`: 3000 glance, 3001 vaultwarden, 3002 forgejo, 3003 pds, 3004
-paperless, 3005 piper, 3006 braxton-is, 3007 ntfy, 3008 atuin, 3009 grafana, 3010 adguard.
+paperless, 3005 piper, 3006 braxton-is, 3007 ntfy, 3008 atuin, 3009 grafana, 3010 adguard,
+3011 knot, 3012 spindle. The knot's tailnet SSH takes 2223, beside Forgejo's 2222.
 `braxton-is` is the one entry on a different domain (`braxton.is`).
 
 ### secrets and recovery

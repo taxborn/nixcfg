@@ -29,6 +29,8 @@
             inputs.home-manager.nixosModules.home-manager
             inputs.lanzaboote.nixosModules.lanzaboote
             inputs.tealfm-piper.nixosModules.default
+            inputs.tangled.nixosModules.knot-rs
+            inputs.tangled.nixosModules.spindle
 
             modules.hardware
             modules.nixos

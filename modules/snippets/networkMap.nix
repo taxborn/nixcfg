@@ -124,6 +124,23 @@ in
         port = 3005;
       };
 
+      # Tangled's knot, on Argon. Same split as `forgejo`: HTTP is public
+      # through Cloudflare, git over SSH is tailnet-only and reached through an
+      # ssh_config alias for the public name. 2223 because Forgejo already
+      # holds 2222, the knot's own default, on the same host.
+      knot = {
+        domain = "knot.biscuits.at";
+        sshDomain = "argon.${config.mySnippets.tailnet.name}";
+        port = 3011;
+        sshPort = 2223;
+      };
+
+      # Tangled's spindle (CI), on Carbon beside the Forgejo runner.
+      spindle = {
+        domain = "spindle.biscuits.at";
+        port = 3012;
+      };
+
       vaultwarden = {
         domain = "vw.biscuits.at";
         port = 3001;

@@ -72,5 +72,15 @@ in
   # signing key is encrypted under it, so a lost copy is a lost instance and a
   # leaked copy is every identity on it.
   "tranquil-pds.age".publicKeys = hostKey "argon";
+
+  # KNOT_MASTER_KEY, as an environment file. It unseals the knot's signing
+  # keys in /var/lib/knot/sealed-keys: lose it and the knot loses control of
+  # every repository's identity. The YubiKey recipient is the off-host copy
+  # upstream asks for.
+  "tangled/knot.age".publicKeys = hostKey "argon";
+
+  # The spindle's P-256 signing key, published in its DID document. Carbon's
+  # alone, since Carbon runs the CI jobs and Argon must not be able to read it.
+  "tangled/spindle-key.age".publicKeys = hostKey "carbon";
 }
 // borgSecrets

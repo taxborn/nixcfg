@@ -31,6 +31,11 @@ in
       packages = {
         agenix = inputs.agenix.packages.${system}.default;
 
+        # The guest image the spindle boots for `engine: microvm` workflows
+        # that ask for `image: nixos`. The knot and spindle binaries come in
+        # through upstream's nixosModules, which set their own `package`.
+        spindle-nixos-image = inputs.tangled.packages.${system}.spindle-nixos-image;
+
         # The upstream lazygit theme, which `modules/home/programs/git.nix`
         # rewrites at build time. catppuccin/nix is not a flake that exposes
         # this under `packages`, so it is imported against nixpkgs here.

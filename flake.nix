@@ -58,6 +58,13 @@
       flake = false;
     };
 
+    # Tangled's knot (git hosting) and spindle (CI), as upstream's NixOS
+    # modules. No `nixpkgs.follows`: the flake pins its own nixpkgs release and
+    # Rust and Go toolchains, and the knot's crate set is generated against
+    # them, so following ours trades a second nixpkgs in the closure for an
+    # untested build. Same knot redirect as `tranquil-src` above.
+    tangled.url = "git+https://tangled.org/did:plc:j5hmlfdrwkvtxm7cjmu7j2is";
+
     tealfm-piper = {
       url = "github:teal-fm/piper";
       inputs.nixpkgs.follows = "nixpkgs";

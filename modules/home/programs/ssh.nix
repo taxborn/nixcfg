@@ -17,7 +17,7 @@ in
       settings =
         let
           tailscaleIPs = config.mySnippets.tailnet.tailscaleIPs;
-          inherit (config.mySnippets.biscuits-at.networkMap) forgejo;
+          inherit (config.mySnippets.biscuits-at.networkMap) forgejo knot;
 
           # One entry per host in the fleet roster, addressed by tailnet IP
           # rather than by name. `tmux new -As0` attaches session 0 or creates
@@ -51,6 +51,16 @@ in
             Hostname = forgejo.sshDomain;
             User = "git";
             Port = forgejo.sshPort;
+          };
+
+          # Tangled prints clone URLs as `git@knot.biscuits.at:<did>/<repo>`,
+          # with no port and the public name. That name is proxied by
+          # Cloudflare, which carries no SSH, so the alias sends it to the
+          # knot's tailnet listener instead. Other people clone over HTTPS.
+          ${knot.domain} = {
+            Hostname = knot.sshDomain;
+            User = "git";
+            Port = knot.sshPort;
           };
         };
     };

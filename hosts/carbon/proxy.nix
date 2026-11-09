@@ -1,5 +1,6 @@
 { config, ... }:
 let
+  inherit (config.mySnippets.biscuits-at.networkMap) spindle;
   site = config.mySnippets.biscuits-at.networkMap.braxton-is;
 in
 {
@@ -7,6 +8,18 @@ in
   myNixOS.services.caddy.cloudflareOnly = true;
 
   services.caddy.virtualHosts = {
+    # Tangled's spindle. It needs its own proxied DNS record pointing at
+    # Carbon: the zone's wildcard lands on Argon, which holds no certificate
+    # for this name, so Cloudflare would serve a 525. Log streaming is a
+    # WebSocket, which reverse_proxy passes through without configuration.
+    ${spindle.domain}.extraConfig = ''
+      import cloudflare-mtls
+
+      reverse_proxy 127.0.0.1:${toString spindle.port} {
+        import client-ip
+      }
+    '';
+
     # `www` exists to be given up. It still needs its own DNS record and its
     # own certificate, because Caddy issues one per site address and a name
     # with no record cannot pass the ACME challenge. Without the record this

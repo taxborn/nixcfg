@@ -20,6 +20,7 @@
       };
       braxton-is.enable = true;
       forgejo-runner.enable = true;
+      tangled.spindle.enable = true;
       minecraft.servers.mavs-updated = {
         directory = "/home/taxborn/public/mavs-updated";
         # For friends, so it is reachable without the tailnet.
