@@ -66,8 +66,10 @@ Two services are deployed by moving a flake input rather than by copying files:
 - `tealfm-piper`, where `nix flake update tealfm-piper` is the Piper upgrade.
   It tracks upstream's default branch, so every update takes whatever landed.
 
-The site is the odd one out, which is the part to remember. Rolling back the
-site is free. Rolling back the PDS does not undo database migrations. Piper's
+The site is the odd one out, which is the part to remember. It is not a flake
+input at all. Tangled CI builds it and pushes a tarball to Carbon over a
+forced-command SSH key (`keys/braxton-is-deploy.pub`), so a deploy needs no
+rebuild of the host. Rolling back the site is free. Rolling back the PDS does not undo database migrations. Piper's
 `db/db.go` alters its SQLite schema on startup with `ALTER TABLE ... ADD COLUMN`
 and `CREATE TABLE IF NOT EXISTS`, and a rollback does not undo that either. Take
 a dump first for both. `borgmatic create` takes one for Piper and the PDS on

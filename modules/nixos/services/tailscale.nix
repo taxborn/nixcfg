@@ -84,8 +84,10 @@ in
     age.secrets.tailscaleAuthKey.file = "${self}/secrets/tailscale/auth.age";
 
     # A trusted interface is accepted before the port rules are reached, which
-    # is what makes every loopback-bound service here reachable over the
-    # tailnet without opening a port for it. One exception is worth
+    # is what makes Caddy and every other socket bound to a tailnet or wildcard
+    # address reachable over the tailnet without opening a port for it.
+    # Loopback services are not covered, since tailnet traffic never arrives on
+    # `lo`, and Caddy is the route in to them. One exception is worth
     # remembering. fail2ban hooks its chains on ahead of that accept, so its
     # ignoreIP, not this line, is what keeps a ban off the tailnet.
     # Only the trusted interface here. `openFirewall` below opens the UDP port

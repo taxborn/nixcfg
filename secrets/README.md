@@ -23,6 +23,10 @@ check their recipient rules before activation.
 | `ntfy.age` | argon | ntfy users, ACLs and tokens as an environment file |
 | `ntfy/token.age` | all hosts | write-only ntfy publisher token, read by every backup client |
 | `paperless.age` | helium | admin password and SMTP password |
+| `grafana/admin-password.age` | helium | Grafana admin password |
+| `grafana/secret-key.age` | helium | Grafana `secret_key`, which encrypts its stored data source credentials |
+| `tangled/knot.age` | argon | `KNOT_MASTER_KEY`, unseals the knot's signing keys |
+| `tangled/spindle-key.age` | carbon | the spindle's P-256 signing key |
 
 `MASTER_KEY` in `tranquil-pds.age` is the one to be most careful with. Every PDS
 account's signing key is encrypted under it, so losing a copy loses the instance
@@ -75,13 +79,15 @@ quotes, because bcrypt hashes contain `$`:
 
 ```dotenv
 NTFY_AUTH_USERS='taxborn:<bcrypt hash>:admin,backups:<bcrypt hash>:user'
-NTFY_AUTH_ACCESS='backups:backups:write-only'
+NTFY_AUTH_ACCESS='backups:backups:write-only,backups:alerts:write-only'
 NTFY_AUTH_TOKENS='backups:tk_<29 chars>:borgmatic'
 ```
 
 `ntfy/token.age` holds only the `tk_...` string. The `backups` user is
-write-only on the `backups` topic, so a leaked token can send fake success
-messages and read nothing. `taxborn` is the login for the web app and phone.
+write-only on the `backups` and `alerts` topics, so a leaked token can send fake
+success messages or fake alerts and read nothing. The `alerts` grant is what
+lets Helium's Alertmanager bridge publish; without it every alert is rejected
+with a 403. `taxborn` is the login for the web app and phone.
 Rotating the token means editing both files, then rebuilding Argon before the
 other hosts, or their next run is rejected.
 
