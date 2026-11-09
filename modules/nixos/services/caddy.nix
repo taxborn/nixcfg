@@ -228,7 +228,7 @@ in
             # https://github.com/caddy-dns/cloudflare/tags
             "github.com/caddy-dns/cloudflare@v0.2.4"
           ];
-          hash = "sha256-l2GhS6JchUjVbRza4Vpy0jicJl+O+Fr1jwpKLCEKXAw=";
+          hash = "sha256-Wi8ZqTvfF7wHlQIAtbf8idQablS5TDEvtpjOc+s8LMw=";
         };
       };
 
