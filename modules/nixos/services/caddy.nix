@@ -223,12 +223,14 @@ in
 
         package = pkgs.caddy.withPlugins {
           plugins = [
-            # curl -s https://proxy.golang.org/github.com/tailscale/caddy-tailscale/@latest
-            "github.com/tailscale/caddy-tailscale@v0.0.0-20260826180304-de41b249af4f"
+            # The caddy-tailscale plugin is deliberately absent. Nothing here
+            # uses its `tailscale` listener, `bind tailscale/...` or its own
+            # tsnet node. `get_certificate tailscale` is core Caddy and only
+            # asks the local tailscaled (see `permitCertUid` below).
             # https://github.com/caddy-dns/cloudflare/tags
             "github.com/caddy-dns/cloudflare@v0.2.4"
           ];
-          hash = "sha256-Wi8ZqTvfF7wHlQIAtbf8idQablS5TDEvtpjOc+s8LMw=";
+          hash = "sha256-QSiwKqKvSxhksWBF4/MlBOpyXba5xOQ2sRwA0R7399E=";
         };
       };
 
