@@ -231,7 +231,19 @@ On Helium you can inspect the served repositories directly. Run borg as
 leaves it `root:root 0600`, after which the client's forced `borg serve` (which
 runs as `taxborn`) fails with `Permission denied: …/config` while the archives
 look fine. The NTFS mount's `uid=1000` option used to mask this. If it happens,
-`sudo chown -R taxborn:users /mnt/hdd/borg` repairs it.
+`sudo chown -R taxborn:users /mnt/hdd/borg` repairs it, but only for the client
+repositories. Leave `/mnt/hdd/borg/helium` root-owned: borgmatic writes it as
+root, and its unit's `CapabilityBoundingSet` has `CAP_DAC_READ_SEARCH` but not
+`CAP_DAC_OVERRIDE`, so root can read a `taxborn`-owned repository and cannot
+write to it. The symptom is `Failed to create/acquire the lock …/lock.exclusive
+([Errno 13] Permission denied …)` on Helium's own run, followed by the 6h
+timeout. Repair with:
+
+```bash
+sudo chown -R root:root /mnt/hdd/borg/helium
+sudo borgmatic break-lock --repository helium   # the timeout kill may leave a lock
+sudo borgmatic create --verbosity 1 --list --repository helium
+```
 
 ```bash
 sudo -u taxborn borg list /mnt/hdd/borg/argon
