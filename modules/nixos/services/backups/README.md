@@ -68,6 +68,22 @@ reachable from the tailnet and nowhere else.
 > in this repo can confirm that, since the file lives on rsync.net and is
 > edited by hand. A host added without the prefix is unrestricted there, with
 > no error to say so. The operator's own `yubikey` entry stays bare.
+> `just rsync-keys-check` fetches the file and diffs it against entries
+> generated from `secrets/borg/*/ssh_key.pub`, reporting any host that is
+> missing, unconfined, or pointed at another repository. It needs the
+> yubikey. `just rsync-keys-test` exercises the generation and comparison
+> offline.
+>
+> Those keys are not append-only either, so a compromised host can prune its
+> own rsync.net repository, exactly as on Helium. The one copy it cannot
+> prune is rsync.net's server-side snapshot schedule, which sits outside the
+> borg key's reach. That makes the schedule the real floor on how much history
+> survives a compromised host, and nothing in this repo records or checks it.
+>
+> **TODO, confirm with rsync.net (account de4388):** snapshot schedule and
+> retention: `<UNCONFIRMED: fill in from the rsync.net account, do not guess>`.
+> Also confirm the snapshots are not writable or deletable from the borg
+> keys' restricted shell.
 
 Check that the forced command is what answers on 2200. This must not print the
 output of `id`. Expect it to hang waiting for borg protocol input, or to exit
@@ -182,8 +198,10 @@ sudo nixos-rebuild switch --flake .#<hostname>
 ### 6. initialize the repositories
 
 Run on the host as root, once per repository. This step is interactive because
-the first connection to each server has to accept its host key. Helium's is
-already pinned via `mySnippets.ssh.knownHosts`; rsync.net's is not.
+the first connection to each server would otherwise have to accept its host
+key. Both are pinned: Helium's from `keys/root_helium.pub`, and rsync.net's
+inline in the backups module, checked against rsync.net's [published
+fingerprints](https://www.rsync.net/resources/fingerprints.txt).
 
 ```bash
 sudo borgmatic repo-create --encryption repokey-blake2

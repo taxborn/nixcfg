@@ -331,6 +331,21 @@ in
         publicKeyFile = "${self}/keys/root_${backupServer.host}.pub";
       };
 
+      # rsync.net's host keys, pinned so the first connection is not trust on
+      # first use. Taken with ssh-keyscan and checked against the PGP-signed
+      # list at https://www.rsync.net/resources/fingerprints.txt, where the
+      # three SHA256 fingerprints match the de6 to de9 entries. If rsync.net
+      # rotates them the backup stops at an unknown host key, which is the
+      # point; re-verify against that list before replacing these.
+      programs.ssh.knownHosts."rsync-net-ed25519" = {
+        hostNames = [ "de4388.rsync.net" ];
+        publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIObQN4P/deJ/k4P4kXh6a9K4Q89qdyywYetp9h3nwfPo";
+      };
+      programs.ssh.knownHosts."rsync-net-ecdsa" = {
+        hostNames = [ "de4388.rsync.net" ];
+        publicKey = "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBC2wi3kWdaW4W+tRu0uq8hhY1ffFbzZ4KCh0FUhFw0GIb8lWWvVnGInc9Tr538k0ZICFSSbs5faMgpMuHSX8QvU=";
+      };
+
       age.secrets = {
         borgPassphrase = {
           file = "${self}/secrets/borg/${hostname}/passphrase.age";
