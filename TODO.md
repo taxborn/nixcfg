@@ -67,6 +67,16 @@ Check each option with `nix eval` before adopting, and build `uranium` and
   --no-build` hook. Only the no-drift path of the recipe was run.
 - docs: the 2026-11-09 drift list is corrected, and `jdk17_headless` is gone
   from `homes/server.nix`.
+- backups: rsync.net's ED25519 and ECDSA host keys are pinned, checked against
+  a fresh scan and rsync.net's published fingerprints, but not against the
+  PGP signature on that list. `just rsync-keys-check` diffs the account's
+  `authorized_keys` against the roster. It needs the YubiKey and has not run
+  against the real file. Still open: fill in the snapshot schedule placeholder
+  in the backups README.
+- caddy: direct vhost access logs go to Loki through Alloy, with an
+  `HttpLoginFailures` Loki rule. The PDS vhosts overwrite `X-Forwarded-For`
+  with the TCP peer. Neither has run: check alloy, loki and the stream
+  `{job="caddy-access"}` after deploying. Deploy helium before argon.
 
 ## open
 
@@ -123,27 +133,10 @@ ordered by how much each item shrinks the worst case.
   to a public knot. It is the sudo password on all five hosts. Move it to
   `hashedPasswordFile` from an agenix secret, then change the password so the
   published hash is dead.
-- backups: pin rsync.net's host key in `programs.ssh.knownHosts`, since the
-  first connection still trusts it on first use. Add a `just` recipe that
-  fetches rsync.net's `authorized_keys` and diffs it against entries generated
-  from the roster, because nothing here can confirm the forced commands.
-  Confirm the account's server-side snapshot schedule and record it in the
-  backups README. The keys are not append-only, so those snapshots are the one
-  copy a compromised host cannot prune.
-- caddy: nothing watches HTTP logins. The only fail2ban jails are sshd and
-  Minecraft, and Alloy skips Caddy's access logs on the ground that fail2ban
-  reads them. Ship the access logs for the direct vhosts to Loki, or add a
-  jail for them.
 - helium: its disk is plain btrfs and it is the one server in a house, with
   the Paperless archive on it. Decide between leaving it, for unattended
   reboots, and LUKS with TPM2 unlock. Record the answer in the README's
   "do not" list either way.
-- caddy: `trusted_proxies` is server-wide, so Caddy believes `X-Forwarded-For`
-  on the direct PDS vhosts when the peer is in a Cloudflare range. Tranquil
-  reads the entry Caddy appended, so the effect stops at Caddy's own logs. It
-  cannot be scoped per vhost. Either set `header_up X-Forwarded-For
-  {remote_host}` on the direct vhosts in place of `client-ip`, or split the
-  listener by address.
 
 Before any `just update` on a host running Postgres, compare
 `datcollversion` with `pg_database_collation_actual_version(oid)` in
