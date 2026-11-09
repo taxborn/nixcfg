@@ -1,6 +1,45 @@
 { config, lib, ... }:
 let
   networkMap = config.mySnippets.biscuits-at.networkMap;
+
+  # Access log for a direct vhost, in Caddy's default JSON so Alloy can ship it
+  # as-is. nixpkgs already gives every vhost an unfiltered 0600 `access-*.log`,
+  # Authorization header and all, and fail2ban no longer reads any of them. The
+  # direct vhosts replace theirs with this one. The mTLS vhosts keep the
+  # default, since that is Cloudflare's traffic and Alloy does not ship it.
+  #
+  # `mode 0640` is for Alloy, which joins the `caddy` group to read these (see
+  # monitoring/default.nix). The default 0600 would be a silent permission
+  # error. The file name is what Alloy turns into the `vhost` label, so it has
+  # to keep the `direct-<name>.log` shape. The prefix is also what keeps Alloy
+  # away from the 0600 defaults.
+  #
+  # The filter runs before the line is written, so a credential dropped here
+  # never reaches disk. Authorization and Cookie carry PDS session tokens and
+  # app passwords, Set-Cookie is the response half. An OAuth callback puts a
+  # one-time `code` in the query string, and `request>uri` logs all of it.
+  # `remote_ip` in the output is the TCP peer. `client_ip` honours
+  # X-Forwarded-For from a Cloudflare range, which anyone with a Cloudflare
+  # account can send, so do not alert on it.
+  accessLog = name: ''
+    output file /var/log/caddy/direct-${name}.log {
+      mode 0640
+    }
+    format filter {
+      wrap json
+      fields {
+        request>headers>Authorization delete
+        request>headers>Proxy-Authorization delete
+        request>headers>Cookie delete
+        resp_headers>Set-Cookie delete
+        request>uri query {
+          replace code REDACTED
+          replace state REDACTED
+          replace token REDACTED
+        }
+      }
+    }
+  '';
 in
 {
   myNixOS.services.caddy = {
@@ -99,14 +138,27 @@ in
     #   - The free tier caps a request body at 100 MB. Blob uploads here are
     #     allowed up to 10 GiB.
     #
-    # Going direct means Caddy sees the real peer, so `client_ip` is already
-    # correct and the `client-ip` snippet the proxied vhosts need would only
-    # overwrite a good value with the same one.
-    ${networkMap.pds.domain}.extraConfig = ''
-      encode zstd gzip
+    # Going direct means Caddy sees the real peer, but not that nothing can
+    # claim otherwise. `trusted_proxies` is server-wide and lists Cloudflare,
+    # so a connection from inside a Cloudflare range has its X-Forwarded-For
+    # believed and passed to the PDS. Anyone can send one by pointing a proxied
+    # record of their own at this address, and a PDS that keys rate limits or
+    # logs on that header would believe it. The `client-ip` snippet would not help, since it forwards
+    # `{client_ip}`, the trusting value. `{remote_host}` is the TCP peer and
+    # `header_up` replaces rather than appends, so a forged value never
+    # reaches the backend.
+    ${networkMap.pds.domain} = {
+      logFormat = accessLog networkMap.pds.domain;
 
-      reverse_proxy 127.0.0.1:${toString networkMap.pds.port}
-    '';
+      extraConfig = ''
+        encode zstd gzip
+
+        reverse_proxy 127.0.0.1:${toString networkMap.pds.port} {
+          header_up X-Forwarded-For {remote_host}
+          header_up X-Real-IP {remote_host}
+        }
+      '';
+    };
 
     # Let's Encrypt issues a wildcard over DNS-01 and no other challenge, so
     # this is the one vhost that cannot use the HTTP-01 the rest fall back to.
@@ -117,14 +169,18 @@ in
       # contains a `*`. Leaving it gives a real file in /var/log/caddy whose
       # name is a glob metacharacter, waiting for the first person to write a
       # loop over that directory.
-      logFormat = "output file /var/log/caddy/access-wildcard.${networkMap.pds.domain}.log";
+      logFormat = accessLog "wildcard.${networkMap.pds.domain}";
 
       extraConfig = ''
         encode zstd gzip
 
         import cloudflare-dns
 
-        reverse_proxy 127.0.0.1:${toString networkMap.pds.port}
+        # Same as the apex above, for the same reason.
+        reverse_proxy 127.0.0.1:${toString networkMap.pds.port} {
+          header_up X-Forwarded-For {remote_host}
+          header_up X-Real-IP {remote_host}
+        }
       '';
     };
 
@@ -161,19 +217,23 @@ in
     #
     # Port 443 is open to everyone here (the PDS), and this vhost has no mTLS,
     # so the matcher is all that keeps the forge off the public address.
-    ${networkMap.forgejo.sshDomain}.extraConfig = ''
-      tls {
-        get_certificate tailscale
-      }
+    ${networkMap.forgejo.sshDomain} = {
+      logFormat = accessLog networkMap.forgejo.sshDomain;
 
-      @offTailnet not remote_ip ${lib.concatStringsSep " " config.mySnippets.tailnet.ranges}
-      abort @offTailnet
+      extraConfig = ''
+        tls {
+          get_certificate tailscale
+        }
 
-      request_body {
-        max_size 2GB
-      }
+        @offTailnet not remote_ip ${lib.concatStringsSep " " config.mySnippets.tailnet.ranges}
+        abort @offTailnet
 
-      reverse_proxy 127.0.0.1:${toString networkMap.forgejo.port}
-    '';
+        request_body {
+          max_size 2GB
+        }
+
+        reverse_proxy 127.0.0.1:${toString networkMap.forgejo.port}
+      '';
+    };
   };
 }

@@ -404,8 +404,57 @@ in
           max_streams_per_user = 5000;
         };
 
+        # Evaluates the LogQL rules below and hands firing alerts to the same
+        # Alertmanager, and so the same ntfy topic, as the Prometheus rules.
+        # Prometheus cannot see inside a log line. The API stays off: rules come
+        # from the store, so a rule edited over HTTP would be gone at the next
+        # restart anyway.
+        ruler = {
+          storage = {
+            type = "local";
+            local.directory = "/etc/loki/rules";
+          };
+          rule_path = "/var/lib/loki/rules-temp";
+          alertmanager_url = "http://127.0.0.1:${toString ports.alertmanager}";
+          enable_api = false;
+          ring.kvstore.store = "inmemory";
+        };
+
         analytics.reporting_enabled = false;
       };
+    };
+
+    # `fake` is the tenant ID Loki uses when `auth_enabled` is false, and the
+    # local rule store looks for its files under a directory of that name.
+    environment.etc."loki/rules/fake/access.yaml".text = builtins.toJSON {
+      groups = [
+        {
+          name = "http";
+          rules = [
+            {
+              alert = "HttpLoginFailures";
+              # Failed password logins against the PDS, from Caddy's access log
+              # for the direct vhosts (hosts/argon/proxy.nix). Matches on the
+              # endpoint as well as the 401, since clients with a stale session
+              # produce 401s on every other route all day. Grouped by vhost and
+              # not by client: `client_ip` can be forged through Cloudflare, so
+              # a per-IP threshold is one an attacker steps around, and the
+              # address to act on is `remote_ip`, read from Explore.
+              expr = ''
+                sum by (host, vhost) (
+                  count_over_time(
+                    {job="caddy-access"} | json | status = 401 | request_uri =~ ".*createSession.*" [10m]
+                  )
+                ) > 10'';
+              labels.severity = "warning";
+              annotations = {
+                summary = "failed logins on {{ $labels.vhost }} ({{ $labels.host }})";
+                description = "{{ $value | printf \"%.0f\" }} failed logins in 10 minutes. Group by remote_ip in Explore.";
+              };
+            }
+          ];
+        }
+      ];
     };
 
     # ------------------------------------------------------------------- Grafana
