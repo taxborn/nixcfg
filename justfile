@@ -21,6 +21,28 @@ update host="":
 check:
     nix develop --command pre-commit run --all-files
 
+# Diff caddy.nix's Cloudflare ranges against Cloudflare's published lists
+check-cloudflare-ips:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    # Only the quoted CIDRs inside the two range lists, so other strings in the
+    # file cannot leak into the comparison.
+    ours=$(awk '/cloudflare(IPv4|IPv6)Ranges = \[/ {on=1; next} on && /\];/ {on=0} on {gsub(/[ "]/, ""); print}' \
+        modules/nixos/services/caddy.nix | sort)
+    theirs=$( { curl -fsS https://www.cloudflare.com/ips-v4; echo; curl -fsS https://www.cloudflare.com/ips-v6; } \
+        | sed '/^$/d' | sort)
+    if [ -z "$ours" ] || [ -z "$theirs" ]; then
+        echo "could not read one of the two lists" >&2
+        exit 2
+    fi
+    if diff=$(diff <(echo "$ours") <(echo "$theirs")); then
+        echo "caddy.nix matches Cloudflare's published ranges"
+    else
+        echo "drift (< caddy.nix, > Cloudflare):"
+        echo "$diff"
+        exit 1
+    fi
+
 # Remove all old nix generations
 clean:
     sudo nix-collect-garbage -d

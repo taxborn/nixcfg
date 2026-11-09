@@ -46,11 +46,14 @@ for the checked rosters.
 just update              # rebuild this machine
 just update <host>       # rebuild a remote host over ssh
 just check               # run every pre-commit hook over the whole tree
+just check-cloudflare-ips # diff caddy.nix's Cloudflare ranges against the published lists
 just clean               # nix-collect-garbage -d
 ```
 
 The devShell installs the hook set through direnv, so a `cd` into the repo is
-the setup step. `nix flake check` evaluates every host, runs those hooks, and
+the setup step. It also installs a pre-push hook that runs
+`nix flake check --no-build`, so a push evaluates every host first. That hook
+is pre-push only, so `just check` and `checks.pre-commit` skip it. `nix flake check` evaluates every host, runs those hooks, and
 checks database registration, fleet agreement, network types, the Forgejo
 runner socket policy and the restore runner with mocked commands.
 
