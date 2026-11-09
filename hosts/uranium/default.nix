@@ -31,9 +31,10 @@
   };
 
   services = {
-    scx = {
+    # services.scx was removed upstream in favour of scx_loader.
+    scx-loader = {
       enable = true;
-      scheduler = "scx_lavd";
+      config.default_sched = "scx_lavd";
     };
   };
 
