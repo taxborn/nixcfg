@@ -138,16 +138,25 @@ in
     #   - The free tier caps a request body at 100 MB. Blob uploads here are
     #     allowed up to 10 GiB.
     #
-    # Going direct means Caddy sees the real peer, so `client_ip` is already
-    # correct and the `client-ip` snippet the proxied vhosts need would only
-    # overwrite a good value with the same one.
+    # Going direct means Caddy sees the real peer, but not that nothing can
+    # claim otherwise. `trusted_proxies` is server-wide and lists Cloudflare,
+    # so a connection from inside a Cloudflare range has its X-Forwarded-For
+    # believed and passed to the PDS. Anyone can send one by pointing a proxied
+    # record of their own at this address, and a PDS that keys rate limits or
+    # logs on that header would believe it. The `client-ip` snippet would not help, since it forwards
+    # `{client_ip}`, the trusting value. `{remote_host}` is the TCP peer and
+    # `header_up` replaces rather than appends, so a forged value never
+    # reaches the backend.
     ${networkMap.pds.domain} = {
       logFormat = accessLog networkMap.pds.domain;
 
       extraConfig = ''
         encode zstd gzip
 
-        reverse_proxy 127.0.0.1:${toString networkMap.pds.port}
+        reverse_proxy 127.0.0.1:${toString networkMap.pds.port} {
+          header_up X-Forwarded-For {remote_host}
+          header_up X-Real-IP {remote_host}
+        }
       '';
     };
 
@@ -167,7 +176,11 @@ in
 
         import cloudflare-dns
 
-        reverse_proxy 127.0.0.1:${toString networkMap.pds.port}
+        # Same as the apex above, for the same reason.
+        reverse_proxy 127.0.0.1:${toString networkMap.pds.port} {
+          header_up X-Forwarded-For {remote_host}
+          header_up X-Real-IP {remote_host}
+        }
       '';
     };
 
