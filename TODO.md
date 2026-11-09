@@ -57,6 +57,16 @@ Check each option with `nix eval` before adopting, and build `uranium` and
   evidence: `nounset` broke `paperless-scheduler` on Helium at activation.
 - `workstation`: journald caps, `udisks2`, speechd
   and nano off.
+- ssh listeners: Forgejo's SSH, the knot's and helium's borg sshd bind the
+  tailnet address with `bindOrdering`, and `federation.ENABLED` is off. Only
+  evaluated and built. Not deployed. Deploy helium first, keep console access,
+  then check `ss -ltn` for 2200 on the tailnet address only.
+- caddy: `caddy-tailscale` removed, since only core `get_certificate tailscale`
+  was in use. Builds on argon, helium and carbon, not yet run on a host.
+- checks: `just check-cloudflare-ips` and a pre-push `nix flake check
+  --no-build` hook. Only the no-drift path of the recipe was run.
+- docs: the 2026-11-09 drift list is corrected, and `jdk17_headless` is gone
+  from `homes/server.nix`.
 
 ## open
 
@@ -113,12 +123,6 @@ ordered by how much each item shrinks the worst case.
   to a public knot. It is the sudo password on all five hosts. Move it to
   `hashedPasswordFile` from an agenix secret, then change the password so the
   published hash is dead.
-- ssh listeners: Forgejo's SSH on 2222, the knot's on 2223 and helium's borg
-  sshd on 2200 bind every interface, and the closed firewall is all that
-  keeps them on the tailnet. Bind each to
-  `myNixOS.services.tailscale.address` with `bindOrdering`, as AdGuard, Loki
-  and the exporters do. For sshd use `listenAddresses`, so 2200 exists only
-  on the tailnet address. Deploy helium before the clients.
 - backups: pin rsync.net's host key in `programs.ssh.knownHosts`, since the
   first connection still trusts it on first use. Add a `just` recipe that
   fetches rsync.net's `authorized_keys` and diffs it against entries generated
@@ -130,46 +134,16 @@ ordered by how much each item shrinks the worst case.
   Minecraft, and Alloy skips Caddy's access logs on the ground that fail2ban
   reads them. Ship the access logs for the direct vhosts to Loki, or add a
   jail for them.
-- forgejo: `federation.ENABLED` is on for a single-user forge with
-  registration closed. Turn it off unless something uses it.
 - helium: its disk is plain btrfs and it is the one server in a house, with
   the Paperless archive on it. Decide between leaving it, for unattended
   reboots, and LUKS with TPM2 unlock. Record the answer in the README's
   "do not" list either way.
-- caddy: the `caddy-tailscale` plugin looks unused. The only Tailscale
-  feature a vhost uses is `get_certificate tailscale`, which is core Caddy.
-  Confirm with a build of argon before removing it and its hash.
-  `trusted_proxies` is also server-wide, so Caddy believes `X-Forwarded-For`
+- caddy: `trusted_proxies` is server-wide, so Caddy believes `X-Forwarded-For`
   on the direct PDS vhosts when the peer is in a Cloudflare range. Tranquil
-  reads the entry Caddy appended, so the effect stops at Caddy's own logs.
-- checks: add a `just` recipe that diffs the Cloudflare ranges in `caddy.nix`
-  against the published list. On carbon a missing range is a partial outage.
-  Run `nix flake check --no-build` from a pre-push hook, since the
-  architecture and restore regressions otherwise run only when remembered. It
-  takes about 20 seconds.
-- docs, drift found in the same review:
-  - `hosts/README.md` and the backups README say carbon has no database. The
-    spindle registers a SQLite dump.
-  - The host tables in `hosts/README.md` leave out Minecraft on argon and
-    carbon, and `braxton.is` on carbon.
-  - The inventory in `secrets/README.md` is missing the two Grafana files and
-    the two Tangled keys. Its ntfy ACL example grants only the `backups`
-    topic, and monitoring needs `alerts` as well.
-  - `keys/README.md` does not list `braxton-is-deploy.pub`.
-  - `monitoring/alerts.nix` and `dashboards.nix` describe helium's external
-    drive as NTFS under ntfs-3g. It is btrfs.
-  - `monitoring/default.nix` says fail2ban watches Caddy's access logs. That
-    jail was removed in the 2026-09-05 review.
-  - `services/tailscale.nix` says the trusted interface makes loopback-bound
-    services reachable over the tailnet. It makes Caddy and tailnet-bound
-    sockets reachable.
-  - The 2026-09-05 review records the server JDK as removed. `58bbc03` put
-    `jdk17_headless` back in `homes/server.nix` for running the packs by hand
-    as `taxborn`. The Minecraft unit calls Java by store path, so drop it
-    again.
-  - `CONTEXT.md` calls the site "the odd one out" among lock-driven deploys
-    without saying how it deploys now, a CI tarball over a forced-command SSH
-    key.
+  reads the entry Caddy appended, so the effect stops at Caddy's own logs. It
+  cannot be scoped per vhost. Either set `header_up X-Forwarded-For
+  {remote_host}` on the direct vhosts in place of `client-ip`, or split the
+  listener by address.
 
 Before any `just update` on a host running Postgres, compare
 `datcollversion` with `pg_database_collation_actual_version(oid)` in
