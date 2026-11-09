@@ -74,6 +74,7 @@ Forgejo's tailnet name as the `directVHosts` exceptions.
 | [Tangled knot](../modules/nixos/services/tangled/knot.nix) | `knot.biscuits.at` | 3011 | git server, no database; git over SSH on 2223, tailnet-only; proxied record, covered by the zone wildcard |
 | [Tranquil PDS](../modules/nixos/services/tranquil-pds.nix) | `pds.biscuits.at` + `*.pds.biscuits.at` | 3003 | ATProto PDS, PostgreSQL |
 | [Vaultwarden](../modules/nixos/services/vaultwarden.nix) | `vw.biscuits.at` | 3001 | |
+| [Minecraft](../modules/nixos/services/minecraft.nix) (`mnb`) | | 25565 | not behind Caddy; `openFirewall` for friends outside the tailnet; fail2ban jail |
 
 The service modules register `pg_dumpall` for Atuin and Tranquil and SQLite
 dumps for Forgejo and Piper when the backup client is enabled.
@@ -93,10 +94,13 @@ An Intel OVH VPS, `vps-2 2026` model.
 | service | vHost | port | notes |
 | --- | --- | --- | --- |
 | [Forgejo runner](../modules/nixos/services/forgejo-runner/README.md) | | | trusted repositories, rootless Podman, one concurrent job |
+| [braxton.is](../modules/nixos/services/braxton-is.nix) | `braxton.is` + `www.braxton.is` | 3006 | personal site, not under `biscuits.at`; deployed by a CI tarball over a forced-command SSH key; no database |
+| [Minecraft](../modules/nixos/services/minecraft.nix) (`mavs-updated`) | | 25565 | not behind Caddy; `openFirewall` for friends outside the tailnet; fail2ban jail |
 | [Tangled spindle](../modules/nixos/services/tangled/spindle.nix) | `spindle.biscuits.at` | 3012 | CI as root with rootful Docker and KVM microVMs, one concurrent job, owner only; SQLite dump; needs its own proxied record, since the zone wildcard lands on Argon |
 
-Nothing on this host is in the backup set beyond the defaults. It has no
-database.
+The spindle's SQLite database is the only one on this host, and the backup
+client registers a dump of it. Nothing else here is in the backup set beyond
+the defaults.
 
 ## [Helium](./helium)
 

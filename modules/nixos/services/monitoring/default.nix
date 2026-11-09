@@ -132,8 +132,8 @@ in
       text = ''
         // Journal entries only. No file scraping: everything on these hosts
         // logs to the journal, including Caddy's runtime log. Caddy's per-vhost
-        // access logs are the exception, and fail2ban already watches them, so
-        // shipping them would be a large, low-value duplicate stream.
+        // access logs are the exception. No fail2ban jail reads them any more,
+        // but they are a large, low-value stream, so they stay unshipped.
         //
         // Alloy keeps a cursor in /var/lib/alloy, so a laptop that was off the
         // tailnet resumes where it stopped instead of losing the gap. Loki

@@ -10,9 +10,10 @@ let
   # the ones that do not. tmpfs, ramfs, and the various fuse shims come and go
   # with desktop sessions and portals, a denylist grows a new hole every time
   # one appears, and the hole is a division by a zero-byte "filesystem" rather
-  # than anything visibly broken. `fuseblk` is Helium's external NTFS drive
-  # under ntfs-3g; `ntfs3` is the same disk if it is ever moved to the kernel
-  # driver, and it is listed now so that move does not silently stop alerting.
+  # than anything visibly broken. `fuseblk` and `ntfs3` cover an NTFS
+  # disk under ntfs-3g or the kernel driver. Helium's external drive is btrfs
+  # now, so neither matches anything today, but they stay listed so that a
+  # reformat or a swapped-in NTFS drive does not silently stop alerting.
   realFs = ''fstype=~"btrfs|ext4|xfs|vfat|ntfs3|fuseblk"'';
 
   # Every btrfs subvolume reports the *pool's* free space, not its own, so a

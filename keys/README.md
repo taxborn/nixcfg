@@ -9,6 +9,7 @@ of the repo rather than through agenix.
 | `root_<host>.pub` | that host's `/etc/ssh/ssh_host_ed25519_key.pub` | `secrets/secrets.nix` as an age recipient, and `mySnippets.ssh.knownHosts` for host key pinning |
 | `yubikey.pub` | my SSH public key, backed by the YubiKey | `modules/users/taxborn.nix` (`authorizedKeys.keyFiles`); also the key to preauthorize on a host before `nixos-anywhere` |
 | `yubikey_age.pub` | the age recipient for the same YubiKey | `secrets/secrets.nix`, as the second recipient of every secret |
+| `braxton-is-deploy.pub` | public half of the key CI uses to deploy braxton.is | `modules/nixos/services/braxton-is.nix`, as the `braxton-deploy` user's authorized key behind a forced command. The private half is a secret on the Tangled spindle only |
 | `pgp.asc` | my OpenPGP public key, `F22AFD6CFD66B874` | `modules/home/programs/gpg.nix`, imported into the keyring so the card's key is trusted for git signing |
 | `cloudflare-origin-pull.pem` | Cloudflare's origin-pull CA certificate | `modules/nixos/services/caddy.nix`, as the trust pool for the `cloudflare-mtls` snippet |
 
