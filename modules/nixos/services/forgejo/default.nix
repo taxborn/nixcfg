@@ -15,11 +15,30 @@ let
   stateDir = "/var/lib/forgejo";
   signingKeyDir = "${stateDir}/signing";
   user = "git";
+
+  tailscale = config.myNixOS.services.tailscale;
+  tailnetIP = tailscale.address;
 in
 {
   options.myNixOS.services.forgejo.enable = lib.mkEnableOption "Forgejo git forge";
 
   config = lib.mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = config.services.tailscale.enable && tailnetIP != null;
+        message = ''
+          myNixOS.services.forgejo binds its SSH server to this host's tailnet
+          address and nowhere else, so the host has to run Tailscale and appear
+          in mySnippets.tailnet.tailscaleIPs.
+        '';
+      }
+    ];
+
+    # The tailnet address only exists once tailscaled is Running, and the
+    # built-in SSH server fails to bind without it. Forgejo's unit has no start
+    # limit of its own, so the shared values merge in without being forced.
+    systemd.services.forgejo = tailscale.bindOrdering;
+
     # Forgejo keeps every account, SSH key, issue and pull request in
     # SQLite, while the git objects themselves sit under
     # /var/lib/forgejo/repositories and ride along in the archive. Being
@@ -81,6 +100,9 @@ in
 
           START_SSH_SERVER = true;
           SSH_DOMAIN = networkMap.forgejo.sshDomain;
+          # The tailnet address, not the wildcard. Git over SSH is tailnet-only,
+          # and the closed firewall used to be the only thing keeping it there.
+          SSH_LISTEN_HOST = tailnetIP;
           SSH_LISTEN_PORT = networkMap.forgejo.sshPort;
           SSH_PORT = networkMap.forgejo.sshPort;
           BUILTIN_SSH_SERVER_USER = "git";
@@ -97,7 +119,10 @@ in
           RUN_AT_START = true;
         };
 
-        federation.ENABLED = true;
+        # Off. Nothing here consumes ActivityPub, and enabled it serves
+        # NodeInfo and the actor endpoints on the public vhost for no benefit.
+        # `ENABLE_FEDERATED_AVATAR` below is Libravatar, an unrelated switch.
+        federation.ENABLED = false;
         indexer.REPO_INDEXER_ENABLED = true;
 
         picture = {
