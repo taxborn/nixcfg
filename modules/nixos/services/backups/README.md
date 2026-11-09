@@ -81,9 +81,10 @@ reachable from the tailnet and nowhere else.
 > borg key's reach. That makes the schedule the real floor on how much history
 > survives a compromised host, and nothing in this repo records or checks it.
 >
-> **TODO, confirm with rsync.net (account de4388):** snapshot schedule and
-> retention: `<UNCONFIRMED: fill in from the rsync.net account, do not guess>`.
-> Also confirm the snapshots are not writable or deletable from the borg
+> Snapshot schedule, confirmed by the account owner on 2026-11-09: snapshots
+> are kept for 7 days. A compromised host can therefore destroy history older
+> than a week only if it also goes unnoticed for longer than that. Still to
+> confirm: that the snapshots are not writable or deletable from the borg
 > keys' restricted shell.
 
 Check that the forced command is what answers on 2200. This must not print the

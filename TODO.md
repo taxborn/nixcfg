@@ -71,8 +71,8 @@ Check each option with `nix eval` before adopting, and build `uranium` and
   a fresh scan and rsync.net's published fingerprints, but not against the
   PGP signature on that list. `just rsync-keys-check` diffs the account's
   `authorized_keys` against the roster. It needs the YubiKey and has not run
-  against the real file. Still open: fill in the snapshot schedule placeholder
-  in the backups README.
+  against the real file until 2026-11-09, when it passed. The snapshot
+  schedule is 7 days, recorded in the backups README.
 - caddy: direct vhost access logs go to Loki through Alloy, with an
   `HttpLoginFailures` Loki rule. The PDS vhosts overwrite `X-Forwarded-For`
   with the TCP peer. Neither has run: check alloy, loki and the stream
