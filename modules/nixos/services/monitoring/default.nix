@@ -16,6 +16,46 @@ let
 
   hasSmart = lib.elem hostname monitoring.physicalDisks;
 
+  # Only the `direct-*` logs, which the direct vhosts on Argon write with
+  # credentials filtered out and group-readable (hosts/argon/proxy.nix). The
+  # `access-*` defaults are unfiltered, 0600, and Cloudflare's traffic, so the
+  # prefix keeps them out. fail2ban no longer reads any of them.
+  #
+  # Two labels, both bounded. `vhost` comes from the file name, so it is the
+  # number of vhosts with a log. Everything else stays inside the JSON line
+  # for `| json` at query time: status, remote_ip and the URI as labels would
+  # make one stream per client, which is the cardinality blow-up
+  # `max_streams_per_user` exists to stop.
+  #
+  # Rotated files (`direct-x-2026-11-09T...log`) match the same glob, and a new
+  # path is read from the start, so they are excluded or every rotation would
+  # re-ship a day of logs.
+  caddyAccess = lib.optionalString config.services.caddy.enable ''
+    local.file_match "caddy_access" {
+      path_targets = [{
+        __path__         = "${config.services.caddy.logDir}/direct-*.log",
+        __path_exclude__ = "${config.services.caddy.logDir}/*-[0-9][0-9][0-9][0-9]-[0-9][0-9]-*",
+        job              = "caddy-access",
+        host             = "${hostname}",
+      }]
+    }
+
+    discovery.relabel "caddy_access" {
+      targets = local.file_match.caddy_access.targets
+
+      rule {
+        source_labels = ["__path__"]
+        regex         = ".*/direct-(.+)\\.log"
+        target_label  = "vhost"
+      }
+    }
+
+    loki.source.file "caddy_access" {
+      targets    = discovery.relabel.caddy_access.output
+      forward_to = [loki.write.server.receiver]
+    }
+  '';
+
   # Every listener here binds this host's own Tailscale address, and none of
   # these ports is in `allowedTCPPorts`. The tailscale module puts `tailscale0`
   # in `trustedInterfaces`, so a socket on that address is reachable from the
@@ -124,16 +164,22 @@ in
 
     services.alloy.enable = cfg.logs;
 
+    # The access logs are `caddy:caddy` 0640. Alloy runs as a DynamicUser and
+    # would otherwise get a permission error that only shows up as a missing
+    # stream in Loki.
+    systemd.services.alloy.serviceConfig.SupplementaryGroups = lib.mkIf (
+      cfg.logs && config.services.caddy.enable
+    ) [ config.services.caddy.group ];
+
     # Written to /etc rather than passed as a store path through `configPath`.
     # The nixpkgs module builds `reloadTriggers` by scanning
     # `environment.etc."alloy/*.alloy"`, so the store-path form gets a full
     # restart of the log shipper on every unrelated rebuild instead of a SIGHUP.
     environment.etc."alloy/config.alloy" = lib.mkIf cfg.logs {
       text = ''
-        // Journal entries only. No file scraping: everything on these hosts
-        // logs to the journal, including Caddy's runtime log. Caddy's per-vhost
-        // access logs are the exception, and fail2ban already watches them, so
-        // shipping them would be a large, low-value duplicate stream.
+        // The journal, plus Caddy's access logs where Caddy runs (below).
+        // Everything else on these hosts logs to the journal, Caddy's runtime
+        // log included.
         //
         // Alloy keeps a cursor in /var/lib/alloy, so a laptop that was off the
         // tailnet resumes where it stopped instead of losing the gap. Loki
@@ -167,6 +213,7 @@ in
           }
         }
 
+        ${caddyAccess}
         loki.write "server" {
           endpoint {
             url = "http://${serverIP}:${toString ports.loki}/loki/api/v1/push"
