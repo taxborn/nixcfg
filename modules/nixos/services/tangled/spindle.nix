@@ -95,8 +95,12 @@ in
           maxConcurrentWorkflows = 1;
         };
 
+        # One nixos-image workflow at a time. The image declares 4096 MiB and
+        # 2 vCPUs, and the spindle charges each VM a further 96 MiB for its
+        # runner process (`runnerBufferMiB`), so a cap of exactly 4096 fits no
+        # VM at all. 4608 leaves headroom for that buffer without fitting two.
         microvm.limits.total = {
-          memoryMiB = 4096;
+          memoryMiB = 4608;
           vcpus = 2;
         };
       };
