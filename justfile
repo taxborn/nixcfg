@@ -69,3 +69,11 @@ restore-dr host *repos="rsync":
 # Run every restore test across the evaluated backup-client roster (tiers 0-2)
 restore-all:
     bash scripts/restore-all.sh
+
+# Diff rsync.net's authorized_keys against the host roster (needs the yubikey)
+rsync-keys-check:
+    bash scripts/rsync-authorized-keys.sh fetch
+
+# Offline test of the expected-entries generation behind rsync-keys-check
+rsync-keys-test:
+    bash scripts/rsync-authorized-keys-test.sh
