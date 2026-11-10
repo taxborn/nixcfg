@@ -91,9 +91,9 @@ Check each option with `nix eval` before adopting, and build `uranium` and
   retention bounds how long that archive survives. The `/var/lib/forgejo*`
   directories are removed. The zone had no explicit `code` or `git`
   records, so both names fall to the proxied wildcard and 525 like any other
-  unserved name. The Fastmail app password is revoked. Open: on carbon,
-  check `ls /var/lib/systemd/linger` and `systemctl status user@990`, since
-  the runner account lingered and its user is now gone.
+  unserved name. The Fastmail app password is revoked. Deployed to carbon:
+  the runner's `user@990` manager stopped cleanly and `/var/lib/systemd/linger`
+  holds only `taxborn`.
 
 ## open
 
