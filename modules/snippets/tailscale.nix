@@ -9,7 +9,7 @@
       description = ''
         MagicDNS suffix for the tailnet. Everything that builds a
         `<host>.<tailnet>` name reads it from here: the known-hosts pins and
-        Forgejo's SSH domain, which is a MagicDNS name because git over SSH is
+        the knot's SSH domain, which is a MagicDNS name because git over SSH is
         tailnet-only.
       '';
       type = lib.types.str;
@@ -24,8 +24,7 @@
       description = ''
         Tailscale's CGNAT block and its ULA prefix. A remote address inside
         either is a tailnet peer. `services.fail2ban` exempts them from bans
-        and asserts they cover `tailscaleIPs`, and Argon's tailnet-only Forgejo
-        vhost aborts any peer outside them, so the two cannot drift apart.
+        and asserts they cover `tailscaleIPs`, so the two cannot drift apart.
       '';
     };
 

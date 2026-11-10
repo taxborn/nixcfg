@@ -21,10 +21,6 @@ in
     # host, so CI stays off any host holding keys it could reach.
     assertions = [
       {
-        assertion = !config.myNixOS.services.forgejo.enable;
-        message = "Keep the spindle, which runs CI as root, off the host holding Forgejo's repositories and credentials.";
-      }
-      {
         assertion = !config.myNixOS.services.tangled.knot.enable;
         message = "Keep the spindle, which runs CI as root, off the host holding the knot's master key.";
       }

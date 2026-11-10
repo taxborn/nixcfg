@@ -50,9 +50,6 @@ in
     ]
     ++ extraKeys;
 
-  "forgejo/signing-key.age".publicKeys = hostKey "argon";
-  "forgejo/mail.age".publicKeys = hostKey "argon";
-
   "glance.age".publicKeys = hostKey "argon";
   "piper.age".publicKeys = hostKey "argon";
   "vaultwarden.age".publicKeys = hostKey "argon";

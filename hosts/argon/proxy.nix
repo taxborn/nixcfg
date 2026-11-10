@@ -1,4 +1,4 @@
-{ config, lib, ... }:
+{ config, ... }:
 let
   networkMap = config.mySnippets.biscuits-at.networkMap;
 
@@ -48,21 +48,10 @@ in
     directVHosts = [
       networkMap.pds.domain
       "*.${networkMap.pds.domain}"
-      networkMap.forgejo.sshDomain
     ];
   };
 
   services.caddy.virtualHosts = {
-    # Git over SSH moved to the tailnet, but the zone's proxied wildcard still
-    # answers for this name and Caddy holds no certificate for it, so
-    # Cloudflare fails the origin handshake and serves a 525. Redirecting beats
-    # leaving a hostname that only errors.
-    "git.biscuits.at".extraConfig = ''
-      import cloudflare-mtls
-
-      redir https://${networkMap.forgejo.domain}{uri} permanent
-    '';
-
     "biscuits.at".extraConfig = ''
       import cloudflare-mtls
 
@@ -184,20 +173,6 @@ in
       '';
     };
 
-    ${networkMap.forgejo.domain}.extraConfig = ''
-      import cloudflare-mtls
-
-      encode zstd gzip
-
-      request_body {
-        max_size 2GB
-      }
-
-      reverse_proxy 127.0.0.1:${toString networkMap.forgejo.port} {
-        import client-ip
-      }
-    '';
-
     # Tangled's knot. Proxied like the rest, which costs it pushes and LFS
     # objects over 100 MB through HTTPS. Pushes go over tailnet SSH instead.
     # No CORS headers here: the knot sets its own, and upstream warns that
@@ -210,30 +185,5 @@ in
         import client-ip
       }
     '';
-
-    # The same Forgejo over the tailnet, so LFS uploads skip Cloudflare's
-    # 100 MB body cap. The certificate comes from tailscaled, because Let's
-    # Encrypt cannot validate a `ts.net` name.
-    #
-    # Port 443 is open to everyone here (the PDS), and this vhost has no mTLS,
-    # so the matcher is all that keeps the forge off the public address.
-    ${networkMap.forgejo.sshDomain} = {
-      logFormat = accessLog networkMap.forgejo.sshDomain;
-
-      extraConfig = ''
-        tls {
-          get_certificate tailscale
-        }
-
-        @offTailnet not remote_ip ${lib.concatStringsSep " " config.mySnippets.tailnet.ranges}
-        abort @offTailnet
-
-        request_body {
-          max_size 2GB
-        }
-
-        reverse_proxy 127.0.0.1:${toString networkMap.forgejo.port}
-      '';
-    };
   };
 }

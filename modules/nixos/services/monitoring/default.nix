@@ -125,7 +125,7 @@ in
         enabledCollectors = [
           # The highest-value collector by a distance. It exports a state series
           # per unit, which turns every failure this config can already have
-          # into one alert rule: a backup that did not run, a runner that died,
+          # into one alert rule: a backup that did not run, a spindle that died,
           # a Caddy that would not start. Without it, `borgmatic.service`
           # failing is visible only to whoever runs `systemctl --failed`.
           "systemd"

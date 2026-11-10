@@ -50,7 +50,7 @@ in
       environmentFile = config.age.secrets.tangledKnot.path;
 
       # Upstream defaults this to true, which opens the SSH port to the world.
-      # Git over SSH is tailnet-only, as Forgejo's is. The listener binds the
+      # Git over SSH is tailnet-only. The listener binds the
       # tailnet address, with this closed firewall as a second layer. Opening
       # it would also need a fail2ban jail, since this is the knot's own SSH
       # server and not OpenSSH.
@@ -72,7 +72,7 @@ in
         # repositories. `open` lets any atproto account host on this disk.
         acl.admission = "closed";
 
-        # Upstream defaults to SHA-256, which GitHub and Forgejo cannot mirror
+        # Upstream defaults to SHA-256, which GitHub cannot mirror
         # to or from. Fixed per repository at creation, so changing this later
         # only affects repositories made afterwards.
         git.object_format = "sha1";

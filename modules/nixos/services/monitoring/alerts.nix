@@ -53,7 +53,7 @@ let
             alert = "SystemdUnitFailed";
             # The rule that pays for the whole stack. It turns every failure
             # this config can already have into one notification without a
-            # per-service rule: a backup that did not run, a Forgejo runner that
+            # per-service rule: a backup that did not run, a spindle that
             # died, a Caddy that would not start after a rebuild. Note the label
             # is `name`, not `unit`.
             expr = ''node_systemd_unit_state{state="failed"} == 1'';

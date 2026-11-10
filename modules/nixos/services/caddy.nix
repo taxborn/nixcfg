@@ -196,9 +196,9 @@ in
 
         # Hands every backend one authoritative client IP. Caddy appends the
         # peer to X-Forwarded-For rather than replacing it, and never sends
-        # X-Real-IP at all, so Forgejo (REVERSE_PROXY_LIMIT=1) and Vaultwarden
-        # (IP_HEADER=X-Real-IP) otherwise resolve Cloudflare's edge or the
-        # loopback. Snippets must be defined before the vHosts that import
+        # X-Real-IP at all, so the knot (`trusted_proxy_header`) and
+        # Vaultwarden (IP_HEADER=X-Real-IP) otherwise resolve Cloudflare's edge
+        # or the loopback. Snippets must be defined before the vHosts that import
         # them, which is where extraConfig lands.
         extraConfig = ''
           (client-ip) {
@@ -238,16 +238,15 @@ in
           plugins = [
             # The caddy-tailscale plugin is deliberately absent. Nothing here
             # uses its `tailscale` listener, `bind tailscale/...` or its own
-            # tsnet node. `get_certificate tailscale` is core Caddy and only
-            # asks the local tailscaled (see `permitCertUid` below).
+            # tsnet node. Core Caddy's `get_certificate tailscale` would also
+            # need `services.tailscale.permitCertUid = "caddy"`, which went
+            # with Forgejo's tailnet vhost, its only user.
             # https://github.com/caddy-dns/cloudflare/tags
             "github.com/caddy-dns/cloudflare@v0.2.4"
           ];
           hash = "sha256-QSiwKqKvSxhksWBF4/MlBOpyXba5xOQ2sRwA0R7399E=";
         };
       };
-
-      tailscale.permitCertUid = "caddy";
     };
   };
 }

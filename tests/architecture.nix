@@ -39,7 +39,6 @@ let
   ];
   movedPaths = extend [
     {
-      services.forgejo.database.path = "/var/lib/forgejo/moved.db";
       services.tealfm-piper.settings.DB_PATH = "/var/lib/tealfm-piper/moved.db";
     }
   ];
@@ -177,15 +176,11 @@ lib.runTests {
     ) movedPaths.services.borgmatic.configurations;
     expected = lib.genAttrs [ "rsync" "helium" ] (_: [
       {
-        name = "forgejo";
-        path = "/var/lib/forgejo/moved.db";
-      }
-      {
         name = "tealfm-piper";
         path = "/var/lib/tealfm-piper/moved.db";
       }
       {
-        # a fixed path, so it does not move with the other two
+        # a fixed path, so it does not move with piper's
         name = "vaultwarden";
         path = "/var/lib/vaultwarden/db.sqlite3";
       }

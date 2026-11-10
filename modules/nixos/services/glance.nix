@@ -97,10 +97,6 @@ in
                             url = "https://${networkMap.vaultwarden.domain}";
                           }
                           {
-                            title = "Forgejo";
-                            url = "https://${networkMap.forgejo.domain}";
-                          }
-                          {
                             title = "Paperless";
                             url = "https://${networkMap.paperless.domain}";
                           }

@@ -10,7 +10,7 @@
     homeModules = {
       # Deliberately the same tree as `nixosModules.snippets` below, which is
       # what makes a snippet a snippet: pure data, evaluated in both, so the
-      # ssh client config in modules/home and the Forgejo server config in
+      # ssh client config in modules/home and the knot's config in
       # modules/nixos read one port out of one attribute and cannot disagree.
       snippets = inputs.import-tree ../snippets;
       default = inputs.import-tree ../home;

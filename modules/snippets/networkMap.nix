@@ -23,7 +23,7 @@ in
           sshDomain = lib.mkOption {
             type = lib.types.nullOr lib.types.nonEmptyStr;
             default = null;
-            description = "SSH clone hostname, set with sshPort so clients and the forge agree.";
+            description = "SSH clone hostname, set with sshPort so clients and the git server agree.";
           };
           sshPort = lib.mkOption {
             type = lib.types.nullOr portType;
@@ -50,17 +50,6 @@ in
     '';
 
     default = {
-      forgejo = {
-        domain = "code.biscuits.at";
-        # Git over SSH is tailnet-only, so this is argon's MagicDNS name and
-        # not a public record. Both ends read it from here — the ssh_config
-        # alias on the clients and the clone URL Forgejo prints — so they
-        # cannot drift apart.
-        sshDomain = "argon.${config.mySnippets.tailnet.name}";
-        port = 3002;
-        sshPort = 2222;
-      };
-
       glance = {
         domain = "www.biscuits.at";
         port = 3000;
@@ -124,10 +113,15 @@ in
         port = 3005;
       };
 
-      # Tangled's knot, on Argon. Same split as `forgejo`: HTTP is public
-      # through Cloudflare, git over SSH is tailnet-only and reached through an
-      # ssh_config alias for the public name. 2223 because Forgejo already
-      # holds 2222, the knot's own default, on the same host.
+      # Tangled's knot, on Argon. HTTP is public through Cloudflare. Git over
+      # SSH is tailnet-only, so `sshDomain` is Argon's MagicDNS name rather
+      # than a public record, and the clients reach it through an ssh_config
+      # alias for the public name. Both ends read it from here, the alias and
+      # the knot's listener, so they cannot drift apart.
+      #
+      # 2223 dates from Forgejo holding 2222, the knot's own default. It stays
+      # now that Forgejo is gone, because every existing remote and
+      # known_hosts entry names this port.
       knot = {
         domain = "knot.biscuits.at";
         sshDomain = "argon.${config.mySnippets.tailnet.name}";
@@ -135,7 +129,7 @@ in
         sshPort = 2223;
       };
 
-      # Tangled's spindle (CI), on Carbon beside the Forgejo runner.
+      # Tangled's spindle (CI), on Carbon.
       spindle = {
         domain = "spindle.biscuits.at";
         port = 3012;

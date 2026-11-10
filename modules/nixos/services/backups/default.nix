@@ -206,7 +206,7 @@ in
         type = lib.types.attrsOf lib.types.str;
         default = { };
         example = lib.literalExpression ''
-          { forgejo = "/var/lib/forgejo/data/forgejo.db"; }
+          { tealfm-piper = "/var/lib/tealfm-piper/piper.db"; }
         '';
         description = ''
           Database name -> path of a SQLite file to capture as a logical dump
