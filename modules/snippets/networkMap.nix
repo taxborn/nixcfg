@@ -112,14 +112,12 @@ in
       # alias for the public name. Both ends read it from here, the alias and
       # the knot's listener, so they cannot drift apart.
       #
-      # 2223 dates from Forgejo holding 2222, the knot's own default. It stays
-      # now that Forgejo is gone, because every existing remote and
-      # known_hosts entry names this port.
+      # 2222 is the knot's own default. It sat on 2223 while Forgejo held 2222.
       knot = {
         domain = "knot.biscuits.at";
         sshDomain = "argon.${config.mySnippets.tailnet.name}";
         port = 3011;
-        sshPort = 2223;
+        sshPort = 2222;
       };
 
       # Tangled's spindle (CI), on Carbon.

@@ -70,7 +70,7 @@ the `directVHosts` exceptions.
 | [Glance](../modules/nixos/services/glance.nix) | `www.biscuits.at` | 3000 | dashboard; apex redirects here |
 | [ntfy](../modules/nixos/services/ntfy.nix) | `ntfy.biscuits.at` | 3007 | push notifications; backup success messages; deny-all, declarative users |
 | [Piper](../modules/nixos/services/piper.nix) | `piper.biscuits.at` | 3005 | teal.fm music tracker |
-| [Tangled knot](../modules/nixos/services/tangled/knot.nix) | `knot.biscuits.at` | 3011 | git server, no database; git over SSH on 2223, tailnet-only; proxied record, covered by the zone wildcard |
+| [Tangled knot](../modules/nixos/services/tangled/knot.nix) | `knot.biscuits.at` | 3011 | git server, no database; git over SSH on 2222, tailnet-only; proxied record, covered by the zone wildcard |
 | [Tranquil PDS](../modules/nixos/services/tranquil-pds.nix) | `pds.biscuits.at` + `*.pds.biscuits.at` | 3003 | ATProto PDS, PostgreSQL |
 | [Vaultwarden](../modules/nixos/services/vaultwarden.nix) | `vw.biscuits.at` | 3001 | |
 | [Minecraft](../modules/nixos/services/minecraft.nix) (`mnb`) | | 25565 | not behind Caddy; `openFirewall` for friends outside the tailnet; fail2ban jail |
