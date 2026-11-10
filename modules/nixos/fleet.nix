@@ -30,20 +30,14 @@ in
       message = "The NixOS host roster and both sets of per-host borg secret rules must agree.";
     }
     {
-      assertion =
-        lib.all
-          (
-            name:
-            let
-              recipients = map lib.trim rules.${name}.publicKeys;
-            in
-            builtins.elem recoveryKey recipients
-            && lib.all (host: builtins.elem (rootKey host) recipients) hosts
-          )
-          [
-            "tailscale/auth.age"
-            "tailscale/caddy.age"
-          ];
+      assertion = lib.all (
+        name:
+        let
+          recipients = map lib.trim rules.${name}.publicKeys;
+        in
+        builtins.elem recoveryKey recipients
+        && lib.all (host: builtins.elem (rootKey host) recipients) hosts
+      ) [ "tailscale/auth.age" ];
       message = "Shared tailnet secrets must name every host root key and the recovery YubiKey.";
     }
   ]

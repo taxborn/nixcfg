@@ -11,7 +11,7 @@ check their recipient rules before activation.
 | secret | recipients | what it holds |
 | --- | --- | --- |
 | `tailscale/auth.age` | all hosts | tailnet auth key |
-| `tailscale/caddy.age` | all hosts | Caddy's environment file, incl. `CF_API_TOKEN` for DNS-01 |
+| `cloudflare/dns-token.age` | argon, helium | `CF_API_TOKEN=...` for Caddy's DNS-01 |
 | `borg/<host>/passphrase.age` | that host | borg repokey passphrase |
 | `borg/<host>/ssh_key.age` | that host | borg client SSH key |
 | `forgejo/mail.age` | argon | Fastmail SMTP password |

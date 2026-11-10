@@ -22,6 +22,13 @@ let
     )
   );
 
+  # Whether any vHost solves DNS-01. Derived from the vHosts rather than a
+  # flag, so a vHost that imports `cloudflare-dns` cannot end up on a host
+  # without the token, which fails renewal in a retry loop instead of loudly.
+  usesDnsChallenge = lib.any (vhost: lib.hasInfix "import cloudflare-dns" vhost.extraConfig) (
+    lib.attrValues config.services.caddy.virtualHosts
+  );
+
   # The firewall works in addresses, not names, so 80/443 can only stay shut to
   # the world while *every* vHost on the host is behind the proxy. One direct
   # vHost and the ports have to answer everyone — which is the cost
@@ -133,7 +140,13 @@ in
         '';
       };
 
-    age.secrets.tailscaleCaddyAuth.file = "${self}/secrets/tailscale/caddy.age";
+    # The Cloudflare token can edit DNS, so it is decrypted only where a vHost
+    # solves DNS-01. Carbon runs CI as root and uses HTTP-01, so it never holds
+    # it. The recipients in `secrets/secrets.nix` must name the same hosts, and
+    # the fleet assertion on `age.secrets` fails the build when they do not.
+    age.secrets = lib.mkIf usesDnsChallenge {
+      cloudflareDnsToken.file = "${self}/secrets/cloudflare/dns-token.age";
+    };
 
     networking.firewall = lib.mkMerge [
       (lib.mkIf (!edgeOnly && !cfg.tailnetOnly) {
@@ -166,11 +179,11 @@ in
       caddy = {
         enable = true;
         enableReload = false;
-        # Despite the name, this file also carries CF_API_TOKEN. Every vhost
-        # that cannot use HTTP-01 solves DNS-01 with that token, which is
-        # every certificate on Helium and Argon's PDS wildcard, so rewriting the
-        # secret as a bare auth key fails their next renewal.
-        environmentFile = config.age.secrets.tailscaleCaddyAuth.path;
+        # One line, `CF_API_TOKEN=...`. Every vhost that cannot use HTTP-01
+        # solves DNS-01 with that token, which is every certificate on Helium
+        # and Argon's PDS wildcard. The file used to double as a Tailscale auth
+        # key for the caddy-tailscale plugin, which is gone.
+        environmentFile = lib.mkIf usesDnsChallenge config.age.secrets.cloudflareDnsToken.path;
 
         # Decides whose X-Forwarded-For {client_ip} is allowed to believe.
         # Anywhere else it falls back to the connecting address, so a direct

@@ -38,7 +38,17 @@ let
 in
 {
   "tailscale/auth.age".publicKeys = keys;
-  "tailscale/caddy.age".publicKeys = keys;
+
+  # Cloudflare token with DNS edit rights, as `CF_API_TOKEN=...`. Only the hosts
+  # whose vHosts import `cloudflare-dns` decrypt it; carbon runs CI as root and
+  # has no use for it. Keep this list in step with `usesDnsChallenge` in
+  # `modules/nixos/services/caddy.nix`.
+  "cloudflare/dns-token.age".publicKeys =
+    builtins.map (host: builtins.readFile ../keys/root_${host}.pub) [
+      "argon"
+      "helium"
+    ]
+    ++ extraKeys;
 
   "forgejo/signing-key.age".publicKeys = hostKey "argon";
   "forgejo/mail.age".publicKeys = hostKey "argon";
