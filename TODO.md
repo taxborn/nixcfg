@@ -77,45 +77,28 @@ Check each option with `nix eval` before adopting, and build `uranium` and
   `HttpLoginFailures` Loki rule. The PDS vhosts overwrite `X-Forwarded-For`
   with the TCP peer. Neither has run: check alloy, loki and the stream
   `{job="caddy-access"}` after deploying. Deploy helium before argon.
+- users: the sudo password hash is an agenix secret
+  (`secrets/users/taxborn-password.age`) and the password was changed, so the
+  hash in git history is dead. Deployed to all five hosts.
+- caddy: the Cloudflare token lives in `secrets/cloudflare/dns-token.age`,
+  decrypted on argon and helium only, derived from which vhosts import
+  `cloudflare-dns`. Deployed and Caddy starts. Open: revoke the old token
+  after confirming DNS-01 with the new one, and note `tailscale/caddy.age`
+  stays readable in git history until then.
 
 ## open
 
 Most of this list comes from the 2026-11-09 config and security review. It is
 ordered by how much each item shrinks the worst case.
 
-- minecraft, deploy step: the servers now run as a `minecraft` service account
-  from `/var/lib/minecraft/<name>`, and the unit cannot see `/home`. Each world
-  has to be moved once, by hand. The socket unit changed, so the switch may
-  stop the server. It then stays skipped until the jar exists at the new path.
-  For `mnb` on argon, and the same for `mavs-updated` on carbon:
-
-  ```bash
-  just update argon
-  # then on the host
-  sudo systemctl stop minecraft-mnb.service
-  sudo cp -a /home/taxborn/public/mnb/. /var/lib/minecraft/mnb/
-  sudo chown -R minecraft:minecraft /var/lib/minecraft/mnb
-  sudo systemctl start minecraft-mnb.service
-  systemctl status minecraft-mnb.service
-  ```
-
-  `cp -a` needs room for a second copy of the world. Remove
-  `/home/taxborn/public/<name>` once players have connected, then delete this
-  entry. The sandbox has not run against a live pack. If a mod fails on
-  startup, read the journal for the denied path or address family before
-  loosening anything.
+- minecraft: the worlds are moved to `/var/lib/minecraft/<name>`. Once players
+  have connected, remove `/home/taxborn/public/<name>` on argon and carbon. The
+  sandbox has not run against a live pack, so if a mod fails read the journal
+  for the denied path or address family before loosening anything.
 - minecraft: move `mnb` off argon. The service account closes the path to
   root, but an internet-facing JVM with third-party mods still shares a host
   with Vaultwarden, the PDS master key and both forges. Carbon already runs
   one server and holds far less.
-- caddy: `secrets/tailscale/caddy.age` holds a Cloudflare `Zone:DNS:Edit`
-  token encrypted to all five hosts, but only argon and helium use DNS-01.
-  Carbon decrypts it at activation, because `caddy.nix` declares the secret
-  wherever Caddy runs, and carbon runs CI as root. Narrow the recipients in
-  `secrets/secrets.nix`, declare the secret only where a vhost imports
-  `cloudflare-dns`, and change the `fleet.nix` assertion that requires every
-  host. Then scope the token down and rotate it. Git history keeps the old
-  ciphertext, which all five host keys can open.
 - tailscale: the tailnet is one flat trust zone and its policy is not in this
   repo. Every host trusts `tailscale0`, runs Tailscale SSH and has IP
   forwarding on, so "tailnet only" means "any tailnet node". Check the policy
@@ -129,10 +112,6 @@ ordered by how much each item shrinks the worst case.
   outside helium notices when helium stops. Add an email receiver for
   `severity="critical"` through the Fastmail relay, and an always-firing rule
   that pings an outside dead-man service.
-- users: `hashedPassword` in `modules/users/taxborn.nix` is in a repo pushed
-  to a public knot. It is the sudo password on all five hosts. Move it to
-  `hashedPasswordFile` from an agenix secret, then change the password so the
-  published hash is dead.
 - helium: its disk is plain btrfs and it is the one server in a house, with
   the Paperless archive on it. Decide between leaving it, for unattended
   reboots, and LUKS with TPM2 unlock. Record the answer in the README's
