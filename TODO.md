@@ -1,13 +1,6 @@
 # TODO
 
-Ideas from comparing against [isabelroses/dotfiles](https://github.com/isabelroses/dotfiles).
-Check each option with `nix eval` before adopting, and build `uranium` and
-`tungsten` in full.
-
 ## open
-
-Most of this list comes from the 2026-11-09 config and security review. It is
-ordered by how much each item shrinks the worst case.
 
 - minecraft: the worlds are moved to `/var/lib/minecraft/<name>`. Once players
   have connected, remove `/home/taxborn/public/<name>` on argon and carbon. The
@@ -30,15 +23,11 @@ ordered by how much each item shrinks the worst case.
   outside helium notices when helium stops. Add an email receiver for
   `severity="critical"` through the Fastmail relay, and an always-firing rule
   that pings an outside dead-man service.
-- helium: its disk is plain btrfs and it is the one server in a house, with
-  the Paperless archive on it. Decide between leaving it, for unattended
-  reboots, and LUKS with TPM2 unlock. Record the answer in the README's
-  "do not" list either way.
 
 Before any `just update` on a host running Postgres, compare
 `datcollversion` with `pg_database_collation_actual_version(oid)` in
 `pg_database`. A mismatch needs `REINDEX DATABASE` then `ALTER DATABASE ...
-REFRESH COLLATION VERSION` first. Argon needed it, Helium did not.
+REFRESH COLLATION VERSION` first.
 
 ## notes
 
@@ -56,5 +45,3 @@ REFRESH COLLATION VERSION` first. Argon needed it, Helium did not.
   `module.sig_enforce`, `oops=panic`), `nohz_full`, forced PTI, `ptrace_scope=3`.
 - `userborn` / `etc.overlay` / `nixos-init`. Possible clash with agenix
   activation, test on a throwaway host.
-- `zswap` instead of zram. Needs a disk swap device.
-- Check her git history for settings she reverted before adopting more.
