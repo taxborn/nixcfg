@@ -90,10 +90,14 @@ Check each option with `nix eval` before adopting, and build `uranium` and
   its aliases. Built only, not deployed. Before deploying argon, take a last
   Forgejo dump if anything in it is worth keeping, since retention will prune
   the archives that hold it. After deploying, remove `/var/lib/forgejo` on
-  argon and `/var/lib/forgejo-runner` plus
-  `/var/lib/forgejo-runner-credentials` on carbon. The runner's borg exclude
-  is gone, so its container layers land in the next archive until then. Delete
-  the `code` and `git` DNS records and revoke the Fastmail app password.
+  argon. On carbon, remove `/var/lib/forgejo-runner` and
+  `/var/lib/forgejo-runner-credentials` before the next borgmatic run, since
+  the runner's borg exclude is gone and its container layers would land in
+  the archive. Check `ls /var/lib/systemd/linger` and `systemctl status
+  user@990` there too, as the runner account lingered. Check the zone for
+  explicit `code` and `git` records and delete them. Names left on the
+  proxied wildcard 525 like any other unserved name. Revoke the Fastmail app
+  password.
 
 ## open
 
@@ -112,7 +116,7 @@ ordered by how much each item shrinks the worst case.
   repo. Every host trusts `tailscale0`, runs Tailscale SSH and has IP
   forwarding on, so "tailnet only" means "any tailnet node". Check the policy
   file in here and apply it from here. Tag the hosts, with carbon as `tag:ci`
-  allowed to reach argon 443, helium 2200 and helium 3100 and nothing else.
+  allowed to reach helium 2200 and helium 3100 and nothing else.
   Allow Tailscale SSH from the workstations only. Check that
   `tailscale/auth.age` is a tagged or single-use key. Set
   `useRoutingFeatures` to `"client"` unless a host is an exit node.
