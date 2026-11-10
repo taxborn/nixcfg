@@ -87,17 +87,13 @@ Check each option with `nix eval` before adopting, and build `uranium` and
   stays readable in git history until then.
 - forgejo: removed with its runner, its port 2222 SSH server, the tailnet
   LFS vhost and the caddy cert permission it needed. The knot keeps 2223 and
-  its aliases. Built only, not deployed. Before deploying argon, take a last
-  Forgejo dump if anything in it is worth keeping, since retention will prune
-  the archives that hold it. After deploying, remove `/var/lib/forgejo` on
-  argon. On carbon, remove `/var/lib/forgejo-runner` and
-  `/var/lib/forgejo-runner-credentials` before the next borgmatic run, since
-  the runner's borg exclude is gone and its container layers would land in
-  the archive. Check `ls /var/lib/systemd/linger` and `systemctl status
-  user@990` there too, as the runner account lingered. Check the zone for
-  explicit `code` and `git` records and delete them. Names left on the
-  proxied wildcard 525 like any other unserved name. Revoke the Fastmail app
-  password.
+  its aliases. A last backup was taken with Forgejo's state in it, and only
+  retention bounds how long that archive survives. The `/var/lib/forgejo*`
+  directories are removed. The zone had no explicit `code` or `git`
+  records, so both names fall to the proxied wildcard and 525 like any other
+  unserved name. The Fastmail app password is revoked. Open: on carbon,
+  check `ls /var/lib/systemd/linger` and `systemctl status user@990`, since
+  the runner account lingered and its user is now gone.
 
 ## open
 
