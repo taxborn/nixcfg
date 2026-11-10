@@ -82,5 +82,7 @@ in
   # The spindle's P-256 signing key, published in its DID document. Carbon's
   # alone, since Carbon runs the CI jobs and Argon must not be able to read it.
   "tangled/spindle-key.age".publicKeys = hostKey "carbon";
+
+  "users/taxborn-password.age".publicKeys = keys;
 }
 // borgSecrets
