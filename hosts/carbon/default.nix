@@ -19,7 +19,6 @@
         notify.enable = true;
       };
       braxton-is.enable = true;
-      forgejo-runner.enable = true;
       tangled.spindle.enable = true;
       # For friends, so it is reachable without the tailnet. The world lives in
       # the module's default, /var/lib/minecraft/mavs-updated.

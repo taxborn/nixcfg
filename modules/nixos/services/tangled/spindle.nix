@@ -17,8 +17,8 @@ in
   config = lib.mkIf cfg.enable {
     # Upstream's unit sets no `User=`, so the spindle runs as root, and the
     # module turns on rootful Docker for the nixery engine, whose socket is
-    # root by another name. The rule the Forgejo runner follows applies with
-    # more force here: CI stays off any host holding keys it could reach.
+    # root by another name. A workflow can therefore read anything on the
+    # host, so CI stays off any host holding keys it could reach.
     assertions = [
       {
         assertion = !config.myNixOS.services.forgejo.enable;
@@ -73,8 +73,8 @@ in
         # secrets and reach whatever Carbon reaches, the tailnet included.
         admission = "closed";
 
-        # One job at a time, as the Forgejo runner does. Carbon also serves
-        # braxton.is, and the two CI systems are not limited as one.
+        # One job at a time. Carbon also serves braxton.is, and a second
+        # concurrent build would compete with it.
         maxJobCount = 1;
       };
 
@@ -84,12 +84,12 @@ in
 
       pipelines = {
         # Upstream's five minutes covers the queue wait as well, which fails
-        # most Nix builds. One hour matches the Forgejo runner.
+        # most Nix builds.
         workflowTimeout = "1h";
 
-        # Docker containers are not in the Forgejo runner's user slice, so
-        # these caps are the only thing bounding a nixery job. Sized so both
-        # CI systems at once still leave room for the website.
+        # Docker containers run outside the spindle's own unit, so these caps
+        # are the only thing bounding a nixery job. Sized to leave room for
+        # the website.
         nixery = {
           maxJobMemoryMb = 4096;
           maxConcurrentWorkflows = 1;

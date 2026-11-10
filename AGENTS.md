@@ -29,8 +29,7 @@ nix build .#checks.x86_64-linux.<name>       # one regression
 ```
 
 Hosts: `argon`, `carbon`, `helium`, `tungsten`, `uranium`. Check names:
-`architecture`, `forgejo-runner-socket`, `pre-commit`, `restore-coverage`,
-`restore-runner`.
+`architecture`, `pre-commit`, `restore-coverage`, `restore-runner`.
 
 ## what you can and cannot do
 
@@ -45,8 +44,8 @@ You can evaluate and build. You cannot deploy, and you cannot read secrets.
 - `nix build .#tealfm-piper`, `.#tranquil-pds` build the
   packages defined in `modules/flake/packages.nix`.
 - `nix flake check` evaluates every host, runs the pre-commit hook set over
-  the whole tree, and runs the architecture, Forgejo runner socket and mocked
-  restore regressions.
+  the whole tree, and runs the architecture and mocked restore
+  regressions.
 - `just check` runs the hook set alone (`nixfmt`, `statix`, `deadnix`,
   `shellcheck`), which is faster and catches almost everything you will break.
 

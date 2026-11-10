@@ -15,7 +15,7 @@ beyond identity; role is a property of the config. Roughly:
 | host | what it is | role |
 | --- | --- | --- |
 | argon | OVH VPS | server, most of `biscuits.at` |
-| carbon | OVH VPS | server, Forgejo runner, `braxton.is` |
+| carbon | OVH VPS | server, Tangled spindle, `braxton.is` |
 | helium | Intel NUC at home | server, backup target, Paperless |
 | tungsten | Dell XPS 15 9520 | workstation (laptop) |
 | uranium | desktop PC | workstation |

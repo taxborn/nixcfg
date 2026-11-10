@@ -127,9 +127,9 @@ lib.runTests {
     expr = lib.mapAttrs (_: host: failures host.config) self.nixosConfigurations;
     expected = lib.genAttrs (builtins.attrNames self.nixosConfigurations) (_: [ ]);
   };
-  testRunnerPlacement = {
+  testSpindlePlacement = {
     expr = lib.mapAttrs (
-      _: host: host.config.myNixOS.services.forgejo-runner.enable
+      _: host: host.config.myNixOS.services.tangled.spindle.enable
     ) self.nixosConfigurations;
     expected = {
       argon = false;
@@ -139,17 +139,11 @@ lib.runTests {
       uranium = false;
     };
   };
-  testRunnerRejectsForgeHost = {
-    expr = builtins.elem "Keep CI jobs off the host holding Forgejo's repositories and credentials." (
-      failures (extend [ { myNixOS.services.forgejo-runner.enable = true; } ])
-    );
-    expected = true;
-  };
-  testRunnerRejectsBackupHost = {
+  testSpindleRejectsBackupHost = {
     expr = builtins.elem "Keep CI jobs off the fleet's backup server." (
       failures
         (self.nixosConfigurations.helium.extendModules {
-          modules = [ { myNixOS.services.forgejo-runner.enable = true; } ];
+          modules = [ { myNixOS.services.tangled.spindle.enable = true; } ];
         }).config
     );
     expected = true;

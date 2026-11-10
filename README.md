@@ -54,8 +54,8 @@ The devShell installs the hook set through direnv, so a `cd` into the repo is
 the setup step. It also installs a pre-push hook that runs
 `nix flake check --no-build`, so a push evaluates every host first. That hook
 is pre-push only, so `just check` and `checks.pre-commit` skip it. `nix flake check` evaluates every host, runs those hooks, and
-checks database registration, fleet agreement, network types, the Forgejo
-runner socket policy and the restore runner with mocked commands.
+checks database registration, fleet agreement, network types and the restore
+runner with mocked commands.
 
 Build a host without switching to it:
 

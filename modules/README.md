@@ -128,27 +128,3 @@ for local repository omissions and workstation rehearsals.
 - [`nixos/services/monitoring/`](./nixos/services/monitoring/README.md) covers
   the Prometheus, Loki and Grafana stack on Helium and the exporters and Alloy
   on every host.
-- [`nixos/services/forgejo-runner/`](./nixos/services/forgejo-runner/README.md)
-  covers the rootless Podman runner on Carbon, its registration and limits.
-
-## retired runner
-
-The replacement [Forgejo runner](./nixos/services/forgejo-runner/README.md)
-runs on Carbon with rootless Podman and v16 registration. It does not share a
-Nix store between jobs. The notes below describe the earlier setup.
-
-`f4012fc` deleted the earlier Forgejo runner module. Its old `just runner-gc` recipe
-queried its missing `storeVolume` and `nixImage` options, so it could not run.
-Do not restore the recipe without restoring a runner configuration.
-
-A runner that shares `/nix` between containers needs a deliberate GC procedure.
-Nix names temporary roots after process IDs. Separate PID namespaces can reuse
-the same IDs, so one container can remove another build's roots and let GC
-delete paths that build still uses. Stop the runner and wait for active jobs
-before collecting the shared store. Shutdown can take `shutdown_timeout`.
-Restart the runner even if collection fails.
-
-The retired setup used rootless Podman as `forgejo-runner`. Its commands needed
-that user's `XDG_RUNTIME_DIR`, `/run/user/<uid>`, and lingering kept the runtime
-directory available between logins. Recover the exact procedure from history
-only after checking the replacement runner's user, image and volume.

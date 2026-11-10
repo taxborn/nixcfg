@@ -93,7 +93,6 @@ An Intel OVH VPS, `vps-2 2026` model.
 
 | service | vHost | port | notes |
 | --- | --- | --- | --- |
-| [Forgejo runner](../modules/nixos/services/forgejo-runner/README.md) | | | trusted repositories, rootless Podman, one concurrent job |
 | [braxton.is](../modules/nixos/services/braxton-is.nix) | `braxton.is` + `www.braxton.is` | 3006 | personal site, not under `biscuits.at`; deployed by a CI tarball over a forced-command SSH key; no database |
 | [Minecraft](../modules/nixos/services/minecraft.nix) (`mavs-updated`) | | 25565 | not behind Caddy; `openFirewall` for friends outside the tailnet; fail2ban jail |
 | [Tangled spindle](../modules/nixos/services/tangled/spindle.nix) | `spindle.biscuits.at` | 3012 | CI as root with rootful Docker and KVM microVMs, one concurrent job, owner only; SQLite dump; needs its own proxied record, since the zone wildcard lands on Argon |

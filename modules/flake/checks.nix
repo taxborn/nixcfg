@@ -1,7 +1,6 @@
 { self, inputs, ... }:
 {
   perSystem = { pkgs, ... }: {
-    checks.forgejo-runner-socket = import ../../tests/forgejo-runner-socket.nix { inherit pkgs; };
     checks.restore-runner =
       pkgs.runCommand "restore-runner-checks"
         {
