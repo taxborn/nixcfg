@@ -60,7 +60,17 @@ in
       };
     };
 
+    # The Nix language servers and formatter the editors call, and nix-ld for
+    # prebuilt binaries that expect a loader in /lib64. All four were on every
+    # host through `programs/nix.nix`. Nobody edits Nix on a server.
+    environment.systemPackages = with pkgs; [
+      nil
+      nixd
+      nixfmt
+    ];
+
     programs = {
+      nix-ld.enable = true;
       niri.enable = true;
       noctalia = {
         enable = true;

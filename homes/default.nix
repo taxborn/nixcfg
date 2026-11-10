@@ -11,22 +11,20 @@
       homeDirectory = "/home/taxborn";
       stateVersion = "25.11";
       sessionPath = [ "$HOME/.local/bin" ];
+      # This profile is the servers' profile too, so nothing here is a
+      # compiler or a language runtime. Those live in homes/workstation.nix. A
+      # server that takes connections from the internet has no use for a
+      # toolchain, and whoever lands on one should not find it waiting.
       packages = with pkgs; [
         atproto-goat
-        cargo
-        gcc
-        # The terminfo entry, not the terminal. This profile is the servers'
-        # profile too, and ssh does not carry terminfo across, so without it a
-        # ghostty window that lands on a server has an unknown $TERM.
+        # The terminfo entry, not the terminal. ssh does not carry terminfo
+        # across, so without it a ghostty window that lands on a server has an
+        # unknown $TERM.
         ghostty.terminfo
-        gnumake
         jq
         just
         ncdu
-        nodejs
         p7zip
-        python3
-        rustc
         unzip
         xh
       ];

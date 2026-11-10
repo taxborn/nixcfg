@@ -70,6 +70,14 @@
       spotify
       vesktop
       vlc
+
+      # Toolchains, kept off the servers. See homes/default.nix.
+      cargo
+      gcc
+      gnumake
+      nodejs
+      python3
+      rustc
     ];
 
     xdg.desktopEntries.lexidraw = {
