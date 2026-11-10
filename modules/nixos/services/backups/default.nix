@@ -43,10 +43,15 @@ let
     # snapper snapshots of /home, which is backed up directly
     "/home/.snapshots"
 
-    # build artifacts
-    "**/target"
-    "**/node_modules"
-    "**/__pycache__"
+    # Build artifacts, under the one directory that holds checkouts. These
+    # read `**/target` and so on until 2026-11-10, which matched under
+    # /var/lib as well: borg's default pattern style lets `*` cross a slash,
+    # so a knot branch named `feat/target` lost its loose ref file from every
+    # archive with nothing reported. Checked with `borg create --dry-run
+    # --list` against a scratch tree, old patterns and new.
+    "/home/taxborn/dev/**/target"
+    "/home/taxborn/dev/**/node_modules"
+    "/home/taxborn/dev/**/__pycache__"
   ];
 
   # Everything a desktop $HOME accumulates that is large, rewritten constantly,
