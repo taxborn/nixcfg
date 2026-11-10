@@ -188,9 +188,22 @@ in
         # Decides whose X-Forwarded-For {client_ip} is allowed to believe.
         # Anywhere else it falls back to the connecting address, so a direct
         # client can never spoof its own IP.
+        #
+        # `trusted_proxies_strict` is what stops a proxied client doing the
+        # same. Cloudflare appends the visitor's address to the right of any
+        # X-Forwarded-For the visitor sent, and Caddy reads the header left to
+        # right by default, taking the first untrusted entry. A visitor who
+        # sends `X-Forwarded-For: 1.2.3.4` through the proxy then becomes
+        # 1.2.3.4 to Vaultwarden's, ntfy's and the knot's rate limiters. Strict
+        # mode reads right to left, so the entry Cloudflare wrote wins.
+        #
+        # One gap remains. A visitor whose own address is inside a Cloudflare
+        # range is skipped as a trusted hop, and the entry to its left is the
+        # one it supplied.
         globalConfig = lib.optionalString cfg.cloudflareOnly ''
           servers {
             trusted_proxies static ${lib.concatStringsSep " " (cloudflareIPv4Ranges ++ cloudflareIPv6Ranges)}
+            trusted_proxies_strict
           }
         '';
 
