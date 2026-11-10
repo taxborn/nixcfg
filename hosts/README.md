@@ -116,7 +116,6 @@ server, reaching its own repository by local path rather than ssh'ing to itself.
 | --- | --- | --- | --- |
 | [Paperless-ngx](../modules/nixos/services/paperless.nix) | `docs.biscuits.at` | 3004 | PostgreSQL; public A record pointing at a tailnet address |
 | [Grafana](../modules/nixos/services/monitoring/README.md) | `grafana.biscuits.at` | 3009 | with Prometheus, Loki and Alertmanager on loopback; public A record pointing at a tailnet address |
-| [AdGuard Home](../modules/nixos/services/adguardhome.nix) | `adguard.biscuits.at` | 3010 | UI only; DNS answers on `100.64.1.0:53`, tailnet only; public A record pointing at a tailnet address |
 | [borg repositories](../modules/nixos/services/backups/README.md) | | ssh | `/mnt/hdd/borg/<host>` for every other host |
 
 The external drive is btrfs, mounted `nofail,noatime` with `X-fstrim.notrim`.

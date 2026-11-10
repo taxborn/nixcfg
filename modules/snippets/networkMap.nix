@@ -101,13 +101,6 @@ in
         port = 3009;
       };
 
-      # AdGuard Home's web UI, on Helium. Same trick as `grafana`. The DNS
-      # listener is separate and sits on the tailnet address, not here.
-      adguard = {
-        domain = "adguard.biscuits.at";
-        port = 3010;
-      };
-
       piper = {
         domain = "piper.biscuits.at";
         port = 3005;

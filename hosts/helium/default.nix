@@ -15,7 +15,6 @@
     profiles.server.enable = true;
     programs.systemd-boot.enable = true;
     services = {
-      adguardhome.enable = true;
       monitoring.server.enable = true;
       paperless.enable = true;
 
