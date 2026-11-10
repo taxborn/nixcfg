@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -21,9 +20,5 @@ in
       };
       pulse.enable = true;
     };
-
-    environment.systemPackages = with pkgs; [
-      pavucontrol
-    ];
   };
 }

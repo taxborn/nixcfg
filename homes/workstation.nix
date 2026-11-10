@@ -36,7 +36,6 @@
         enable = true;
         configPath = "${config.xdg.configHome}/mozilla/firefox";
       };
-      lazygit.enable = true;
       # Keeps fish as the shell inside `nix develop` and `nix shell`, which
       # otherwise drop into bash.
       nix-your-shell = {
