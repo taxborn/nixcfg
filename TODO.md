@@ -85,6 +85,15 @@ Check each option with `nix eval` before adopting, and build `uranium` and
   `cloudflare-dns`. Deployed and Caddy starts. Open: revoke the old token
   after confirming DNS-01 with the new one, and note `tailscale/caddy.age`
   stays readable in git history until then.
+- forgejo: removed with its runner, its port 2222 SSH server, the tailnet
+  LFS vhost and the caddy cert permission it needed. The knot keeps 2223 and
+  its aliases. Built only, not deployed. Before deploying argon, take a last
+  Forgejo dump if anything in it is worth keeping, since retention will prune
+  the archives that hold it. After deploying, remove `/var/lib/forgejo` on
+  argon and `/var/lib/forgejo-runner` plus
+  `/var/lib/forgejo-runner-credentials` on carbon. The runner's borg exclude
+  is gone, so its container layers land in the next archive until then. Delete
+  the `code` and `git` DNS records and revoke the Fastmail app password.
 
 ## open
 
@@ -97,7 +106,7 @@ ordered by how much each item shrinks the worst case.
   for the denied path or address family before loosening anything.
 - minecraft: move `mnb` off argon. The service account closes the path to
   root, but an internet-facing JVM with third-party mods still shares a host
-  with Vaultwarden, the PDS master key and both forges. Carbon already runs
+  with Vaultwarden, the PDS master key and the knot. Carbon already runs
   one server and holds far less.
 - tailscale: the tailnet is one flat trust zone and its policy is not in this
   repo. Every host trusts `tailscale0`, runs Tailscale SSH and has IP

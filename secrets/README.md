@@ -14,8 +14,6 @@ check their recipient rules before activation.
 | `cloudflare/dns-token.age` | argon, helium | `CF_API_TOKEN=...` for Caddy's DNS-01 |
 | `borg/<host>/passphrase.age` | that host | borg repokey passphrase |
 | `borg/<host>/ssh_key.age` | that host | borg client SSH key |
-| `forgejo/mail.age` | argon | Fastmail SMTP password |
-| `forgejo/signing-key.age` | argon | SSH key Forgejo signs commits with |
 | `glance.age` | argon | dashboard secret key and user password |
 | `piper.age` | argon | ATProto client key, allowed DIDs, Spotify + Last.fm creds |
 | `tranquil-pds.age` | argon | `JWT_SECRET`, `DPOP_SECRET`, `MASTER_KEY`, SMTP login |
@@ -91,9 +89,9 @@ with a 403. `taxborn` is the login for the web app and phone.
 Rotating the token means editing both files, then rebuilding Argon before the
 other hosts, or their next run is rejected.
 
-`ssh_key.pub` and `signing-key.pub` sit unencrypted beside their `.age`
-counterparts on purpose. Public halves are not secret, and Helium's
-`server.authorizedKeys` and Forgejo's signing config read them from the repo.
+`ssh_key.pub` sits unencrypted beside its `.age` counterpart on purpose. Public
+halves are not secret, and Helium's `server.authorizedKeys` reads them from the
+repo.
 
 ## working with them
 
@@ -103,8 +101,8 @@ a rule name verbatim, so running from the repo root finds no matching rule.
 ```bash
 cd secrets
 
-agenix -e forgejo/mail.age        # create or edit
-agenix -d forgejo/mail.age        # print to stdout
+agenix -e piper.age               # create or edit
+agenix -d piper.age               # print to stdout
 agenix -r                         # rekey everything after changing recipients
 ```
 

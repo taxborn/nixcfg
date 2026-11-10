@@ -59,15 +59,14 @@ in Setup.
 An Intel OVH VPS, `vps-2020-elite-8-16-320` model.
 16 GB of RAM, 8 vCPUs, 320 GB of storage.
 
-Carries most of `biscuits.at`. Caddy is `cloudflareOnly`, with the PDS names and
-Forgejo's tailnet name as the `directVHosts` exceptions.
+Carries most of `biscuits.at`. Caddy is `cloudflareOnly`, with the PDS names as
+the `directVHosts` exceptions.
 
 ### Services hosted
 
 | service | vHost | port | notes |
 | --- | --- | --- | --- |
 | [Atuin](../modules/nixos/services/atuin.nix) | `atuin.biscuits.at` | 3008 | shell history sync; PostgreSQL; registration closed except for the deploy that creates the account |
-| [Forgejo](../modules/nixos/services/forgejo/default.nix) | `code.biscuits.at` | 3002 | SQLite; git over SSH on 2222, tailnet-only; also served at `argon.<tailnet>` so LFS uploads skip Cloudflare's 100 MB cap |
 | [Glance](../modules/nixos/services/glance.nix) | `www.biscuits.at` | 3000 | dashboard; apex redirects here |
 | [ntfy](../modules/nixos/services/ntfy.nix) | `ntfy.biscuits.at` | 3007 | push notifications; backup success messages; deny-all, declarative users |
 | [Piper](../modules/nixos/services/piper.nix) | `piper.biscuits.at` | 3005 | teal.fm music tracker |
@@ -77,7 +76,7 @@ Forgejo's tailnet name as the `directVHosts` exceptions.
 | [Minecraft](../modules/nixos/services/minecraft.nix) (`mnb`) | | 25565 | not behind Caddy; `openFirewall` for friends outside the tailnet; fail2ban jail |
 
 The service modules register `pg_dumpall` for Atuin and Tranquil and SQLite
-dumps for Forgejo and Piper when the backup client is enabled.
+dumps for Piper and Vaultwarden when the backup client is enabled.
 
 The PDS is why the two `pds` records are the only DNS-only names in the zone.
 Cloudflare's universal certificate does not cover a second label,

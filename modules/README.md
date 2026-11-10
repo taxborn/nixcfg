@@ -21,8 +21,8 @@ file beneath it. Creating the file is the whole registration step. There is no
 import list, and adding one would break the pattern rather than tidy it.
 
 So the directory structure is organisational only. Nesting says nothing about
-the option path. `nixos/services/forgejo/default.nix` declares
-`myNixOS.services.forgejo` because it says so, not because of where it sits.
+the option path. `nixos/services/tangled/knot.nix` declares
+`myNixOS.services.tangled.knot` because it says so, not because of where it sits.
 Keep the two aligned anyway; every file in here does.
 
 `disko/` and `flake/` are the exceptions. `flake/modules.nix` exports reusable
@@ -82,7 +82,7 @@ imported into both the NixOS and the home-manager module sets so that two sides
 of the same fact cannot drift:
 
 - `mySnippets.biscuits-at.networkMap` holds domain, port, and SSH details per
-  service. The Forgejo module and the SSH client config read the same port from
+  service. The knot module and the SSH client config read the same port from
   here. Entries require a nonempty `domain` and a `port` from 1 through 65535.
   SSH entries require both `sshDomain` and `sshPort`. Unknown fields fail
   evaluation. Add a service here and read the entry from both its module and

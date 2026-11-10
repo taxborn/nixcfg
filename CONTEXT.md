@@ -109,8 +109,6 @@ Caddy:
 `directVHosts` is the way around that, and it is expensive: naming one vhost
 reopens 80/443 to everyone for the whole host, because iptables cannot tell
 which name a connection is about to ask for. The PDS is the case it exists for.
-Argon also lists Forgejo's tailnet name, whose vhost has no mTLS and instead
-aborts any peer outside the tailnet ranges.
 
 The `client-ip` snippet is the other half. Caddy appends to `X-Forwarded-For`
 rather than replacing it and never sends `X-Real-IP`, so without it every
@@ -125,9 +123,10 @@ asserts coverage; it rejects uncovered IPv6 addresses too.
 ### port allocation
 
 Services on `biscuits.at` take a port from the `300x` sequence, recorded in
-`networkMap`: 3000 glance, 3001 vaultwarden, 3002 forgejo, 3003 pds, 3004
-paperless, 3005 piper, 3006 braxton-is, 3007 ntfy, 3008 atuin, 3009 grafana, 3010 adguard,
-3011 knot, 3012 spindle. The knot's tailnet SSH takes 2223, beside Forgejo's 2222.
+`networkMap`: 3000 glance, 3001 vaultwarden, 3003 pds, 3004 paperless,
+3005 piper, 3006 braxton-is, 3007 ntfy, 3008 atuin, 3009 grafana, 3010 adguard,
+3011 knot, 3012 spindle. 3002 was Forgejo's. The knot's tailnet SSH takes 2223,
+kept after Forgejo released 2222 because existing remotes name it.
 `braxton-is` is the one entry on a different domain (`braxton.is`).
 
 ### secrets and recovery

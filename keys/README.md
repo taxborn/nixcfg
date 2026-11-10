@@ -35,6 +35,6 @@ The private half lives only in Cloudflare; nothing here needs it. Rotating means
 generating a fresh pair, uploading it there, and replacing this file. Adding
 another zone means uploading this same certificate to it.
 
-`secrets/borg/<host>/ssh_key.pub` and `secrets/forgejo/signing-key.pub` follow
-the same convention one directory over, public halves kept beside their `.age`
-counterparts. See the [secrets README](../secrets/README.md) for why.
+`secrets/borg/<host>/ssh_key.pub` follows the same convention one directory
+over, public halves kept beside their `.age` counterparts. See the
+[secrets README](../secrets/README.md) for why.
