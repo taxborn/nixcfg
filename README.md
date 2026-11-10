@@ -27,7 +27,7 @@ modules/hardware/      myHardware.*   CPU / GPU / chassis
 modules/snippets/      mySnippets.*   data-only registries, shared by both
 modules/disko/         reusable disk layouts; hosts instantiate them
 modules/users/         the taxborn account
-homes/                 home-manager profiles: default, server, workstation
+homes/                 home-manager profiles: default, workstation
 hosts/<host>/          per-host config, disko.nix and proxy.nix
 secrets/               agenix .age files and the secrets.nix rule file
 keys/                  public keys: host roots, yubikey, the origin-pull cert

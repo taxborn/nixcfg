@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  self,
   ...
 }:
 let
@@ -11,8 +10,8 @@ in
   options.myNixOS.profiles.server.enable = lib.mkEnableOption "common server configuration";
 
   config = lib.mkIf cfg.enable {
-    home-manager.users.taxborn.imports = [ self.homeModules.profile-server ];
-
+    # No home profile of its own. `base` imports `profile-default`, and a
+    # server wants nothing beyond it.
     myNixOS = {
       base.enable = true;
       services = {
