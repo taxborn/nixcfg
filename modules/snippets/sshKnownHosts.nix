@@ -9,9 +9,12 @@
     type = lib.types.attrs;
     description = ''
       Host key pins, one entry per host, listed under every name that host is
-      reached by: bare, `.local`, MagicDNS, and tailnet IP. known_hosts matches
-      per name, so a name left off this list is one that still falls back to
+      reached by: bare, MagicDNS, and tailnet IP. known_hosts matches per name,
+      so a name left off this list is one that still falls back to
       trust-on-first-use.
+
+      No `.local` names. No host runs avahi, so nothing resolves them, and a
+      pin for a name that cannot be reached only reads as if mDNS were in use.
 
       The key files are the same `keys/root_<host>.pub` that secrets/secrets.nix
       encrypts to, so a host has one identity across ssh and agenix rather than
@@ -22,7 +25,6 @@
       argon = {
         hostNames = [
           "argon"
-          "argon.local"
           "argon.${config.mySnippets.tailnet.name}"
           config.mySnippets.tailnet.tailscaleIPs.argon
         ];
@@ -32,7 +34,6 @@
       carbon = {
         hostNames = [
           "carbon"
-          "carbon.local"
           "carbon.${config.mySnippets.tailnet.name}"
           config.mySnippets.tailnet.tailscaleIPs.carbon
         ];
@@ -42,7 +43,6 @@
       helium = {
         hostNames = [
           "helium"
-          "helium.local"
           "helium.${config.mySnippets.tailnet.name}"
           config.mySnippets.tailnet.tailscaleIPs.helium
         ];
@@ -52,7 +52,6 @@
       uranium = {
         hostNames = [
           "uranium"
-          "uranium.local"
           "uranium.${config.mySnippets.tailnet.name}"
           config.mySnippets.tailnet.tailscaleIPs.uranium
         ];
@@ -62,7 +61,6 @@
       tungsten = {
         hostNames = [
           "tungsten"
-          "tungsten.local"
           "tungsten.${config.mySnippets.tailnet.name}"
           config.mySnippets.tailnet.tailscaleIPs.tungsten
         ];
