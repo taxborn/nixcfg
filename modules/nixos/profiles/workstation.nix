@@ -144,6 +144,8 @@ in
 
     myNixOS = {
       base.enable = true;
+      # Port 22 stays shut on a workstation. The option says why.
+      programs.ssh.openFirewall = false;
       profiles = {
         audio.enable = true;
         bluetooth.enable = true;

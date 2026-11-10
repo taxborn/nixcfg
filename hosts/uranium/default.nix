@@ -22,11 +22,12 @@
   system.stateVersion = "25.11";
 
   programs = {
-    steam = {
-      enable = true;
-      remotePlay.openFirewall = true;
-      dedicatedServer.openFirewall = true;
-    };
+    # No `remotePlay.openFirewall` or `dedicatedServer.openFirewall`. Together
+    # they opened 27015, 27036 and 27037 and five UDP ports to every
+    # interface. Remote Play to a device on the tailnet still connects, since
+    # `tailscale0` is trusted. Streaming to a device on the LAN alone needs
+    # `remotePlay.openFirewall` back.
+    steam.enable = true;
     gamemode.enable = true;
   };
 
