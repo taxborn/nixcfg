@@ -1,15 +1,16 @@
 { inputs, ... }:
 let
-  # Tranquil tracks `main`, so the tag-derived version nixpkgs sets no longer
-  # identifies what is being built -- upstream has not bumped Cargo.toml since
-  # v0.6.6, and two different commits would otherwise produce the same version
-  # string. The short rev is what makes a `nixos-rebuild` diff legible.
+  # Tranquil is pinned to a commit of `main`, so the tag-derived version
+  # nixpkgs sets no longer identifies what is being built. Upstream has not
+  # bumped Cargo.toml since v0.6.6, and two different commits would otherwise
+  # produce the same version string. The short rev is what makes a
+  # `nixos-rebuild` diff legible.
   tranquilVersion = "0.6.6-unstable-${inputs.tranquil-src.shortRev}";
 
-  # Same problem, same shape. `github:teal-fm/piper` names no ref, so the input
-  # tracks the default branch while upstream's package.nix still says 0.0.11:
-  # every commit since built as that one version, and a `nixos-rebuild` diff
-  # showed nothing when piper moved.
+  # Same problem, same shape. The input is pinned to a commit of piper's
+  # default branch while upstream's package.nix still says 0.0.11. Every
+  # commit since built as that one version, and a `nixos-rebuild` diff showed
+  # nothing when piper moved.
   piperVersion = "0.0.11-unstable-${inputs.tealfm-piper.shortRev}";
 
   # A flake input is an attrset of `outPath`, `rev`, `narHash` and friends --

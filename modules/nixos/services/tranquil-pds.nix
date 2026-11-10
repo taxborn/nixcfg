@@ -9,8 +9,8 @@ let
   cfg = config.myNixOS.services.tranquil-pds;
   networkMap = config.mySnippets.biscuits-at.networkMap;
 
-  # `main`, not the tagged release nixpkgs carries. The `tranquil-src` input in
-  # flake.nix records what tracking main costs. Server and frontend come from
+  # A pinned commit of `main`, not the tagged release nixpkgs carries. The
+  # `tranquil-src` input in flake.nix records why. Server and frontend come from
   # the same tree on purpose: the server serves the frontend out of
   # `settings.frontend.dir`, so taking one from the flake and the other from
   # nixpkgs is a version skew that shows up only as a broken web UI.

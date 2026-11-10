@@ -58,13 +58,19 @@ include `base`. Hardware profiles use the same pattern for chassis, such as
 
 ## practices
 
-### the flake.lock revision *is* the deploy
+### the pinned revision *is* the deploy
 
-Two services are deployed by moving a flake input rather than by copying files:
+Three services are deployed by moving a flake input rather than by copying
+files. Each has its commit pinned in `flake.nix`, so a bare `nix flake update`
+leaves them alone and an upgrade is a deliberate edit:
 
-- `tranquil-src`, where `nix flake update tranquil-src` is the PDS upgrade.
-- `tealfm-piper`, where `nix flake update tealfm-piper` is the Piper upgrade.
-  It tracks upstream's default branch, so every update takes whatever landed.
+- `tranquil-src` is the PDS.
+- `tealfm-piper` is Piper.
+- `tangled` is the knot and the spindle.
+
+To upgrade one, change its `rev` in `flake.nix` and run `nix flake lock`. They
+were unpinned until 2026-11-10, and routine lock updates upgraded the PDS five
+times without anyone asking for it.
 
 The site is the odd one out, which is the part to remember. It is not a flake
 input at all. Tangled CI builds it and pushes a tarball to Carbon over a

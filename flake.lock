@@ -608,13 +608,15 @@
       "locked": {
         "lastModified": 1794240848,
         "narHash": "sha256-g2GxZB7phhMGmfdeQ/j5oW+r0I0+XdL8+zCwtf587sU=",
-        "ref": "refs/heads/master",
+        "ref": "master",
         "rev": "21c431c0c48215365980331fea16547f79bdea0b",
         "revCount": 6452,
         "type": "git",
         "url": "https://tangled.org/did:plc:j5hmlfdrwkvtxm7cjmu7j2is"
       },
       "original": {
+        "ref": "master",
+        "rev": "21c431c0c48215365980331fea16547f79bdea0b",
         "type": "git",
         "url": "https://tangled.org/did:plc:j5hmlfdrwkvtxm7cjmu7j2is"
       }
@@ -636,6 +638,7 @@
       "original": {
         "owner": "teal-fm",
         "repo": "piper",
+        "rev": "8177627d1424712202b2c34719cc89b5f7bad099",
         "type": "github"
       }
     },
@@ -665,6 +668,7 @@
       },
       "original": {
         "ref": "main",
+        "rev": "b5a7bf4ea762ccefbc68b9b31a245cbc7b7bd556",
         "type": "git",
         "url": "https://tangled.org/did:plc:jj6ajj6duxnlthwtnob4qyuv"
       }
