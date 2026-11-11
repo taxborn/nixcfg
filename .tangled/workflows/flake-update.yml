@@ -1,0 +1,86 @@
+# Weekly `nix flake update`, committed to main only if every host builds.
+#
+# `schedule` and `manual` and nothing else. A `push` trigger would fire on the
+# commit this workflow makes, and the push below passes `skip-ci` for the same
+# reason. Schedules run the default branch's saved copy of this file, so it has
+# to be on main before the first run.
+when:
+  - event: [schedule, manual]
+    schedule:
+      - cron: "H 3 * * 0"
+        timezone: America/Chicago
+
+# Nixery, not microvm. The knot takes git over SSH on the tailnet only and the
+# microVMs cannot route there (see modules/nixos/services/braxton-is.nix). A
+# Docker container reaches whatever Carbon reaches. Unverified until the first
+# manual run: if the push step times out, this path does not work.
+engine: nixery
+
+dependencies:
+  nixpkgs:
+    - bash
+    - cacert
+    - coreutils
+    - git
+    - nix
+    - openssh
+
+# One step, on purpose. Every nixery step is a fresh container and only the
+# workspace survives, so a separate build step would start with an empty Nix
+# store and rebuild everything.
+steps:
+  - name: update, build every host, push
+    environment:
+      # The container has no nix.conf, no build users and no kernel sandbox
+      # support. Root builds unsandboxed, and the spindle's container is the
+      # isolation. One job at a time keeps evaluation inside the 4 GiB cap that
+      # modules/nixos/services/tangled/spindle.nix sets for nixery.
+      NIX_CONFIG: |
+        experimental-features = nix-command flakes
+        build-users-group =
+        sandbox = false
+        max-jobs = 1
+        cores = 2
+      SSL_CERT_FILE: /etc/ssl/certs/ca-bundle.crt
+      HOME: /tmp/home
+      PUSH_URL: ssh://git@argon.tucuxi-hexatonic.ts.net:2222/braxton.is/nixcfg
+    command: |
+      set -euo pipefail
+      mkdir -p "$HOME/.ssh"
+
+      nix flake update
+
+      if git diff --quiet -- flake.lock; then
+        echo "flake.lock unchanged, nothing to commit"
+        exit 0
+      fi
+      git diff --stat -- flake.lock
+
+      # Evaluating a host is not building it. Anything that evaluates but fails
+      # to build (a vendor hash, a broken package) only shows up here.
+      # --keep-going reports every broken host in one run, not just the first.
+      nix build --no-link --keep-going \
+        .#nixosConfigurations.argon.config.system.build.toplevel \
+        .#nixosConfigurations.carbon.config.system.build.toplevel \
+        .#nixosConfigurations.helium.config.system.build.toplevel \
+        .#nixosConfigurations.tungsten.config.system.build.toplevel \
+        .#nixosConfigurations.uranium.config.system.build.toplevel
+
+      # The hook set and the architecture and restore regressions.
+      nix flake check
+
+      # NIXCFG_PUSH_KEY is a Settings -> Pipelines -> Secrets entry. Anyone who
+      # can push a branch to this repo can read it, so it should be a key
+      # that is only good for this repository's pushes.
+      umask 077
+      printf '%s\n' "$NIXCFG_PUSH_KEY" > "$HOME/.ssh/id_ed25519"
+      export GIT_SSH_COMMAND="ssh -i $HOME/.ssh/id_ed25519 -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new -o UserKnownHostsFile=$HOME/.ssh/known_hosts"
+
+      git config user.name "Braxton Fair"
+      git config user.email "hello@taxborn.com"
+      git commit --quiet -m "chore: nix flake update" -- flake.lock
+
+      # No force. If main moved since this run cloned it the push is rejected
+      # and the run fails, which is the right outcome: the next run starts from
+      # the new tip.
+      git push -o skip-ci "$PUSH_URL" HEAD:refs/heads/main
