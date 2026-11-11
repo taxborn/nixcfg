@@ -46,6 +46,15 @@ steps:
       PUSH_URL: ssh://git@argon.tucuxi-hexatonic.ts.net:2222/braxton.is/nixcfg
     command: |
       set -euo pipefail
+
+      # Docker hands the container a low soft nofile limit, and fetching
+      # thousands of store paths into an empty store exhausted it: the first
+      # run died with `error: opening directory "/nix/store": Too many open
+      # files` after 19 minutes. Raise it to the hard limit if 1048576 is
+      # refused.
+      ulimit -n 1048576 2>/dev/null || ulimit -n "$(ulimit -Hn)"
+      echo "nofile limit: $(ulimit -n)"
+
       mkdir -p "$HOME/.ssh"
 
       nix flake update
