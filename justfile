@@ -70,6 +70,11 @@ restore-dr host *repos="rsync":
 restore-all:
     bash scripts/restore-all.sh
 
+# Apply retention to the append-only repositories (yubikey; --dry-run, --yes, HOST...)
+[positional-arguments]
+borg-maintain *args:
+    bash scripts/borg-maintain.sh {{ age_identity }} "$@"
+
 # Diff rsync.net's authorized_keys against the host roster (needs the yubikey)
 rsync-keys-check:
     bash scripts/rsync-authorized-keys.sh fetch

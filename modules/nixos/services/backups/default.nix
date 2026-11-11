@@ -419,6 +419,21 @@ in
           // lib.optionalAttrs (repo.remotePath != null) {
             remote_path = repo.remotePath;
           }
+          // lib.optionalAttrs (lib.hasPrefix "ssh://" repo.path) {
+            # Both servers run this client's key with `--append-only`, so a
+            # prune from here would log deletions the server never applies,
+            # and compact would reclaim nothing. Skipping them keeps the
+            # nightly run from reporting work it did not do. Retention is
+            # applied by `just borg-maintain` from a workstation, with the
+            # operator's own unrestricted key. It reads `retention` above, so
+            # the keep_* values stay in this file. Local repositories (Helium's
+            # own, Uranium's SSD) have no server to enforce append-only and
+            # keep pruning as before.
+            skip_actions = [
+              "prune"
+              "compact"
+            ];
+          }
           // lib.optionalAttrs cfg.client.notify.enable {
             # Success only, on purpose. borgmatic's default is to ping on
             # failure, but a failure message needs the run to get as far as
@@ -605,12 +620,19 @@ in
       # store path is needed because a forced command runs without the system
       # PATH.
       #
+      # `--append-only` means a client can add archives and read its own, but
+      # whatever it deletes or prunes is only logged, not applied, so a
+      # compromised host cannot erase its history. The cost is that nothing
+      # reclaims space from the client side: `just borg-maintain` does it from
+      # a workstation over port 22, where the operator's tailnet identity runs
+      # an unrestricted `borg serve`.
+      #
       # This confines a key arriving on `backupServer.port`. It does not stop a
       # compromised host reaching a shell on 22 by tailnet identity, which only
       # the tailnet ACLs can close.
       users.users.${backupServer.user}.openssh.authorizedKeys.keys = lib.mapAttrsToList (
         client: pubkey:
-        ''command="${lib.getExe pkgs.borgbackup} serve --restrict-to-path ${backupServer.basePath}/${client}",restrict ${lib.trim pubkey}''
+        ''command="${lib.getExe pkgs.borgbackup} serve --append-only --restrict-to-path ${backupServer.basePath}/${client}",restrict ${lib.trim pubkey}''
       ) cfg.server.authorizedKeys;
     })
   ];

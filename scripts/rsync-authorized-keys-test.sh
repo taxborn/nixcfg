@@ -15,7 +15,7 @@ fail() {
 n=$(find "$root/secrets/borg" -name ssh_key.pub | wc -l)
 "$tool" expected "$root" >"$tmp/good"
 [[ $(wc -l <"$tmp/good") -eq $n ]] || fail "entry count differs from roster ($n)"
-if grep -vq '^command="borg14 serve --restrict-to-path /data1/home/de4388/borg/[a-z]*",restrict ssh-ed25519 ' "$tmp/good"; then
+if grep -vq '^command="borg14 serve --append-only --restrict-to-path /data1/home/de4388/borg/[a-z]*",restrict ssh-ed25519 ' "$tmp/good"; then
     fail "malformed expected entry"
 fi
 
@@ -30,6 +30,13 @@ fi
 sed '1s/^command="[^"]*",restrict //' "$tmp/good" >"$tmp/bare"
 if "$tool" check "$tmp/bare" "$root" 2>/dev/null; then
     fail "unconfined entry accepted"
+fi
+
+# A confined entry that lost --append-only, which would let a compromised host
+# prune its own off-site history, must be caught.
+sed '1s/ --append-only//' "$tmp/good" >"$tmp/writable"
+if "$tool" check "$tmp/writable" "$root" 2>/dev/null; then
+    fail "entry without --append-only accepted"
 fi
 
 # A dropped host must be caught.

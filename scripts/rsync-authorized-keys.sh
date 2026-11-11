@@ -24,7 +24,7 @@ expected() {
     for dir in "$root"/secrets/borg/*/; do
         host=$(basename "$dir")
         key=$(<"$dir/ssh_key.pub")
-        printf 'command="borg14 serve --restrict-to-path %s/%s",restrict %s\n' \
+        printf 'command="borg14 serve --append-only --restrict-to-path %s/%s",restrict %s\n' \
             "$base" "$host" "$key"
     done
 }

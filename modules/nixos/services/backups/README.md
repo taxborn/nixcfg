@@ -38,7 +38,7 @@ need a port of their own. Nothing is added to `allowedTCPPorts`, and the
 tailscale interface is in `trustedInterfaces`, so the repositories are
 reachable from the tailnet and nowhere else.
 
-> Each client key is confined to `borg serve --restrict-to-path
+> Each client key is confined to `borg serve --append-only --restrict-to-path
 > /mnt/hdd/borg/<client>` by a forced command, with `restrict`. It is served on
 > port 2200 from real sshd, because on 22 Tailscale SSH answers and never reads
 > `authorized_keys`. That port is not in the firewall and sshd binds it to the
@@ -51,12 +51,12 @@ reachable from the tailnet and nowhere else.
 > host's repository. What it does not: port 22 is still there. A host
 > compromised badly enough can reach a shell on Helium by tailnet identity and
 > wipe the drive, which only the tailnet ACLs can stop. Those live outside this
-> repo, so check them. The keys are also not append-only, so a compromised host
-> can still prune its own repository. Append-only would stop client-side prune
-> and compact from reclaiming space, so it was left off. Every repository is
-> owned by `taxborn` on one btrfs filesystem, and every key serves as that user,
-> so file permissions are no boundary between repositories, and the forced
-> command is the only one. They do keep other local users out: the tree is
+> repo, so check them. The keys are append-only, so a compromised host cannot
+> prune or delete its own history. That is also why the clients skip `prune`
+> and `compact`, and why [retention](#retention) is a manual step. Every
+> repository is owned by `taxborn` on one btrfs filesystem, and every key
+> serves as that user, so file permissions are no boundary between
+> repositories, and the forced command is the only one. They do keep other local users out: the tree is
 > `0700`, so a compromised service account on Helium cannot delete archives.
 >
 > Deploy Helium before any client. A client rebuilt first points at 2200 before
@@ -64,7 +64,7 @@ reachable from the tailnet and nowhere else.
 > is silent.
 >
 > rsync.net's `authorized_keys` carries the same confinement, one entry per
-> host: `command="borg14 serve --restrict-to-path
+> host: `command="borg14 serve --append-only --restrict-to-path
 > /data1/home/de4388/borg/<host>",restrict ssh-ed25519 … borg-<host>`. Nothing
 > in this repo can confirm that, since the file lives on rsync.net and is
 > edited by hand. A host added without the prefix is unrestricted there, with
@@ -75,11 +75,11 @@ reachable from the tailnet and nowhere else.
 > yubikey. `just rsync-keys-test` exercises the generation and comparison
 > offline.
 >
-> Those keys are not append-only either, so a compromised host can prune its
-> own rsync.net repository, exactly as on Helium. The one copy it cannot
-> prune is rsync.net's server-side snapshot schedule, which sits outside the
-> borg key's reach. That makes the schedule the real floor on how much history
-> survives a compromised host, and nothing in this repo records or checks it.
+> Those keys are append-only as well, which `just rsync-keys-check` verifies.
+> A compromised host cannot prune its rsync.net repository, so the server-side
+> snapshot schedule, which also sits outside the borg key's reach, is a second
+> floor under the history rather than the only one. Nothing in this repo
+> records or checks the schedule.
 >
 > Snapshot schedule, confirmed by the account owner on 2026-11-09: snapshots
 > are kept for 7 days. A compromised host can therefore destroy history older
@@ -172,7 +172,7 @@ added bare:
 
 ```bash
 scp rsync-backup:.ssh/authorized_keys /tmp/rsync_authkeys
-printf 'command="borg14 serve --restrict-to-path /data1/home/de4388/borg/%s",restrict %s\n' \
+printf 'command="borg14 serve --append-only --restrict-to-path /data1/home/de4388/borg/%s",restrict %s\n' \
     <hostname> "$(cat /tmp/borg_ssh_key.pub)" >> /tmp/rsync_authkeys
 scp /tmp/rsync_authkeys rsync-backup:.ssh/authorized_keys
 rm /tmp/rsync_authkeys
@@ -269,6 +269,36 @@ sudo borgmatic create --verbosity 1 --list --repository helium
 sudo -u taxborn borg list /mnt/hdd/borg/argon
 sudo -u taxborn borg check --repository-only /mnt/hdd/borg/argon
 ```
+
+## retention
+
+The Helium and rsync.net repositories are append-only, so the nightly
+borgmatic run creates archives and checks, and never prunes or compacts them.
+Retention (the `retention` option, 7 daily, 4 weekly, 6 monthly, 1 yearly by
+default) is applied from a workstation with your own access instead of the
+host's confined key:
+
+```bash
+just borg-maintain --dry-run          # show what would be pruned, change nothing
+just borg-maintain                    # every host, one yubikey touch per host
+just borg-maintain argon helium       # only these hosts
+```
+
+For each remote repository it shows the archive count and asks before
+committing anything. That prompt matters: append-only logs a client's deletes
+and the next normal write applies them, and that write is this one. If the
+count fell and you did not delete anything, a host was deleting its history.
+Stop, and repair the repository (`borg check --repair` on the server throws away
+the uncommitted transactions) before running maintenance again.
+
+Space is never reclaimed between runs, so skipping this grows both targets.
+Run it roughly monthly, and sooner if Helium's drive passes about 70% full.
+Helium's own repository and Uranium's SSD are local paths, with no server to
+enforce append-only, so borgmatic still prunes them nightly.
+
+The rsync.net route uses the bare `yubikey` entry through the `rsync-backup`
+ssh alias, and the Helium route uses Tailscale SSH on port 22 as `taxborn`.
+Neither uses the host's key on port 2200.
 
 ## databases
 
