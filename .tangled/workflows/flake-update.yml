@@ -58,6 +58,15 @@ steps:
       ulimit -n 1048576 2>/dev/null || ulimit -n "$(ulimit -Hn)"
       echo "nofile limit: $(ulimit -n)"
 
+      # The nixery image has no passwd entry for root, and builds run
+      # unsandboxed against the container's own /etc. agenix's installCheck
+      # parses SSH recipients through a user lookup, so it failed with "No
+      # user exists for uid 0" and took system-path and every host with it.
+      if ! getent passwd 0 >/dev/null; then
+        echo 'root:x:0:0:root:/root:/bin/bash' >> /etc/passwd
+        echo 'root:x:0:' >> /etc/group
+      fi
+
       mkdir -p "$HOME/.ssh"
 
       nix flake update
