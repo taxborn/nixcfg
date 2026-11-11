@@ -41,6 +41,9 @@ steps:
         sandbox = false
         max-jobs = 1
         cores = 2
+        http-connections = 8
+        max-substitution-jobs = 8
+        log-lines = 200
       SSL_CERT_FILE: /etc/ssl/certs/ca-bundle.crt
       HOME: /tmp/home
       PUSH_URL: ssh://git@argon.tucuxi-hexatonic.ts.net:2222/braxton.is/nixcfg
@@ -67,13 +70,21 @@ steps:
 
       # Evaluating a host is not building it. Anything that evaluates but fails
       # to build (a vendor hash, a broken package) only shows up here.
-      # --keep-going reports every broken host in one run, not just the first.
-      nix build --no-link --keep-going \
-        .#nixosConfigurations.argon.config.system.build.toplevel \
-        .#nixosConfigurations.carbon.config.system.build.toplevel \
-        .#nixosConfigurations.helium.config.system.build.toplevel \
-        .#nixosConfigurations.tungsten.config.system.build.toplevel \
-        .#nixosConfigurations.uranium.config.system.build.toplevel
+      #
+      # One nix invocation per host. A single five-host build held every
+      # evaluation in one process and was OOM-killed at the container's 4 GiB
+      # cap, 25 minutes in. Each host is still tried after one fails, so a run
+      # reports every broken host, not just the first.
+      failed=()
+      for host in argon carbon helium tungsten uranium; do
+        echo "::: building $host"
+        nix build --no-link ".#nixosConfigurations.${host}.config.system.build.toplevel" \
+          || failed+=("$host")
+      done
+      if [ "${#failed[@]}" -gt 0 ]; then
+        echo "hosts that failed to build: ${failed[*]}" >&2
+        exit 1
+      fi
 
       # The hook set and the architecture and restore regressions.
       nix flake check
