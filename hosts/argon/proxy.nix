@@ -51,6 +51,12 @@ in
     ];
   };
 
+  # HTTP/3 for the direct PDS names. Caddy already listens on UDP 443; only the
+  # firewall was in the way. Never narrowed to Cloudflare's ranges, matching TCP
+  # 443 here, which `directVHosts` has already opened to everyone. The
+  # `cloudflare-mtls` vhosts still demand a client certificate over QUIC.
+  networking.firewall.allowedUDPPorts = [ 443 ];
+
   services.caddy.virtualHosts = {
     "biscuits.at".extraConfig = ''
       import cloudflare-mtls
