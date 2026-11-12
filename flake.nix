@@ -58,7 +58,7 @@
     # follows it; worth knowing when a fetch fails for reasons that look like
     # DNS.
     tranquil-src = {
-      url = "git+https://tangled.org/did:plc:jj6ajj6duxnlthwtnob4qyuv?ref=main&rev=b5a7bf4ea762ccefbc68b9b31a245cbc7b7bd556";
+      url = "git+https://tangled.org/did:plc:jj6ajj6duxnlthwtnob4qyuv?ref=main&rev=ce17e8a4948aa216c6c1056122966a11b8a693c8";
       flake = false;
     };
 

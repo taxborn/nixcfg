@@ -2,16 +2,16 @@
 let
   # Tranquil is pinned to a commit of `main`, so the tag-derived version
   # nixpkgs sets no longer identifies what is being built. Upstream has not
-  # bumped Cargo.toml since v0.6.6, and two different commits would otherwise
+  # bumped Cargo.toml since v0.8.0, and two different commits would otherwise
   # produce the same version string. The short rev is what makes a
   # `nixos-rebuild` diff legible.
-  tranquilVersion = "0.6.6-unstable-${inputs.tranquil-src.shortRev}";
+  tranquilVersion = "0.8.0-unstable-${inputs.tranquil-src.shortRev}";
 
   # Same problem, same shape. The input is pinned to a commit of piper's
-  # default branch while upstream's package.nix still says 0.0.11. Every
+  # default branch while upstream's package.nix still says 0.1.1. Every
   # commit since built as that one version, and a `nixos-rebuild` diff showed
   # nothing when piper moved.
-  piperVersion = "0.0.11-unstable-${inputs.tealfm-piper.shortRev}";
+  piperVersion = "0.1.1-unstable-${inputs.tealfm-piper.shortRev}";
 
   # A flake input is an attrset of `outPath`, `rev`, `narHash` and friends --
   # it has no `name`, which the nixpkgs frontend derivation reaches for in its
@@ -90,7 +90,7 @@ in
           # `outputHashes` entry for every one of them.
           cargoDeps = pkgs.rustPlatform.fetchCargoVendor {
             src = inputs.tranquil-src;
-            hash = "sha256-Ys71U939KFMKieqA6zrB6XCCOwJnswrT9yzYQ9bUXis=";
+            hash = "sha256-r6j925a6PfVKNLg60vxKRVw4rddLsGtQ0G2/KvyGw3Q=";
           };
         });
 
