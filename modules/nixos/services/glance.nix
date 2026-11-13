@@ -18,13 +18,11 @@ let
       domain,
       icon,
       path ? "",
-      codes ? [ ],
     }:
     {
       inherit title icon;
       url = "https://${domain}";
       check-url = "https://${domain}${path}";
-      alt-status-codes = codes;
     };
 
   serviceSites = [
@@ -65,21 +63,11 @@ let
       title = "Spindle";
       domain = networkMap.spindle.domain;
       icon = "mdi:cog-sync";
-      codes = [
-        401
-        403
-        404
-      ];
     })
     (site {
       title = "Piper";
       domain = networkMap.piper.domain;
       icon = "mdi:music";
-      codes = [
-        401
-        403
-        404
-      ];
     })
     (site {
       title = "Atuin";
@@ -179,6 +167,12 @@ in
                 widgets = [
                   {
                     type = "clock";
+                    hour-format = "12h";
+                  }
+                  {
+                    type = "weather";
+                    location = "Saint Paul, Minnesota, United States";
+                    units = "imperial";
                     hour-format = "12h";
                   }
                   {
