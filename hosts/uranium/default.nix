@@ -17,6 +17,11 @@
     ];
   };
 
+  # `libvirtd` is what lets virt-manager manage system VMs without a root
+  # prompt each time. The group is root-equivalent on this machine, which is
+  # the same trade the `wheel` membership already makes.
+  users.users.taxborn.extraGroups = [ "libvirtd" ];
+
   nixpkgs.hostPlatform = "x86_64-linux";
   networking.hostName = "uranium";
   system.stateVersion = "25.11";
@@ -68,6 +73,7 @@
   myNixOS = {
     profiles.workstation.enable = true;
     programs.lanzaboote.enable = true;
+    programs.libvirt.enable = true;
 
     profiles.btrfs.snapshotSubvolumes.compatdata = "/games/steamapps/compatdata";
 
