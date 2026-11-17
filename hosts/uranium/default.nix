@@ -133,7 +133,6 @@
 
   myHardware = {
     amd.gpu.enable = true;
-    intel.cpu.enable = true;
   };
 
   hardware.steam-hardware.enable = true;

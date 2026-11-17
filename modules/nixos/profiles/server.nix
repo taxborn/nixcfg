@@ -13,7 +13,6 @@ in
     # No home profile of its own. `base` imports `modules/home`, and a
     # server wants nothing beyond it.
     myNixOS = {
-      base.enable = true;
       services = {
         caddy.enable = true;
         fail2ban.enable = true;

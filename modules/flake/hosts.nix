@@ -19,7 +19,7 @@
 
             ../hardware
             ../nixos
-            ../users
+
             ../options.nix
 
             {

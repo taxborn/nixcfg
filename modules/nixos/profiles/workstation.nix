@@ -152,7 +152,6 @@ in
     myHardware.logitech.mx-master.enable = true;
 
     myNixOS = {
-      base.enable = true;
       # Port 22 stays shut on a workstation. The option says why.
       programs.ssh.openFirewall = false;
       profiles = {
