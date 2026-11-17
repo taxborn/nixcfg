@@ -6,13 +6,12 @@
 let
   cfg = config.myNixOS.services.monitoring.client;
 
-  tailnet = config.mySnippets.tailnet;
-  monitoring = config.mySnippets.monitoring;
+  monitoring = config.homelab.monitoring;
   inherit (monitoring) ports;
 
   hostname = config.networking.hostName;
   hostIP = config.myNixOS.services.tailscale.address;
-  serverIP = tailnet.tailscaleIPs.${monitoring.server} or null;
+  serverIP = config.homelab.hosts.${monitoring.server} or null;
 
   hasSmart = lib.elem hostname monitoring.physicalDisks;
 
@@ -92,7 +91,7 @@ in
         message = ''
           myNixOS.services.monitoring.client is enabled on ${hostname}, but
           either it or the monitoring server (${monitoring.server}) has no entry
-          in mySnippets.tailnet.tailscaleIPs. The exporters bind this host's
+          in homelab.hosts. The exporters bind this host's
           address and Alloy pushes to the server's, so a missing entry is a host
           that silently exports nothing.
         '';
@@ -105,7 +104,7 @@ in
         # of it with smartd on has the data and never publishes it.
         assertion = hasSmart == config.services.smartd.enable;
         message = ''
-          ${hostname} is ${if hasSmart then "" else "not "}listed in mySnippets.monitoring.physicalDisks, but
+          ${hostname} is ${if hasSmart then "" else "not "}listed in homelab.monitoring.physicalDisks, but
           services.smartd.enable is ${lib.boolToString config.services.smartd.enable}.
           Both describe whether this host has SMART-capable disks and they have
           to agree.

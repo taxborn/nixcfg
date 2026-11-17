@@ -11,7 +11,7 @@ let
   unitOf = name: "minecraft-${name}.service";
   exposedServers = lib.filterAttrs (_: server: server.openFirewall) cfg.servers;
 
-  monitoring = config.mySnippets.monitoring;
+  monitoring = config.homelab.monitoring;
   hostIP = config.myNixOS.services.tailscale.address;
   inherit (config.myNixOS.services.tailscale) bindOrdering;
   hostname = config.networking.hostName;
@@ -138,7 +138,7 @@ in
         assertion = lib.elem hostname monitoring.minecraftHosts;
         message = ''
           ${hostname} runs Minecraft servers but is not in
-          mySnippets.monitoring.minecraftHosts, so the monitoring server never
+          homelab.monitoring.minecraftHosts, so the monitoring server never
           scrapes the exporters below and the Minecraft dashboard stays empty.
         '';
       }

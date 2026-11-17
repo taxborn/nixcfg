@@ -7,10 +7,9 @@
 let
   cfg = config.myNixOS.services.monitoring.server;
 
-  tailnet = config.mySnippets.tailnet;
-  monitoring = config.mySnippets.monitoring;
+  monitoring = config.homelab.monitoring;
   inherit (monitoring) ports;
-  grafana = config.mySnippets.biscuits-at.networkMap.grafana;
+  grafana = config.homelab.services.grafana;
 
   hostname = config.networking.hostName;
   serverIP = config.myNixOS.services.tailscale.address;
@@ -20,8 +19,8 @@ let
 
   # The roster, partitioned. Every host on the tailnet is scraped. The split
   # only decides which job a host lands in, and the job is what the down alert
-  # keys off. See `mySnippets.monitoring.alwaysOn`.
-  allHosts = lib.attrNames tailnet.tailscaleIPs;
+  # keys off. See `homelab.monitoring.alwaysOn`.
+  allHosts = lib.attrNames config.homelab.hosts;
   intermittentHosts = lib.subtractLists monitoring.alwaysOn allHosts;
 
   # One `static_configs` entry per host, each carrying its own `instance` label
@@ -41,7 +40,7 @@ let
         # a name in `alwaysOn` or `physicalDisks` that is not on the tailnet is
         # dropped instead of producing a target with an empty address. The
         # assertions below turn that into a build failure anyway.
-        lib.filterAttrs (n: _: lib.elem n hosts) tailnet.tailscaleIPs
+        lib.filterAttrs (n: _: lib.elem n hosts) config.homelab.hosts
       );
 
   dashboardDir = "/etc/grafana-dashboards";
@@ -81,7 +80,7 @@ in
         assertion = hostname == monitoring.server && serverIP != null;
         message = ''
           myNixOS.services.monitoring.server is enabled on ${hostname}, but
-          mySnippets.monitoring.server names ${monitoring.server}. Every Alloy
+          homelab.monitoring.server names ${monitoring.server}. Every Alloy
           pushes to the host in the snippet, so the two have to be the same
           machine, and it needs a tailnet address to bind Loki to.
         '';
@@ -90,7 +89,7 @@ in
         assertion = lib.all (h: lib.elem h allHosts) (
           monitoring.alwaysOn ++ monitoring.physicalDisks ++ monitoring.minecraftHosts
         );
-        message = "mySnippets.monitoring.alwaysOn, physicalDisks and minecraftHosts may only name hosts in mySnippets.tailnet.tailscaleIPs.";
+        message = "homelab.monitoring.alwaysOn, physicalDisks and minecraftHosts may only name hosts in homelab.hosts.";
       }
     ];
 
@@ -271,7 +270,7 @@ in
         http.addr = "127.0.0.1:${toString ports.alertmanagerNtfy}";
         # The ntfy instance on Argon, read from the same entry its own module
         # and vhost use.
-        ntfy.baseurl = "https://${config.mySnippets.biscuits-at.networkMap.ntfy.domain}";
+        ntfy.baseurl = "https://${config.homelab.services.ntfy.domain}";
         ntfy.notification.topic = cfg.ntfyTopic;
       };
 

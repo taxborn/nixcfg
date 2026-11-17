@@ -6,7 +6,7 @@
 }:
 let
   cfg = config.myNixOS.services.tangled.knot;
-  networkMap = config.mySnippets.biscuits-at.networkMap;
+  networkMap = config.homelab.services;
   tailscale = config.myNixOS.services.tailscale;
   tailnetIP = tailscale.address;
 in
@@ -21,7 +21,7 @@ in
         message = ''
           myNixOS.services.tangled.knot binds its SSH server to this host's
           tailnet address and nowhere else, so the host has to run Tailscale
-          and appear in mySnippets.tailnet.tailscaleIPs.
+          and appear in homelab.hosts.
         '';
       }
     ];

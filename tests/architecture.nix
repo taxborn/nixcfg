@@ -6,11 +6,11 @@ let
       builtins.deepSeq
         (lib.evalModules {
           modules = [
-            ../modules/snippets/networkMap.nix
-            ../modules/snippets/tailscale.nix
-            { mySnippets.biscuits-at.networkMap = lib.mkForce { test = value; }; }
+            ../modules/options.nix
+            { homelab.services = lib.mkForce { test = value; }; }
           ];
-        }).config.mySnippets.biscuits-at.networkMap
+          specialArgs = { inherit self; };
+        }).config.homelab.services
         true
     )).success;
   argon = self.nixosConfigurations.argon;

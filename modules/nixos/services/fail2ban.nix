@@ -8,7 +8,7 @@ let
 
   # A ban that lands inside either range is a ban on the path used to lift the
   # ban.
-  tailnetRanges = config.mySnippets.tailnet.ranges;
+  tailnetRanges = config.homelab.tailnet.ranges;
 
   isIPv4 = addr: !(lib.hasInfix ":" addr);
 
@@ -30,9 +30,7 @@ let
   covered =
     addr: isIPv4 addr && lib.any (cidr: containsIPv4 cidr addr) (lib.filter isIPv4 tailnetRanges);
 
-  uncovered = lib.filter (addr: !covered addr) (
-    lib.attrValues config.mySnippets.tailnet.tailscaleIPs
-  );
+  uncovered = lib.filter (addr: !covered addr) (lib.attrValues config.homelab.hosts);
 in
 {
   options.myNixOS.services.fail2ban.enable = lib.mkEnableOption "fail2ban intrusion prevention";
@@ -48,7 +46,7 @@ in
         message = ''
           fail2ban ignores ${lib.concatStringsSep " " tailnetRanges}, which does
           not cover ${lib.concatStringsSep " " uncovered} from
-          mySnippets.tailnet.tailscaleIPs. A ban on that address would take the
+          homelab.hosts. A ban on that address would take the
           tailnet with it.
         '';
       }

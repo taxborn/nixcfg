@@ -6,7 +6,7 @@
 }:
 let
   cfg = config.myNixOS.services.paperless;
-  networkMap = config.mySnippets.biscuits-at.networkMap;
+  networkMap = config.homelab.services;
 in
 {
   options.myNixOS.services.paperless.enable = lib.mkEnableOption "Paperless-ngx document archive";

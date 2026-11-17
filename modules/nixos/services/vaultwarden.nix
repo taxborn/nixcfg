@@ -6,7 +6,7 @@
 }:
 let
   cfg = config.myNixOS.services.vaultwarden;
-  networkMap = config.mySnippets.biscuits-at.networkMap;
+  networkMap = config.homelab.services;
 in
 {
   options.myNixOS.services.vaultwarden.enable = lib.mkEnableOption "vaultwarden password manager";
