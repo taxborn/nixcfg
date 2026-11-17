@@ -23,10 +23,6 @@
 
   myNixOS = {
     services = {
-      backups.client = {
-        enable = true;
-        notify.enable = true;
-      };
       # For friends, so it is reachable without the tailnet. The world lives in
       # the module's default, /var/lib/minecraft/mnb.
       minecraft.servers.mnb.openFirewall = true;

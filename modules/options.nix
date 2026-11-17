@@ -45,6 +45,13 @@ in
       );
     };
 
+    backupServer = {
+      host = mkOption { type = types.str; };
+      user = mkOption { type = types.str; };
+      basePath = mkOption { type = types.str; };
+      port = mkOption { type = port; };
+    };
+
     monitoring = {
       server = mkOption { type = types.str; };
       alwaysOn = hostList;

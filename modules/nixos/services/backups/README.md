@@ -20,9 +20,9 @@ drive over the tailnet. Uranium also writes to a local SSD.
   inside every archive, `postgresqlDumpAll` for a cluster and `sqliteDatabases`
   for a file (see [databases](#databases))
 
-The server's paths and the clients' targets both derive from one `backupServer`
-attrset at the top of `default.nix`. There is exactly one backup server, so
-those are constants rather than options. Changing them in one place moves both
+The server's paths and the clients' targets both derive from `backupServer` in
+`homelab.nix`. The server half of the module switches itself on for the host
+it names. Changing them in one place moves both
 halves at once, and no host can set them out of sync.
 
 ### server side
@@ -110,7 +110,7 @@ than filling Helium's root filesystem with archives nobody would notice.
 
 ## notifications
 
-`client.notify.enable` sends an [ntfy](../ntfy.nix) message to
+Every host sends an [ntfy](../ntfy.nix) message to
 `ntfy.biscuits.at` after each successful run. It is success only. A failed or
 wedged run sends nothing, so a host that stops reporting is the signal, and the
 absence is something a person has to notice. borgmatic runs once per
@@ -158,12 +158,9 @@ cp /tmp/borg_ssh_key.pub borg/<hostname>/ssh_key.pub
 
 ### 3. authorize the key on both servers
 
-On Helium, add the host to `hosts/helium/default.nix` and rebuild it:
-
-```nix
-myNixOS.services.backups.server.authorizedKeys.<hostname> =
-  builtins.readFile "${self}/secrets/borg/<hostname>/ssh_key.pub";
-```
+Helium authorizes the key of every other host in `homelab.nix`, read from
+`secrets/borg/<hostname>/ssh_key.pub`, so rebuild Helium once the public key is
+committed.
 
 rsync.net's restricted shell blocks redirection (`>`/`>>`), so edit its
 `authorized_keys` by round-tripping it over scp. The entry carries a forced
@@ -319,7 +316,7 @@ archive as borg writes it.
 | `sqliteDatabases.<name> = <path>` | SQLite | `sqlite3 <path> .dump` | `<path>*` |
 
 Piper, Vaultwarden, Atuin, Tranquil, Paperless and the Tangled spindle register their
-dumps in their service modules whenever the backup client is enabled. Moving one of these services
+dumps in their service modules. Moving one of these services
 therefore carries its dump requirement with it. Repository and retention
 choices remain with the host. Piper reads its database path from its service
 configuration.
@@ -392,7 +389,7 @@ Everything at once, from a workstation:
 just restore-all
 ```
 
-Reads `nix eval --json .#restoreCoverage` to cover every enabled backup client,
+Reads `nix eval --json .#restoreCoverage` to cover every host,
 including Tungsten and Uranium. Tier 1 exercises every configured repository,
 including Uranium's local SSD. Tier 2 exercises the remote repositories and
 prints an explicit skip reason for Helium's own local repository and Uranium's
@@ -571,12 +568,10 @@ restore of its `/var/lib` directory to confirm permissions survive the trip.
 
 | option | type | default | description |
 |--------|------|---------|-------------|
-| `enable` | bool | `false` | enable the borgmatic client |
 | `paths` | list of str | `[ "/home" "/var/lib" "/etc" ]` | directories to back up |
 | `extraExcludes` | list of str | `[ ]` | exclude patterns on top of the defaults |
 | `desktopExcludes` | bool | `false` | also exclude a desktop `$HOME`'s caches and re-downloadable data |
 | `repositories` | attrsOf { path, label, remotePath? } | rsync.net + Helium | targets to back up to |
-| `notify.enable` | bool | `false` | send an ntfy message after each successful run |
 | `notify.topic` | str | `"backups"` | topic the messages go to; must match the ACL in `secrets/ntfy.age` |
 | `retention.keepDaily` | int | `7` | daily archives to keep |
 | `retention.keepWeekly` | int | `4` | weekly archives to keep |
@@ -592,29 +587,22 @@ caches (which live under `.config`, not `.cache`, so they survive the obvious
 pattern), Steam runtimes, and every virtualenv and direnv on the machine. None
 of it dedups well between runs and none of it is worth restoring.
 
-It is off by default and *not* implied by `profiles.workstation`. Deciding what
+It is off by default and *not* implied by `modules/nixos/workstation`. Deciding what
 under `/home` is disposable is a judgement about the host, and getting it wrong
 drops real data silently. `~/Downloads` is left in the archive for that reason.
 
-Snapper's `.snapshots` directories need no entry here. `profiles/btrfs` derives
+Snapper's `.snapshots` directories need no entry here. `common/btrfs.nix` derives
 an exclude for every subvolume in its `snapshotSubvolumes`, so a backup path
 containing one does not quietly archive the whole timeline alongside the live
 data.
 
-### `myNixOS.services.backups.server`
-
-| option | type | default | description |
-|--------|------|---------|-------------|
-| `enable` | bool | `false` | serve borg repositories over SSH |
-| `authorizedKeys` | attrsOf str | `{ }` | client hostname -> that host's borg SSH public key |
-
 ## enabling on a host
 
+Every host runs the client, through `modules/nixos/common`. Host-specific
+settings go in the host file:
+
 ```nix
-myNixOS.services.backups.client = {
-  enable = true;
-  extraExcludes = [ "/var/lib/containers" ];
-};
+myNixOS.services.backups.client.extraExcludes = [ "/var/lib/containers" ];
 ```
 
 Both repositories are added automatically,

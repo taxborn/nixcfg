@@ -7,7 +7,6 @@
 let
   cfg = config.myNixOS.services.minecraft;
   systemctl = lib.getExe' config.systemd.package "systemctl";
-  backupsOn = config.myNixOS.services.backups.client.enable;
   unitOf = name: "minecraft-${name}.service";
   exposedServers = lib.filterAttrs (_: server: server.openFirewall) cfg.servers;
 
@@ -147,19 +146,21 @@ in
     # an idle world. That is wasted on a world borg never walks, and a
     # directory outside the client's `paths` is one with no backup and nothing
     # to say so.
-    ++ lib.optional backupsOn {
-      assertion = lib.all (
-        server:
-        lib.any (
-          path: lib.hasPrefix "${path}/" "${server.directory}/"
-        ) config.myNixOS.services.backups.client.paths
-      ) (lib.attrValues cfg.servers);
-      message = ''
-        Every myNixOS.services.minecraft server directory on ${hostname} must
-        sit under one of myNixOS.services.backups.client.paths, or its world
-        is not archived.
-      '';
-    };
+    ++ [
+      {
+        assertion = lib.all (
+          server:
+          lib.any (
+            path: lib.hasPrefix "${path}/" "${server.directory}/"
+          ) config.myNixOS.services.backups.client.paths
+        ) (lib.attrValues cfg.servers);
+        message = ''
+          Every myNixOS.services.minecraft server directory on ${hostname} must
+          sit under one of myNixOS.services.backups.client.paths, or its world
+          is not archived.
+        '';
+      }
+    ];
 
     users.groups.${user} = { };
     users.users.${user} = {
@@ -370,7 +371,7 @@ in
           };
         };
       }
-      // lib.optionalAttrs backupsOn {
+      // {
         # A running world is not a consistent backup: region files are rewritten
         # while borg reads them. Stop every server for the nightly run and bring
         # them back after, so the archive holds a world that was saved and idle.

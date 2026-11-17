@@ -1,9 +1,7 @@
 { self, inputs, ... }:
 let
   lib = inputs.nixpkgs.lib;
-  clients = lib.filterAttrs (
-    _: host: host.config.myNixOS.services.backups.client.enable
-  ) self.nixosConfigurations;
+  clients = self.nixosConfigurations;
   localReasons = {
     helium.helium = "Helium's own repository uses a local path. Tier 1 covers it on Helium.";
     uranium.local = "Uranium's third copy is on its local SSD. Tier 1 covers it on Uranium.";

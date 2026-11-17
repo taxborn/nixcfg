@@ -1,5 +1,3 @@
-{ lib, self, ... }:
-
 {
   imports = [
     ../../modules/nixos/services/monitoring/server.nix
@@ -13,24 +11,6 @@
   nixpkgs.hostPlatform = "x86_64-linux";
   networking.hostName = "helium";
   system.stateVersion = "25.11";
-
-  myNixOS = {
-    services = {
-
-      backups = {
-        client = {
-          enable = true;
-          notify.enable = true;
-        };
-        server = {
-          enable = true;
-          authorizedKeys = lib.genAttrs (lib.remove "helium" (
-            builtins.attrNames (import "${self}/homelab.nix").hosts
-          )) (host: builtins.readFile "${self}/secrets/borg/${host}/ssh_key.pub");
-        };
-      };
-    };
-  };
 
   boot = {
     initrd.availableKernelModules = [

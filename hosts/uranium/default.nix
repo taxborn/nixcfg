@@ -78,8 +78,6 @@
     profiles.btrfs.snapshotSubvolumes.compatdata = "/games/steamapps/compatdata";
 
     services.backups.client = {
-      enable = true;
-      notify.enable = true;
       desktopExcludes = true;
       paths = [
         "/home"

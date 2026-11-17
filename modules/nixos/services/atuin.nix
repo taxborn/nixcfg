@@ -23,8 +23,7 @@ in
     # the dump is ciphertext. It is still the only copy a new machine can sync
     # from, so it is dumped like every other database. `pg_dumpall` covers it
     # without naming it, see the databases section of the backups README.
-    myNixOS.services.backups.client.postgresqlDumpAll =
-      lib.mkIf config.myNixOS.services.backups.client.enable true;
+    myNixOS.services.backups.client.postgresqlDumpAll = true;
 
     services.atuin = {
       enable = true;

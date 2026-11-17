@@ -11,21 +11,7 @@ let
   networkMap = config.homelab.services;
   addr = config.myNixOS.services.tailscale.address;
 
-  # Helium keeps the second copy of every host's archives on its external drive.
-  # Both halves of that arrangement read from here — the paths `borg serve` is
-  # confined to on the server, and the target each client writes to — so the two
-  # cannot drift apart. There is one backup server, so this is a constant rather
-  # than an option, in the same spirit as the hardcoded rsync.net URL below.
-  backupServer = {
-    host = "helium";
-    user = "taxborn";
-    basePath = "/mnt/hdd/borg";
-    # Real sshd, not Tailscale SSH. Tailscale answers 22 on the tailnet address
-    # and authorises by tailnet identity, so an `authorized_keys` entry there is
-    # never read and its forced command never runs. Anything that has to be
-    # confined to one repository has to arrive on a port Tailscale leaves alone.
-    port = 2200;
-  };
+  backupServer = config.homelab.backupServer;
 
   # Paths that are reproducible, volatile, or already represented elsewhere in
   # the archive. Host-specific noise belongs in `extraExcludes`.
@@ -150,8 +136,6 @@ in
 {
   options.myNixOS.services.backups = {
     client = {
-      enable = lib.mkEnableOption "borgmatic backup client";
-
       paths = lib.mkOption {
         type = lib.types.listOf lib.types.str;
         default = [
@@ -232,8 +216,6 @@ in
       };
 
       notify = {
-        enable = lib.mkEnableOption "an ntfy message after each successful backup";
-
         topic = lib.mkOption {
           type = lib.types.str;
           default = "backups";
@@ -282,26 +264,10 @@ in
       };
     };
 
-    server = {
-      enable = lib.mkEnableOption "borg repository server, served over SSH";
-
-      authorizedKeys = lib.mkOption {
-        type = lib.types.attrsOf lib.types.str;
-        default = { };
-        example = lib.literalExpression ''
-          { argon = builtins.readFile "''${self}/secrets/borg/argon/ssh_key.pub"; }
-        '';
-        description = ''
-          Client hostname -> that host's borg SSH public key, authorized for
-          the backup user. Each key is confined to `borg serve` on that
-          client's own repository.
-        '';
-      };
-    };
   };
 
   config = lib.mkMerge [
-    (lib.mkIf cfg.client.enable {
+    {
       # Two destinations for every host: rsync.net off-site, and Helium's
       # external drive over the tailnet.
       myNixOS.services.backups.client.repositories = {
@@ -362,8 +328,7 @@ in
           file = "${self}/secrets/borg/${hostname}/ssh_key.age";
           mode = "0400";
         };
-      }
-      // lib.optionalAttrs cfg.client.notify.enable {
+
         # One write-only token for every host rather than one each. It can
         # publish to a single topic and read nothing, so a host leaking it
         # allows fake "backup ok" messages and no more.
@@ -434,7 +399,7 @@ in
               "compact"
             ];
           }
-          // lib.optionalAttrs cfg.client.notify.enable {
+          // {
             # Success only, on purpose. borgmatic's default is to ping on
             # failure, but a failure message needs the run to get as far as
             # sending one, and the failures that matter here (a wedged borg, a
@@ -536,9 +501,9 @@ in
           CPUSchedulingPolicy = "idle";
         };
       };
-    })
+    }
 
-    (lib.mkIf cfg.server.enable {
+    (lib.mkIf (hostname == backupServer.host) {
       environment.systemPackages = [ pkgs.borgbackup ];
 
       # A repository must never end up inside its own backup. Inert today — the
@@ -607,7 +572,7 @@ in
         {
           assertion = config.services.tailscale.enable && addr != null;
           message = ''
-            myNixOS.services.backups.server binds the borg port to this host's
+            The backup server binds the borg port to this host's
             tailnet address and nowhere else, so the host has to run Tailscale
             and appear in homelab.hosts.
           '';
@@ -631,9 +596,9 @@ in
       # compromised host reaching a shell on 22 by tailnet identity, which only
       # the tailnet ACLs can close.
       users.users.${backupServer.user}.openssh.authorizedKeys.keys = lib.mapAttrsToList (
-        client: pubkey:
-        ''command="${lib.getExe pkgs.borgbackup} serve --append-only --restrict-to-path ${backupServer.basePath}/${client}",restrict ${lib.trim pubkey}''
-      ) cfg.server.authorizedKeys;
+        client: _:
+        ''command="${lib.getExe pkgs.borgbackup} serve --append-only --restrict-to-path ${backupServer.basePath}/${client}",restrict ${lib.trim (builtins.readFile "${self}/secrets/borg/${client}/ssh_key.pub")}''
+      ) (lib.removeAttrs config.homelab.hosts [ backupServer.host ]);
     })
   ];
 }
