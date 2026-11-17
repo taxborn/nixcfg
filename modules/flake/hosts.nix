@@ -36,12 +36,7 @@
             }
           ];
 
-          # `self` and nothing else. Every module in the tree is written
-          # against that one argument, so a package built from an input is
-          # re-exported through
-          # modules/flake/packages.nix and reached as
-          # `self.packages.<system>.<name>`. Widening this for one service
-          # would make `inputs` fair game everywhere.
+          # `self` only. Modules reach input packages through self.packages.
           specialArgs = { inherit self; };
         }
       );
