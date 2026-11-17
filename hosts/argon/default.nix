@@ -32,7 +32,6 @@
   };
 
   myHardware = {
-    intel.cpu.enable = true;
     profiles.ovh = {
       enable = true;
       # OVH gives this instance a second NIC for IPv6; ens3 keeps IPv4.

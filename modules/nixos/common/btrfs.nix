@@ -47,7 +47,6 @@ let
 in
 {
   options.myNixOS.profiles.btrfs = {
-    enable = lib.mkEnableOption "btrfs filesystem configuration";
     deduplicate = lib.mkEnableOption ''
       block-level deduplication with bees.
 
@@ -88,7 +87,7 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = {
     environment.systemPackages = lib.optional cfg.guiTools pkgs.snapper-gui;
 
     # Keep every snapshotted subvolume's `.snapshots` out of the archives.

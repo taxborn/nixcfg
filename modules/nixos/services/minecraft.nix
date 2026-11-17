@@ -15,7 +15,7 @@ let
   hostIP = config.myNixOS.services.tailscale.address;
   inherit (config.myNixOS.services.tailscale) bindOrdering;
   hostname = config.networking.hostName;
-  metricsOn = config.myNixOS.services.monitoring.client.enable && hostIP != null;
+  metricsOn = hostIP != null;
 
   # One account for every server, and never a person's. The servers take
   # connections from the internet and load third-party mods, so whatever runs

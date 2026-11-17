@@ -9,8 +9,6 @@ let
 in
 {
   options.myNixOS.services.tailscale = {
-    enable = lib.mkEnableOption "Tailscale VPN service";
-
     authKeyFile = lib.mkOption {
       description = ''
         Auth key tailscaled logs in with, held in a file so it can come from
@@ -73,7 +71,7 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = {
     assertions = [
       {
         assertion = cfg.authKeyFile != null;

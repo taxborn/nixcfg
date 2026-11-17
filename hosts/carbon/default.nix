@@ -27,7 +27,6 @@
   };
 
   myHardware = {
-    intel.cpu.enable = true;
     profiles.ovh = {
       enable = true;
       ipv6 = {

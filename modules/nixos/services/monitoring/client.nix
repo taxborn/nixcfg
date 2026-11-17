@@ -67,8 +67,6 @@ let
 in
 {
   options.myNixOS.services.monitoring.client = {
-    enable = lib.mkEnableOption "monitoring client (Prometheus exporters and Alloy log shipping)";
-
     logs = lib.mkOption {
       type = lib.types.bool;
       default = true;
@@ -84,7 +82,7 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = {
     assertions = [
       {
         assertion = hostIP != null && serverIP != null;

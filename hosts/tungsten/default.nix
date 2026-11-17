@@ -28,10 +28,7 @@
 
   myHardware = {
     nvidia.gpu.enable = true;
-    intel = {
-      cpu.enable = true;
-      gpu.enable = true;
-    };
+    intel.gpu.enable = true;
     profiles.laptop.enable = true;
   };
 

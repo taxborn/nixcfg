@@ -9,12 +9,6 @@ let
 in
 {
   options.myNixOS.programs.ssh = {
-    enable = lib.mkEnableOption ''
-      known-host pins and the firewall opening for sshd.
-
-      sshd itself comes from `myNixOS.base`
-    '';
-
     openFirewall = lib.mkOption {
       type = lib.types.bool;
       default = true;
@@ -32,7 +26,7 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = {
     programs.ssh.knownHosts = lib.mapAttrs (host: ip: {
       hostNames = [
         host
