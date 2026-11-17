@@ -15,21 +15,11 @@ let
   hostname = config.networking.hostName;
   metricsOn = hostIP != null;
 
-  # One account for every server, and never a person's. The servers take
-  # connections from the internet and load third-party mods, so whatever runs
-  # them is the account an exploit lands in. They ran as `taxborn` while the
-  # packs lived in that home directory. That account is in `wheel`, which
-  # `programs/nix.nix` lists in `trusted-users`, and a trusted user is
-  # root-equivalent. A constant and not an option, so a host cannot set it back.
+  # Never a person's account. The owner is in wheel, a Nix trusted user.
   user = "minecraft";
 
-  # Under /var/lib on purpose. It is one of the backup client's default
-  # `paths`, so a world placed here is archived without the host naming it.
   stateDir = "/var/lib/minecraft";
 
-  # Every server runs the same launcher with the pack's `variables.txt` flags.
-  # The port is not written into `server.properties`, so it has to match
-  # `server-port` there.
   servers = lib.mapAttrs (
     name: server:
     server
@@ -39,13 +29,9 @@ let
       jvmArgs = [
         "-Xmx5G"
         "-Xms5G"
-        # Log4Shell (CVE-2021-44228) mitigation for pack versions whose
-        # bundled log4j predates the fix.
         "-Dlog4j2.formatMsgNoLookups=true"
       ];
       port = 25565;
-      # A modded world saves slowly, and a kill during the save is what this
-      # bound exists to avoid.
       stopTimeout = "5min";
     }
   ) cfg.servers;
@@ -53,12 +39,6 @@ let
 
   stdinOf = name: "/run/minecraft-${name}.stdin";
 
-  # The console is a FIFO, so `stop` can be written by a script and by hand. The
-  # unit has to outlive the write: systemd sends SIGTERM the moment ExecStop
-  # returns, and a modded world takes a while to save. Waiting on the PID keeps
-  # systemd from killing a server in the middle of that save. Same shape as
-  # nixpkgs' `services.minecraft-server`, which this cannot reuse because it
-  # models exactly one server under its own user and data directory.
   stopScript =
     name:
     pkgs.writeShellScript "minecraft-${name}-stop" ''
@@ -113,10 +93,7 @@ in
         '';
       }
     ]
-    # The borgmatic hook at the bottom stops the servers so the archive holds
-    # an idle world. That is wasted on a world borg never walks, and a
-    # directory outside the client's `paths` is one with no backup and nothing
-    # to say so.
+    # A world outside the backup paths has no backup and nothing says so.
     ++ [
       {
         assertion = lib.all (
@@ -137,9 +114,6 @@ in
       home = stateDir;
     };
 
-    # 0750 keeps other local accounts out of the worlds and whitelists. Only
-    # the directories are created. A server's files arrive by hand, and
-    # `ConditionPathExists` on the unit covers the time before they do.
     systemd.tmpfiles.rules = [
       "d ${stateDir} 0750 ${user} ${user} -"
     ]
@@ -154,12 +128,6 @@ in
         allowedUDPPorts = map (server: server.port) exposed;
       };
 
-    # A scanner on the public port sends a truncated handshake. Netty fails to
-    # decode it, prints the stack trace to STDERR and logs the peer as
-    # `lost connection: Internal Exception: ...DecoderException`. Real clients
-    # that drop or time out log a different reason with no DecoderException, so
-    # this line is the scanner's alone. fail2ban only needs to exist where the
-    # port is exposed, and the global ignoreIP keeps the tailnet out of it.
     environment.etc = lib.mapAttrs' (
       name: _:
       lib.nameValuePair "fail2ban/filter.d/minecraft-${name}.conf" {
@@ -186,11 +154,6 @@ in
       }
     ) exposedServers;
 
-    # Heap size is no use as a memory graph: `-Xms` equals `-Xmx`, so it is flat
-    # from the first second. Resident set size is what grows past it (metaspace,
-    # thread stacks, mod native allocations) and what the OOM killer reads,
-    # which is why process-exporter is here at all. `minecraft-exporter` below
-    # covers players, latency and health.
     services.prometheus.exporters.process = lib.mkIf metricsOn {
       enable = true;
       listenAddress = hostIP;
@@ -202,8 +165,6 @@ in
       }) servers;
     };
 
-    # Owned by the service account, so writing `stop` by hand now takes
-    # `sudo -u minecraft` or root.
     systemd.sockets = lib.mapAttrs' (
       name: _:
       lib.nameValuePair "minecraft-${name}" {
@@ -232,25 +193,15 @@ in
           ];
           wants = [ "network-online.target" ];
 
-          # A switch that touches this unit would restart it and kick everyone
-          # connected. The new definition lands on the next start or reboot.
           restartIfChanged = false;
 
-          # The module creates `directory` empty, and a server's files are
-          # copied in by hand. Without this a host deployed before its world
-          # arrives runs java against a missing jar every thirty seconds,
-          # forever: `Restart=on-failure` never gives up, so the unit never
-          # reaches `failed` and nothing alerts on the loop. A skipped unit is
-          # quiet for the same reason, so check `systemctl status` after
-          # moving a world in.
+          # Without this a missing jar loops forever and never reaches failed.
           unitConfig.ConditionPathExists = "${server.directory}/${server.jar}";
 
           serviceConfig = {
             ExecStart = "${lib.getExe' pkgs.jdk17_headless "java"} ${lib.escapeShellArgs server.jvmArgs} -jar ${server.jar} nogui";
             ExecStop = "${stopScript name} $MAINPID";
             TimeoutStopSec = server.stopTimeout;
-            # `stop` from the console exits 0, which `on-failure` leaves alone.
-            # A crash or an OOM kill comes back on its own.
             Restart = "on-failure";
             RestartSec = "30s";
             User = user;
@@ -260,11 +211,6 @@ in
             StandardOutput = "journal";
             StandardError = "journal";
 
-            # The server directory is the only thing on the host this process
-            # can write, and `/home` and `/root` do not exist for it. `ExecStop`
-            # still reaches the console: the FIFO sits on the read-only `/run`,
-            # and the kernel checks a mount's write access for regular files
-            # and directories, not for a FIFO.
             ProtectSystem = "strict";
             ProtectHome = true;
             ReadWritePaths = [ server.directory ];
@@ -288,9 +234,6 @@ in
             RestrictSUIDSGID = true;
             SystemCallArchitectures = "native";
 
-            # AF_UNIX is how glibc reaches nscd for user and host lookups.
-            # AF_NETLINK is how the JVM enumerates interfaces before it binds,
-            # the same call `braxton-is.nix` documents for Node.
             RestrictAddressFamilies = [
               "AF_UNIX"
               "AF_INET"
@@ -298,19 +241,11 @@ in
               "AF_NETLINK"
             ];
 
-            # Two options left off on purpose. `MemoryDenyWriteExecute` kills
-            # any JIT: HotSpot writes machine code into memory and then runs
-            # it, so the JVM aborts at startup. `SystemCallFilter` is off
-            # because mods ship their own native libraries, and a filtered
-            # call is a SIGSYS in the middle of a session that no build or
-            # evaluation can predict. Add one only after watching a real pack
-            # run under it.
+            # MemoryDenyWriteExecute kills the JIT. SystemCallFilter would SIGSYS on mod natives.
           };
         }
       ) servers
       // lib.optionalAttrs metricsOn {
-        # Players, latency and health come from a status ping, the same one the
-        # multiplayer menu sends, so this needs no mod and no `enable-query`.
         prometheus-process-exporter = bindOrdering;
         minecraft-exporter = lib.recursiveUpdate bindOrdering {
           description = "Minecraft status exporter";
@@ -321,10 +256,7 @@ in
             }";
             Restart = "on-failure";
             DynamicUser = true;
-            # mc-monitor has no listen-address flag, so it binds every interface
-            # and the unit has to do what the flag would. Loopback is the ping to
-            # the server, the tailnet range is Prometheus. Nothing else gets a
-            # byte in, whatever the firewall says about the public address.
+            # mc-monitor binds every interface, so the unit restricts who can reach it.
             IPAddressDeny = "any";
             IPAddressAllow = [
               "localhost"
@@ -338,20 +270,7 @@ in
         };
       }
       // {
-        # A running world is not a consistent backup: region files are rewritten
-        # while borg reads them. Stop every server for the nightly run and bring
-        # them back after, so the archive holds a world that was saved and idle.
-        #
-        # Two traps, both on purpose. The stop is `-` prefixed so a server that
-        # will not stop cannot block the backup it was stopped for. And the
-        # restart is ExecStopPost rather than a Conflicts= or After= edge:
-        # Conflicts= works both ways, so starting a server mid-run would stop
-        # borgmatic mid-archive and leave the stale lock the backups module
-        # already documents. ExecStopPost runs when the run fails too.
-        #
-        # `+` runs outside the unit's sandbox, which cannot reach systemd.
-        # This covers the timer only. `borgmatic create` by hand does not go
-        # through this unit and archives a live world.
+        # Stop the servers so the archive holds an idle world. See docs/services.md#minecraft.
         borgmatic.serviceConfig = {
           ExecStartPre = map (name: "-+${systemctl} stop ${unitOf name}") (lib.attrNames servers);
           ExecStopPost = map (name: "+${systemctl} start --no-block ${unitOf name}") (lib.attrNames servers);

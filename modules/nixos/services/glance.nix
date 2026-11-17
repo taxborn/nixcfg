@@ -7,10 +7,6 @@
 let
   networkMap = config.homelab.services;
 
-  # Probes run from Argon, against the public names rather than loopback, so a
-  # red tile means the whole path is broken (DNS, Cloudflare, Caddy, the app)
-  # and not just the process. Tailnet-only names resolve to Helium's tailnet
-  # address, which Argon reaches because it is a peer.
   site =
     {
       title,
@@ -80,10 +76,6 @@ let
     })
   ];
 
-  # Liveness of a host is whether its node_exporter answers on the tailnet,
-  # the same signal Prometheus scrapes. Workstations are expected to be red
-  # when asleep, which is why they sit in their own widget and not beside the
-  # servers.
   roster = config.homelab.hosts;
   nodePort = toString config.homelab.monitoring.ports.nodeExporter;
   alwaysOn = config.homelab.monitoring.alwaysOn;
@@ -102,10 +94,7 @@ in
     environmentFile = config.age.secrets.glance.path;
     enable = true;
     settings = {
-      # The `\${...}` escape keeps Nix from interpolating, so the literal
-      # reaches Glance, which expands it from the EnvironmentFile at runtime.
-      # Written any other way the values land in the settings JSON the module
-      # renders into the nix store.
+      # Escaped so Glance expands these at runtime and they stay out of the store.
       auth = {
         secret-key = "\${GLANCE_SECRET_KEY}";
         users.taxborn.password = "\${GLANCE_USER_PASSWORD}";
@@ -113,11 +102,6 @@ in
       server = {
         port = config.homelab.services.glance.port;
       };
-      # Catppuccin Mocha with the Mauve accent, typed out rather than
-      # inherited. This option takes raw HSL triples, and there is no
-      # `catppuccin.glance` module for the tree-wide `autoEnable` to find, so
-      # this is the one place the palette is written by hand. The bookmark
-      # group colours below are Blue and Pink out of the same palette.
       theme = {
         background-color = "240 21 15";
         contrast-multiplier = 1.2;
@@ -325,9 +309,6 @@ in
               size = "small";
               widgets = [
                 {
-                  # The local server only. Glance reads this host's own
-                  # /proc, so this is Argon and says nothing of the others,
-                  # which the node checks beside it cover.
                   type = "server-stats";
                   servers = [
                     {
