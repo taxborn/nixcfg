@@ -5,8 +5,6 @@
 }:
 let
 
-  # A ban that lands inside either range is a ban on the path used to lift the
-  # ban.
   tailnetRanges = config.homelab.tailnet.ranges;
 
   isIPv4 = addr: !(lib.hasInfix ":" addr);
@@ -18,24 +16,20 @@ let
     let
       parts = lib.splitString "/" cidr;
       network = ipv4ToInt (lib.head parts);
-      # No shift operator in Nix, so double a prefix's worth of times.
+      # No shift operator in Nix.
       size = lib.foldl' (acc: _: acc * 2) 1 (lib.range 1 (32 - lib.toInt (lib.elemAt parts 1)));
       address = ipv4ToInt addr;
     in
     address >= network && address < network + size;
 
-  # v6 addresses fall through as uncovered rather than being waved past, so a
-  # roster that grows one trips the assertion instead of the ban.
+  # IPv6 addresses count as uncovered, so a new one trips the assertion instead of a ban.
   covered =
     addr: isIPv4 addr && lib.any (cidr: containsIPv4 cidr addr) (lib.filter isIPv4 tailnetRanges);
 
   uncovered = lib.filter (addr: !covered addr) (lib.attrValues config.homelab.hosts);
 in
 {
-  # fail2ban hooks its ban chains onto the head of INPUT, ahead of the
-  # firewall's accept for trustedInterfaces, so ignoreip is the only thing
-  # holding the tailnet open. That makes the roster and the ranges below a
-  # pair that has to agree, and nothing else checks that they do.
+  # fail2ban runs ahead of trustedInterfaces, so ignoreIP alone keeps a ban off the tailnet.
   assertions = [
     {
       assertion = uncovered == [ ];
@@ -59,13 +53,8 @@ in
       maxtime = "168h";
     };
 
-    # The tailnet is the whole exemption. A public address stays bannable,
-    # including my own, which is the point of the jail. It costs no access,
-    # because tailnet SSH answers on a different address and that one is
-    # covered here.
     ignoreIP = tailnetRanges;
 
-    # Tighter than the global maxretry. The module already declares the jail.
     jails.sshd.settings.maxretry = 3;
   };
 }
