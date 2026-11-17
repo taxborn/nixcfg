@@ -13,100 +13,50 @@ let
 
   backupServer = config.homelab.backupServer;
 
-  # Paths that are reproducible, volatile, or already represented elsewhere in
-  # the archive. Host-specific noise belongs in `extraExcludes`.
   commonExcludes = [
-    # rebuilt from the flake
     "/nix"
 
-    # runtime and volatile state
     "/tmp"
     "/var/tmp"
     "/run"
     "/var/lib/systemd"
     "/var/log/journal"
 
-    # snapper snapshots of /home, which is backed up directly
     "/home/.snapshots"
 
-    # Build artifacts, under the one directory that holds checkouts. These
-    # read `**/target` and so on until 2026-11-10, which matched under
-    # /var/lib as well: borg's default pattern style lets `*` cross a slash,
-    # so a knot branch named `feat/target` lost its loose ref file from every
-    # archive with nothing reported. Checked with `borg create --dry-run
-    # --list` against a scratch tree, old patterns and new.
+    # Scoped to ~/dev. A bare `**/target` once matched a knot ref under /var/lib.
     "/home/${config.homelab.owner.username}/dev/**/target"
     "/home/${config.homelab.owner.username}/dev/**/node_modules"
     "/home/${config.homelab.owner.username}/dev/**/__pycache__"
   ];
 
-  # Everything a desktop $HOME accumulates that is large, rewritten constantly,
-  # and either regenerated on demand or re-downloadable. `commonExcludes` was
-  # written against servers, where /home holds a shell history and little else;
-  # on a workstation those same three source directories pull in browser and
-  # Electron caches, Steam's runtime, and every virtualenv and direnv on the
-  # machine. That is tens of gigabytes of pure churn going off-site nightly —
-  # the same problem uranium's compatdata split solves, one directory over, and
-  # worse, because none of it dedups between runs.
   desktopExcludes = [
-    # XDG cache, and the same directory wherever else it turns up
     "**/.cache"
 
-    # Chromium and Electron apps keep caches under .config, not .cache, so the
-    # pattern above misses them entirely — this is most of the win on a machine
-    # running an editor and a chat client.
     "**/.config/*/Cache"
     "**/.config/*/CachedData"
     "**/.config/*/Code Cache"
     "**/.config/*/GPUCache"
     "**/.config/*/Service Worker/CacheStorage"
 
-    # Steam's default library and its runtimes. On uranium the library itself
-    # lives on the games drive, but the runtime and shader caches still land
-    # here, and on a host without that drive this is the whole library.
     "/home/*/.local/share/Steam"
     "/home/*/.steam"
 
-    # flatpak runtimes and per-app caches
     "/home/*/.local/share/flatpak"
     "/home/*/.var/app/*/cache"
 
-    # already deleted
     "/home/*/.local/share/Trash"
 
-    # reproducible from a lockfile, a flake, or the network
     "**/.venv"
     "**/.direnv"
     "**/.gradle/caches"
     "**/.cargo/registry"
   ];
 
-  # Whether this host replaces a live database with a logical dump in the
-  # archive. Everything below that is about dumps rather than about one
-  # particular engine keys off this, so adding a third hook later is one more
-  # disjunct rather than a sweep through the file.
   takesDumps = cfg.postgresqlDumpAll || cfg.sqliteDatabases != { };
 
-  # borgmatic stages database dumps on disk and hands borg the staging path as
-  # an extra source, so an exclude covering that path silently drops the dump:
-  # the dump still runs, the archive is still created, borgmatic still reports
-  # success, and the database is simply not in the backup. Nothing surfaces it
-  # except restoring — or the dump assertion in `scripts/backup-restore-test.sh`,
-  # which is how this was caught.
-  #
-  # Which path it uses depends on how borgmatic was started, so both have to
-  # go, and the list drops `/var/tmp` alongside them:
-  #   /run  — the packaged unit sets RuntimeDirectory=borgmatic, giving
-  #           /run/./borgmatic (the `/./` is borg's slashdot hack, so the
-  #           archive stores it as plain `borgmatic/…`)
-  #   /tmp  — the fallback when neither XDG_RUNTIME_DIR nor a systemd
-  #           RuntimeDirectory is set, which is the case running `borgmatic`
-  #           by hand over ssh, exactly as the restore test does
-  #
-  # Dropping these is safe as long as `paths` stays below them, which it is:
-  # /home, /var/lib, and /etc never traverse /run, /tmp, or /var/tmp, so the
-  # excludes were inert for file selection and doing nothing but this harm.
-  # Revisit if a host ever backs up / or /var wholesale.
+  # An exclude covering the dump staging path drops every database from the archive
+  # while borgmatic still reports success. See docs/backups.md#databases.
   dumpStagingPaths = [
     "/run"
     "/tmp"
@@ -253,8 +203,6 @@ in
 
   config = lib.mkMerge [
     {
-      # Two destinations for every host: rsync.net off-site, and Helium's
-      # external drive over the tailnet.
       homelab.backups.repositories = {
         rsync = lib.mkDefault {
           path = "ssh://${config.homelab.rsyncNet.user}@${config.homelab.rsyncNet.host}/./borg/${hostname}";
@@ -266,21 +214,16 @@ in
           label = backupServer.host;
           path =
             if hostname == backupServer.host then
-              # The server reaches its own repository through the filesystem
-              # rather than ssh'ing to itself.
               "${backupServer.basePath}/${hostname}"
             else
-              # borg reads a single slash after the host as home-relative, so
-              # the leading slash of basePath is what makes this absolute.
+              # The double slash makes the path absolute.
               "ssh://${backupServer.user}@${
                 config.homelab.hosts.${backupServer.host}
               }:${toString backupServer.port}/${backupServer.basePath}/${hostname}";
         };
       };
 
-      # known_hosts matches a non-default port as `[name]:port`, so the pin the
-      # snippet holds for port 22 does not cover this one, and the first backup
-      # would stop at an unknown host key.
+      # known_hosts matches a non-default port separately from 22.
       programs.ssh.knownHosts."${backupServer.host}-borg" = {
         hostNames = [
           "[${config.homelab.hosts.${backupServer.host}}]:${toString backupServer.port}"
@@ -288,12 +231,7 @@ in
         publicKeyFile = "${self}/keys/root_${backupServer.host}.pub";
       };
 
-      # rsync.net's host keys, pinned so the first connection is not trust on
-      # first use. Taken with ssh-keyscan and checked against the PGP-signed
-      # list at https://www.rsync.net/resources/fingerprints.txt, where the
-      # three SHA256 fingerprints match the de6 to de9 entries. If rsync.net
-      # rotates them the backup stops at an unknown host key, which is the
-      # point; re-verify against that list before replacing these.
+      # Verified against rsync.net's signed fingerprint list. Re-verify before replacing.
       programs.ssh.knownHosts."rsync-net-ed25519" = {
         hostNames = [ config.homelab.rsyncNet.host ];
         publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIObQN4P/deJ/k4P4kXh6a9K4Q89qdyywYetp9h3nwfPo";
@@ -314,9 +252,6 @@ in
           mode = "0400";
         };
 
-        # One write-only token for every host rather than one each. It can
-        # publish to a single topic and read nothing, so a host leaking it
-        # allows fake "backup ok" messages and no more.
         ntfyToken = {
           file = "${self}/secrets/ntfy/token.age";
           mode = "0400";
@@ -326,8 +261,6 @@ in
       services.borgmatic = {
         enable = true;
 
-        # One borgmatic configuration per repository: `remote_path` is per-config,
-        # and rsync.net needs it. borgmatic's timer walks every config in one run.
         configurations = lib.mapAttrs (
           _: repo:
           {
@@ -336,10 +269,8 @@ in
             exclude_patterns =
               (if takesDumps then lib.subtractLists dumpStagingPaths commonExcludes else commonExcludes)
               ++ lib.optionals cfg.desktopExcludes desktopExcludes
-              # superseded by the logical dumps configured below
               ++ lib.optional cfg.postgresqlDumpAll "/var/lib/postgresql"
-              # the trailing glob takes the `-wal` and `-shm` sidecars with it,
-              # which are half the database while the service is running
+              # The glob takes the -wal and -shm sidecars with the database.
               ++ lib.mapAttrsToList (_: path: "${path}*") cfg.sqliteDatabases
               ++ cfg.extraExcludes;
             exclude_if_present = [ ".nobackup" ];
@@ -370,36 +301,17 @@ in
             remote_path = repo.remotePath;
           }
           // lib.optionalAttrs (lib.hasPrefix "ssh://" repo.path) {
-            # Both servers run this client's key with `--append-only`, so a
-            # prune from here would log deletions the server never applies,
-            # and compact would reclaim nothing. Skipping them keeps the
-            # nightly run from reporting work it did not do. Retention is
-            # applied by `just borg-maintain` from a workstation, with the
-            # operator's own unrestricted key. It reads `retention` above, so
-            # the keep_* values stay in this file. Local repositories (Helium's
-            # own, Uranium's SSD) have no server to enforce append-only and
-            # keep pruning as before.
+            # The servers enforce append-only, so prune and compact would do nothing.
             skip_actions = [
               "prune"
               "compact"
             ];
           }
           // {
-            # Success only, on purpose. borgmatic's default is to ping on
-            # failure, but a failure message needs the run to get as far as
-            # sending one, and the failures that matter here (a wedged borg, a
-            # host that is down) never do. A message that stops arriving is
-            # the signal, so the thing to send is the one that only a working
-            # backup can.
-            #
-            # borgmatic runs once per repository, so every host sends one
-            # message per copy. The label in the title is what tells the
-            # rsync.net one from Helium's.
+            # Success only. A message that stops arriving is the signal.
             ntfy = {
               server = "https://${networkMap.ntfy.domain}";
               topic = config.homelab.ntfy.topics.backups;
-              # An `access_token` rather than a username and password, so the
-              # credential is scoped to the one write-only user.
               access_token = "{credential file ${config.age.secrets.ntfyToken.path}}";
               states = [ "finish" ];
               finish = {
@@ -411,16 +323,8 @@ in
             };
           }
           // lib.optionalAttrs cfg.postgresqlDumpAll {
-            # `username` with no `password` and no `pg_dump_command` is load
-            # bearing in a way that is easy to undo by accident: that exact
-            # combination is what makes the nixpkgs borgmatic module wrap the
-            # dump in `sudo -u postgres` *and* relax the hardened unit
-            # (NoNewPrivileges = false, CAP_SETUID/CAP_SETGID) so the user
-            # switch is permitted. Supplying an equivalent command by hand —
-            # runuser, or an explicit pg_dumpall — opts out of that relaxation
-            # and the dump dies with "cannot set groups: Operation not
-            # permitted". The user switch itself is needed because the cluster
-            # trusts peer authentication, not a password.
+            # This exact shape (username, no password, no command) is what lets the nixpkgs
+            # module relax the unit for `sudo -u postgres`. See docs/backups.md#databases.
             postgresql_databases = [
               {
                 name = "all";
@@ -429,10 +333,7 @@ in
             ];
           }
           // lib.optionalAttrs (cfg.sqliteDatabases != { }) {
-            # No `username` here, and deliberately: borgmatic reads the file
-            # directly and the unit already runs as root, so there is no user to
-            # switch to and none of the postgres hook's unit relaxation applies.
-            # The nixpkgs module fills in `sqlite_command` from pkgs.sqlite.
+            # No username: a SQLite dump must not trigger the postgres unit relaxation.
             sqlite_databases = lib.mapAttrsToList (name: path: {
               inherit name path;
             }) cfg.sqliteDatabases;
@@ -441,46 +342,13 @@ in
       };
 
       systemd.services.borgmatic = {
-        # A `nixos-rebuild switch` has no business touching a backup that is
-        # already running, and by default it restarts this unit like any other.
-        # That does two bad things at once: the switch blocks on the start job
-        # for as long as a full run takes, and the SIGTERM that precedes the
-        # restart kills borg mid-archive, leaving a stale lock in
-        # /root/.cache/borg that the replacement run then times out against.
-        # Argon lost eight days of backups to exactly that sequence. The timer
-        # decides when a backup runs; a configuration change lands on the next
-        # scheduled one.
+        # A switch must not restart a running backup. See docs/backups.md#the-borgmatic-unit.
         restartIfChanged = false;
 
         serviceConfig = {
-          # `Type=oneshot` defaults TimeoutStartSec to infinity, so a run that
-          # wedges sits in `activating` forever instead of failing. That is how
-          # those eight days went unnoticed: the fleet alert watches
-          # `node_systemd_unit_state{state="failed"}`, and a unit that never
-          # fails never alerts. The wedge itself is borgmatic's — when borg
-          # exits early, the database dump processes are left blocked writing
-          # to a named pipe nothing will ever read. Six hours is far past any
-          # run these hosts do, so the only thing this bound catches is a hang,
-          # and it turns that hang into something the alert can see.
-          #
-          # Recovery after one fires is `borgmatic break-lock`, since the
-          # timeout kill leaves behind the same stale lock a switch used to.
-          # Deliberately not automated: breaking a lock a live borg still holds
-          # is worse than the wedge.
+          # Turns a wedged run into a failed unit the alert can see.
           TimeoutStartSec = "6h";
 
-          # The packaged timer is `OnCalendar=daily` with `Persistent=true`,
-          # which is the right shape and should stay: on a laptop asleep at
-          # midnight the catch-up run is the only run that ever happens. The
-          # cost is that it fires the instant the machine wakes — on Tungsten
-          # it last started in the same second as resume — and then spends a
-          # minute and a half competing with a desktop that is still coming up.
-          #
-          # The fix is priority, not schedule. borg is I/O bound, so idle I/O
-          # scheduling is what does the work here; the CPU settings just keep
-          # the compression from being felt. The backup still starts promptly,
-          # which is what a machine that is rarely awake needs, it simply
-          # yields to anything a person is waiting on.
           Nice = 19;
           IOSchedulingClass = "idle";
           CPUSchedulingPolicy = "idle";
@@ -491,16 +359,10 @@ in
     (lib.mkIf (hostname == backupServer.host) {
       environment.systemPackages = [ pkgs.borgbackup ];
 
-      # A repository must never end up inside its own backup. Inert today — the
-      # default source directories don't reach the drive — but load-bearing the
-      # moment a data service living there joins the backup set.
+      # A repository must never end up inside its own backup.
       homelab.backups.extraExcludes = [ backupServer.basePath ];
 
-      # The drive is mounted `nofail`, so it can be absent at boot. Creating the
-      # base directory as an unprivileged user, and only once the mount is up,
-      # means a missing drive fails the backup loudly instead of quietly filling
-      # the root filesystem with archives — /mnt/hdd itself is root-owned 0755,
-      # so `borg serve` cannot create anything under it on its own.
+      # Fails loudly on a missing drive instead of filling the root filesystem.
       systemd.services.borg-repo-base = {
         description = "Create the borg repository base directory";
         wantedBy = [ "multi-user.target" ];
@@ -513,17 +375,7 @@ in
         };
       };
 
-      # 22 keeps listening on every interface, as before. 2200 binds the
-      # tailnet address alone, so it exists nowhere else even if the firewall
-      # is ever opened or `tailscale0` stops being trusted. The closed firewall
-      # used to be the only thing keeping it there. `openFirewall` stays off
-      # because it would open both ports, and 22 stays open through
-      # `programs.ssh` instead.
-      #
-      # An explicit port on any `listenAddresses` entry replaces sshd's
-      # wildcard listener, so 22 has to be listed for both families or it
-      # would vanish. `ports` stays at 22 so a stray `Port` line cannot put
-      # 2200 back on the wildcard.
+      # 2200 binds the tailnet address only. 22 is listed for both families or it vanishes.
       services.openssh = {
         openFirewall = false;
         ports = [ 22 ];
@@ -543,11 +395,6 @@ in
         ];
       };
 
-      # The tailnet address only exists once tailscaled is Running. sshd carries
-      # on with the listeners that did bind, so losing the race at boot leaves
-      # 22 answering and 2200 dead, and every client's backup refused with
-      # notifications success-only. The nixpkgs unit sets its own restart
-      # policy, so the shared values are forced.
       systemd.services.sshd = lib.recursiveUpdate config.homelab.tailscale.bindOrdering {
         unitConfig.StartLimitIntervalSec = lib.mkForce 0;
         serviceConfig.RestartSec = lib.mkForce 5;
@@ -564,22 +411,7 @@ in
         }
       ];
 
-      # Each client key can run `borg serve` on its own repository and nothing
-      # else, whatever command it asks for. `restrict` drops the pty,
-      # forwarding and agent access the entry would otherwise grant. The full
-      # store path is needed because a forced command runs without the system
-      # PATH.
-      #
-      # `--append-only` means a client can add archives and read its own, but
-      # whatever it deletes or prunes is only logged, not applied, so a
-      # compromised host cannot erase its history. The cost is that nothing
-      # reclaims space from the client side: `just borg-maintain` does it from
-      # a workstation over port 22, where the operator's tailnet identity runs
-      # an unrestricted `borg serve`.
-      #
-      # This confines a key arriving on `backupServer.port`. It does not stop a
-      # compromised host reaching a shell on 22 by tailnet identity, which only
-      # the tailnet ACLs can close.
+      # Each key can only append to its own repository.
       users.users.${backupServer.user}.openssh.authorizedKeys.keys = lib.mapAttrsToList (
         client: _:
         ''command="${lib.getExe pkgs.borgbackup} serve --append-only --restrict-to-path ${backupServer.basePath}/${client}",restrict ${lib.trim (builtins.readFile "${self}/secrets/borg/${client}/ssh_key.pub")}''
