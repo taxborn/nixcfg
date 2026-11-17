@@ -15,13 +15,7 @@
       description = config.homelab.owner.name;
       uid = 1000;
       isNormalUser = true;
-      # `mutableUsers = false` below, so `passwd` does not survive a rebuild
-      # and the hash has to be declared to exist at all. It lives in an agenix
-      # secret because this repo is pushed to a public knot, and the hash is the
-      # sudo password on every host. agenix orders its decryption before the
-      # `users` activation script, so the file exists when accounts are created.
-      # If it were ever missing the account would have no password and `sudo`
-      # would lock out, so keep a root session open while switching.
+      # mutableUsers is false. If this file is missing sudo locks out, so keep a root shell open.
       hashedPasswordFile = config.age.secrets.taxbornPassword.path;
       extraGroups = [
         "networkmanager"

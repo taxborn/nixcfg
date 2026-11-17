@@ -33,21 +33,11 @@
   };
 
   services = {
-    # Monthly rather than the weekly default. Every btrfs mount in
-    # `modules/disko` carries `discard=async` and every LUKS volume allows
-    # discards, so extents are trimmed as they are freed and this pass mostly
-    # repeats that work. On Tungsten it still spent over two minutes of I/O
-    # finding leftovers. Kept rather than dropped because it covers the one
-    # thing async discard cannot, which is space the filesystem never
-    # allocated in the first place.
     fstrim = {
       enable = true;
       interval = "monthly";
     };
-    # Scrub and mdadm report damage that has already happened. SMART is the
-    # part that warns beforehand. `mkDefault` so the OVH profile can turn it
-    # off, where there is no SMART behind virtio and smartd fails to start
-    # rather than idling with nothing to register.
+    # mkDefault so the OVH module can turn it off.
     smartd = {
       enable = lib.mkDefault true;
       autodetect = true;
@@ -62,30 +52,14 @@
   };
 
   boot.kernel.sysctl = {
-    # Nothing here replaces a running kernel with kexec, and an attacker with
-    # root could use it to load one that skips the module and lockdown checks.
-    # One-way until the next boot. nixos-anywhere kexecs into an installer on
-    # a target that has no config of ours yet, so provisioning is unaffected.
+    # One-way until reboot.
     "kernel.kexec_load_disabled" = true;
 
-    # Stricter than the NixOS defaults of 1. Hides kernel pointers from root
-    # as well, and stops O_CREAT opens of other users' FIFOs and regular
-    # files in sticky world-writable directories. A tool that deliberately
-    # writes into another user's file in /tmp is the thing that breaks.
     "kernel.kptr_restrict" = 2;
     "fs.protected_fifos" = 2;
     "fs.protected_regular" = 2;
   };
 
-  # nsncd is ordered `Before=nss-lookup.target nss-user-lookup.target`, and
-  # both targets are restarted several times during boot as units that want
-  # them are pulled in. Each restart cycles nscd, four times inside five
-  # seconds on uranium, which is enough to trip systemd's default limit of
-  # five starts in ten seconds. The unit then latches failed with
-  # `start-limit-hit` and takes both targets down with it, so name service
-  # caching is gone for the rest of the boot. Nothing about that is loud. It
-  # is logged once, at boot, and `Restart=always` cannot recover a unit
-  # systemd has stopped issuing start jobs for.
   systemd.services.nscd.unitConfig.StartLimitIntervalSec = 0;
 
   environment = {

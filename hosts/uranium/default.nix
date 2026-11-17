@@ -12,8 +12,6 @@
     ./disko.nix
   ];
 
-  # Apps only this machine wants. The shared workstation home cannot vary per
-  # host, so the host adds to it.
   home-manager.users.${config.homelab.owner.username} = {
     home.packages = with pkgs; [
       via
@@ -21,9 +19,7 @@
     ];
   };
 
-  # `libvirtd` is what lets virt-manager manage system VMs without a root
-  # prompt each time. The group is root-equivalent on this machine, which is
-  # the same trade the `wheel` membership already makes.
+  # The libvirtd group is root-equivalent, the same trade as wheel.
   users.users.${config.homelab.owner.username}.extraGroups = [ "libvirtd" ];
 
   nixpkgs.hostPlatform = "x86_64-linux";
@@ -31,45 +27,29 @@
   system.stateVersion = "25.11";
 
   programs = {
-    # No `remotePlay.openFirewall` or `dedicatedServer.openFirewall`. Together
-    # they opened 27015, 27036 and 27037 and five UDP ports to every
-    # interface. Remote Play to a device on the tailnet still connects, since
-    # `tailscale0` is trusted. Streaming to a device on the LAN alone needs
-    # `remotePlay.openFirewall` back.
+    # No Steam firewall options. Together they opened eight ports to every interface.
     steam.enable = true;
     gamemode.enable = true;
   };
 
   services = {
-    # services.scx was removed upstream in favour of scx_loader.
     scx-loader = {
       enable = true;
       config.default_sched = "scx_lavd";
     };
   };
 
-  # Large closures (games, toolchains) build here. Start collecting at 5 GiB
-  # free and stop at 20 GiB rather than stalling mid-build on a full store.
   nix.settings = {
     min-free = 5 * 1024 * 1024 * 1024;
     max-free = 20 * 1024 * 1024 * 1024;
   };
 
   boot = {
-    # Make accelerated AES available when stage 1 opens cryptroot. dm-crypt
-    # allocates its cipher then; loading a faster implementation after opening
-    # the mapping does not replace that cipher. A missing initrd module can
-    # therefore leave a working root filesystem on a slower implementation.
+    # dm-crypt picks its cipher in stage 1. A faster module loaded later does not replace it.
     initrd.availableKernelModules = [ "aesni_intel" ];
     kernelParams = [
       "intel_iommu=on"
-      # Nothing here is passed through to a VM, so devices need no translation.
-      # Identity-map them and keep the IOMMU for isolation without paying for
-      # DMA remapping on every transfer.
       "iommu=pt"
-      # A desktop on mains power. Autosuspend is what makes the MX Master
-      # receiver, the QMK board and the YubiKey drop and re-enumerate. Costs
-      # battery, so not set on the laptop.
       "usbcore.autosuspend=-1"
     ];
   };
@@ -98,11 +78,6 @@
     "d /games/steamapps/compatdata 0755 ${config.homelab.owner.username} users -"
   ];
 
-  # With intel_pstate in active HWP mode, powersave still permits the full
-  # frequency range. Set the performance hint for this desktop without using
-  # the performance governor, which restricts HWP to the highest allowed
-  # P-state. These are separate controls despite sharing the word performance.
-  # https://docs.kernel.org/admin-guide/pm/intel_pstate.html#active-mode-with-hwp
   systemd.services.cpu-epp = {
     description = "Bias HWP toward performance rather than balance_performance";
     wantedBy = [ "multi-user.target" ];

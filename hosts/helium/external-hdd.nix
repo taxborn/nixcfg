@@ -6,10 +6,6 @@ _: {
       "defaults"
       "nofail"
       "noatime"
-      # USB-attached spinning rust does not implement FITRIM, and fstrim exits
-      # 64 on the EREMOTEIO. It has already trimmed every other filesystem by
-      # then, so nothing goes untrimmed and the unit fails anyway. That is what
-      # kept fstrim.service permanently red here.
       "X-fstrim.notrim"
     ];
   };

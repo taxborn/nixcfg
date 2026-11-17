@@ -16,8 +16,6 @@
   networking.hostName = "carbon";
   system.stateVersion = "25.11";
 
-  # For friends, so it is reachable without the tailnet. The world lives in
-  # the module's default, /var/lib/minecraft/mavs-updated.
   homelab.minecraft.servers.mavs-updated.openFirewall = true;
 
   homelab.ovh.ipv6 = {
