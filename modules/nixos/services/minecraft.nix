@@ -8,7 +8,6 @@ let
   cfg = config.myNixOS.services.minecraft;
   systemctl = lib.getExe' config.systemd.package "systemctl";
   unitOf = name: "minecraft-${name}.service";
-  exposedServers = lib.filterAttrs (_: server: server.openFirewall) cfg.servers;
 
   monitoring = config.homelab.monitoring;
   hostIP = config.myNixOS.services.tailscale.address;
@@ -27,6 +26,30 @@ let
   # Under /var/lib on purpose. It is one of the backup client's default
   # `paths`, so a world placed here is archived without the host naming it.
   stateDir = "/var/lib/minecraft";
+
+  # Every server runs the same launcher with the pack's `variables.txt` flags.
+  # The port is not written into `server.properties`, so it has to match
+  # `server-port` there.
+  servers = lib.mapAttrs (
+    name: server:
+    server
+    // {
+      directory = "${stateDir}/${name}";
+      jar = "fabric-server-launcher.jar";
+      jvmArgs = [
+        "-Xmx5G"
+        "-Xms5G"
+        # Log4Shell (CVE-2021-44228) mitigation for pack versions whose
+        # bundled log4j predates the fix.
+        "-Dlog4j2.formatMsgNoLookups=true"
+      ];
+      port = 25565;
+      # A modded world saves slowly, and a kill during the save is what this
+      # bound exists to avoid.
+      stopTimeout = "5min";
+    }
+  ) cfg.servers;
+  exposedServers = lib.filterAttrs (_: server: server.openFirewall) servers;
 
   stdinOf = name: "/run/minecraft-${name}.stdin";
 
@@ -61,77 +84,25 @@ in
         reference for the flags below.
       '';
       type = lib.types.attrsOf (
-        lib.types.submodule (
-          { name, ... }:
-          {
-            options = {
-              directory = lib.mkOption {
-                type = lib.types.path;
-                default = "${stateDir}/${name}";
-                defaultText = lib.literalExpression ''"/var/lib/minecraft/''${name}"'';
-                description = ''
-                  Directory holding the server jar, `world/` and `server.properties`.
-                  The `minecraft` user must own everything in it. The module
-                  creates the directory itself and nothing inside it.
-
-                  It is the only path the unit can write, and `/home` is hidden
-                  from the server, so a pack cannot stay in a home directory. When
-                  the backup client is on, an assertion requires it to sit under
-                  one of the client's `paths`.
-                '';
-              };
-              jar = lib.mkOption {
-                type = lib.types.str;
-                default = "fabric-server-launcher.jar";
-                description = "Launcher jar, relative to `directory`.";
-              };
-              jvmArgs = lib.mkOption {
-                type = lib.types.listOf lib.types.str;
-                default = [
-                  "-Xmx5G"
-                  "-Xms5G"
-                  # Log4Shell (CVE-2021-44228) mitigation for pack versions whose
-                  # bundled log4j predates the fix.
-                  "-Dlog4j2.formatMsgNoLookups=true"
-                ];
-                description = "Arguments for the JVM, matching the pack's `variables.txt`.";
-              };
-              openFirewall = lib.mkOption {
-                type = lib.types.bool;
-                default = false;
-                description = ''
-                  Open `port` to the internet, TCP and UDP. Minecraft speaks its own
-                  protocol, so Caddy cannot front it and this is a deliberate
-                  exception to the loopback-only rule. UDP is for voice chat mods and
-                  Bedrock-style clients. Closed by default.
-                '';
-              };
-              port = lib.mkOption {
-                type = lib.types.port;
-                default = 25565;
-                description = ''
-                  Port the server listens on. Nothing here writes it into
-                  `server.properties`, so it must match `server-port` there. Only
-                  `openFirewall` reads it.
-                '';
-              };
-              stopTimeout = lib.mkOption {
-                type = lib.types.str;
-                default = "5min";
-                description = ''
-                  How long a `stop` may take before systemd kills the server. A
-                  modded world saves slowly, and a kill during the save is the
-                  failure this bound exists to avoid, so it is generous.
-                '';
-              };
+        lib.types.submodule {
+          options = {
+            openFirewall = lib.mkOption {
+              type = lib.types.bool;
+              default = false;
+              description = ''
+                Open `port` to the internet, TCP and UDP. Minecraft speaks its own
+                protocol, so Caddy cannot front it and this is a deliberate
+                exception to the loopback-only rule. UDP is for voice chat mods and
+                Bedrock-style clients. Closed by default.
+              '';
             };
-          }
-        )
+          };
+        }
       );
     };
   };
 
-  config = lib.mkIf (cfg.servers != { }) {
+  config = lib.mkIf (servers != { }) {
     assertions = [
       {
         assertion = lib.elem hostname monitoring.minecraftHosts;
@@ -153,7 +124,7 @@ in
           lib.any (
             path: lib.hasPrefix "${path}/" "${server.directory}/"
           ) config.myNixOS.services.backups.client.paths
-        ) (lib.attrValues cfg.servers);
+        ) (lib.attrValues servers);
         message = ''
           Every myNixOS.services.minecraft server directory on ${hostname} must
           sit under one of myNixOS.services.backups.client.paths, or its world
@@ -175,7 +146,7 @@ in
     systemd.tmpfiles.rules = [
       "d ${stateDir} 0750 ${user} ${user} -"
     ]
-    ++ lib.mapAttrsToList (_: server: "d ${server.directory} 0750 ${user} ${user} -") cfg.servers;
+    ++ lib.mapAttrsToList (_: server: "d ${server.directory} 0750 ${user} ${user} -") servers;
 
     networking.firewall =
       let
@@ -231,7 +202,7 @@ in
         name = "minecraft-${name}";
         comm = [ "java" ];
         cmdline = [ ".*-jar ${lib.escapeRegex server.jar}.*" ];
-      }) cfg.servers;
+      }) servers;
     };
 
     # Owned by the service account, so writing `stop` by hand now takes
@@ -249,7 +220,7 @@ in
           FlushPending = true;
         };
       }
-    ) cfg.servers;
+    ) servers;
 
     systemd.services =
       lib.mapAttrs' (
@@ -339,7 +310,7 @@ in
             # run under it.
           };
         }
-      ) cfg.servers
+      ) servers
       // lib.optionalAttrs metricsOn {
         # Players, latency and health come from a status ping, the same one the
         # multiplayer menu sends, so this needs no mod and no `enable-query`.
@@ -349,9 +320,7 @@ in
           wantedBy = [ "multi-user.target" ];
           serviceConfig = {
             ExecStart = "${lib.getExe pkgs.mc-monitor} export-for-prometheus -port ${toString monitoring.ports.minecraftExporter} -servers ${
-              lib.concatMapStringsSep "," (server: "127.0.0.1:${toString server.port}") (
-                lib.attrValues cfg.servers
-              )
+              lib.concatMapStringsSep "," (server: "127.0.0.1:${toString server.port}") (lib.attrValues servers)
             }";
             Restart = "on-failure";
             DynamicUser = true;
@@ -387,10 +356,8 @@ in
         # This covers the timer only. `borgmatic create` by hand does not go
         # through this unit and archives a live world.
         borgmatic.serviceConfig = {
-          ExecStartPre = map (name: "-+${systemctl} stop ${unitOf name}") (lib.attrNames cfg.servers);
-          ExecStopPost = map (name: "+${systemctl} start --no-block ${unitOf name}") (
-            lib.attrNames cfg.servers
-          );
+          ExecStartPre = map (name: "-+${systemctl} stop ${unitOf name}") (lib.attrNames servers);
+          ExecStopPost = map (name: "+${systemctl} start --no-block ${unitOf name}") (lib.attrNames servers);
         };
       };
   };

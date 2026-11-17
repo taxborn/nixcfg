@@ -9,19 +9,6 @@ let
 in
 {
   options.myNixOS.services.tailscale = {
-    authKeyFile = lib.mkOption {
-      description = ''
-        Auth key tailscaled logs in with, held in a file so it can come from
-        agenix. Defaults to the secret this module declares.
-
-        Null is a build failure, by the assertion below, rather than a host
-        that quietly comes up unjoined. Off the tailnet it has no route to the
-        backup server and no Tailscale SSH to be fixed over.
-      '';
-      default = config.age.secrets.tailscaleAuthKey.path or null;
-      type = lib.types.nullOr lib.types.path;
-    };
-
     address = lib.mkOption {
       description = ''
         This host's address from `homelab.hosts`, or null if
@@ -72,13 +59,6 @@ in
   };
 
   config = {
-    assertions = [
-      {
-        assertion = cfg.authKeyFile != null;
-        message = "myNixOS.services.tailscale.authKeyFile cannot be null.";
-      }
-    ];
-
     age.secrets.tailscaleAuthKey.file = "${self}/secrets/tailscale/auth.age";
 
     # A trusted interface is accepted before the port rules are reached, which
@@ -94,7 +74,7 @@ in
 
     services.tailscale = {
       enable = true;
-      inherit (cfg) authKeyFile;
+      authKeyFile = config.age.secrets.tailscaleAuthKey.path;
 
       # `tailscale set`, not `tailscale up`. The autoconnect unit only runs
       # `up` when the backend reports NeedsLogin, NeedsMachineAuth or Stopped;
