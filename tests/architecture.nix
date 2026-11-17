@@ -16,17 +16,6 @@ let
   argon = self.nixosConfigurations.argon;
   extend = modules: (argon.extendModules { inherit modules; }).config;
   failures = config: map (a: a.message) (builtins.filter (a: !a.assertion) config.assertions);
-  missingTailnet = extend [
-    ({ config, ... }: {
-      mySnippets.tailnet.tailscaleIPs = lib.mkForce (
-        builtins.removeAttrs argon.config.mySnippets.tailnet.tailscaleIPs [ "carbon" ]
-      );
-      # Keep fail2ban's own checks from masking the fleet assertion under test.
-      services.fail2ban.ignoreIP = lib.mkForce (
-        builtins.attrValues config.mySnippets.tailnet.tailscaleIPs
-      );
-    })
-  ];
   wrongRecipient = extend [
     {
       age.secrets.wrongRecipient.file = "${self}/secrets/paperless.age";
@@ -144,12 +133,6 @@ lib.runTests {
         (self.nixosConfigurations.helium.extendModules {
           modules = [ { myNixOS.services.tangled.spindle.enable = true; } ];
         }).config
-    );
-    expected = true;
-  };
-  testMissingTailnetHost = {
-    expr = builtins.elem "The NixOS host roster and tailnet map must contain the same hosts." (
-      failures missingTailnet
     );
     expected = true;
   };

@@ -1,11 +1,5 @@
 let
-  hosts = [
-    "argon"
-    "carbon"
-    "helium"
-    "tungsten"
-    "uranium"
-  ];
+  hosts = builtins.attrNames (import ../homelab.nix).hosts;
   # The YubiKey, deliberately a recipient of every rule below. If a host is
   # gone, it is the only key left that can open its archives.
   extras = [
