@@ -36,11 +36,7 @@ in
       publicKeyFile = "${self}/keys/root_${host}.pub";
     }) config.homelab.hosts;
 
-    # Both halves follow the option. nixpkgs opens 22 by itself through
-    # `services.openssh.openFirewall`, which defaults to true, so leaving that
-    # alone would keep the port open whatever this module said. `mkDefault`
-    # because the backup server sets it false for a different reason, see
-    # `services/backups`, and still wants 22 open through the line below.
+    # nixpkgs opens 22 on its own, so both halves follow the option. mkDefault lets the backup server override it.
     services.openssh.openFirewall = lib.mkDefault cfg.openFirewall;
 
     networking.firewall.allowedTCPPorts = lib.mkIf cfg.openFirewall [ 22 ];
