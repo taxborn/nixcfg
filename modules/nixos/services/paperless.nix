@@ -12,6 +12,19 @@ in
   options.myNixOS.services.paperless.enable = lib.mkEnableOption "Paperless-ngx document archive";
 
   config = lib.mkIf cfg.enable {
+    # nixpkgs bumped torch to 2.15 while paperless-ngx 3.4.2 still pins
+    # `torch<2.15`, so pythonRuntimeDepsCheck fails the build. Torch is only
+    # pulled in for the optional ML classifier, so relaxing the bound is
+    # safe in practice. Drop this once nixpkgs ships a paperless-ngx that
+    # accepts 2.15.
+    nixpkgs.overlays = [
+      (_final: prev: {
+        paperless-ngx = prev.paperless-ngx.overrideAttrs (old: {
+          pythonRelaxDeps = (old.pythonRelaxDeps or [ ]) ++ [ "torch" ];
+        });
+      })
+    ];
+
     # Paperless keeps everything but the document files in postgres. Walking
     # the live cluster archives a torn set of pages, so take a logical dump.
     myNixOS.services.backups.client.postgresqlDumpAll =
