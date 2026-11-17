@@ -13,6 +13,7 @@
     ./ssh.nix
     ./swap.nix
     ./user.nix
+    ../services/backups
     ../services/monitoring/client.nix
     ../services/tailscale.nix
   ];

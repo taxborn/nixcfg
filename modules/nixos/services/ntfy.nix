@@ -1,6 +1,5 @@
 {
   config,
-  lib,
   self,
   ...
 }:
@@ -48,9 +47,7 @@ in
   # exists to keep out of archives as a torn copy. DynamicUser puts the real
   # directory under /var/lib/private, and `/var/lib/ntfy-sh` is a symlink to
   # it, which borg records as a link rather than following.
-  myNixOS.services.backups.client.extraExcludes =
-    lib.mkIf config.myNixOS.services.backups.client.enable
-      [
-        "/var/lib/private/ntfy-sh"
-      ];
+  myNixOS.services.backups.client.extraExcludes = [
+    "/var/lib/private/ntfy-sh"
+  ];
 }

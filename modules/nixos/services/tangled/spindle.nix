@@ -1,6 +1,5 @@
 {
   config,
-  lib,
   pkgs,
   self,
   ...
@@ -22,7 +21,7 @@ in
       message = "Keep the spindle, which runs CI as root, off the host holding the knot's master key.";
     }
     {
-      assertion = !config.myNixOS.services.backups.server.enable;
+      assertion = config.networking.hostName != config.homelab.backupServer.host;
       message = "Keep CI jobs off the fleet's backup server.";
     }
   ];
@@ -34,7 +33,7 @@ in
   # root-only 0400 default is right, since the spindle runs as root.
   age.secrets.tangledSpindleKey.file = "${self}/secrets/tangled/spindle-key.age";
 
-  myNixOS.services.backups.client = lib.mkIf config.myNixOS.services.backups.client.enable {
+  myNixOS.services.backups.client = {
     # Repository CI secrets live in here as plaintext, one reason it is
     # dumped through SQLite into the encrypted archive and not copied live.
     sqliteDatabases.spindle = spindle.server.dbPath;

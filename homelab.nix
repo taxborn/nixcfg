@@ -74,6 +74,14 @@ in
     };
   };
 
+  # Holds the second copy of every host's borg archives, on its external drive.
+  backupServer = {
+    host = "helium";
+    user = "taxborn";
+    basePath = "/mnt/hdd/borg";
+    port = 2200;
+  };
+
   monitoring = {
     server = "helium";
     alwaysOn = [

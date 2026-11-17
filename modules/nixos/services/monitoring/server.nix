@@ -557,12 +557,10 @@ in
     # nothing that provisioning does not rebuild, but does hold a live SQLite
     # file that borg would copy torn. None of these paths overlaps borgmatic's
     # dump staging directory.
-    myNixOS.services.backups.client.extraExcludes =
-      lib.mkIf config.myNixOS.services.backups.client.enable
-        [
-          "/var/lib/prometheus2"
-          "/var/lib/loki"
-          "/var/lib/grafana"
-        ];
+    myNixOS.services.backups.client.extraExcludes = [
+      "/var/lib/prometheus2"
+      "/var/lib/loki"
+      "/var/lib/grafana"
+    ];
   };
 }

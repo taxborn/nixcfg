@@ -99,11 +99,9 @@ in
 
   # Releases are rebuilt by CI from the repository, and a rollback target
   # older than a few deploys is not worth archiving.
-  myNixOS.services.backups.client.extraExcludes =
-    lib.mkIf config.myNixOS.services.backups.client.enable
-      [
-        root
-      ];
+  myNixOS.services.backups.client.extraExcludes = [
+    root
+  ];
 
   systemd.services.braxton-is = {
     description = "braxton.is";

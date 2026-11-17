@@ -21,11 +21,6 @@ let
       age.secrets.wrongRecipient.file = "${self}/secrets/paperless.age";
     }
   ];
-  backupDisabled = extend [
-    {
-      myNixOS.services.backups.client.enable = lib.mkForce false;
-    }
-  ];
   movedPaths = extend [
     {
       services.tealfm-piper.settings.DB_PATH = "/var/lib/tealfm-piper/moved.db";
@@ -129,17 +124,6 @@ lib.runTests {
       failures wrongRecipient
     );
     expected = true;
-  };
-  testDisabledBackupClient = {
-    expr = {
-      inherit (backupDisabled.myNixOS.services.backups.client) postgresqlDumpAll sqliteDatabases;
-      configurations = backupDisabled.services.borgmatic.configurations;
-    };
-    expected = {
-      postgresqlDumpAll = false;
-      sqliteDatabases = { };
-      configurations = { };
-    };
   };
   testDumpsFollowServicePaths = {
     expr = lib.mapAttrs (
