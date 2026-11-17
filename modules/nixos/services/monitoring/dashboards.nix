@@ -5,9 +5,6 @@
 }:
 let
 
-  # Must match the UIDs pinned on the provisioned datasources in server.nix.
-  # Pinning them is what lets a dashboard name its datasource at build time
-  # instead of asking the reader to pick one from a dropdown.
   promUID = "prometheus";
   lokiUID = "loki";
 
@@ -20,10 +17,7 @@ let
     uid = lokiUID;
   };
 
-  # Real filesystems only, matching the selector the alert rules use. Kept in
-  # step with alerts.nix by hand, they are separate files because a dashboard
-  # is not an alert, but a graph that disagrees with the rule that pages you is
-  # worse than either alone.
+  # Must match realFs in alerts.nix.
   realFs = ''fstype=~"btrfs|ext4|xfs|vfat|ntfs3|fuseblk"'';
 
   refIds = lib.stringToCharacters "ABCDEFGHIJKL";
@@ -87,9 +81,6 @@ let
     }
     // lib.optionalAttrs (description != null) { inherit description; };
 
-  # A line graph. `mode = "multi"` on the tooltip is the setting that makes a
-  # fleet-wide graph readable: hovering shows every host at that instant rather
-  # than only the series the cursor happens to be nearest.
   ts =
     args:
     mkPanel (
@@ -178,18 +169,12 @@ let
           refresh
           ;
 
-        # Null rather than a number: a provisioned dashboard must not claim an
-        # internal id, which belongs to whatever database it is loaded into.
         id = null;
 
         schemaVersion = 39;
         version = 1;
         timezone = "browser";
 
-        # The provisioning provider already sets allowUiUpdates = false, so an
-        # edit in the browser would be accepted and then silently discarded on
-        # the next restart. Marking the dashboard itself read-only means the UI
-        # says so up front instead.
         editable = false;
 
         time = {
@@ -200,7 +185,6 @@ let
       }
     );
 
-  # Shared by the log panels that are not the generic Logs dashboard's.
   logOptions = {
     showTime = true;
     showLabels = false;
@@ -212,18 +196,7 @@ let
     sortOrder = "Descending";
   };
 
-  # --------------------------------------------------------- upstream dashboards
-
-  # Fetched at build time against a pinned revision and hash, rather than
-  # vendored into the repo. The previous version of this stack checked the same
-  # dashboard in as a 470 KB, 15,597-line JSON blob, which made every upstream
-  # bump a 15,000-line diff nobody could review. This is the treatment the Caddy
-  # plugins already get in modules/nixos/services/caddy.nix: a version bump is a
-  # revision number and a hash.
-  #
-  # Refresh with:
-  #   curl -s https://grafana.com/api/dashboards/1860 | jq .revision
-  #   nix store prefetch-file https://grafana.com/api/dashboards/1860/revisions/<n>/download
+  # Pinned revision and hash. See docs/monitoring.md to refresh.
   grafanaDashboard =
     {
       id,
@@ -261,11 +234,6 @@ let
     hash = "sha256-GExrdAnzBtp1Ul13cvcZRbEM6iOtFrXXjEaY6g6lGYY=";
   };
 
-  # ------------------------------------------------------------- fleet overview
-
-  # The single pane the upstream dashboard cannot give: 1860 is deliberately
-  # one-host-at-a-time, driven by a `$node` picker, so there is nowhere in it
-  # that answers "is anything wrong anywhere".
   fleetOverview = mkDashboard {
     uid = "fleet-overview";
     title = "Fleet Overview";
@@ -300,9 +268,6 @@ let
           x = 6;
           y = 0;
         };
-        # `or vector(0)` because a series that matches nothing is *absent*, not
-        # zero, without it this panel reads "No data" in the one state that
-        # matters most, which is everything being fine.
         targets = [ { expr = ''count(ALERTS{alertstate="firing"}) or vector(0)''; } ];
         thresholds = steps [
           (step "green" null)
@@ -558,8 +523,6 @@ let
     ];
   };
 
-  # ----------------------------------------------------------------- disk & SMART
-
   diskSmart = mkDashboard {
     uid = "disk-smart";
     title = "Disk & SMART";
@@ -765,8 +728,6 @@ let
     ];
   };
 
-  # ------------------------------------------------------------------------ logs
-
   logs = mkDashboard {
     uid = "fleet-logs";
     title = "Logs";
@@ -778,9 +739,6 @@ let
     from = "now-1h";
     refresh = "";
 
-    # `host` and `unit` are the two labels Alloy promotes, see the relabel
-    # rules in this directory's default.nix. Nothing else is a label, so nothing
-    # else can be a variable here.
     templating = [
       {
         name = "host";
@@ -869,8 +827,6 @@ let
         };
         targets = [
           {
-            # `(?i)` on an empty $search matches everything, so the textbox is
-            # inert until it is typed in, no separate "filtered" panel needed.
             expr = ''{host=~"$host", unit=~"$unit"} |~ "(?i)$search"'';
           }
         ];
@@ -878,14 +834,6 @@ let
     ];
   };
 
-  # ------------------------------------------------------------------ minecraft
-
-  # The journal label Alloy derives from the unit name. Hardcoded because the
-  # dashboard is for one server, and a second one gets its own copy rather than
-  # a variable nobody would ever change.
-  #
-  # Every metric selector below carries `instance="carbon"` too. Argon runs its
-  # own Minecraft server, so unscoped sums would add its players to this one.
   mcUnit = "minecraft-mavs-updated.service";
   mcLogs = ''{unit="${mcUnit}"}'';
 
@@ -1147,7 +1095,6 @@ in
     name: file:
     lib.nameValuePair "grafana-dashboards/${name}.json" {
       source = file;
-      # Grafana's provisioner reads these as its own user.
       mode = "0444";
     }
   ) dashboards;

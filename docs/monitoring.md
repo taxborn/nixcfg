@@ -128,3 +128,121 @@ systemctl reset-failed alert-canary
 ```
 
 The resolved notification is half the check.
+
+## design notes
+
+Reasoning that used to sit beside the code.
+
+### server
+
+- **Prometheus** listens on loopback. Grafana is its only client and runs on the
+  same host, so putting the TSDB on the tailnet would expose every metric to
+  every device for nothing. Use Grafana's Explore tab or an SSH tunnel.
+- Scrape interval is 30s. The 1m default misses CPU spikes, and 15s would
+  double storage with nothing needing it. SMART is scraped every 5m, since the
+  data changes over hours and each scrape wakes the disks.
+- Retention is 90 days or 16 GB, whichever comes first. The size cap is what
+  stops a cardinality bug from filling the disk.
+- Each scrape target gets its own `instance` label (`helium`, not
+  `100.64.1.0:9100`). That only works because each `static_configs` entry
+  holds exactly one target.
+- Hosts in `alwaysOn` land in the `node` job and the rest in
+  `node-intermittent`. `InstanceDown` covers `node` only, because a closed lid
+  is not an outage, and a rule that fires every time one closes gets muted.
+- **Alertmanager** listens on loopback, and its clustering is turned off. The
+  nixpkgs defaults would listen on every interface and gossip on 9094.
+- Alerts are grouped by alert and host, repeat every 12h rather than 4h since
+  nothing here is on call, and send resolutions.
+- The webhook URL must end in `/hook`. Anything else gets a 404 that
+  Alertmanager logs and ignores, so the alert never reaches a phone.
+- **alertmanager-ntfy** turns the webhook JSON into a readable push. It reuses
+  the backup clients' write-only publisher token, rendered by a root
+  `alertmanager-ntfy-auth` unit into a tmpfs YAML fragment, because the bridge
+  runs under DynamicUser and has no stable uid to own an agenix file.
+- **Loki** has no multi-tenancy, so any tailnet peer can push any label. That
+  is the tailnet's trust boundary, and it was accepted on purpose. Loki's HTTP
+  listener is the only tailnet socket on the server. The gRPC ring stays on
+  loopback, and its port is pinned because the ring advertises the configured
+  value, so `0` would leave every client dialling `127.0.0.1:0`.
+- Loki retention needs `retention_enabled` on the compactor as well as
+  `retention_period`. With only the period set, Loki grows until the disk
+  fills.
+- Samples older than a week are rejected, so a host with a bad clock or a long
+  offline buffer cannot write into the past. Per-host ingestion is capped to
+  limit a service stuck in a log loop. `volume_enabled` powers Explore's volume
+  histogram.
+- The Loki ruler sends LogQL alerts to the same Alertmanager. Its rules live
+  under the `fake` tenant directory, which is the tenant name when auth is off.
+  The PDS login-failure rule matches the endpoint as well as the 401, and
+  groups by vhost rather than client, since `client_ip` can be forged through
+  Cloudflare.
+- **Grafana** listens on loopback behind Caddy. The admin password is declared
+  through `$__file{}` rather than set at first login, which would leave it only
+  in the mutable database. Datasource UIDs are pinned so provisioned dashboards
+  can name them. `deleteDatasources`, `allowUiUpdates = false` and
+  `disableDeletion` keep the store authoritative. Editing a dashboard means
+  editing `dashboards.nix`. nixpkgs 26.05 dropped Grafana's shared default
+  secret key, so one is provided. Rotating it only costs sessions.
+- Prometheus, Loki and Grafana state is excluded from backups. A restored
+  metrics store records a machine that no longer exists, and Grafana's SQLite
+  file would be copied torn.
+
+### client
+
+- Exporters bind the host's own tailnet address. `tailscale0` is trusted, so the
+  ports are reachable from the tailnet and nowhere else. Loopback would not
+  work, since another host does the scraping.
+- node_exporter adds the `systemd`, `processes` and `interrupts` collectors.
+  `systemd` is the valuable one: it turns every unit failure into one alert
+  rule.
+- smartctl_exporter runs only on `physicalDisks` hosts and scans for devices
+  itself, because `/dev/sdX` paths are not stable. The client asserts that
+  `physicalDisks` and `services.smartd.enable` agree.
+- Alloy ships the journal plus Caddy's `direct-*` access logs. The only labels
+  are `host`, `unit` and `vhost`. Status, IP and URI stay in the JSON line,
+  because as labels they would make one stream per client. Rotated files are
+  excluded, or every rotation would re-ship a day of logs. Alloy joins the
+  `caddy` group to read the `0640` logs. Its config is written to `/etc`
+  because the nixpkgs module derives reload triggers from there, and a store
+  path would restart Alloy on every rebuild.
+
+### alerts
+
+- Filesystem alerts use an allowlist of real filesystem types. A denylist grows
+  a hole every time a new tmpfs or fuse shim appears.
+- btrfs subvolumes all report the pool's free space, so the ratio is collapsed
+  with `min by (instance, device)`. Otherwise one full disk is six alerts.
+- `SystemdUnitFailed` covers most failures. `BackupStale` covers what it cannot
+  see: a timer that stopped firing leaves no failed unit behind. It keys on the
+  timer's last trigger, and only for the `node` job.
+- Rules on monotonic counters (OOM kills, btrfs device errors, NVMe media
+  errors) alert on the increase, so each event reports once.
+- Disk-fill prediction also requires under 30% free, since a six-hour trend on
+  an empty disk crosses zero after any large build.
+- The read-only filesystem alert excludes `/nix/store`, which NixOS bind-mounts
+  read-only. Left in, it never resolves and holds the notification path open
+  until the receiver rate-limits everything else.
+- `node_md_degraded` exists because mdadm's only other notification is mail to
+  a local mailbox nobody reads.
+- The SMART temperature rule filters `temperature_type="current"`. The exporter
+  also publishes the drive's trip point, which would always match.
+- Steal time is watched on the OVH instances, which share hardware.
+- Rules are emitted with `builtins.toJSON` and checked by `promtool` at build
+  time. promtool cannot check metric names, so every name was verified against
+  live exporter output.
+
+### dashboards
+
+- `realFs` must match the selector in `alerts.nix`. They are kept in step by
+  hand.
+- The Node Exporter Full dashboard (1860) is fetched at a pinned revision and
+  hash rather than vendored as a 15,000-line JSON file. To refresh it, run
+  `curl -s https://grafana.com/api/dashboards/1860 | jq .revision`, then
+  `nix store prefetch-file` the revision's download URL.
+- The fleet overview exists because 1860 shows one host at a time. Its alert
+  count uses `or vector(0)`, so "nothing firing" reads as 0 rather than "No
+  data".
+- Provisioned dashboards have `id = null` and `editable = false`, so the UI
+  says up front that edits will not stick.
+- The Minecraft dashboard is hardcoded to Carbon's server and scoped to
+  `instance="carbon"`, because Argon runs one too.

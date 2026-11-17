@@ -13,42 +13,20 @@ let
   hostname = config.networking.hostName;
   serverIP = config.homelab.tailscale.address;
 
-  # Where the bridge's credential file is generated, see `alertmanager-ntfy-auth`.
   ntfyAuthFile = "/run/alertmanager-ntfy-auth/auth.yml";
 
-  # The roster, partitioned. Every host on the tailnet is scraped. The split
-  # only decides which job a host lands in, and the job is what the down alert
-  # keys off. See `homelab.monitoring.alwaysOn`.
   allHosts = lib.attrNames config.homelab.hosts;
   intermittentHosts = lib.subtractLists monitoring.alwaysOn allHosts;
 
-  # One `static_configs` entry per host, each carrying its own `instance` label
-  # so graphs and alerts read `helium` rather than `100.64.1.0:9100`. Safe as a
-  # per-target label rather than a relabel rule only because each entry has
-  # exactly one target. Two targets sharing one entry would collapse to the
-  # same instance and silently overwrite each other's series.
   mkTargets =
     port: hosts:
-    lib.mapAttrsToList
-      (name: ip: {
-        targets = [ "${ip}:${toString port}" ];
-        labels.instance = name;
-      })
-      (
-        # `filterAttrs` over the roster rather than `map` over the host list, so
-        # a name in `alwaysOn` or `physicalDisks` that is not on the tailnet is
-        # dropped instead of producing a target with an empty address. The
-        # assertions below turn that into a build failure anyway.
-        lib.filterAttrs (n: _: lib.elem n hosts) config.homelab.hosts
-      );
+    lib.mapAttrsToList (name: ip: {
+      targets = [ "${ip}:${toString port}" ];
+      labels.instance = name;
+    }) (lib.filterAttrs (n: _: lib.elem n hosts) config.homelab.hosts);
 
   dashboardDir = "/etc/grafana-dashboards";
 
-  # Datasource UIDs are pinned rather than left for Grafana to generate, because
-  # provisioned dashboards have to name them at build time. Otherwise they carry
-  # a datasource picker variable with no default, which renders an empty screen
-  # until someone chooses from a dropdown and stores that choice per-user in the
-  # mutable database.
   promUID = "prometheus";
   lokiUID = "loki";
 in
@@ -82,56 +60,36 @@ in
     ];
 
     age.secrets = {
-      # Grafana reads this itself, at startup, through the `$__file{}`
-      # indirection below, so unlike a systemd credential the process needs to
-      # open it directly.
       grafanaAdminPassword = {
         file = "${self}/secrets/grafana/admin-password.age";
         owner = "grafana";
         mode = "0400";
       };
 
-      # Signs Grafana's cookies and encrypts credentials it stores. nixpkgs 26.05
-      # removed the shared default key, so Grafana refuses to evaluate without
-      # one. Nothing stored here is a secret yet, so rotating it costs sessions.
       grafanaSecretKey = {
         file = "${self}/secrets/grafana/secret-key.age";
         owner = "grafana";
         mode = "0400";
       };
 
-      # The write-only publisher token every backup client already uses. It can
-      # publish to the topics the server's ACL names and read nothing, so reusing
-      # it adds no new credential. Read by root in `alertmanager-ntfy-auth`.
       ntfyToken = {
         file = "${self}/secrets/ntfy/token.age";
         mode = "0400";
       };
     };
 
-    # ---------------------------------------------------------------- Prometheus
-
     services.prometheus = {
       enable = true;
 
-      # Loopback. Grafana is the only thing that queries this and it runs here.
-      # Putting the TSDB on the tailnet would expose every metric from every
-      # host to every device on it for nothing. Ad-hoc PromQL goes through
-      # Grafana's Explore tab, and an SSH tunnel covers the web UI.
+      # Loopback only. Exposing the TSDB on the tailnet would leak every host's metrics.
       listenAddress = "127.0.0.1";
       port = ports.prometheus;
 
       globalConfig = {
-        # Explicit rather than inherited. The upstream default is 1m, which is
-        # coarse enough to miss a CPU spike entirely, and 15s would double the
-        # storage for a fleet this size with nothing asking for the resolution.
         scrape_interval = "30s";
         evaluation_interval = "30s";
       };
 
-      # Both numbers are ceilings and whichever is reached first wins. The size
-      # limit is the one that matters: it stops a runaway cardinality bug from
-      # filling the disk, where the upstream default is 15 days and no size cap.
       retentionTime = "90d";
       extraFlags = [ "--storage.tsdb.retention.size=16GB" ];
 
@@ -141,43 +99,27 @@ in
 
       scrapeConfigs = [
         {
-          # Hosts that are supposed to be up. `InstanceDown` covers this job and
-          # only this job.
           job_name = "node";
           static_configs = mkTargets ports.nodeExporter monitoring.alwaysOn;
         }
         {
-          # Laptops and desktops. Scraped identically, since the dashboards do
-          # not distinguish, but exempt from the down alert because `up == 0`
-          # here means someone closed a lid.
           job_name = "node-intermittent";
           static_configs = mkTargets ports.nodeExporter intermittentHosts;
         }
         {
           job_name = "smartctl";
-          # SMART data changes on the order of hours, and each scrape wakes the
-          # disks to ask. The exporter's own poll is 60s, so scraping faster
-          # just stores the same numbers repeatedly.
           scrape_interval = "5m";
           static_configs = mkTargets ports.smartctlExporter monitoring.physicalDisks;
         }
         {
-          # Players, latency and health from a status ping, see the Minecraft
-          # module. Absent entirely on a host with no servers, so the target
-          # list is empty rather than pointing at a port nothing opened.
           job_name = "minecraft";
           static_configs = mkTargets ports.minecraftExporter monitoring.minecraftHosts;
         }
         {
-          # Resident memory and CPU of the server JVM. The status ping cannot
-          # see either.
           job_name = "minecraft-process";
           static_configs = mkTargets ports.processExporter monitoring.minecraftHosts;
         }
         {
-          # Prometheus's own health. Cheap, and the only way to notice that
-          # scrapes are being dropped or the TSDB is unhappy. A monitoring
-          # system that cannot see itself fails silently by construction.
           job_name = "prometheus";
           static_configs = [
             {
@@ -189,27 +131,20 @@ in
       ];
     };
 
-    # -------------------------------------------------------------- Alertmanager
-
     services.prometheus.alertmanager = {
       enable = true;
 
-      # The module's default is an empty string, which listens on every
-      # interface. Only Prometheus talks to this, from this host.
+      # The module default listens on every interface.
       listenAddress = "127.0.0.1";
       port = ports.alertmanager;
 
-      # Clustering is on by default and binds 9094 on every interface, to gossip
-      # with peers that do not exist. An empty address turns it off.
+      # Clustering would otherwise gossip on 9094 on every interface.
       extraFlags = [ "--cluster.listen-address=" ];
 
       configuration = {
         route = {
           receiver = "ntfy";
 
-          # Group by the alert and the host it is about, so a disk filling on
-          # Helium and the same alert on Carbon arrive as two notifications
-          # rather than one that reads as a single problem.
           group_by = [
             "alertname"
             "instance"
@@ -218,10 +153,6 @@ in
           group_wait = "30s";
           group_interval = "5m";
 
-          # Twelve hours, not the four-hour default. Nothing here is on call, so
-          # a re-notification is a reminder, and a reminder every four hours for
-          # a disk that will be dealt with at the weekend is how notifications
-          # get muted.
           repeat_interval = "12h";
         };
 
@@ -230,15 +161,9 @@ in
             name = "ntfy";
             webhook_configs = [
               {
-                # `/hook`, not `/`. The bridge serves the webhook on that one
-                # path and answers 404 everywhere else. Alertmanager records a
-                # delivery error in its own log and moves on, so the alert fires,
-                # resolves, and never reaches a phone.
+                # Must be /hook. Any other path 404s and the alert is silently dropped.
                 url = "http://127.0.0.1:${toString ports.alertmanagerNtfy}/hook";
 
-                # The resolved notification is half the value. An alert that
-                # fires and never visibly clears trains you to treat the whole
-                # stream as noise.
                 send_resolved = true;
               }
             ];
@@ -247,32 +172,19 @@ in
       };
     };
 
-    # Turns Alertmanager's webhook JSON into an ntfy push with a real title, a
-    # priority derived from firing or resolved, and a coloured tag. Alertmanager
-    # can post a webhook but cannot template its body, so without a bridge the
-    # phone receives raw JSON.
     services.prometheus.alertmanager-ntfy = {
       enable = true;
 
       settings = {
         http.addr = "127.0.0.1:${toString ports.alertmanagerNtfy}";
-        # The ntfy instance on Argon, read from the same entry its own module
-        # and vhost use.
         ntfy.baseurl = "https://${config.homelab.services.ntfy.domain}";
         ntfy.notification.topic = config.homelab.ntfy.topics.alerts;
       };
 
-      # The bridge wants its token as a YAML fragment, and the shared publisher
-      # token is a bare string. systemd reads this file as root and hands it
-      # over through the credentials directory, because the unit runs under
-      # DynamicUser and has no stable uid to chown an agenix file to.
       extraConfigFiles = [ ntfyAuthFile ];
     };
 
     systemd.services = {
-      # Renders the YAML fragment above from the bare token, into a root-only
-      # tmpfs directory, so the token never reaches the Nix store. The bridge
-      # cannot start without it, hence the ordering.
       alertmanager-ntfy-auth = {
         wantedBy = [ "multi-user.target" ];
         before = [ "alertmanager-ntfy.service" ];
@@ -289,33 +201,20 @@ in
         '';
       };
 
-      # Loki binds a tailnet address, so it loses the same cold-boot race the
-      # exporters do, and its unit orders on `network-online.target`, which is
-      # reached well before tailscaled has an address to hand out.
       loki = config.homelab.tailscale.bindOrdering;
     };
-
-    # ---------------------------------------------------------------------- Loki
 
     services.loki = {
       enable = true;
 
       configuration = {
-        # No multi-tenancy. Any tailnet peer can push logs under any label,
-        # which is the same trust boundary as everything else on the tailnet and
-        # is accepted rather than overlooked. See the README.
+        # Any tailnet peer can push any label. Accepted, see docs/monitoring.md.
         auth_enabled = false;
 
         server = {
-          # The one component here that needs a tailnet-reachable socket, since
-          # every other host pushes to it. Everything else is on loopback.
           http_listen_address = serverIP;
           http_listen_port = ports.loki;
 
-          # Single binary, so the gRPC ring talks to itself, over loopback and
-          # never the tailnet. The port is pinned rather than left at 0: the
-          # kernel does hand out a free port, but the ring goes on advertising
-          # the configured value, so every internal client dials 127.0.0.1:0.
           grpc_listen_address = "127.0.0.1";
           grpc_listen_port = ports.lokiGrpc;
 
@@ -356,10 +255,7 @@ in
           cache_location = "/var/lib/loki/tsdb-cache";
         };
 
-        # `retention_period` alone does nothing. It marks chunks as expired and
-        # only the compactor deletes them, which it will not do unless
-        # `retention_enabled` is set. Without both, Loki grows until the disk is
-        # full, and the absence is not visible for months.
+        # Without retention_enabled the compactor never deletes and Loki fills the disk.
         compactor = {
           working_directory = "/var/lib/loki/compactor";
           retention_enabled = true;
@@ -371,31 +267,16 @@ in
         limits_config = {
           retention_period = "30d";
 
-          # Refuse anything older than a week. This is not retention. It guards
-          # against a host with a badly wrong clock, or an Alloy that buffered
-          # for days offline, injecting a backlog that lands in the wrong place
-          # on every dashboard.
           reject_old_samples = true;
           reject_old_samples_max_age = "168h";
 
-          # Powers the log-volume histogram above the results in Grafana's
-          # Explore view. Off by default, and its absence reads as a Grafana bug
-          # rather than a Loki setting.
           volume_enabled = true;
 
-          # A ceiling on how much damage one misbehaving host can do. Five
-          # machines' journals are a rounding error against these, and a service
-          # stuck in a log loop is not.
           ingestion_rate_mb = 8;
           ingestion_burst_size_mb = 16;
           max_streams_per_user = 5000;
         };
 
-        # Evaluates the LogQL rules below and hands firing alerts to the same
-        # Alertmanager, and so the same ntfy topic, as the Prometheus rules.
-        # Prometheus cannot see inside a log line. The API stays off: rules come
-        # from the store, so a rule edited over HTTP would be gone at the next
-        # restart anyway.
         ruler = {
           storage = {
             type = "local";
@@ -411,8 +292,6 @@ in
       };
     };
 
-    # `fake` is the tenant ID Loki uses when `auth_enabled` is false, and the
-    # local rule store looks for its files under a directory of that name.
     environment.etc."loki/rules/fake/access.yaml".text = builtins.toJSON {
       groups = [
         {
@@ -420,13 +299,6 @@ in
           rules = [
             {
               alert = "HttpLoginFailures";
-              # Failed password logins against the PDS, from Caddy's access log
-              # for the direct vhosts (hosts/argon/proxy.nix). Matches on the
-              # endpoint as well as the 401, since clients with a stale session
-              # produce 401s on every other route all day. Grouped by vhost and
-              # not by client: `client_ip` can be forged through Cloudflare, so
-              # a per-IP threshold is one an attacker steps around, and the
-              # address to act on is `remote_ip`, read from Explore.
               expr = ''
                 sum by (host, vhost) (
                   count_over_time(
@@ -444,14 +316,11 @@ in
       ];
     };
 
-    # ------------------------------------------------------------------- Grafana
-
     services.grafana = {
       enable = true;
 
       settings = {
         server = {
-          # Caddy is the only client, see hosts/helium/proxy.nix.
           http_addr = "127.0.0.1";
           http_port = grafana.port;
           inherit (grafana) domain;
@@ -459,11 +328,7 @@ in
         };
 
         security = {
-          # Declared, not seeded. Grafana's default is admin/admin with a
-          # first-login prompt, which leaves the real password living only in
-          # the mutable SQLite database: undeclared state no rebuild can
-          # reproduce. `$__file{}` is Grafana's own indirection, so the value is
-          # read at startup and never appears in the generated ini in the store.
+          # Declared rather than seeded, so the password is not mutable state.
           admin_password = "$__file{${config.age.secrets.grafanaAdminPassword.path}}";
 
           secret_key = "$__file{${config.age.secrets.grafanaSecretKey.path}}";
@@ -482,8 +347,6 @@ in
 
       provision = {
         datasources.settings = {
-          # Without this, a provisioned datasource that is later renamed or
-          # removed here is left behind in the database forever.
           deleteDatasources = [
             {
               name = "Prometheus";
@@ -522,11 +385,6 @@ in
             type = "file";
             updateIntervalSeconds = 30;
 
-            # Both make the store the source of truth. Without
-            # `allowUiUpdates = false` an edit in the browser wins until the
-            # next restart and then vanishes without warning. Without
-            # `disableDeletion` a dashboard deleted from this config stays in
-            # the database. Editing a dashboard means editing dashboards.nix.
             allowUiUpdates = false;
             disableDeletion = true;
 
@@ -536,12 +394,7 @@ in
       };
     };
 
-    # Prometheus, Loki and Grafana all keep state under /var/lib, and none of
-    # it belongs in an archive. A metrics store restored from last night is a
-    # gap-free record of a machine that no longer exists, and Grafana holds
-    # nothing that provisioning does not rebuild, but does hold a live SQLite
-    # file that borg would copy torn. None of these paths overlaps borgmatic's
-    # dump staging directory.
+    # None of this belongs in an archive. See docs/monitoring.md.
     homelab.backups.extraExcludes = [
       "/var/lib/prometheus2"
       "/var/lib/loki"
