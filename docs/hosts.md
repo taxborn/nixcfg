@@ -179,7 +179,9 @@ root`, which should print nothing.
 - **btrfs.** Snapper excludes every `snapshotSubvolumes` entry's `.snapshots`
   from backups, and orders `snapper-timeline` after their mounts. Without that
   ordering, its boot catch-up run reached Uranium's compatdata 152 ms before it
-  mounted and failed once per boot. Both are derived from the same attribute,
+  mounted and failed once per boot. Each subvolume in `snapshotSubvolumes`
+  needs a `.snapshots` subvolume declared in its disko layout, since the
+  snapper module only writes configs. Both settings are derived from the same attribute,
   because the host that adds the next subvolume is the one that would forget.
 - **Secret recipients.** `fleet.nix` checks that each age secret a host uses
   exists and names that host and the YubiKey. It reads the rules and public
@@ -230,7 +232,9 @@ root`, which should print nothing.
   explicitly so the sysctls name something the kernel knows.
 - GRUB installs to the removable media path, because the firmware does not keep
   EFI variables across a rebuild.
-- IPv6 is a single /128 whose gateway sits outside it, so the gateway gets an
+- IPv6 is set per host in `homelab.ovh.ipv6`. Read the instance's allocation
+  with `curl -s http://169.254.169.254/openstack/latest/network_data.json`.
+  It is a single /128 whose gateway sits outside it, so the gateway gets an
   on-link route first. NetworkManager's auto-default is disabled for that
   interface only, or it activates a "Wired connection" before the declarative
   profile exists and never switches. Argon carries IPv6 on a second NIC (`ens4`)

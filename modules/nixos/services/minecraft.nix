@@ -52,29 +52,14 @@ in
   options.homelab.minecraft = {
     servers = lib.mkOption {
       default = { };
-      description = ''
-        Minecraft servers, each run as `minecraft-<name>.service` from an existing
-        directory. Nothing here generates the server's files yet. The directory
-        keeps its own `server.properties`, whitelist, mods and world.
-
-        The unit runs the server jar directly instead of the pack's `start.sh`.
-        That script waits for a keypress when `WAIT_FOR_USER_INPUT` is set, runs
-        a Java version check before every start, and can download a JDK through
-        jabba, none of which belongs in a unit. Its `variables.txt` stays the
-        reference for the flags below.
-      '';
+      description = "Minecraft servers, each run as `minecraft-<name>.service` from `/var/lib/minecraft/<name>`.";
       type = lib.types.attrsOf (
         lib.types.submodule {
           options = {
             openFirewall = lib.mkOption {
               type = lib.types.bool;
               default = false;
-              description = ''
-                Open `port` to the internet, TCP and UDP. Minecraft speaks its own
-                protocol, so Caddy cannot front it and this is a deliberate
-                exception to the loopback-only rule. UDP is for voice chat mods and
-                Bedrock-style clients. Closed by default.
-              '';
+              description = "Open the server port to the internet, TCP and UDP.";
             };
           };
         }

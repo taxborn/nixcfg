@@ -55,44 +55,15 @@ let
 in
 {
   options.homelab.caddy = {
-    cloudflareOnly = lib.mkEnableOption ''
-      dropping 80/443 from everywhere but Cloudflare's edge.
+    cloudflareOnly = lib.mkEnableOption "firewalling 80/443 to Cloudflare's edge";
 
-      Only true where every vHost is proxied. A host serving anything on a
-      LAN or a bare public IP goes dark otherwise
-    '';
-
-    tailnetOnly = lib.mkEnableOption ''
-      keeping 80/443 off the firewall entirely, leaving Caddy reachable over
-      the tailnet and nowhere else.
-
-      The opposite end of `cloudflareOnly`: that one narrows the two ports to
-      the edge, this one closes them. Nothing is punched through for the
-      tailnet because nothing needs to be — its interface is already trusted,
-      and accepted before the port rules are reached.
-
-      Costs the host HTTP-01, which needs an open 80 from anywhere. Every vHost
-      on a `tailnetOnly` host has to solve DNS-01 instead, and one that does not
-      fails issuance in a retry loop rather than loudly
-    '';
+    tailnetOnly = lib.mkEnableOption "keeping 80/443 closed, so Caddy is reachable over the tailnet only";
 
     directVHosts = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
       example = lib.literalExpression ''[ "pds.biscuits.at" ]'';
-      description = ''
-        vHosts reached straight from the internet rather than through
-        Cloudflare, exempting them from the `cloudflare-mtls` assertion.
-
-        Naming one costs the whole host its IP allowlist: 80/443 reopen to
-        everyone, because iptables cannot tell which name a connection is
-        about to ask for. The other vHosts keep the client-certificate half,
-        which is the half that actually authenticates, and lose the
-        belt-and-braces half.
-
-        Worth it only where the proxy cannot serve the name at all. The PDS is
-        the case this exists for — see hosts/argon/proxy.nix.
-      '';
+      description = "vHosts served directly, exempt from the mTLS assertion. Reopens 80/443 to everyone.";
     };
   };
 

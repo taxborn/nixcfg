@@ -104,40 +104,13 @@ in
     desktopExcludes = lib.mkOption {
       type = lib.types.bool;
       default = false;
-      description = ''
-        Also exclude the caches, runtimes, and re-downloadable data that a
-        desktop `$HOME` accumulates. Enable on any host someone logs into
-        graphically.
-
-        The module's default excludes were written against servers, where
-        `/home` is nearly empty. A workstation backing up the same three
-        directories ships browser caches, Electron app caches (which live
-        under `.config`, not `.cache`), Steam runtimes, and every virtualenv
-        and direnv on the machine — tens of gigabytes that change every day,
-        dedup poorly between runs, and restore to nothing anyone wants.
-
-        Deliberately not on by default and not implied by
-        `modules/nixos/workstation`: what counts as disposable under `/home` is a
-        judgement about the host, and getting it wrong silently drops data.
-        `~/Downloads` is left *in* for the same reason.
-      '';
+      description = "Also exclude a desktop `$HOME`'s caches and re-downloadable data.";
     };
 
     postgresqlDumpAll = lib.mkOption {
       type = lib.types.bool;
       default = false;
-      description = ''
-        Capture every PostgreSQL database as a consistent logical dump
-        (`pg_dumpall`) inside each archive, and exclude the live
-        `/var/lib/postgresql` data directory.
-
-        Copying a running cluster's files is not a backup: borg walks them
-        over a period during which the cluster keeps writing, so the archive
-        holds a torn mix of pages whose recovery depends on catching a
-        checkpoint at the right moment. The dump is taken through the server
-        itself and is consistent by construction, and borgmatic replays it on
-        `borgmatic restore`. Enable this on any host running PostgreSQL.
-      '';
+      description = "Archive a `pg_dumpall` dump instead of the live PostgreSQL directory.";
     };
 
     sqliteDatabases = lib.mkOption {
@@ -146,32 +119,13 @@ in
       example = lib.literalExpression ''
         { tealfm-piper = "/var/lib/tealfm-piper/piper.db"; }
       '';
-      description = ''
-        Database name -> path of a SQLite file to capture as a logical dump
-        (`sqlite3 .dump`) inside each archive. The live file, and its `-wal`
-        and `-shm` companions, are excluded in favour of that dump.
-
-        Same reasoning as `postgresqlDumpAll`, and if anything a sharper
-        version of it: most of a busy SQLite database's recent history lives
-        *outside* the file it is named after, in the write-ahead log, and borg
-        reaches the two at different moments. A `-wal` archived out of step
-        with its database is a torn pair, and the pair is what recovery reads.
-        The dump goes through SQLite itself and sees one consistent snapshot.
-
-        The name is a label for `borgmatic restore --database <name>`, not
-        something the file has to be called. Restoring writes the dump back
-        over the live path, replacing whatever is there.
-      '';
+      description = "Name to SQLite path, archived as a `.dump` instead of the live file.";
     };
 
     repositories = lib.mkOption {
       type = lib.types.attrsOf repoOpts;
       default = { };
-      description = ''
-        Named borg repositories to back up to. Every enabled host gets the
-        rsync.net and Helium repositories by default; setting an attribute of
-        the same name replaces it.
-      '';
+      description = "Borg repositories. Every host gets `rsync` and the backup server's by default.";
     };
 
     retention = {

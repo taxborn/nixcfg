@@ -44,21 +44,9 @@ let
 in
 {
   options.homelab.btrfs = {
-    deduplicate = lib.mkEnableOption ''
-      block-level deduplication with bees.
+    deduplicate = lib.mkEnableOption "block-level deduplication with bees";
 
-      Each btrfs filesystem on the host gets its own 2 GiB hash table, mapped
-      for as long as the daemon runs. Leave this off unless duplicate blocks
-      justify that memory use and the background I/O
-    '';
-
-    guiTools = lib.mkEnableOption ''
-      graphical btrfs tooling (snapper-gui).
-
-      Off by default because this profile is enabled on every host: the servers
-      were carrying a GTK application none of them can display. Set by
-      `modules/nixos/workstation`
-    '';
+    guiTools = lib.mkEnableOption "snapper-gui";
 
     snapshotSubvolumes = lib.mkOption {
       type = lib.types.attrsOf lib.types.str;
@@ -66,21 +54,7 @@ in
       example = lib.literalExpression ''
         { compatdata = "/games/steamapps/compatdata"; }
       '';
-      description = ''
-        Snapper config name -> subvolume path, for subvolumes that should get
-        timeline snapshots on top of `/home`.
-
-        `/home` is picked up on its own wherever it is a btrfs subvolume, which
-        covers the root array. This is for the ones that are not derivable that
-        way — in practice, subvolumes on a companion drive, where the interesting
-        question is which parts of the drive are worth snapshotting at all
-        rather than whether the drive is btrfs.
-
-        Each subvolume named here needs a `.snapshots` subvolume beneath it. The
-        NixOS snapper module writes config files and nothing else, so that has to
-        come from the disko layout — see modules/disko for how the existing
-        /home/.snapshots is declared.
-      '';
+      description = "Snapper config name to subvolume path, snapshotted alongside `/home`.";
     };
   };
 
