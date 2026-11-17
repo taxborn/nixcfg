@@ -562,6 +562,82 @@ Tiers 1 and 2 extract a single small file for speed, which deliberately does
 *not* verify ownership. Once a service with real state exists, do one `sudo`
 restore of its `/var/lib` directory to confirm permissions survive the trip.
 
+## module internals
+
+Things in `modules/nixos/services/backups/default.nix` that look like cleanup
+targets and are not.
+
+### the borgmatic unit
+
+- `restartIfChanged = false`. By default a `nixos-rebuild switch` restarts the
+  unit like any other. That blocks the switch on the start job for a full run,
+  and the SIGTERM kills borg mid-archive and leaves a stale lock in
+  `/root/.cache/borg` that the next run times out against. Argon lost eight
+  days of backups to that. A configuration change lands on the next scheduled
+  run.
+- `TimeoutStartSec = "6h"`. A oneshot unit's default is infinity, so a wedged
+  run sits in `activating` forever. The fleet alert watches for failed units,
+  and a unit that never fails never alerts, which is how those eight days went
+  unnoticed. The wedge is borgmatic's: when borg exits early, the dump
+  processes block on a named pipe nothing reads. Six hours is far past any real
+  run. After it fires, recover with `borgmatic break-lock`. That is deliberately
+  not automated, because breaking a lock a live borg still holds is worse than
+  the wedge.
+- `Nice = 19` and idle I/O and CPU scheduling. The packaged timer is
+  `OnCalendar=daily` with `Persistent=true`, which is right for a laptop asleep
+  at midnight, since the catch-up run is the only run it gets. It fires the
+  moment the machine wakes, though, so the backup yields to the desktop rather
+  than being moved to a different schedule.
+
+### excludes
+
+- Build artifacts are excluded only under `~/dev`. They read `**/target` until
+  2026-11-10, and borg's default pattern style lets `*` cross a slash, so a knot
+  branch named `feat/target` lost its loose ref from every archive with nothing
+  reported. Check pattern changes with `borg create --dry-run --list` against a
+  scratch tree.
+- `desktopExcludes` covers what a workstation `$HOME` piles up: XDG caches,
+  Chromium and Electron caches under `.config/*/Cache` (most of the win, and
+  missed by a `.cache` pattern), Steam's runtime and shader caches, flatpak
+  runtimes, Trash and virtualenvs. None of it dedups between runs.
+- The backup server excludes its own repository path. That does nothing today,
+  since the default paths do not reach the drive, but it matters the moment a
+  service there joins the backup set.
+
+### repositories and keys
+
+- One borgmatic configuration per repository, because `remote_path` is
+  per-configuration and rsync.net needs `borg14`.
+- The Helium URL is `ssh://user@ip:2200//mnt/hdd/borg/<host>`. borg reads a
+  single slash after the host as home-relative, so the second slash makes the
+  path absolute.
+- known_hosts matches a non-default port as `[name]:port`, so the port-22 pin
+  does not cover 2200. The module pins Helium's key for that port separately.
+- rsync.net's host keys are pinned too. They were taken with `ssh-keyscan` and
+  checked against the PGP-signed [fingerprint list](https://www.rsync.net/resources/fingerprints.txt),
+  where they match the de6 to de9 entries. If rsync.net rotates them the backup
+  stops at an unknown host key. Re-verify against that list before replacing
+  them.
+- Remote repositories skip `prune` and `compact`. Both servers run the client
+  key `--append-only`, so a prune would only log deletions. Local repositories
+  (Helium's own, Uranium's SSD) still prune nightly.
+- Every host shares one write-only ntfy token, used as an `access_token`. It
+  can publish to one topic and read nothing, so a leaked token allows fake
+  "backup ok" messages and nothing more.
+
+### the server's sshd
+
+- 2200 binds the tailnet address alone, so it exists nowhere else even if the
+  firewall is opened or `tailscale0` stops being trusted.
+- An explicit port on any `listenAddresses` entry replaces sshd's wildcard, so
+  22 is listed for both address families or it would vanish. `ports` stays at
+  22 so a stray `Port` line cannot put 2200 on the wildcard.
+- `openFirewall` stays off because it would open both ports. 22 stays open
+  through `homelab.ssh`.
+- sshd orders after tailscaled-autoconnect. sshd carries on with whichever
+  listeners did bind, so losing the boot race leaves 22 up and 2200 dead, and
+  every client's backup is refused with no notification.
+
 ## options
 
 ### `homelab.backups`
