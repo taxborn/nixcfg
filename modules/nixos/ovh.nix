@@ -1,0 +1,125 @@
+{ config, lib, ... }:
+
+let
+  cfg = config.myHardware.profiles.ovh;
+in
+{
+  options.myHardware.profiles.ovh = {
+    ipv6 = {
+      address = lib.mkOption {
+        type = lib.types.nonEmptyStr;
+        example = "2604:2dc0:202:300::236a";
+        description = ''
+          Public IPv6 address, without a prefix length. OVH assigns a single
+          /128 whose gateway sits outside it, so the gateway is reached through
+          an explicit on-link route rather than by sharing a subnet.
+
+          Read the instance's own allocation back with:
+            curl -s http://169.254.169.254/openstack/latest/network_data.json
+        '';
+      };
+
+      gateway = lib.mkOption {
+        type = lib.types.nonEmptyStr;
+        example = "2604:2dc0:202:300::1";
+        description = "IPv6 gateway, per the instance's `network_data.json`.";
+      };
+
+      interface = lib.mkOption {
+        type = lib.types.str;
+        default = "ens3";
+        description = "Interface carrying the public address.";
+      };
+
+      ipv4Method = lib.mkOption {
+        type = lib.types.enum [
+          "auto"
+          "disabled"
+        ];
+        default = "auto";
+        description = ''
+          `ipv4.method` for the profile below. Some OVH instances put IPv6 on a
+          dedicated second NIC (argon: ens3 carries IPv4, ens4 carries IPv6),
+          where this must be "disabled" so the profile does not chase a DHCP
+          lease that will never arrive on a v6-only link.
+        '';
+      };
+    };
+  };
+
+  config = lib.mkMerge [
+    {
+      boot.initrd.availableKernelModules = [
+        "ata_piix"
+        "uhci_hcd"
+        "virtio_pci"
+        "virtio_scsi"
+      ];
+
+      # These instances serve the public internet over long-haul paths,
+      # where a dropped packet is more often a blip than a sign of
+      # congestion, and cubic halves its window for both. BBR paces against
+      # measured bandwidth and RTT instead, with `fq` rather than the default
+      # `fq_codel` because BBR's pacing lives in that qdisc. Loaded
+      # explicitly because neither module comes up on its own here, and the
+      # sysctls below would otherwise name things the kernel does not know
+      # about.
+      boot.kernelModules = [
+        "tcp_bbr"
+        "sch_fq"
+      ];
+
+      boot.kernel.sysctl = {
+        "net.ipv4.tcp_congestion_control" = "bbr";
+        "net.core.default_qdisc" = "fq";
+      };
+
+      # The shared layout installs both BIOS and EFI GRUB (EF02 plus the ESP
+      # in modules/disko/btrfs-ovh.nix), so the hardware profile picks the
+      # loader and hosts do not repeat it.
+      boot.loader.grub = {
+        enable = true;
+        efiSupport = true;
+
+        # The OVH instances are the only hosts here booting GRUB, and their
+        # firmware does not keep EFI variables across a rebuild. Installing to
+        # the removable media path leaves the loader somewhere the firmware can
+        # find without a boot entry pointing at it.
+        efiInstallAsRemovable = true;
+      };
+      # No SMART behind virtio. smartd is on by default in `common/default.nix`, and
+      # with nothing to register it fails to start rather than idling.
+      services.smartd.enable = false;
+    }
+
+    {
+      # NetworkManager otherwise auto-creates a "Wired connection N" for the
+      # device and activates it before `ensure-profiles` has written the
+      # profile below, and a reload does not move an already-active device,
+      # so the declarative profile ends up loaded but idle. Scoped to this
+      # interface rather than "*" because argon's IPv4 lives on a different
+      # NIC that still needs its auto-default.
+      networking.networkmanager.settings.main.no-auto-default = cfg.ipv6.interface;
+      networking.networkmanager.ensureProfiles.profiles.${cfg.ipv6.interface} = {
+        connection = {
+          id = cfg.ipv6.interface;
+          type = "ethernet";
+          interface-name = cfg.ipv6.interface;
+          autoconnect = true;
+        };
+
+        ipv4.method = cfg.ipv6.ipv4Method;
+
+        ipv6 = {
+          method = "manual";
+          address1 = "${cfg.ipv6.address}/128";
+          # The gateway sits outside the /128: pin it on-link first, then
+          # route the default through it.
+          route1 = "${cfg.ipv6.gateway}/128";
+          route2 = "::/0,${cfg.ipv6.gateway}";
+          may-fail = true;
+        };
+      };
+    }
+  ];
+}

@@ -3,14 +3,9 @@
   lib,
   ...
 }:
-let
-  cfg = config.myHardware.profiles.laptop;
-in
 {
-  options.myHardware.profiles.laptop.enable = lib.mkEnableOption "Laptop hardware configuration";
-
   config = lib.mkMerge [
-    (lib.mkIf cfg.enable {
+    {
       services = {
         # Thunderbolt ships at security level `user`, meaning devices stay
         # unauthorized until something grants it. Nothing does without boltd, so
@@ -44,13 +39,13 @@ in
           unitConfig.ConditionACPower = true;
         };
       };
-    })
+    }
 
-    (lib.mkIf ((lib.elem "kvm-intel" config.boot.kernelModules) && cfg.enable) {
+    {
       services.thermald.enable = true;
-    })
+    }
 
-    (lib.mkIf ((lib.elem "nvidia" config.services.xserver.videoDrivers) && cfg.enable) {
+    {
       hardware.nvidia = {
         dynamicBoost.enable = lib.mkDefault true;
 
@@ -87,6 +82,6 @@ in
           };
         };
       };
-    })
+    }
   ];
 }

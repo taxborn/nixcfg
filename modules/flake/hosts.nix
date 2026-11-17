@@ -17,7 +17,6 @@
             inputs.tangled.nixosModules.knot-rs
             inputs.tangled.nixosModules.spindle
 
-            ../hardware
             ../nixos
 
             ../options.nix
