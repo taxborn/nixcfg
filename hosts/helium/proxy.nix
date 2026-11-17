@@ -5,7 +5,7 @@ in
 {
   # Nothing Helium serves is meant for the internet, so the two
   # ports stay shut and the tailnet interface is the whole front door.
-  myNixOS.services.caddy.tailnetOnly = true;
+  homelab.caddy.tailnetOnly = true;
 
   services.caddy.virtualHosts = {
     # Paperless. `docs.biscuits.at` is a public A record holding Helium's

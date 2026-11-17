@@ -10,7 +10,7 @@
     # holds it, which shuts out everything that reaches the card through
     # pcscd: ykman, and age-plugin-yubikey, which is how every secret in this
     # repo gets decrypted. Disabled, scdaemon goes through pcscd like they do
-    # and the three take turns. pcscd comes from myNixOS.services.yubikey.
+    # and the three take turns. pcscd comes from modules/nixos/workstation/yubikey.nix.
     scdaemonSettings.disable-ccid = true;
 
     publicKeys = [

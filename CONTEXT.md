@@ -54,7 +54,7 @@ the registry namespaces and their consumers.
 A profile bundles other modules by role or subsystem. A host enables
 `profiles.server` or `profiles.workstation`, then names its exceptions. Both
 include `base`. Hardware profiles use the same pattern for chassis, such as
-`myHardware.profiles.laptop` and `myHardware.profiles.ovh`.
+`myHardware.profiles.laptop` and `homelab.ovh`.
 
 ## practices
 

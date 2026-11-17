@@ -33,7 +33,7 @@ in
   # root-only 0400 default is right, since the spindle runs as root.
   age.secrets.tangledSpindleKey.file = "${self}/secrets/tangled/spindle-key.age";
 
-  myNixOS.services.backups.client = {
+  homelab.backups = {
     # Repository CI secrets live in here as plaintext, one reason it is
     # dumped through SQLite into the encrypted archive and not copied live.
     sqliteDatabases.spindle = spindle.server.dbPath;
@@ -54,7 +54,7 @@ in
 
     server = {
       hostname = networkMap.spindle.domain;
-      inherit (config.myNixOS.services.tangled) owner;
+      inherit (config.homelab.tangled) owner;
 
       # Upstream binds every interface. Caddy is the way in.
       listenAddr = "127.0.0.1:${toString networkMap.spindle.port}";

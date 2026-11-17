@@ -564,7 +564,7 @@ restore of its `/var/lib` directory to confirm permissions survive the trip.
 
 ## options
 
-### `myNixOS.services.backups.client`
+### `homelab.backups`
 
 | option | type | default | description |
 |--------|------|---------|-------------|
@@ -602,7 +602,7 @@ Every host runs the client, through `modules/nixos/common`. Host-specific
 settings go in the host file:
 
 ```nix
-myNixOS.services.backups.client.extraExcludes = [ "/var/lib/containers" ];
+homelab.backups.extraExcludes = [ "/var/lib/containers" ];
 ```
 
 Both repositories are added automatically,
@@ -611,6 +611,6 @@ Both repositories are added automatically,
 attribute replaces that target:
 
 ```nix
-myNixOS.services.backups.client.repositories.rsync.path =
+homelab.backups.repositories.rsync.path =
   lib.mkForce "ssh://de4388@de4388.rsync.net/./borg/<hostname>-alt";
 ```

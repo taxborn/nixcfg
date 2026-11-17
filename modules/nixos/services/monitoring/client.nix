@@ -9,7 +9,7 @@ let
   inherit (monitoring) ports;
 
   hostname = config.networking.hostName;
-  hostIP = config.myNixOS.services.tailscale.address;
+  hostIP = config.homelab.tailscale.address;
   serverIP = config.homelab.hosts.${monitoring.server} or null;
 
   hasSmart = lib.elem hostname monitoring.physicalDisks;
@@ -61,8 +61,8 @@ let
   # that another host scrapes it.
   #
   # The cost is a startup ordering problem, handled by
-  # `myNixOS.services.tailscale.bindOrdering`, which documents the race.
-  inherit (config.myNixOS.services.tailscale) bindOrdering;
+  # `homelab.tailscale.bindOrdering`, which documents the race.
+  inherit (config.homelab.tailscale) bindOrdering;
 in
 {
   config = {
@@ -70,7 +70,7 @@ in
       {
         assertion = hostIP != null && serverIP != null;
         message = ''
-          myNixOS.services.monitoring.client is enabled on ${hostname}, but
+          The monitoring client runs on ${hostname}, but
           either it or the monitoring server (${monitoring.server}) has no entry
           in homelab.hosts. The exporters bind this host's
           address and Alloy pushes to the server's, so a missing entry is a host

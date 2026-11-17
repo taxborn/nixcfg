@@ -64,7 +64,7 @@ for host in "${hosts[@]}"; do
     ((${#repos[@]})) || { echo "SKIP $host: no remote repositories"; continue; }
 
     if ! retention=$(nix eval --json \
-            ".#nixosConfigurations.$host.config.myNixOS.services.backups.client.retention"); then
+            ".#nixosConfigurations.$host.config.homelab.backups.retention"); then
         rc=1
         continue
     fi

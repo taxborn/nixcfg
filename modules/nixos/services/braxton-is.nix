@@ -99,7 +99,7 @@ in
 
   # Releases are rebuilt by CI from the repository, and a rollback target
   # older than a few deploys is not worth archiving.
-  myNixOS.services.backups.client.extraExcludes = [
+  homelab.backups.extraExcludes = [
     root
   ];
 

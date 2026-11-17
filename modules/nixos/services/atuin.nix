@@ -4,11 +4,11 @@
   ...
 }:
 let
-  cfg = config.myNixOS.services.atuin;
+  cfg = config.homelab.atuin;
   networkMap = config.homelab.services;
 in
 {
-  options.myNixOS.services.atuin = {
+  options.homelab.atuin = {
     openRegistration = lib.mkEnableOption ''
       new account registration. Off by default, because the server is reachable
       from the internet behind Cloudflare and anyone who can register can store
@@ -23,7 +23,7 @@ in
     # the dump is ciphertext. It is still the only copy a new machine can sync
     # from, so it is dumped like every other database. `pg_dumpall` covers it
     # without naming it, see the databases section of the backups README.
-    myNixOS.services.backups.client.postgresqlDumpAll = true;
+    homelab.backups.postgresqlDumpAll = true;
 
     services.atuin = {
       enable = true;

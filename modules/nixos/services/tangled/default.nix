@@ -3,7 +3,7 @@
 {
   # Shared by the knot on Argon and the spindle on Carbon, so the two cannot
   # disagree about who runs them.
-  options.myNixOS.services.tangled.owner = lib.mkOption {
+  options.homelab.tangled.owner = lib.mkOption {
     type = lib.types.strMatching "^did:[a-z]+:.+";
     default = "did:plc:2grdruc2p6fjhksrfpt366yl";
     description = ''

@@ -5,7 +5,7 @@ let
 in
 {
   # Carbon serves nothing else on 80/443. Minecraft has its own port.
-  myNixOS.services.caddy.cloudflareOnly = true;
+  homelab.caddy.cloudflareOnly = true;
 
   services.caddy.virtualHosts = {
     # Tangled's spindle. It needs its own proxied DNS record pointing at

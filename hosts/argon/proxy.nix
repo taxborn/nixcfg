@@ -42,7 +42,7 @@ let
   '';
 in
 {
-  myNixOS.services.caddy = {
+  homelab.caddy = {
     cloudflareOnly = true;
 
     directVHosts = [

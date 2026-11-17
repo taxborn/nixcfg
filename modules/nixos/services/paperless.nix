@@ -22,7 +22,7 @@ in
 
   # Paperless keeps everything but the document files in postgres. Walking
   # the live cluster archives a torn set of pages, so take a logical dump.
-  myNixOS.services.backups.client.postgresqlDumpAll = true;
+  homelab.backups.postgresqlDumpAll = true;
 
   age.secrets.paperless.file = "${self}/secrets/paperless.age";
 

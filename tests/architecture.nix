@@ -28,7 +28,7 @@ let
   ];
   movedRepositories = extend [
     {
-      myNixOS.services.backups.client.repositories.rsync = lib.mkForce {
+      homelab.backups.repositories.rsync = lib.mkForce {
         label = "rsync";
         path = "ssh://backup@example.test/./moved/argon";
         remotePath = "borg-custom";
