@@ -83,5 +83,5 @@ in
     };
   };
 
-  config.homelab = lib.mkDefault data;
+  config.homelab = lib.mapAttrsRecursive (_: lib.mkDefault) data;
 }
