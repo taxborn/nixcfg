@@ -1,4 +1,4 @@
-{ self, ... }:
+{ ... }:
 {
-  imports = [ self.diskoConfigurations.btrfs-ovh ];
+  imports = [ ../../modules/disko/btrfs-ovh.nix ];
 }

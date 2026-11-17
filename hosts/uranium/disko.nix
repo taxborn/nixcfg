@@ -1,7 +1,7 @@
-{ self, ... }:
+{ ... }:
 {
   imports = [
-    (import self.diskoConfigurations.btrfs-luks-raid1 {
+    (import ../../modules/disko/btrfs-luks-raid1.nix {
       nvme0 = "/dev/disk/by-id/nvme-Samsung_SSD_980_PRO_2TB_S76ENL0X900787H";
       nvme1 = "/dev/disk/by-id/nvme-Samsung_SSD_980_PRO_2TB_S76ENL0X900698K";
       games = "/dev/disk/by-id/nvme-Patriot_M.2_P300_512GB_P300PBBB240118013691";
