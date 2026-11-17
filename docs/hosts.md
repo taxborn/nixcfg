@@ -34,7 +34,8 @@ reproducible or already redundant. Keeping them off it also keeps
 them out of the root array's snapshot scope.
 
 Steam, gamemode, and the `scx_lavd` scheduler. `/games/steamapps/compatdata` is
-a snapper-snapshotted subvolume and is backed up separately from `/home`.
+a snapper-snapshotted subvolume and is not in the borg backup. Local snapshots
+are its only history.
 
 ## [Tungsten](../hosts/tungsten)
 
@@ -213,8 +214,8 @@ root`, which should print nothing.
   - `/games` keeps `common`, `downloading` and `shadercache` in one subvolume,
     because Steam installs by `rename()` and that fails across subvolumes.
     `/compatdata` (Proton prefixes, so local saves) is split out to be
-    snapshotted and backed up. It has no recovery key, since everything on the
-    games drive is re-downloadable or backed up.
+    snapshotted, though no longer backed up. It has no recovery key, since
+    everything on the games drive is re-downloadable or expendable.
   - The `backup` volume enrolls a recovery key, printed once at install. Keep it
     with the borg passphrase. Without it, losing the root array takes the local
     repository with it, which is when it is worth the most. `/borg` is never

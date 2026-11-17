@@ -72,7 +72,6 @@
         "/home"
         "/var/lib"
         "/etc"
-        "/games/steamapps/compatdata"
       ];
       repositories.local = {
         label = "local";
