@@ -4,7 +4,6 @@
   ...
 }:
 let
-  cfg = config.myNixOS.services.monitoring.client;
 
   monitoring = config.homelab.monitoring;
   inherit (monitoring) ports;
@@ -66,22 +65,6 @@ let
   inherit (config.myNixOS.services.tailscale) bindOrdering;
 in
 {
-  options.myNixOS.services.monitoring.client = {
-    logs = lib.mkOption {
-      type = lib.types.bool;
-      default = true;
-      description = ''
-        Ship this host's systemd journal to Loki through Alloy.
-
-        Separate from `enable` because the two fail differently. Metrics are
-        pulled, so an unreachable host is a gap in a graph. Logs are pushed, and
-        a host that cannot reach Loki retries and eventually drops them, which
-        is noise in the journal of the host least able to afford it. Turning
-        this off leaves metrics working.
-      '';
-    };
-  };
-
   config = {
     assertions = [
       {
@@ -159,20 +142,20 @@ in
       prometheus-smartctl-exporter = lib.mkIf hasSmart bindOrdering;
     };
 
-    services.alloy.enable = cfg.logs;
+    services.alloy.enable = true;
 
     # The access logs are `caddy:caddy` 0640. Alloy runs as a DynamicUser and
     # would otherwise get a permission error that only shows up as a missing
     # stream in Loki.
-    systemd.services.alloy.serviceConfig.SupplementaryGroups = lib.mkIf (
-      cfg.logs && config.services.caddy.enable
-    ) [ config.services.caddy.group ];
+    systemd.services.alloy.serviceConfig.SupplementaryGroups = lib.mkIf config.services.caddy.enable [
+      config.services.caddy.group
+    ];
 
     # Written to /etc rather than passed as a store path through `configPath`.
     # The nixpkgs module builds `reloadTriggers` by scanning
     # `environment.etc."alloy/*.alloy"`, so the store-path form gets a full
     # restart of the log shipper on every unrelated rebuild instead of a SIGHUP.
-    environment.etc."alloy/config.alloy" = lib.mkIf cfg.logs {
+    environment.etc."alloy/config.alloy" = {
       text = ''
         // The journal, plus Caddy's access logs where Caddy runs (below).
         // Everything else on these hosts logs to the journal, Caddy's runtime
