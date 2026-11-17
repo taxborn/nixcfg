@@ -8,40 +8,37 @@ agenix, and disko.
 
 | document | what it covers |
 | --- | --- |
-| [AGENTS.md](./AGENTS.md) | working in this repo: what to run, what not to run, validation, permissions and comment policy |
-| [CONTEXT.md](./CONTEXT.md) | vocabulary, deployment model and network policy |
-| [hosts](./docs/hosts.md) | what each machine is and what it runs |
-| [modules/](./modules/README.md) | how the module system is laid out and how to add to it |
-| [secrets](./docs/secrets.md) | agenix rules, who can decrypt what, day-to-day commands |
-| [keys](./docs/keys.md) | the public key material and what reads each file |
+| [AGENTS.md](./AGENTS.md) | working in this repo: what to run, what not to run, comment policy |
+| [architecture](./docs/architecture.md) | how hosts are assembled, `homelab.nix`, conventions, packages, checks |
+| [hosts](./docs/hosts.md) | each machine, the shared base, disk layouts |
+| [network](./docs/network.md) | Caddy, Cloudflare, tailscale, fail2ban, ports |
+| [services](./docs/services.md) | what each service does and how its state is kept |
 | [backups](./docs/backups.md) | borg/borgmatic, provisioning a host, restore testing |
 | [monitoring](./docs/monitoring.md) | Prometheus, Loki and Grafana on Helium |
-| [desktop](./docs/desktop.md) | the Niri and Noctalia session |
+| [secrets](./docs/secrets.md) | agenix rules, who can decrypt what, day-to-day commands |
+| [keys](./docs/keys.md) | the public key material and what reads each file |
+| [desktop](./docs/desktop.md) | the workstations, Niri and home-manager |
 | [decisions](./docs/decisions.md) | settings that look removable and are not |
 
 ## layout
 
 ```
-flake.nix              inputs only; outputs are `import-tree ./modules/flake`
-modules/flake/         flake-parts: host roster, module exports, packages, hooks
-modules/nixos/         myNixOS.*      system options
-modules/home/          myHome.*       home-manager options
-modules/hardware/      myHardware.*   CPU / GPU / chassis
-modules/snippets/      mySnippets.*   data-only registries, shared by both
-modules/disko/         reusable disk layouts; hosts instantiate them
-modules/users/         the taxborn account
-homes/                 home-manager profiles: default, workstation
-hosts/<host>/          per-host config, disko.nix and proxy.nix
+flake.nix              inputs; outputs are `import-tree ./modules/flake`
+homelab.nix            homelab-wide settings: hosts, domains, ports, identity
+modules/options.nix    types homelab.nix as `homelab.*`
+modules/flake/         flake-parts: hosts, packages, checks, hooks, restore plan
+modules/nixos/common/  every host
+modules/nixos/server.nix, workstation/   the two roles
+modules/nixos/services/                  one file per service
+modules/home/          home-manager: default.nix, workstation.nix
+modules/disko/         shared disk layouts
+hosts/<host>/          what the host imports, its disks, proxy and hardware
 secrets/               agenix .age files and the secrets.nix rule file
 keys/                  public keys: host roots, yubikey, the origin-pull cert
 scripts/               operational bash, invoked from the justfile
 tests/                 evaluation regressions and mocked operational tests
-docs/                  subject guides: hosts, backups, monitoring, secrets, keys, desktop, decisions
+docs/                  the guides above
 ```
-
-See [module loading](./modules/README.md#how-a-module-gets-loaded) for imports
-and disk layout ownership, and [fleet agreement](./modules/README.md#fleet-agreement)
-for the checked rosters.
 
 ## day to day
 
@@ -57,8 +54,8 @@ The devShell installs the hook set through direnv, so a `cd` into the repo is
 the setup step. It also installs a pre-push hook that runs
 `nix flake check --no-build`, so a push evaluates every host first. That hook
 is pre-push only, so `just check` and `checks.pre-commit` skip it. `nix flake check` evaluates every host, runs those hooks, and
-checks database registration, fleet agreement, network types and the restore
-runner with mocked commands.
+checks database registration, secret recipients, service types and the
+restore runner with mocked commands.
 
 Build a host without switching to it:
 
@@ -76,11 +73,9 @@ nix build .#nixosConfigurations.<host>.config.system.build.toplevel
 2. Collect the installed host's `/etc/ssh/ssh_host_ed25519_key.pub` into
    `keys/root_<host>.pub`.
 3. Add its final configuration and `disko.nix` under `hosts/<host>/`, then add
-   its name to `modules/flake/hosts.nix`, `secrets/secrets.nix` and
-   `mySnippets.tailnet.tailscaleIPs` together. Fleet assertions require agreement.
-   Also add an entry to `mySnippets.ssh.knownHosts` in
-   `modules/snippets/sshKnownHosts.nix`. No assertion checks it, and a missing
-   host falls back to trust-on-first-use.
+   the host and its tailnet address to `hosts` in `homelab.nix`. That one entry
+   adds it to the build, the secret rules, the tailnet map, the known-host
+   pins and Helium's borg keys.
 4. Follow [secret operations](./docs/secrets.md#working-with-them) to rekey
    the shared secrets and register any service-specific recipients.
 5. Complete the key-material and authorization steps in
@@ -90,8 +85,8 @@ nix build .#nixosConfigurations.<host>.config.system.build.toplevel
    initialize its backup repositories as described in that guide.
 
 The standalone installation makes the root key available before the final
-configuration requires it. Fleet assertions check file existence and recipient
-rules; activation still needs the encrypted files to have been rekeyed.
+configuration requires it. The build checks that each secret exists and names
+the host, but activation still needs the encrypted files to have been rekeyed.
 
 ## references
 

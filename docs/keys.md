@@ -6,7 +6,7 @@ of the repo rather than through agenix.
 
 | file | what it is | read by |
 | --- | --- | --- |
-| `root_<host>.pub` | that host's `/etc/ssh/ssh_host_ed25519_key.pub` | `secrets/secrets.nix` as an age recipient, and `mySnippets.ssh.knownHosts` for host key pinning |
+| `root_<host>.pub` | that host's `/etc/ssh/ssh_host_ed25519_key.pub` | `secrets/secrets.nix` as an age recipient, and the known-host pins in `common/ssh.nix` for host key pinning |
 | `yubikey.pub` | my SSH public key, backed by the YubiKey | `modules/users/taxborn.nix` (`authorizedKeys.keyFiles`); also the key to preauthorize on a host before `nixos-anywhere` |
 | `yubikey_age.pub` | the age recipient for the same YubiKey | `secrets/secrets.nix`, as the second recipient of every secret |
 | `braxton-is-deploy.pub` | public half of the key CI uses to deploy braxton.is | `modules/nixos/services/braxton-is.nix`, as the `braxton-deploy` user's authorized key behind a forced command. The private half is a secret on the Tangled spindle only |
@@ -20,7 +20,7 @@ piece of hardware, different layers: the first gets a shell, the second decrypts
 a secret. Both are recorded here.
 
 `yubikey_age.pub` is a recipient of every secret on purpose. The
-[secrets README](./secrets.md#who-can-read-what) explains why.
+[secrets](./secrets.md#who-can-read-what) explains why.
 
 ## adding a host
 
@@ -37,4 +37,4 @@ another zone means uploading this same certificate to it.
 
 `secrets/borg/<host>/ssh_key.pub` follows the same convention one directory
 over, public halves kept beside their `.age` counterparts. See the
-[secrets README](./secrets.md) for why.
+[secrets](./secrets.md) for why.
