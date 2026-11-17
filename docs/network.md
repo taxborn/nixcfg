@@ -168,9 +168,11 @@ Whether a host actually routes is decided by the tailnet ACLs, which live
 outside this repo (see TODO.md).
 
 A service that binds the tailnet address merges `homelab.tailscale.bindOrdering`
-into its unit. The address only exists once tailscaled is Running, and a unit
-that loses that race on a cold boot would otherwise latch failed after
-systemd's start limit.
+into its unit. The address only exists once tailscaled is Running, which
+`network.target` does not wait for. Ordering after `tailscaled-autoconnect`
+wins that race on a cold boot. An attempt that still loses, such as on a laptop
+that has never joined, dies with EADDRNOTAVAIL, so the start limit is dropped
+and the unit retries every five seconds instead of latching failed.
 
 ## fail2ban
 

@@ -38,6 +38,11 @@ dump first (`sudo borgmatic create --verbosity 1 --list`).
 History is encrypted on the client, so the dump holds ciphertext. It is still
 the only copy a new machine can sync from.
 
+Registration is closed, because the server is reachable from the internet and
+anyone who registers can store data on it. To create an account, set
+`homelab.atuin.openRegistration = true` for one deploy, run `atuin register` on
+a client, then turn it off and deploy again.
+
 ## glance
 
 The status probes run from Argon against the public names, so a red tile means
@@ -188,6 +193,13 @@ privilege. Rolling back the site is free.
 
 ## minecraft
 
+- Servers are not generated. Each directory keeps its own
+  `server.properties`, whitelist, mods and world, copied in by hand. The unit
+  runs the launcher jar directly rather than the pack's `start.sh`, which waits
+  for a keypress, checks Java on every start and can download a JDK. The pack's
+  `variables.txt` is the reference for the JVM flags. `openFirewall` opens the
+  port TCP and UDP (voice chat mods, Bedrock clients), the one deliberate
+  exception to loopback-only.
 - Every server runs as the `minecraft` user, never a person. The servers load
   third-party mods and take internet connections, and the owner is in `wheel`,
   which is a Nix trusted user and so root-equivalent.

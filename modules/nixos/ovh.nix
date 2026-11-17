@@ -9,14 +9,7 @@ in
       address = lib.mkOption {
         type = lib.types.nonEmptyStr;
         example = "2604:2dc0:202:300::236a";
-        description = ''
-          Public IPv6 address, without a prefix length. OVH assigns a single
-          /128 whose gateway sits outside it, so the gateway is reached through
-          an explicit on-link route rather than by sharing a subnet.
-
-          Read the instance's own allocation back with:
-            curl -s http://169.254.169.254/openstack/latest/network_data.json
-        '';
+        description = "Public IPv6 address, without a prefix length.";
       };
 
       gateway = lib.mkOption {
@@ -37,12 +30,7 @@ in
           "disabled"
         ];
         default = "auto";
-        description = ''
-          `ipv4.method` for the profile below. Some OVH instances put IPv6 on a
-          dedicated second NIC (argon: ens3 carries IPv4, ens4 carries IPv6),
-          where this must be "disabled" so the profile does not chase a DHCP
-          lease that will never arrive on a v6-only link.
-        '';
+        description = "`ipv4.method` for the IPv6 interface. `disabled` on a v6-only NIC.";
       };
     };
   };
