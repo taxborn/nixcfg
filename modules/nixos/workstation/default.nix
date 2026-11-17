@@ -20,31 +20,15 @@
     "/home/${config.homelab.owner.username}/.config/age/yubikey-identity.txt"
   ];
 
-  # `mkDefault` so a host can fall back to an LTS kernel when a new release
-  # regresses on its hardware, without reaching for `mkForce`.
   boot.kernelPackages = lib.mkDefault pkgs.linuxPackages_latest;
 
-  # The kernel default is `madvise`, so only programs that ask get huge pages.
-  # `always` hands them to games and builds without each one opting in, and
-  # `defer` keeps the allocator from stalling a frame to compact memory for
-  # one. Workstations only. Databases on the servers (Postgres, Redis) do
-  # worse with it on.
   boot.kernel.sysfs.kernel.mm.transparent_hugepage = {
     enabled = "always";
     defrag = "defer";
   };
 
-  # A hung unit on a desktop is a shutdown that sits at "a stop job is
-  # running" for the default 90 seconds. Nothing on a workstation needs that
-  # long to start or stop. Servers keep the default, where a database
-  # flushing on stop can legitimately take that long.
   systemd = {
-    # Runs shellcheck over every script NixOS generates for a unit, and also
-    # makes each one `set -o nounset`. Workstations only. On Helium it broke
-    # paperless-scheduler, whose pre-start reads $CREDENTIALS_DIRECTORY, a
-    # variable systemd does not set there. Shellcheck cannot see that, so
-    # every host built clean and the failure only showed at activation. Do
-    # not enable it on a server without reading each generated script.
+    # Workstations only. It broke a server unit that only failed at activation.
     enableStrictShellChecks = true;
 
     settings.Manager = {
@@ -61,9 +45,6 @@
     };
   };
 
-  # The Nix language servers and formatter the editors call, and nix-ld for
-  # prebuilt binaries that expect a loader in /lib64. All four were on every
-  # host through `programs/nix.nix`. Nobody edits Nix on a server.
   environment.systemPackages = with pkgs; [
     nil
     nixd
@@ -79,22 +60,15 @@
     };
   };
 
-  # Journals on a workstation are for the current boot's debugging, not an
-  # audit trail. Servers keep the default, where history matters.
   services.journald.settings.Journal = {
     SystemMaxUse = "100M";
     RuntimeMaxUse = "50M";
     SystemMaxFileSize = "50M";
   };
 
-  # Pulls in a speech dispatcher closure of several hundred MiB that nothing
-  # here uses. Browsers keep a minimal copy regardless.
   services.speechd.enable = false;
   programs.nano.enable = false;
 
-  # NixOS ships perl, rsync and strace to every machine by default. Nothing
-  # here uses them directly, and anything that needs one pulls it in as a
-  # dependency. Add `strace` to the system packages when debugging a hang.
   environment.defaultPackages = [ ];
 
   environment.sessionVariables.NIXOS_OZONE_WL = "1";
@@ -106,8 +80,6 @@
     atkinson-hyperlegible-next
   ];
 
-  # The NL variant drops JetBrains Mono's ligatures. `NFM` is the Nerd Font
-  # Mono family, which keeps glyphs single-width for terminals.
   fonts.fontconfig.defaultFonts = {
     sansSerif = [ "Atkinson Hyperlegible Next" ];
     serif = [ "Atkinson Hyperlegible Next" ];
@@ -115,14 +87,6 @@
   };
 
   services = {
-    # systemd-oomd (`profiles/swap.nix`) reacts to cgroup memory pressure,
-    # which can arrive after the desktop has already stalled on a nix build.
-    # earlyoom watches free memory and swap directly and acts before that. The
-    # `--avoid` list is the session and the things that cannot be restarted
-    # unnoticed. `--prefer` is what is cheap to lose. earlyoom matches the
-    # kernel `comm` name, which is truncated to 15 characters, so the patterns
-    # are anchored to that rather than the full command line. `-g` kills the
-    # whole process group, so a browser goes down with its renderers.
     earlyoom = {
       enable = true;
       enableNotifications = true;
@@ -138,21 +102,18 @@
         "^(Web Content|Isolated Web Co|firefox.*|chrom(e|ium).*|electron|java.*|.*[.]exe|nix|node|npm)$"
       ];
     };
-    # earlyoom turns this on to deliver its notifications, while smartd (see
-    # `common/default.nix`) sets it false. The forwarder is harmless to smartd, which
-    # gains desktop notifications from it, so the workstation wins.
     systembus-notify.enable = lib.mkForce true;
     blueman.enable = true;
     fwupd.enable = true;
     gnome.gnome-keyring.enable = true;
     gvfs.enable = true;
-    udisks2.enable = true; # Automount for USB drives, which gvfs hands off to.
+    udisks2.enable = true;
     libinput.enable = true;
 
   };
 
   homelab = {
-    # Port 22 stays shut on a workstation. The option says why.
+    # Port 22 stays shut on a workstation.
     ssh.openFirewall = false;
     btrfs.guiTools = true;
   };

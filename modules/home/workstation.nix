@@ -20,11 +20,6 @@
     };
 
     programs = {
-      # Syncs to the self-hosted server on Argon. History is encrypted on this
-      # machine with a key that never leaves it, so the server stores
-      # ciphertext. `atuin register` once, then `atuin key` to carry the key to
-      # another machine. Until an account exists, `auto_sync` fails quietly
-      # and history stays local.
       atuin = {
         enable = true;
         enableFishIntegration = true;
@@ -34,15 +29,12 @@
           sync_frequency = "5m";
         };
       };
-      # Atuin owns Ctrl-R. fzf keeps Ctrl-T for files and Alt-C for directories.
       fzf.historyWidget.command = "";
       claude-code.enable = true;
       firefox = {
         enable = true;
         configPath = "${config.xdg.configHome}/mozilla/firefox";
       };
-      # Keeps fish as the shell inside `nix develop` and `nix shell`, which
-      # otherwise drop into bash.
       nix-your-shell = {
         enable = true;
         enableFishIntegration = true;
@@ -54,8 +46,6 @@
       obsidian = {
         enable = true;
         cli.enable = true;
-        # electron 43.8.3 breaks the renderer preload (webFrame, "reading
-        # 'defineProperty'") and the window never opens. 43.7.11 and 44 are fine.
         package = pkgs.obsidian.override { electron = pkgs.electron_44; };
       };
       obs-studio.enable = true;
@@ -65,7 +55,7 @@
       bitwarden-desktop
       bitwarden-cli
       feh
-      dix # closure diff, run after a rebuild to see what changed
+      dix
       librepods
       nautilus
       nix-output-monitor
@@ -75,7 +65,6 @@
       vesktop
       vlc
 
-      # Toolchains, kept off the servers. See modules/home/default.nix.
       cargo
       gcc
       gnumake
@@ -98,8 +87,6 @@
 
     services.gnome-keyring.enable = true;
 
-    # https://github.com/drduh/YubiKey-Guide/blob/master/config/gpg-agent.conf
-    # https://www.gnupg.org/documentation/manuals/gnupg/Agent-Options.html
     services.gpg-agent = {
       enable = true;
       enableSshSupport = true;
@@ -136,7 +123,6 @@
       };
     };
 
-    # Preserve the file manager bookmarks independently of GTK theming.
     xdg.configFile."gtk-3.0/bookmarks".text = lib.concatMapStrings (dir: "file://${dir}\n") [
       config.xdg.userDirs.documents
       config.xdg.userDirs.download
@@ -145,7 +131,6 @@
       config.xdg.userDirs.pictures
     ];
 
-    # Keep application themes, but let the new shell own desktop appearance.
     catppuccin = {
       gtk.icon.enable = false;
       cursors.enable = false;

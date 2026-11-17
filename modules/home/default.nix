@@ -16,15 +16,9 @@
       homeDirectory = "/home/${osConfig.homelab.owner.username}";
       stateVersion = "25.11";
       sessionPath = [ "$HOME/.local/bin" ];
-      # This profile is the servers' profile too, so nothing here is a
-      # compiler or a language runtime. Those live in modules/home/workstation.nix. A
-      # server that takes connections from the internet has no use for a
-      # toolchain, and whoever lands on one should not find it waiting.
+      # Servers get this profile too, so no toolchains here.
       packages = with pkgs; [
         atproto-goat
-        # The terminfo entry, not the terminal. ssh does not carry terminfo
-        # across, so without it a ghostty window that lands on a server has an
-        # unknown $TERM.
         ghostty.terminfo
         jq
         just
@@ -63,9 +57,6 @@
       };
     };
 
-    # `autoEnable` themes every program the catppuccin module knows about,
-    # which makes theming opt-out. A program that should keep its own colours
-    # turns `catppuccin.<program>.enable` off rather than being added here.
     catppuccin = {
       accent = "mauve";
       autoEnable = true;
