@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  osConfig,
   ...
 }:
 let
@@ -16,8 +17,8 @@ in
 
       settings =
         let
-          tailscaleIPs = config.mySnippets.tailnet.tailscaleIPs;
-          inherit (config.mySnippets.biscuits-at.networkMap) knot;
+          tailscaleIPs = osConfig.homelab.hosts;
+          inherit (osConfig.homelab.services) knot;
 
           # One entry per host in the fleet roster, addressed by tailnet IP
           # rather than by name. `tmux new -As0` attaches session 0 or creates

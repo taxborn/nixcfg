@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  osConfig,
   pkgs,
   ...
 }:
@@ -24,7 +25,7 @@
         enable = true;
         enableFishIntegration = true;
         settings = {
-          sync_address = "https://${config.mySnippets.biscuits-at.networkMap.atuin.domain}";
+          sync_address = "https://${osConfig.homelab.services.atuin.domain}";
           auto_sync = true;
           sync_frequency = "5m";
         };

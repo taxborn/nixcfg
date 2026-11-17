@@ -22,7 +22,7 @@
           modules.hardware
           modules.nixos
           modules.users
-          modules.snippets
+          ../options.nix
 
           {
             home-manager = {

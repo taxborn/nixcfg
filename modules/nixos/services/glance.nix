@@ -6,7 +6,7 @@
 }:
 let
   cfg = config.myNixOS.services.glance;
-  networkMap = config.mySnippets.biscuits-at.networkMap;
+  networkMap = config.homelab.services;
 
   # Probes run from Argon, against the public names rather than loopback, so a
   # red tile means the whole path is broken (DNS, Cloudflare, Caddy, the app)
@@ -85,9 +85,9 @@ let
   # the same signal Prometheus scrapes. Workstations are expected to be red
   # when asleep, which is why they sit in their own widget and not beside the
   # servers.
-  roster = config.mySnippets.tailnet.tailscaleIPs;
-  nodePort = toString config.mySnippets.monitoring.ports.nodeExporter;
-  alwaysOn = config.mySnippets.monitoring.alwaysOn;
+  roster = config.homelab.hosts;
+  nodePort = toString config.homelab.monitoring.ports.nodeExporter;
+  alwaysOn = config.homelab.monitoring.alwaysOn;
   workstations = lib.filter (h: !(lib.elem h alwaysOn)) (lib.attrNames roster);
   nodeSites = map (host: {
     title = lib.toUpper (lib.substring 0 1 host) + lib.substring 1 (-1) host;
@@ -115,7 +115,7 @@ in
           users.taxborn.password = "\${GLANCE_USER_PASSWORD}";
         };
         server = {
-          port = config.mySnippets.biscuits-at.networkMap.glance.port;
+          port = config.homelab.services.glance.port;
         };
         # Catppuccin Mocha with the Mauve accent, typed out rather than
         # inherited. This option takes raw HSL triples, and there is no

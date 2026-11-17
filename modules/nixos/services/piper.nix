@@ -7,7 +7,7 @@
 }:
 let
   cfg = config.myNixOS.services.piper;
-  networkMap = config.mySnippets.biscuits-at.networkMap;
+  networkMap = config.homelab.services;
   package = self.packages.${pkgs.stdenv.hostPlatform.system}.tealfm-piper;
 in
 {

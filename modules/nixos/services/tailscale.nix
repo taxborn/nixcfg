@@ -26,12 +26,12 @@ in
 
     address = lib.mkOption {
       description = ''
-        This host's address from `mySnippets.tailnet.tailscaleIPs`, or null if
+        This host's address from `homelab.hosts`, or null if
         it has no entry. Read by every service that binds the tailnet address
         instead of looking the hostname up itself, and asserts on null.
       '';
       type = lib.types.nullOr lib.types.str;
-      default = config.mySnippets.tailnet.tailscaleIPs.${config.networking.hostName} or null;
+      default = config.homelab.hosts.${config.networking.hostName} or null;
       readOnly = true;
     };
 

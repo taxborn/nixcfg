@@ -1,6 +1,6 @@
 { config, ... }:
 let
-  networkMap = config.mySnippets.biscuits-at.networkMap;
+  networkMap = config.homelab.services;
 
   # Access log for a direct vhost, in Caddy's default JSON so Alloy can ship it
   # as-is. nixpkgs already gives every vhost an unfiltered 0600 `access-*.log`,

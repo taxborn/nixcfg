@@ -1,7 +1,7 @@
 { config, ... }:
 let
-  inherit (config.mySnippets.biscuits-at.networkMap) spindle;
-  site = config.mySnippets.biscuits-at.networkMap.braxton-is;
+  inherit (config.homelab.services) spindle;
+  site = config.homelab.services.braxton-is;
 in
 {
   # Carbon serves nothing else on 80/443. Minecraft has its own port.

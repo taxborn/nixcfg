@@ -6,7 +6,7 @@
 }:
 let
   cfg = config.myNixOS.services.ntfy;
-  networkMap = config.mySnippets.biscuits-at.networkMap;
+  networkMap = config.homelab.services;
 in
 {
   options.myNixOS.services.ntfy.enable = lib.mkEnableOption "ntfy push notification server";

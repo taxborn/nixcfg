@@ -37,7 +37,7 @@ let
             alert = "InstanceDown";
             # `job="node"` and deliberately not `job=~"node.*"`. The
             # intermittent job holds the laptop and the desktop, where being
-            # down is the normal state, see `mySnippets.monitoring.alwaysOn`. A
+            # down is the normal state, see `homelab.monitoring.alwaysOn`. A
             # rule that fires every time a lid closes is one that gets muted,
             # and muting it costs this alert, which is the only one that catches
             # a server that simply stopped.

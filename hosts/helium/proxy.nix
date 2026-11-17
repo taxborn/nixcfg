@@ -1,6 +1,6 @@
 { config, ... }:
 let
-  networkMap = config.mySnippets.biscuits-at.networkMap;
+  networkMap = config.homelab.services;
 in
 {
   # Nothing Helium serves is meant for the internet, so the two

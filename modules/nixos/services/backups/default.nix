@@ -8,7 +8,7 @@
 let
   cfg = config.myNixOS.services.backups;
   hostname = config.networking.hostName;
-  networkMap = config.mySnippets.biscuits-at.networkMap;
+  networkMap = config.homelab.services;
   addr = config.myNixOS.services.tailscale.address;
 
   # Helium keeps the second copy of every host's archives on its external drive.
@@ -322,7 +322,7 @@ in
               # borg reads a single slash after the host as home-relative, so
               # the leading slash of basePath is what makes this absolute.
               "ssh://${backupServer.user}@${
-                config.mySnippets.tailnet.tailscaleIPs.${backupServer.host}
+                config.homelab.hosts.${backupServer.host}
               }:${toString backupServer.port}/${backupServer.basePath}/${hostname}";
         };
       };
@@ -332,7 +332,7 @@ in
       # would stop at an unknown host key.
       programs.ssh.knownHosts."${backupServer.host}-borg" = {
         hostNames = [
-          "[${config.mySnippets.tailnet.tailscaleIPs.${backupServer.host}}]:${toString backupServer.port}"
+          "[${config.homelab.hosts.${backupServer.host}}]:${toString backupServer.port}"
         ];
         publicKeyFile = "${self}/keys/root_${backupServer.host}.pub";
       };
@@ -609,7 +609,7 @@ in
           message = ''
             myNixOS.services.backups.server binds the borg port to this host's
             tailnet address and nowhere else, so the host has to run Tailscale
-            and appear in mySnippets.tailnet.tailscaleIPs.
+            and appear in homelab.hosts.
           '';
         }
       ];

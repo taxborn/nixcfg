@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  self,
   ...
 }:
 let
@@ -32,7 +33,14 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    programs.ssh.knownHosts = config.mySnippets.ssh.knownHosts;
+    programs.ssh.knownHosts = lib.mapAttrs (host: ip: {
+      hostNames = [
+        host
+        "${host}.${config.homelab.tailnet.name}"
+        ip
+      ];
+      publicKeyFile = "${self}/keys/root_${host}.pub";
+    }) config.homelab.hosts;
 
     # Both halves follow the option. nixpkgs opens 22 by itself through
     # `services.openssh.openFirewall`, which defaults to true, so leaving that

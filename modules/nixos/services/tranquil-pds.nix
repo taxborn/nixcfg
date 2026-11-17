@@ -7,7 +7,7 @@
 }:
 let
   cfg = config.myNixOS.services.tranquil-pds;
-  networkMap = config.mySnippets.biscuits-at.networkMap;
+  networkMap = config.homelab.services;
 
   # A pinned commit of `main`, not the tagged release nixpkgs carries. The
   # `tranquil-src` input in flake.nix records why. Server and frontend come from

@@ -7,7 +7,7 @@
 }:
 let
   cfg = config.myNixOS.services.tangled.spindle;
-  networkMap = config.mySnippets.biscuits-at.networkMap;
+  networkMap = config.homelab.services;
   spindle = config.services.tangled.spindle;
 in
 {

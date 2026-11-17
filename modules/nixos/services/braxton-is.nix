@@ -7,7 +7,7 @@
 }:
 let
   cfg = config.myNixOS.services.braxton-is;
-  site = config.mySnippets.biscuits-at.networkMap.braxton-is;
+  site = config.homelab.services.braxton-is;
 
   root = "/srv/braxton-is";
   deployUser = "braxton-deploy";
