@@ -45,7 +45,7 @@ Recipients come from [`../keys/`](../keys). Two tiers:
 
 The yubikey appears in both tiers on purpose. If a host is gone, that key is
 the only thing left that can open its archives, which is what tier 0 of the
-[backups README](./backups.md#testing-restore)
+[backup guide](./backups.md#testing-restore)
 checks.
 
 The rules at the top of `secrets.nix` derive borg material per host, so adding a
@@ -128,4 +128,4 @@ rekeyed before the host rebuilds. Changing a rule alone does not change who
 can decrypt an existing file.
 
 Borg key material has its own provisioning sequence, in the
-[backups README](./backups.md#provisioning-a-host).
+[backup guide](./backups.md#provisioning-a-host).

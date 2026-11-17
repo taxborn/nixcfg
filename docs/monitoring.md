@@ -17,8 +17,8 @@ comments is carried over.
 ## how a host gets monitored
 
 It is on the tailnet, and `base` enables the client, so every host is covered
-including the workstations. `mySnippets.tailnet.tailscaleIPs` is the roster and
-the server derives its scrape targets from it. `mySnippets.monitoring` refines
+including the workstations. `homelab.hosts` is the roster and
+the server derives its scrape targets from it. `homelab.monitoring` refines
 that without changing whether a host is monitored:
 
 - `alwaysOn` hosts land in the `node` job and are covered by `InstanceDown`.
@@ -32,8 +32,8 @@ off the tailnet ships the gap when it returns, up to the week Loki accepts.
 ## what listens where
 
 Nothing here is in `allowedTCPPorts`. Reachability is decided by which address a
-process binds. Ports live in `mySnippets.monitoring.ports`, and Grafana's is in
-`networkMap`.
+process binds. Ports live in `homelab.monitoring.ports`, and Grafana's is in
+`homelab.services`.
 
 | Service | Address | Reachable from |
 | --- | --- | --- |
