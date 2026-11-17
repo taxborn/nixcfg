@@ -7,28 +7,17 @@ let
   networkMap = config.homelab.services;
 in
 {
-  # The vault is a SQLite file under /var/lib/vaultwarden, so being inside
-  # the backed-up `/var/lib` is not enough: archiving the live file, or its
-  # `-wal` and `-shm` companions, at different moments takes a torn pair. The
-  # dump goes through SQLite and sees one snapshot. The path is the
-  # nixpkgs module's data folder plus Vaultwarden's default database name,
-  # and `backupDir` stays null because borgmatic does this job instead.
   homelab.backups.sqliteDatabases.vaultwarden = "/var/lib/vaultwarden/db.sqlite3";
 
   age.secrets.vaultwarden.file = "${self}/secrets/vaultwarden.age";
 
   services.vaultwarden = {
-    # `config` renders to a vaultwarden.env in the nix store, which is
-    # world-readable, so the SMTP login and anything else secret arrives
-    # through here instead.
     environmentFile = config.age.secrets.vaultwarden.path;
     enable = true;
     config = {
       DOMAIN = "https://${networkMap.vaultwarden.domain}";
       ROCKET_PORT = networkMap.vaultwarden.port;
-      # Loopback, so Caddy is the only route in. This read an explicit
-      # 0.0.0.0 until f1bdfff, when the closed firewall rather than the bind
-      # address was all that kept the vault off Argon's public IP.
+      # Loopback only. It was once 0.0.0.0, and only the firewall kept the vault private.
       ROCKET_ADDRESS = "127.0.0.1";
 
       SIGNUPS_ALLOWED = false;
@@ -36,13 +25,6 @@ in
       SHOW_PASSWORD_HINT = false;
       INVITATIONS_ALLOWED = true;
 
-      # Port 465 is implicit TLS, which is what `force_tls` selects.
-      # `starttls` is the value for 587 and is wrong here. SMTP_USERNAME and
-      # SMTP_PASSWORD come from the environment file.
-      #
-      # The sender is the apex address, which is what the zone's SPF record
-      # and DKIM CNAMEs cover. They do not descend, so sending as anything
-      # under a subdomain means unauthenticated mail.
       SMTP_AUTH_MECHANISM = "Login";
       SMTP_FROM = config.homelab.mail.from;
       SMTP_FROM_NAME = "Vaultwarden Service";
