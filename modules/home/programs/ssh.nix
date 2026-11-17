@@ -13,12 +13,6 @@
         tailscaleIPs = osConfig.homelab.hosts;
         inherit (osConfig.homelab.services) knot;
 
-        # One entry per host in the fleet roster, addressed by tailnet IP
-        # rather than by name. `tmux new -As0` attaches session 0 or creates
-        # it, so a dropped link leaves the work running and reconnecting
-        # lands back in it. The cost is that RemoteCommand takes the slot a
-        # command would use: `ssh helium uptime` refuses to run, and a
-        # one-shot needs `ssh -o RemoteCommand=none`.
         machine = name: ip: {
           ${name} = {
             Hostname = ip;
@@ -40,14 +34,6 @@
           User = osConfig.homelab.rsyncNet.user;
         };
 
-        # Tangled prints clone URLs as `git@knot.biscuits.at:<did>/<repo>`,
-        # with no port and the public name. That name is proxied by
-        # Cloudflare, which carries no SSH, so the alias sends it to the
-        # knot's tailnet listener instead. Other people clone over HTTPS.
-        #
-        # `tangled` is the short form:
-        # `git clone tangled:<handle or did>/repo`. The knot takes either as
-        # the owner.
         ${knot.domain} = {
           Hostname = knot.sshDomain;
           User = "git";

@@ -1,23 +1,16 @@
 {
   hardware.logitech.wireless.enable = true;
-  # Package and udev rules only, kept to read the HID++ device name that
-  # logiops matches on below. `userService` stays off, see the note below.
   programs.solaar.enable = true;
 
-  # The MX Master 3S thumb button emits no BTN_* event of its own. It is a
-  # HID++ control that Logi Options+ would interpret, so there is nothing
-  # for Niri to bind until logid claims it and synthesises keys through
-  # uinput. Those combos are bound in the Niri config. Solaar's
-  # `userService` must stay off; it drives HID++ on the same device and the
-  # two conflict.
+  # Solaar's userService must stay off. It fights logiops over HID++.
   services.logiops = {
     enable = true;
     config.devices = [
       {
-        name = "MX Master 3S"; # must match the HID++ name solaar reports
+        name = "MX Master 3S";
         buttons = [
           {
-            cid = 195; # 0xc3, the gesture button; nix has no hex literals
+            cid = 195;
             action = {
               type = "Gestures";
               gestures = [
@@ -44,7 +37,6 @@
                   };
                 }
                 {
-                  # Pressed without moving; Super+R opens Noctalia's launcher.
                   direction = "None";
                   mode = "OnRelease";
                   action = {

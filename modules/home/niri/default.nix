@@ -8,7 +8,6 @@
 {
   home.packages = with pkgs; [
     playerctl
-    # Niri starts this on demand for existing X11 applications, including Steam.
     xwayland-satellite
   ];
 
@@ -23,8 +22,6 @@
     end
   '';
 
-  # A store symlink would make the settings UI read-only. Seed a regular
-  # file once, then leave subsequent edits to Noctalia and the user.
   home.activation.seedNoctalia = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     if [[ ! -e ${lib.escapeShellArg "${config.xdg.configHome}/noctalia/config.toml"} && ! -L ${lib.escapeShellArg "${config.xdg.configHome}/noctalia/config.toml"} ]]; then
       run ${lib.getExe' pkgs.coreutils "install"} -Dm600 \

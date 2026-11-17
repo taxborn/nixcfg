@@ -40,3 +40,103 @@ Validate the compositor file with `niri validate -c modules/home/niri/config.kdl
 Build both workstation toplevels before deploying. A successful build cannot
 verify physical monitor modes, GPU rendering or application launches in a live
 session.
+
+## workstation system
+
+`modules/nixos/workstation` is imported by Tungsten and Uranium.
+
+- **Kernel.** `linuxPackages_latest` through `mkDefault`, so a host can fall back
+  to LTS without `mkForce`. Transparent huge pages are `always` with `defer`
+  defrag, which gives games and builds huge pages without each one opting in,
+  and without stalling a frame to compact memory. Servers keep `madvise`,
+  because Postgres and Redis do worse with it on.
+- **15-second unit timeouts.** A hung unit otherwise holds shutdown at "a stop job
+  is running" for 90 seconds. Servers keep the default, since a database
+  flushing on stop can take that long.
+- **`enableStrictShellChecks`** runs shellcheck over every generated unit script
+  and adds `set -o nounset`. It is workstation-only. On Helium it broke
+  paperless-scheduler, whose pre-start reads `$CREDENTIALS_DIRECTORY`, and every
+  host built cleanly before failing at activation. Read each generated script
+  before turning it on for a server.
+- **Packages.** The Nix language servers, nixfmt and nix-ld live here, not on
+  servers. `environment.defaultPackages` is empty (add `strace` when debugging a
+  hang) and speechd is off, which saves several hundred MiB.
+- **Journals** are capped at 100M, for debugging the current boot. Servers keep the
+  default, because history matters there.
+- **earlyoom** acts on free memory and swap before the desktop stalls, where
+  systemd-oomd waits for cgroup pressure. `--avoid` lists the session and things
+  that cannot restart unnoticed, and `--prefer` lists what is cheap to lose.
+  Patterns match the 15-character `comm` name, and `-g` takes a browser's
+  renderers with it. earlyoom needs `systembus-notify`, which smartd turns off,
+  so the workstation forces it on.
+- **Fonts.** JetBrains Mono NL (no ligatures) and the `NFM` Nerd Font Mono
+  family, which keeps glyphs single-width in terminals.
+- **Containers.** Rootless podman with a `docker` shim. There is no daemon and
+  no root-equivalent group. DNS is on for the default network, because compose
+  files expect containers to resolve each other. Images are pruned weekly,
+  since Nix's GC never touches them.
+
+## boot
+
+- **Lanzaboote** forces systemd-boot off, because both claim the ESP and nixpkgs
+  allows exactly one loader. The boot editor is off, because it would let anyone
+  at the keyboard append `init=/bin/sh`. New entries get three tries:
+  systemd-bless-boot marks one good at `boot-complete.target`, and an entry that
+  runs out of tries sorts last, so a generation that never finishes booting
+  rolls back. A unit that fails before that target counts as a failed boot too.
+  `bootctl list` shows the remaining tries. Microsoft's keys are enrolled
+  because the discrete GPUs' option ROMs are signed with them.
+- **Graphical boot.** `autologinOnce` logs tty1 in once per boot, which is all
+  the fish login hook needs to start Niri. Logging out lands on a password
+  prompt. Kernel parameters hide the logo, cursor and fbcon handover between
+  Plymouth and the compositor. `loader.timeout = 0` hides the menu, and holding
+  a key still shows it.
+
+## hardware
+
+- **MX Master 3S.** The thumb button emits no `BTN_*` event, so logiops claims it
+  over HID++ and synthesises key combos through uinput, which Niri binds.
+  Solaar is installed only to read the device name. Its `userService` must stay
+  off, because it drives HID++ on the same device. The gesture button's CID is
+  `195` (0xc3).
+- **YubiKey.** pcscd must run, or every YubiKey age identity fails to decrypt,
+  including `just restore-keys`. `age-plugin-yubikey` is on PATH for interactive
+  `agenix -d`. agenix's activation uses a wrapped `age` with the plugin on its
+  PATH, because activation's PATH is nearly empty. gpg's scdaemon is told
+  `disable-ccid`, so it shares the card through pcscd instead of claiming the
+  USB device outright.
+
+## home-manager
+
+`modules/home/default.nix` goes to every host, servers included, so it has no
+compilers or language runtimes. Toolchains are in `workstation.nix`. It
+installs ghostty's terminfo, because ssh does not carry terminfo across.
+Catppuccin's `autoEnable` makes theming opt-out.
+
+- **git** signs with the primary key in `keys/pgp.asc`. The private half is on
+  the YubiKey, and only workstations run a gpg-agent, so a commit made on a
+  server is refused rather than written unsigned. The lazygit theme is migrated
+  at build time, because lazygit would try to rewrite its read-only config.
+  Drop that once catppuccin/lazygit ships the new layout.
+- **gpg** uses drduh's hardened defaults. `require-secmem` refuses to run rather
+  than let a passphrase reach swap. `throw-keyids` hides recipients, at the cost
+  of clients that cannot try every key (Mailvelope).
+- **ssh** has one alias per host, addressed by tailnet IP, opening
+  `tmux new -As0`, so a dropped link reconnects into the same session. One-shot
+  commands need `-o RemoteCommand=none`. `knot.biscuits.at` and `tangled` alias
+  to the knot's tailnet listener, because the public name goes through
+  Cloudflare, which carries no SSH.
+- **The YubiKey age identity** in `yubikey.nix` is a stub naming a serial and a
+  slot, not a key, so it can be public. Workstations list its path in
+  `age.identityPaths`.
+- **Atuin** syncs ciphertext to Argon. Run `atuin register` once, then
+  `atuin key` to carry the key to another machine. Atuin owns Ctrl-R, and fzf
+  keeps Ctrl-T and Alt-C. `nix-your-shell` keeps fish inside `nix develop`.
+- **Obsidian** runs on Electron 44, because 43.8.3 breaks its renderer preload.
+- **nix-search.** manix is pointed at this flake's nixpkgs and home-manager
+  through `NIX_PATH`. Left alone it falls through to nix-darwin's options and
+  answers with Darwin defaults. Run `manix -u` after a flake update. `ns` is an
+  fzf pipeline over nix-search-tv, which indexes for about twenty seconds on
+  first run.
+- **Niri** starts xwayland-satellite on demand. Noctalia's config is seeded once
+  as a regular file, so its settings UI can write to it.

@@ -9,16 +9,9 @@
       efi.canTouchEfiVariables = lib.mkDefault true;
 
       systemd-boot = {
-        # Lanzaboote installs through `boot.loader.external` and does not turn
-        # systemd-boot off on its own, so without this two installers claim
-        # the ESP and the build fails nixpkgs' "exactly one bootloader"
-        # assertion.
         enable = lib.mkForce false;
 
-        # Still read by lanzaboote, which seeds loader.conf from these. The
-        # boot editor lets anyone at the keyboard append `init=/bin/sh` to the
-        # kernel command line, walking straight around everything Secure Boot
-        # just verified, and nixpkgs leaves it on.
+        # The boot editor would let anyone at the keyboard bypass Secure Boot.
         editor = lib.mkDefault false;
       };
     };
@@ -27,22 +20,13 @@
       enable = true;
       configurationLimit = lib.mkDefault 10;
 
-      # New entries get three boot attempts. systemd-bless-boot marks one good
-      # once boot-complete.target is reached, and an entry that runs out of
-      # tries sorts last, so a generation that never finishes booting rolls
-      # back on its own. The catch is that a failed unit ordered before that
-      # target counts as a failed boot too, so a service that breaks on every
-      # start can quietly send a machine back to the previous generation.
-      # `bootctl list` shows the remaining tries.
       bootCounting.initialTries = lib.mkDefault 3;
       pkiBundle = lib.mkDefault "/var/lib/sbctl";
       autoGenerateKeys.enable = lib.mkDefault true;
       autoEnrollKeys = {
         enable = lib.mkDefault true;
         autoReboot = lib.mkDefault true;
-        # Load bearing on any machine with a discrete GPU. Option ROMs are
-        # signed by Microsoft, and firmware that will not validate one can
-        # leave the card with no output.
+        # GPU option ROMs are Microsoft-signed. Without these keys the card can stay dark.
         includeMicrosoftKeys = lib.mkDefault true;
       };
     };
