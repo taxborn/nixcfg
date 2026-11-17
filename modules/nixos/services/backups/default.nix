@@ -47,6 +47,12 @@ let
 
     "/home/*/.local/share/Trash"
 
+    "/home/*/.npm"
+    "/home/*/.local/share/containers/storage/overlay"
+    "/home/*/.local/share/claude/versions"
+    "/home/*/.local/share/zed/external_agents"
+    "/home/*/.local/share/zed/languages"
+
     "**/.venv"
     "**/.direnv"
     "**/.gradle/caches"

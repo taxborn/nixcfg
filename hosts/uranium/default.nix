@@ -59,6 +59,15 @@
 
     backups = {
       desktopExcludes = true;
+      extraExcludes = [
+        "/home/*/.local/share/comfyui/models"
+        "/home/*/.local/share/PrismLauncher/assets"
+        "/home/*/.local/share/PrismLauncher/libraries"
+        "/home/*/.local/share/PrismLauncher/cache"
+        "/home/*/.local/share/containers/storage/volumes/connectu_dbdata"
+        "/home/*/.config/vesktop/sessionData"
+        "/home/*/documents/isos"
+      ];
       paths = [
         "/home"
         "/var/lib"

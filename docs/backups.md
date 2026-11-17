@@ -599,7 +599,17 @@ targets and are not.
 - `desktopExcludes` covers what a workstation `$HOME` piles up: XDG caches,
   Chromium and Electron caches under `.config/*/Cache` (most of the win, and
   missed by a `.cache` pattern), Steam's runtime and shader caches, flatpak
-  runtimes, Trash and virtualenvs. None of it dedups between runs.
+  runtimes, Trash and virtualenvs. None of it dedups between runs. It also
+  covers re-downloadable tool state under `~/.local/share` and `~/.npm`: npm's
+  cache, podman image layers (`containers/storage/overlay`, never `volumes`),
+  downloaded Claude Code binaries, and Zed's language servers and agents.
+- Uranium's `extraExcludes` are judgements about that one machine: ComfyUI
+  models (re-downloadable, `output/` is kept), PrismLauncher's assets, libraries
+  and cache (`instances` holds the worlds and is kept), the Vesktop session
+  data, `~/documents/isos`, and the `connectu_dbdata` podman volume. That volume
+  is a live MySQL data directory, so archiving it is the torn-copy problem
+  described under [databases](#databases). It is development data with no dump
+  hook, so it is excluded rather than dumped.
 - The backup server excludes its own repository path. That does nothing today,
   since the default paths do not reach the drive, but it matters the moment a
   service there joins the backup set.
