@@ -5,6 +5,7 @@
 }:
 {
   imports = [
+    ../../modules/nixos/workstation
     ./disko.nix
   ];
 
@@ -71,8 +72,6 @@
   };
 
   myNixOS = {
-    profiles.workstation.enable = true;
-    programs.lanzaboote.enable = true;
     programs.libvirt.enable = true;
 
     profiles.btrfs.snapshotSubvolumes.compatdata = "/games/steamapps/compatdata";

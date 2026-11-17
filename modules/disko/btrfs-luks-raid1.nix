@@ -135,7 +135,7 @@ in
       message = ''
         The btrfs-luks-raid1 layout puts a fallback ESP on nvme1 at
         ${fallbackMountPoint}, and lanzaboote is the only bootloader here that
-        installs to it. Set myNixOS.programs.lanzaboote.enable on this host, or
+        installs to it. Import modules/nixos/workstation on this host, or
         teach modules/disko/btrfs-luks-raid1.nix how to populate that mount
         point for whichever bootloader replaces it.
       '';

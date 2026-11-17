@@ -75,8 +75,6 @@ let
 in
 {
   options.myNixOS.services.caddy = {
-    enable = lib.mkEnableOption "Caddy web server.";
-
     cloudflareOnly = lib.mkEnableOption ''
       dropping 80/443 from everywhere but Cloudflare's edge.
 
@@ -118,7 +116,7 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = {
     assertions =
       lib.optional cfg.cloudflareOnly {
         assertion = unprotectedVHosts == [ ];

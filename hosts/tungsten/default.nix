@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ../../modules/nixos/workstation
     ./disko.nix
   ];
 
@@ -12,8 +13,6 @@
   environment.systemPackages = [ pkgs.brightnessctl ];
 
   myNixOS = {
-    profiles.workstation.enable = true;
-    programs.lanzaboote.enable = true;
     services.backups.client = {
       enable = true;
       notify.enable = true;

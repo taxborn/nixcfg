@@ -184,7 +184,7 @@ in
           dedup poorly between runs, and restore to nothing anyone wants.
 
           Deliberately not on by default and not implied by
-          `profiles.workstation`: what counts as disposable under `/home` is a
+          `modules/nixos/workstation`: what counts as disposable under `/home` is a
           judgement about the host, and getting it wrong silently drops data.
           `~/Downloads` is left *in* for the same reason.
         '';

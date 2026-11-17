@@ -17,7 +17,7 @@ in
         the site's deploy key on its public address, and the other two want a
         way in when tailscaled is down.
 
-        `profiles.workstation` turns it off. A workstation runs no fail2ban,
+        `modules/nixos/workstation` turns it off. A workstation runs no fail2ban,
         and the laptop joins networks nobody here controls. Closing the port
         costs nothing on the tailnet, where `tailscale0` is a trusted
         interface and Tailscale SSH answers 22 without sshd. The way in when

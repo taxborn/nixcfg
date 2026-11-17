@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ../../modules/nixos/server.nix
     ./disko.nix
     ./external-hdd.nix
     ./proxy.nix
@@ -12,7 +13,6 @@
   system.stateVersion = "25.11";
 
   myNixOS = {
-    profiles.server.enable = true;
     programs.systemd-boot.enable = true;
     services = {
       monitoring.server.enable = true;
