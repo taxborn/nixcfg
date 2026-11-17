@@ -1,28 +1,23 @@
 # hosts
 
-The main configuration for each host in my homelab, one directory per machine.
-Hosts are named after chemical elements, as explained in
-[CONTEXT.md](./architecture.md).
-
-Each host is one directory: `default.nix` for the machine itself, plus
-`proxy.nix` where it runs Caddy, and any other file the machine alone needs.
-Disk selection and serial numbers live in `disko.nix` beside each host.
-See [fleet agreement](./architecture.md) for the checked
-rosters and [provisioning](../README.md#provisioning-a-new-host) for the order
-in which a new host joins them.
+One directory per machine under `hosts/`: `default.nix` imports the host's
+role, shared hardware and services, `disko.nix` names its drives, `proxy.nix`
+holds its Caddy vhosts, and any other file is hardware only that host has.
+See [architecture](./architecture.md) for how they are assembled and
+[provisioning](../README.md#provisioning-a-new-host) for adding one.
 
 ## at a glance
 
-| host | role | profile | tailnet | boot |
+| host | machine | role | tailnet | boot |
 | --- | --- | --- | --- | --- |
-| [Argon](#argon) | OVH VPS | `profiles.server` | `100.64.2.1` | grub, via `profiles.ovh` |
-| [Carbon](#carbon) | OVH VPS | `profiles.server` | `100.64.2.0` | grub, via `profiles.ovh` |
-| [Helium](#helium) | home server | `profiles.server` | `100.64.1.0` | systemd-boot |
-| [Tungsten](#tungsten) | laptop | `profiles.workstation` | `100.64.0.1` | lanzaboote |
-| [Uranium](#uranium) | desktop | `profiles.workstation` | `100.64.0.0` | lanzaboote |
+| [Argon](#argon) | OVH VPS | `server.nix` | `100.64.2.1` | grub, via `ovh.nix` |
+| [Carbon](#carbon) | OVH VPS | `server.nix` | `100.64.2.0` | grub, via `ovh.nix` |
+| [Helium](#helium) | home server | `server.nix` | `100.64.1.0` | systemd-boot |
+| [Tungsten](#tungsten) | laptop | `workstation` | `100.64.0.1` | lanzaboote |
+| [Uranium](#uranium) | desktop | `workstation` | `100.64.0.0` | lanzaboote |
 
 Every host backs up to rsync.net and to Helium. Uranium adds a third repository
-on a local SSD. See the [backups README](./backups.md).
+on a local SSD. See [backups](./backups.md).
 
 ## [Uranium](../hosts/uranium)
 
@@ -76,12 +71,12 @@ the `directVHosts` exceptions.
 | [Minecraft](../modules/nixos/services/minecraft.nix) (`mnb`) | | 25565 | not behind Caddy; `openFirewall` for friends outside the tailnet; fail2ban jail |
 
 The service modules register `pg_dumpall` for Atuin and Tranquil and SQLite
-dumps for Piper and Vaultwarden when the backup client is enabled.
+dumps for Piper and Vaultwarden.
 
 The PDS is why the two `pds` records are the only DNS-only names in the zone.
 Cloudflare's universal certificate does not cover a second label,
 `subscribeRepos` is a long-lived WebSocket, and the free tier caps request
-bodies at 100 MB. See [`argon/proxy.nix`](../hosts/argon/proxy.nix).
+bodies at 100 MB. See [network](./network.md#directvhosts).
 
 ## [Carbon](../hosts/carbon)
 
