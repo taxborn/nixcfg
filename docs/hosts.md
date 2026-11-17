@@ -149,3 +149,124 @@ archives. Nothing else enforces it, so it is lost on a reformat or a restore
 that copies modes from somewhere else (rsync from NTFS brought `0777`). After a
 restore, rerun both and confirm with `find /mnt/hdd/borg -maxdepth 2 -user
 root`, which should print nothing.
+
+## every host
+
+`modules/nixos/common` applies to all five.
+
+- **fstrim** runs monthly rather than weekly. Every btrfs mount uses
+  `discard=async` and every LUKS volume allows discards, so the pass mostly
+  repeats work. It still covers space the filesystem never allocated.
+- **smartd** is on, since scrub and mdadm only report damage that has already
+  happened. The OVH module turns it off, because there is no SMART behind
+  virtio and smartd fails to start rather than idling.
+- **Kernel hardening.** `kexec_load_disabled` (nothing replaces a running
+  kernel here, and nixos-anywhere's kexec happens before this config exists).
+  `kptr_restrict = 2`, `protected_fifos = 2` and `protected_regular = 2`,
+  stricter than NixOS's defaults of 1.
+- **nscd** has no start limit. nsncd restarts with the NSS targets several
+  times during boot, four times in five seconds on Uranium, which trips the
+  default limit and latches it failed for the rest of the boot.
+- **The user account** is immutable (`mutableUsers = false`), so its password
+  hash comes from agenix. The repository is public and the hash is the sudo
+  password everywhere. agenix decrypts before the users activation script. If
+  the file were missing, sudo would lock out, so keep a root session open while
+  switching anything that touches it.
+- **Nix.** `@wheel` is trusted, which is root-equivalent and fine while wheel is
+  one person. `keep-going`, 30 log lines, no dirty-tree warning, `keep-outputs`
+  and `keep-derivations` so direnv's GC roots survive a collection,
+  `accept-flake-config = false`, and free-space thresholds a host can raise.
+  The nix-community cache's key can sign any path a host accepts, so removing
+  the cache means removing the key.
+- **zram swap** with `swappiness = 180` and `page-cluster = 0`. A swap-in is a
+  decompression, not a seek, so the kernel should swap well before dropping page
+  cache, and readahead would only decompress pages on speculation.
+- **btrfs.** Snapper excludes every `snapshotSubvolumes` entry's `.snapshots`
+  from backups, and orders `snapper-timeline` after their mounts. Without that
+  ordering, its boot catch-up run reached Uranium's compatdata 152 ms before it
+  mounted and failed once per boot. Both are derived from the same attribute,
+  because the host that adds the next subvolume is the one that would forget.
+- **Secret recipients.** `fleet.nix` checks that each age secret a host uses
+  exists and names that host and the YubiKey. It reads the rules and public
+  keys, never the payload, so it cannot tell whether a file was rekeyed.
+
+## disk layouts
+
+`modules/disko` holds the shared layouts. Each host's `disko.nix` supplies the
+`by-id` drive paths.
+
+- `btrfs-opts.nix` holds the mount options every root subvolume shares.
+- `btrfs-ovh.nix` (Argon, Carbon) keeps the 2M EF02 partition as well as the
+  ESP. Disko adds the disk to `boot.loader.grub.devices` from EF02, so GRUB
+  installs for both BIOS and EFI. See [decisions](./decisions.md).
+- `btrfs-luks-raid1.nix` (Tungsten, Uranium): an ESP on each disk, mdraid RAID1,
+  LUKS enrolled to a FIDO2 YubiKey, btrfs on top.
+  - The second ESP is kept in sync by the bootloader. Without it a RAID1 that
+    survives losing a disk boots from only one of them.
+  - `raidSize` caps the first disk's array partition for mismatched drives.
+    Size it against the smaller drive minus its ESP (Tungsten's pair leaves
+    927.5 GiB).
+  - Optional companions (`games`, `backup`) sit outside the mirror on their own
+    LUKS volumes. Their content is reproducible or already redundant. They skip
+    compression (game data and borg output are already compressed) and mount
+    `nofail`.
+  - Companion keyfiles live on the encrypted root, so they unlock from
+    crypttab in stage 2, not the initrd. The installer reuses an existing key
+    rather than minting a new one, which would lock a re-run out of its data.
+  - `/games` keeps `common`, `downloading` and `shadercache` in one subvolume,
+    because Steam installs by `rename()` and that fails across subvolumes.
+    `/compatdata` (Proton prefixes, so local saves) is split out to be
+    snapshotted and backed up. It has no recovery key, since everything on the
+    games drive is re-downloadable or backed up.
+  - The `backup` volume enrolls a recovery key, printed once at install. Keep it
+    with the borg passphrase. Without it, losing the root array takes the local
+    repository with it, which is when it is worth the most. `/borg` is never
+    snapshotted, since snapshots would pin every segment `borg prune` deletes.
+- Helium's single NVMe layout is in `hosts/helium/disko.nix`. Its external
+  drive is mounted with `X-fstrim.notrim`. USB spinning disks reject FITRIM,
+  which kept `fstrim.service` permanently failed.
+
+## OVH instances
+
+`modules/nixos/ovh.nix` (Argon, Carbon):
+
+- BBR with the `fq` qdisc. Long-haul public paths see drops that are more often
+  blips than congestion, and BBR's pacing lives in `fq`. Both modules are loaded
+  explicitly so the sysctls name something the kernel knows.
+- GRUB installs to the removable media path, because the firmware does not keep
+  EFI variables across a rebuild.
+- IPv6 is a single /128 whose gateway sits outside it, so the gateway gets an
+  on-link route first. NetworkManager's auto-default is disabled for that
+  interface only, or it activates a "Wired connection" before the declarative
+  profile exists and never switches. Argon carries IPv6 on a second NIC (`ens4`)
+  with IPv4 disabled there.
+
+## host notes
+
+- **Uranium.** `aesni_intel` is in the initrd, because dm-crypt picks its
+  cipher when stage 1 opens the root and a faster module loaded later does not
+  replace it. `iommu=pt` identity-maps devices, since nothing is passed through.
+  USB autosuspend is off, because it makes the receiver, keyboard and YubiKey
+  re-enumerate. A `cpu-epp` unit sets the HWP performance hint without the
+  performance governor. Steam's firewall options stay off (Remote Play over the
+  tailnet still works). The Nix free-space thresholds are 5 and 20 GiB for large
+  builds. `libvirtd` group membership is root-equivalent, the same trade as
+  `wheel`.
+- **Uranium libvirt.** swtpm for Windows 11. Guests shut down cleanly with the
+  host. `/var/lib/libvirt/images` has a `.nobackup` marker and `+C`
+  (no copy-on-write and no checksums, acceptable for throwaway disks only).
+  Move a VM you care about out of it.
+- **Uranium GPU.** `amdgpu.ppfeaturemask` exposes OverDrive controls for LACT
+  or CoreCtrl. It does nothing until a tool writes to them.
+- **Tungsten GPU.** `i915` loads in the initrd before nvidia, or Electron apps
+  can stall for a minute after boot. The nvidia modules load in stage 2, since
+  finegrained power management's udev rules only fire on a `bind` that happens
+  after switch-root. Loaded from the initrd, the card never reaches RTD3 and
+  draws several watts all session. The PRIME bus IDs are decimal, converted from
+  `lspci`'s hex. 32-bit VAAPI is installed so wine and Steam do not fall back to
+  software decode.
+- **Tungsten power.** boltd authorizes Thunderbolt devices, which are inert
+  without it. A critical battery powers off, because hibernation is not set up
+  and the default HybridSleep would try to resume from nothing. iwlwifi power
+  saving is on. nix-gc and nix-optimise wait for AC power. borgmatic does not,
+  because a skipped unit counts as a success and the timer never retries.

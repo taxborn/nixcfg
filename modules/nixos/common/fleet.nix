@@ -11,8 +11,6 @@ let
   hostname = config.networking.hostName;
 in
 {
-  # Check the rules and public keys, never the encrypted payload. This catches
-  # a service moved to a host that is not a recipient before activation fails.
   config.assertions = lib.mapAttrsToList (
     name: secret:
     let

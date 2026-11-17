@@ -5,9 +5,6 @@
   ...
 }:
 let
-  # Keyed by device rather than by mount point. Every subvolume of one
-  # filesystem shows up in `fileSystems` under the same device, and bees works
-  # on the filesystem, so the mount list would name the same disk repeatedly.
   btrfsFSDevices = lib.unique (
     map (fs: fs.device) (
       lib.attrValues (lib.filterAttrs (_: fs: fs.fsType == "btrfs") config.fileSystems)
@@ -90,13 +87,7 @@ in
   config = {
     environment.systemPackages = lib.optional cfg.guiTools pkgs.snapper-gui;
 
-    # Keep every snapshotted subvolume's `.snapshots` out of the archives.
-    # Snapper holds a timeline of full subtrees, so a backup path that contains
-    # one hands borg every retained snapshot as well as the live data — the
-    # exact mistake `/home/.snapshots` in the backup module's own excludes
-    # already avoids, one subvolume over. Derived from `snapshotSubvolumes`
-    # rather than written per host because the host that adds the next
-    # subvolume is the host that forgets.
+    # Snapper timelines must never reach an archive.
     homelab.backups.extraExcludes = lib.mapAttrsToList (
       _: subvolume: "${subvolume}/.snapshots"
     ) cfg.snapshotSubvolumes;
@@ -127,21 +118,6 @@ in
       };
     };
 
-    # `snapper-timeline.service` ships with `Requires=local-fs.target` and no
-    # ordering of its own, and a companion drive is not ordered before that
-    # target — so the timer's boot catch-up run can reach a subvolume on one
-    # before it is mounted. On uranium the margin was 152ms: the run started at
-    # 16:33:49.356 and /games/steamapps/compatdata mounted at 16:33:49.538.
-    # What snapper reads in that window is the bare mountpoint underneath, and
-    # the whole run dies on "subvolume is not a btrfs subvolume" — once per
-    # boot, leaving a failed unit until the next hourly tick.
-    #
-    # Only `snapshotSubvolumes` needs this. `/home` is picked up separately and
-    # lives on the root array, which has to be mounted for the host to boot at
-    # all; these are the ones on a drive that mounts whenever it gets round to
-    # it. Derived from the same attrset that creates the problem rather than
-    # written per host, for the reason the excludes above give: the host that
-    # adds the next subvolume is the host that forgets.
     systemd.services.snapper-timeline =
       lib.mkIf (btrfsFSDevices != [ ] && cfg.snapshotSubvolumes != { })
         {

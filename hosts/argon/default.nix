@@ -21,12 +21,9 @@
   networking.hostName = "argon";
   system.stateVersion = "25.11";
 
-  # For friends, so it is reachable without the tailnet. The world lives in
-  # the module's default, /var/lib/minecraft/mnb.
   homelab.minecraft.servers.mnb.openFirewall = true;
 
   homelab.ovh.ipv6 = {
-    # OVH gives this instance a second NIC for IPv6; ens3 keeps IPv4.
     interface = "ens4";
     address = "2604:2dc0:101:200::2cc6";
     gateway = "2604:2dc0:101:200::1";

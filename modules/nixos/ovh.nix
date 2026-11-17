@@ -56,14 +56,6 @@ in
         "virtio_scsi"
       ];
 
-      # These instances serve the public internet over long-haul paths,
-      # where a dropped packet is more often a blip than a sign of
-      # congestion, and cubic halves its window for both. BBR paces against
-      # measured bandwidth and RTT instead, with `fq` rather than the default
-      # `fq_codel` because BBR's pacing lives in that qdisc. Loaded
-      # explicitly because neither module comes up on its own here, and the
-      # sysctls below would otherwise name things the kernel does not know
-      # about.
       boot.kernelModules = [
         "tcp_bbr"
         "sch_fq"
@@ -74,31 +66,16 @@ in
         "net.core.default_qdisc" = "fq";
       };
 
-      # The shared layout installs both BIOS and EFI GRUB (EF02 plus the ESP
-      # in modules/disko/btrfs-ovh.nix), so the hardware profile picks the
-      # loader and hosts do not repeat it.
       boot.loader.grub = {
         enable = true;
         efiSupport = true;
 
-        # The OVH instances are the only hosts here booting GRUB, and their
-        # firmware does not keep EFI variables across a rebuild. Installing to
-        # the removable media path leaves the loader somewhere the firmware can
-        # find without a boot entry pointing at it.
         efiInstallAsRemovable = true;
       };
-      # No SMART behind virtio. smartd is on by default in `common/default.nix`, and
-      # with nothing to register it fails to start rather than idling.
       services.smartd.enable = false;
     }
 
     {
-      # NetworkManager otherwise auto-creates a "Wired connection N" for the
-      # device and activates it before `ensure-profiles` has written the
-      # profile below, and a reload does not move an already-active device,
-      # so the declarative profile ends up loaded but idle. Scoped to this
-      # interface rather than "*" because argon's IPv4 lives on a different
-      # NIC that still needs its auto-default.
       networking.networkmanager.settings.main.no-auto-default = cfg.ipv6.interface;
       networking.networkmanager.ensureProfiles.profiles.${cfg.ipv6.interface} = {
         connection = {
@@ -113,8 +90,6 @@ in
         ipv6 = {
           method = "manual";
           address1 = "${cfg.ipv6.address}/128";
-          # The gateway sits outside the /128: pin it on-link first, then
-          # route the default through it.
           route1 = "${cfg.ipv6.gateway}/128";
           route2 = "::/0,${cfg.ipv6.gateway}";
           may-fail = true;
