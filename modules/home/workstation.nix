@@ -30,7 +30,6 @@
         };
       };
       fzf.historyWidget.command = "";
-      claude-code.enable = true;
       firefox = {
         enable = true;
         configPath = "${config.xdg.configHome}/mozilla/firefox";
