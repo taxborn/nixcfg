@@ -1,5 +1,6 @@
 {
   pkgs,
+  config,
   ...
 }:
 {
@@ -9,7 +10,7 @@
   # than another free shell.
   services.getty = {
     autologinOnce = true;
-    autologinUser = "taxborn";
+    autologinUser = config.homelab.owner.username;
   };
 
   boot = {

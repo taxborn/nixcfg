@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ osConfig, pkgs, ... }:
 {
   imports = [
     ./programs/fzf.nix
@@ -12,8 +12,8 @@
 
   config = {
     home = {
-      username = "taxborn";
-      homeDirectory = "/home/taxborn";
+      username = osConfig.homelab.owner.username;
+      homeDirectory = "/home/${osConfig.homelab.owner.username}";
       stateVersion = "25.11";
       sessionPath = [ "$HOME/.local/bin" ];
       # This profile is the servers' profile too, so nothing here is a

@@ -44,10 +44,10 @@ in
       # and DKIM CNAMEs cover. They do not descend, so sending as anything
       # under a subdomain means unauthenticated mail.
       SMTP_AUTH_MECHANISM = "Login";
-      SMTP_FROM = "infra@biscuits.at";
+      SMTP_FROM = config.homelab.mail.from;
       SMTP_FROM_NAME = "Vaultwarden Service";
-      SMTP_HOST = "smtp.fastmail.com";
-      SMTP_PORT = 465;
+      SMTP_HOST = config.homelab.mail.host;
+      SMTP_PORT = config.homelab.mail.port;
       SMTP_SECURITY = "force_tls";
 
       LOG_LEVEL = "warn";

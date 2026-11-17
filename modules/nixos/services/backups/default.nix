@@ -35,9 +35,9 @@ let
     # so a knot branch named `feat/target` lost its loose ref file from every
     # archive with nothing reported. Checked with `borg create --dry-run
     # --list` against a scratch tree, old patterns and new.
-    "/home/taxborn/dev/**/target"
-    "/home/taxborn/dev/**/node_modules"
-    "/home/taxborn/dev/**/__pycache__"
+    "/home/${config.homelab.owner.username}/dev/**/target"
+    "/home/${config.homelab.owner.username}/dev/**/node_modules"
+    "/home/${config.homelab.owner.username}/dev/**/__pycache__"
   ];
 
   # Everything a desktop $HOME accumulates that is large, rewritten constantly,
@@ -214,18 +214,6 @@ in
       '';
     };
 
-    notify = {
-      topic = lib.mkOption {
-        type = lib.types.str;
-        default = "backups";
-        description = ''
-          Topic the messages go to. The server's access rules in
-          `secrets/ntfy.age` name this topic, so changing it here without
-          changing them there gets every publish rejected with a 403.
-        '';
-      };
-    };
-
     repositories = lib.mkOption {
       type = lib.types.attrsOf repoOpts;
       default = { };
@@ -269,7 +257,7 @@ in
       # external drive over the tailnet.
       homelab.backups.repositories = {
         rsync = lib.mkDefault {
-          path = "ssh://de4388@de4388.rsync.net/./borg/${hostname}";
+          path = "ssh://${config.homelab.rsyncNet.user}@${config.homelab.rsyncNet.host}/./borg/${hostname}";
           label = "rsync";
           remotePath = "borg14";
         };
@@ -307,11 +295,11 @@ in
       # rotates them the backup stops at an unknown host key, which is the
       # point; re-verify against that list before replacing these.
       programs.ssh.knownHosts."rsync-net-ed25519" = {
-        hostNames = [ "de4388.rsync.net" ];
+        hostNames = [ config.homelab.rsyncNet.host ];
         publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIObQN4P/deJ/k4P4kXh6a9K4Q89qdyywYetp9h3nwfPo";
       };
       programs.ssh.knownHosts."rsync-net-ecdsa" = {
-        hostNames = [ "de4388.rsync.net" ];
+        hostNames = [ config.homelab.rsyncNet.host ];
         publicKey = "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBC2wi3kWdaW4W+tRu0uq8hhY1ffFbzZ4KCh0FUhFw0GIb8lWWvVnGInc9Tr538k0ZICFSSbs5faMgpMuHSX8QvU=";
       };
 
@@ -409,7 +397,7 @@ in
             # rsync.net one from Helium's.
             ntfy = {
               server = "https://${networkMap.ntfy.domain}";
-              inherit (cfg.notify) topic;
+              topic = config.homelab.ntfy.topics.backups;
               # An `access_token` rather than a username and password, so the
               # credential is scoped to the one write-only user.
               access_token = "{credential file ${config.age.secrets.ntfyToken.path}}";

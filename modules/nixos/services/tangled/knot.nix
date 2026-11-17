@@ -10,8 +10,6 @@ let
   tailnetIP = tailscale.address;
 in
 {
-  imports = [ ./default.nix ];
-
   assertions = [
     {
       assertion = config.services.tailscale.enable && tailnetIP != null;
@@ -57,13 +55,13 @@ in
       server = {
         hostname = networkMap.knot.domain;
         # The knot advertises the first admin as its owner.
-        admins = [ config.homelab.tangled.owner ];
+        admins = [ config.homelab.owner.did ];
         listen_addr = "127.0.0.1:${toString networkMap.knot.port}";
         ssh_listen_addr = "${tailnetIP}:${toString networkMap.knot.sshPort}";
       };
 
       atproto.plc_directory = "https://plc.directory";
-      contact.email = "atproto@biscuits.at";
+      contact.email = config.homelab.mail.atproto;
 
       # The default, spelled out: closed means only admins create
       # repositories. `open` lets any atproto account host on this disk.

@@ -4,9 +4,6 @@
   self,
   ...
 }:
-let
-  cfg = config.homelab.tailscale;
-in
 {
   options.homelab.tailscale = {
     address = lib.mkOption {
@@ -48,14 +45,6 @@ in
       readOnly = true;
     };
 
-    operator = lib.mkOption {
-      description = ''
-        Unix user handed control of tailscaled, so `tailscale status` and the
-        rest of the CLI work without sudo. Null leaves them root-only.
-      '';
-      default = null;
-      type = lib.types.nullOr lib.types.str;
-    };
   };
 
   config = {
@@ -97,9 +86,9 @@ in
       # `--operator` has the same latent problem, being applied only on first
       # join. It has never changed, so it has never mattered; move it up to
       # `extraSetFlags` if it ever does.
-      extraUpFlags = lib.optionals (cfg.operator != null) [
+      extraUpFlags = [
         "--operator"
-        "${cfg.operator}"
+        config.homelab.owner.username
       ];
 
       # Opens Tailscale's UDP port to the internet so peers can connect
