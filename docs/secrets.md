@@ -3,7 +3,7 @@
 [agenix](https://github.com/ryantm/agenix)-encrypted secrets. `secrets.nix` is
 the rule file, mapping each `.age` path to the set of public keys that may
 decrypt it. agenix uses it to encrypt and rekey files. NixOS references the
-`.age` files directly and [fleet assertions](../modules/README.md#fleet-agreement)
+`.age` files directly and [fleet assertions](./architecture.md)
 check their recipient rules before activation.
 
 ## inventory
@@ -45,7 +45,7 @@ Recipients come from [`../keys/`](../keys). Two tiers:
 
 The yubikey appears in both tiers on purpose. If a host is gone, that key is
 the only thing left that can open its archives, which is what tier 0 of the
-[backups README](../modules/nixos/services/backups/README.md#testing-restore)
+[backups README](./backups.md#testing-restore)
 checks.
 
 The rules at the top of `secrets.nix` derive borg material per host, so adding a
@@ -128,4 +128,4 @@ rekeyed before the host rebuilds. Changing a rule alone does not change who
 can decrypt an existing file.
 
 Borg key material has its own provisioning sequence, in the
-[backups README](../modules/nixos/services/backups/README.md#provisioning-a-host).
+[backups README](./backups.md#provisioning-a-host).

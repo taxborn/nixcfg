@@ -108,23 +108,23 @@ include every host and the recovery YubiKey, and that each configured age file
 exists with a rule naming its consuming host and the YubiKey.
 
 These checks inspect rules and public keys. They cannot prove that an encrypted
-file was rekeyed after its rule changed. Follow the [secrets procedure](../secrets/README.md#working-with-them)
-and run the [key recovery test](./nixos/services/backups/README.md#tier-0-key-material)
+file was rekeyed after its rule changed. Follow the [secrets procedure](../docs/secrets.md#working-with-them)
+and run the [key recovery test](../docs/backups.md#tier-0-key-material)
 after changing recipients.
 
 `nix eval --json .#restoreCoverage` lists every enabled backup client and each
 repository's restore coverage. `flake/restore.nix` derives this plan from the
-host configurations. See the [restore procedure](./nixos/services/backups/README.md#testing-restore)
+host configurations. See the [restore procedure](../docs/backups.md#testing-restore)
 for local repository omissions and workstation rehearsals.
 
 ## modules with their own README
 
-- [`home/desktop/niri/`](./home/desktop/niri/README.md) covers the minimal
+- [`home/desktop/niri/`](../docs/desktop.md) covers the minimal
   Niri and Noctalia workstation session and its shortcuts.
-- [`nixos/services/backups/`](./nixos/services/backups/README.md) covers borg
+- [`nixos/services/backups/`](../docs/backups.md) covers borg
   and borgmatic, provisioning a host into the backup set, and the three tiers of
   restore testing. It is the highest-consequence module here. Read it in full
   before editing.
-- [`nixos/services/monitoring/`](./nixos/services/monitoring/README.md) covers
+- [`nixos/services/monitoring/`](../docs/monitoring.md) covers
   the Prometheus, Loki and Grafana stack on Helium and the exporters and Alloy
   on every host.

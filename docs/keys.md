@@ -20,7 +20,7 @@ piece of hardware, different layers: the first gets a shell, the second decrypts
 a secret. Both are recorded here.
 
 `yubikey_age.pub` is a recipient of every secret on purpose. The
-[secrets README](../secrets/README.md#who-can-read-what) explains why.
+[secrets README](./secrets.md#who-can-read-what) explains why.
 
 ## adding a host
 
@@ -37,4 +37,4 @@ another zone means uploading this same certificate to it.
 
 `secrets/borg/<host>/ssh_key.pub` follows the same convention one directory
 over, public halves kept beside their `.age` counterparts. See the
-[secrets README](../secrets/README.md) for why.
+[secrets README](./secrets.md) for why.

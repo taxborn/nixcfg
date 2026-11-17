@@ -10,11 +10,14 @@ agenix, and disko.
 | --- | --- |
 | [AGENTS.md](./AGENTS.md) | working in this repo: what to run, what not to run, validation, permissions and comment policy |
 | [CONTEXT.md](./CONTEXT.md) | vocabulary, deployment model and network policy |
-| [hosts/](./hosts/README.md) | what each machine is and what it runs |
+| [hosts](./docs/hosts.md) | what each machine is and what it runs |
 | [modules/](./modules/README.md) | how the module system is laid out and how to add to it |
-| [secrets/](./secrets/README.md) | agenix rules, who can decrypt what, day-to-day commands |
-| [keys/](./keys/README.md) | the public key material and what reads each file |
-| [backups](./modules/nixos/services/backups/README.md) | borg/borgmatic, provisioning a host, restore testing |
+| [secrets](./docs/secrets.md) | agenix rules, who can decrypt what, day-to-day commands |
+| [keys](./docs/keys.md) | the public key material and what reads each file |
+| [backups](./docs/backups.md) | borg/borgmatic, provisioning a host, restore testing |
+| [monitoring](./docs/monitoring.md) | Prometheus, Loki and Grafana on Helium |
+| [desktop](./docs/desktop.md) | the Niri and Noctalia session |
+| [decisions](./docs/decisions.md) | settings that look removable and are not |
 
 ## layout
 
@@ -33,7 +36,7 @@ secrets/               agenix .age files and the secrets.nix rule file
 keys/                  public keys: host roots, yubikey, the origin-pull cert
 scripts/               operational bash, invoked from the justfile
 tests/                 evaluation regressions and mocked operational tests
-docs/reviews/          dated maintenance and architecture decisions
+docs/                  subject guides: hosts, backups, monitoring, secrets, keys, desktop, decisions
 ```
 
 See [module loading](./modules/README.md#how-a-module-gets-loaded) for imports
@@ -78,10 +81,10 @@ nix build .#nixosConfigurations.<host>.config.system.build.toplevel
    Also add an entry to `mySnippets.ssh.knownHosts` in
    `modules/snippets/sshKnownHosts.nix`. No assertion checks it, and a missing
    host falls back to trust-on-first-use.
-4. Follow [secret operations](./secrets/README.md#working-with-them) to rekey
+4. Follow [secret operations](./docs/secrets.md#working-with-them) to rekey
    the shared secrets and register any service-specific recipients.
 5. Complete the key-material and authorization steps in
-   [backup provisioning](./modules/nixos/services/backups/README.md#provisioning-a-host)
+   [backup provisioning](./docs/backups.md#provisioning-a-host)
    before the first rebuild of the final configuration.
 6. Evaluate and build the host, then deploy it with `just update <host>` and
    initialize its backup repositories as described in that guide.
@@ -105,13 +108,6 @@ sudo sh -c 'for a in /sys/class/firmware-attributes/dell-wmi-sysman/attributes/*
   printf "%-28s %-16s %s\n" "$(basename $a)" "$(cat $a/current_value)" "$(cat $a/possible_values 2>/dev/null)"
 done'
 ```
-
-## reviews
-
-- [Maintenance review, 2026-09-05](./docs/reviews/2026-09-05-maintenance.md)
-  records fixes and retained settings from the pinned-input review.
-- [Architecture review, completed 2026-09-06](./docs/reviews/2026-09-06-architecture.md)
-  records the five tasks from `26a1827` and their implementation.
 
 ## do not
 
