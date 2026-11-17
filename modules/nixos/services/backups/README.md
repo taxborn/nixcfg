@@ -572,7 +572,6 @@ restore of its `/var/lib` directory to confirm permissions survive the trip.
 | `extraExcludes` | list of str | `[ ]` | exclude patterns on top of the defaults |
 | `desktopExcludes` | bool | `false` | also exclude a desktop `$HOME`'s caches and re-downloadable data |
 | `repositories` | attrsOf { path, label, remotePath? } | rsync.net + Helium | targets to back up to |
-| `notify.topic` | str | `"backups"` | topic the messages go to; must match the ACL in `secrets/ntfy.age` |
 | `retention.keepDaily` | int | `7` | daily archives to keep |
 | `retention.keepWeekly` | int | `4` | weekly archives to keep |
 | `retention.keepMonthly` | int | `6` | monthly archives to keep |
@@ -606,7 +605,7 @@ homelab.backups.extraExcludes = [ "/var/lib/containers" ];
 ```
 
 Both repositories are added automatically,
-`ssh://de4388@de4388.rsync.net/./borg/<hostname>` and
+`ssh://<rsyncNet.user>@<rsyncNet.host>/./borg/<hostname>` and
 `ssh://taxborn@<helium tailnet IP>:2200//mnt/hdd/borg/<hostname>`. Naming an
 attribute replaces that target:
 

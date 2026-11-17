@@ -24,6 +24,28 @@ in
   options.homelab = {
     domain = mkOption { type = types.nonEmptyStr; };
 
+    owner = {
+      name = mkOption { type = types.str; };
+      email = mkOption { type = types.str; };
+      username = mkOption { type = types.str; };
+      gpgKey = mkOption { type = types.str; };
+      did = mkOption { type = types.strMatching "^did:[a-z]+:.+"; };
+    };
+
+    mail = {
+      host = mkOption { type = types.str; };
+      port = mkOption { type = port; };
+      from = mkOption { type = types.str; };
+      atproto = mkOption { type = types.str; };
+    };
+
+    ntfy.topics = mkOption { type = types.attrsOf types.str; };
+
+    rsyncNet = {
+      user = mkOption { type = types.str; };
+      host = mkOption { type = types.str; };
+    };
+
     hosts = mkOption {
       type = types.attrsOf types.str;
       description = "Every host in the fleet, mapped to its tailnet address.";

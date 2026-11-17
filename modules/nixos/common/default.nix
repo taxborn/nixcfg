@@ -18,7 +18,7 @@
     ../services/tailscale.nix
   ];
 
-  home-manager.users.taxborn.imports = [ ../../home ];
+  home-manager.users.${config.homelab.owner.username}.imports = [ ../../home ];
 
   age.identityPaths = lib.mkDefault [ "/etc/ssh/ssh_host_ed25519_key" ];
 

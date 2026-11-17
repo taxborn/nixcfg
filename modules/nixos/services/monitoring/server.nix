@@ -5,7 +5,6 @@
   ...
 }:
 let
-  cfg = config.homelab.monitoring;
 
   monitoring = config.homelab.monitoring;
   inherit (monitoring) ports;
@@ -58,20 +57,6 @@ in
     ./alerts.nix
     ./dashboards.nix
   ];
-
-  options.homelab.monitoring = {
-    ntfyTopic = lib.mkOption {
-      type = lib.types.str;
-      default = "alerts";
-      description = ''
-        ntfy topic alerts are published to, on the instance `networkMap.ntfy`
-        points at. That server denies everything by default, so the access rules
-        in `secrets/ntfy.age` have to grant the write-only publisher token
-        write access to this topic, or every alert is rejected with a 403 that
-        only shows up in the bridge's journal.
-      '';
-    };
-  };
 
   config = {
     assertions = [
@@ -274,7 +259,7 @@ in
         # The ntfy instance on Argon, read from the same entry its own module
         # and vhost use.
         ntfy.baseurl = "https://${config.homelab.services.ntfy.domain}";
-        ntfy.notification.topic = cfg.ntfyTopic;
+        ntfy.notification.topic = config.homelab.ntfy.topics.alerts;
       };
 
       # The bridge wants its token as a YAML fragment, and the shared publisher

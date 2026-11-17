@@ -1,6 +1,7 @@
 {
   lib,
   pkgs,
+  config,
   ...
 }:
 {
@@ -13,7 +14,7 @@
 
   # Apps only this machine wants. The shared workstation home cannot vary per
   # host, so the host adds to it.
-  home-manager.users.taxborn = {
+  home-manager.users.${config.homelab.owner.username} = {
     home.packages = with pkgs; [
       via
       prismlauncher
@@ -23,7 +24,7 @@
   # `libvirtd` is what lets virt-manager manage system VMs without a root
   # prompt each time. The group is root-equivalent on this machine, which is
   # the same trade the `wheel` membership already makes.
-  users.users.taxborn.extraGroups = [ "libvirtd" ];
+  users.users.${config.homelab.owner.username}.extraGroups = [ "libvirtd" ];
 
   nixpkgs.hostPlatform = "x86_64-linux";
   networking.hostName = "uranium";
@@ -92,9 +93,9 @@
   };
 
   systemd.tmpfiles.rules = [
-    "d /games 0755 taxborn users -"
-    "d /games/steamapps 0755 taxborn users -"
-    "d /games/steamapps/compatdata 0755 taxborn users -"
+    "d /games 0755 ${config.homelab.owner.username} users -"
+    "d /games/steamapps 0755 ${config.homelab.owner.username} users -"
+    "d /games/steamapps/compatdata 0755 ${config.homelab.owner.username} users -"
   ];
 
   # With intel_pstate in active HWP mode, powersave still permits the full

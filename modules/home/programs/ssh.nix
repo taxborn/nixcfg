@@ -22,7 +22,7 @@
         machine = name: ip: {
           ${name} = {
             Hostname = ip;
-            User = "taxborn";
+            User = osConfig.homelab.owner.username;
             RequestTTY = "yes";
             RemoteCommand = "tmux new -As0";
           };
@@ -36,8 +36,8 @@
       machines
       // {
         rsync-backup = {
-          Hostname = "de4388.rsync.net";
-          User = "de4388";
+          Hostname = osConfig.homelab.rsyncNet.host;
+          User = osConfig.homelab.rsyncNet.user;
         };
 
         # Tangled prints clone URLs as `git@knot.biscuits.at:<did>/<repo>`,

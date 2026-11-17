@@ -56,7 +56,7 @@ in
     settings = {
       # Where a password reset lands. Deliberately the mailbox rather than
       # `infra@`, which is a sending identity.
-      PAPERLESS_ADMIN_MAIL = "hello@taxborn.com";
+      PAPERLESS_ADMIN_MAIL = config.homelab.owner.email;
 
       # Port 465 is implicit TLS, not STARTTLS. USE_TLS is the STARTTLS knob,
       # and setting both is a Django configuration error.
@@ -64,10 +64,10 @@ in
       # The login is the account the app password belongs to. The sender is
       # the apex address the zone's SPF record and DKIM CNAMEs cover; sending
       # as anything under a subdomain means unauthenticated mail.
-      PAPERLESS_EMAIL_HOST = "smtp.fastmail.com";
-      PAPERLESS_EMAIL_PORT = 465;
-      PAPERLESS_EMAIL_HOST_USER = "hello@taxborn.com";
-      PAPERLESS_EMAIL_FROM = "infra@biscuits.at";
+      PAPERLESS_EMAIL_HOST = config.homelab.mail.host;
+      PAPERLESS_EMAIL_PORT = config.homelab.mail.port;
+      PAPERLESS_EMAIL_HOST_USER = config.homelab.owner.email;
+      PAPERLESS_EMAIL_FROM = config.homelab.mail.from;
       PAPERLESS_EMAIL_USE_SSL = true;
     };
   };

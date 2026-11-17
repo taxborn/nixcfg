@@ -3,9 +3,35 @@
 let
   domain = "biscuits.at";
   tailnet = "tucuxi-hexatonic.ts.net";
+  owner = {
+    name = "Braxton Fair";
+    email = "hello@taxborn.com";
+    username = "taxborn";
+    gpgKey = "F22AFD6CFD66B874";
+    did = "did:plc:2grdruc2p6fjhksrfpt366yl";
+  };
 in
 {
-  inherit domain;
+  inherit domain owner;
+
+  # Outgoing mail for every service that sends any. 465 is implicit TLS.
+  mail = {
+    host = "smtp.fastmail.com";
+    port = 465;
+    from = "infra@${domain}";
+    atproto = "atproto@${domain}";
+  };
+
+  # The ACLs in secrets/ntfy.age grant the publisher token these topics.
+  ntfy.topics = {
+    backups = "backups";
+    alerts = "alerts";
+  };
+
+  rsyncNet = {
+    user = "de4388";
+    host = "de4388.rsync.net";
+  };
 
   # Every host in the fleet, mapped to its tailnet address.
   hosts = {
@@ -77,7 +103,7 @@ in
   # Holds the second copy of every host's borg archives, on its external drive.
   backupServer = {
     host = "helium";
-    user = "taxborn";
+    user = owner.username;
     basePath = "/mnt/hdd/borg";
     port = 2200;
   };

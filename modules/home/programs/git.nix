@@ -2,6 +2,7 @@
   lib,
   pkgs,
   self,
+  osConfig,
   ...
 }:
 {
@@ -23,7 +24,7 @@
       # YubiKey, and only a workstation runs an agent with the card in it
       # (`modules/home/workstation.nix`), so a commit made on a server cannot
       # sign and git refuses it rather than writing it unsigned.
-      signing.key = "F22AFD6CFD66B874";
+      signing.key = osConfig.homelab.owner.gpgKey;
       signing.signByDefault = true;
 
       settings = {
@@ -34,8 +35,7 @@
         init.defaultBranch = "main";
 
         user = {
-          name = "Braxton Fair";
-          email = "hello@taxborn.com";
+          inherit (osConfig.homelab.owner) name email;
         };
       };
     };

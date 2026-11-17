@@ -11,8 +11,8 @@
   age.secrets.taxbornPassword.file = "${self}/secrets/users/taxborn-password.age";
 
   users = {
-    users.taxborn = {
-      description = "Braxton";
+    users.${config.homelab.owner.username} = {
+      description = config.homelab.owner.name;
       uid = 1000;
       isNormalUser = true;
       # `mutableUsers = false` below, so `passwd` does not survive a rebuild
@@ -35,7 +35,4 @@
     defaultUserShell = pkgs.fish;
     mutableUsers = false;
   };
-
-  # The user module owns this rather than the service module naming a person.
-  homelab.tailscale.operator = "taxborn";
 }

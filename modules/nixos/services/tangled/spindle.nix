@@ -9,8 +9,6 @@ let
   spindle = config.services.tangled.spindle;
 in
 {
-  imports = [ ./default.nix ];
-
   # Upstream's unit sets no `User=`, so the spindle runs as root, and the
   # module turns on rootful Docker for the nixery engine, whose socket is
   # root by another name. A workflow can therefore read anything on the
@@ -50,11 +48,11 @@ in
   services.tangled.spindle = {
     enable = true;
     keyPath = config.age.secrets.tangledSpindleKey.path;
-    contact.email = "atproto@biscuits.at";
+    contact.email = config.homelab.mail.atproto;
 
     server = {
       hostname = networkMap.spindle.domain;
-      inherit (config.homelab.tangled) owner;
+      owner = config.homelab.owner.did;
 
       # Upstream binds every interface. Caddy is the way in.
       listenAddr = "127.0.0.1:${toString networkMap.spindle.port}";

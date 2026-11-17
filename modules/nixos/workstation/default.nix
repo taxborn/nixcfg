@@ -1,4 +1,5 @@
 {
+  config,
   lib,
   pkgs,
   ...
@@ -12,11 +13,11 @@
     ./yubikey.nix
   ];
 
-  home-manager.users.taxborn.imports = [ ../../home/workstation.nix ];
+  home-manager.users.${config.homelab.owner.username}.imports = [ ../../home/workstation.nix ];
 
   age.identityPaths = [
     "/etc/ssh/ssh_host_ed25519_key"
-    "/home/taxborn/.config/age/yubikey-identity.txt"
+    "/home/${config.homelab.owner.username}/.config/age/yubikey-identity.txt"
   ];
 
   # `mkDefault` so a host can fall back to an LTS kernel when a new release

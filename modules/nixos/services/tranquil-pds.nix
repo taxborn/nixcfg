@@ -80,11 +80,11 @@ in
       # CNAMEs sit at `biscuits.at` and do not descend, so sending as
       # `pds.biscuits.at` means unauthenticated mail.
       email = {
-        from_address = "infra@biscuits.at";
+        from_address = config.homelab.mail.from;
         from_name = "biscuits.at PDS";
         smarthost = {
-          host = "smtp.fastmail.com";
-          port = 465;
+          host = config.homelab.mail.host;
+          port = config.homelab.mail.port;
           tls = "implicit";
         };
       };
