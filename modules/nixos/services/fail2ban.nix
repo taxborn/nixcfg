@@ -4,7 +4,6 @@
   ...
 }:
 let
-  cfg = config.myNixOS.services.fail2ban;
 
   # A ban that lands inside either range is a ban on the path used to lift the
   # ban.
@@ -33,44 +32,40 @@ let
   uncovered = lib.filter (addr: !covered addr) (lib.attrValues config.homelab.hosts);
 in
 {
-  options.myNixOS.services.fail2ban.enable = lib.mkEnableOption "fail2ban intrusion prevention";
+  # fail2ban hooks its ban chains onto the head of INPUT, ahead of the
+  # firewall's accept for trustedInterfaces, so ignoreip is the only thing
+  # holding the tailnet open. That makes the roster and the ranges below a
+  # pair that has to agree, and nothing else checks that they do.
+  assertions = [
+    {
+      assertion = uncovered == [ ];
+      message = ''
+        fail2ban ignores ${lib.concatStringsSep " " tailnetRanges}, which does
+        not cover ${lib.concatStringsSep " " uncovered} from
+        homelab.hosts. A ban on that address would take the
+        tailnet with it.
+      '';
+    }
+  ];
 
-  config = lib.mkIf cfg.enable {
-    # fail2ban hooks its ban chains onto the head of INPUT, ahead of the
-    # firewall's accept for trustedInterfaces, so ignoreip is the only thing
-    # holding the tailnet open. That makes the roster and the ranges below a
-    # pair that has to agree, and nothing else checks that they do.
-    assertions = [
-      {
-        assertion = uncovered == [ ];
-        message = ''
-          fail2ban ignores ${lib.concatStringsSep " " tailnetRanges}, which does
-          not cover ${lib.concatStringsSep " " uncovered} from
-          homelab.hosts. A ban on that address would take the
-          tailnet with it.
-        '';
-      }
-    ];
+  services.fail2ban = {
+    enable = true;
+    maxretry = 5;
+    bantime = "1h";
 
-    services.fail2ban = {
+    bantime-increment = {
       enable = true;
-      maxretry = 5;
-      bantime = "1h";
-
-      bantime-increment = {
-        enable = true;
-        multipliers = "2 4 8 16 32 64";
-        maxtime = "168h";
-      };
-
-      # The tailnet is the whole exemption. A public address stays bannable,
-      # including my own, which is the point of the jail. It costs no access,
-      # because tailnet SSH answers on a different address and that one is
-      # covered here.
-      ignoreIP = tailnetRanges;
-
-      # Tighter than the global maxretry. The module already declares the jail.
-      jails.sshd.settings.maxretry = 3;
+      multipliers = "2 4 8 16 32 64";
+      maxtime = "168h";
     };
+
+    # The tailnet is the whole exemption. A public address stays bannable,
+    # including my own, which is the point of the jail. It costs no access,
+    # because tailnet SSH answers on a different address and that one is
+    # covered here.
+    ignoreIP = tailnetRanges;
+
+    # Tighter than the global maxretry. The module already declares the jail.
+    jails.sshd.settings.maxretry = 3;
   };
 }

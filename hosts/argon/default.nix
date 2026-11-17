@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ../../modules/nixos/server.nix
     ./disko.nix
     (modulesPath + "/profiles/qemu-guest.nix")
     ./proxy.nix
@@ -12,7 +13,6 @@
   system.stateVersion = "25.11";
 
   myNixOS = {
-    profiles.server.enable = true;
     services = {
       backups.client = {
         enable = true;

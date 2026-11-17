@@ -1,21 +1,12 @@
 {
   imports = [
     ./common
-    ./profiles/audio.nix
-    ./profiles/bluetooth.nix
-    ./profiles/containers.nix
-    ./profiles/graphical-boot.nix
-    ./profiles/server.nix
-    ./profiles/workstation.nix
     ./programs/grub.nix
-    ./programs/lanzaboote.nix
     ./programs/libvirt.nix
     ./programs/systemd-boot.nix
     ./services/atuin.nix
     ./services/backups/default.nix
     ./services/braxton-is.nix
-    ./services/caddy.nix
-    ./services/fail2ban.nix
     ./services/glance.nix
     ./services/minecraft.nix
     ./services/monitoring/alerts.nix
@@ -29,6 +20,5 @@
     ./services/tangled/spindle.nix
     ./services/tranquil-pds.nix
     ./services/vaultwarden.nix
-    ./services/yubikey.nix
   ];
 }

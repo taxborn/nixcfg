@@ -60,7 +60,7 @@ in
 
       Off by default because this profile is enabled on every host: the servers
       were carrying a GTK application none of them can display. Set by
-      `profiles.workstation`
+      `modules/nixos/workstation`
     '';
 
     snapshotSubvolumes = lib.mkOption {
