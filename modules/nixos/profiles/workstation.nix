@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  self,
   pkgs,
   ...
 }:
@@ -12,7 +11,7 @@ in
   options.myNixOS.profiles.workstation.enable = lib.mkEnableOption "workstation configuration";
 
   config = lib.mkIf cfg.enable {
-    home-manager.users.taxborn.imports = [ self.homeModules.profile-workstation ];
+    home-manager.users.taxborn.imports = [ ../../home/workstation.nix ];
 
     age.identityPaths = [
       "/etc/ssh/ssh_host_ed25519_key"

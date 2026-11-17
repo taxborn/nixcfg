@@ -10,7 +10,7 @@ in
   options.myNixOS.profiles.server.enable = lib.mkEnableOption "common server configuration";
 
   config = lib.mkIf cfg.enable {
-    # No home profile of its own. `base` imports `profile-default`, and a
+    # No home profile of its own. `base` imports `modules/home`, and a
     # server wants nothing beyond it.
     myNixOS = {
       base.enable = true;

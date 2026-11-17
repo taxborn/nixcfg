@@ -36,7 +36,7 @@ that file does not exist. The initial settings enable authentication prompts
 and disable the lockscreen, including locking before suspend. Noctalia's
 default idle timers are disabled. Later rebuilds preserve your settings.
 
-Validate the compositor file with `niri validate -c modules/home/desktop/niri/config.kdl`.
+Validate the compositor file with `niri validate -c modules/home/niri/config.kdl`.
 Build both workstation toplevels before deploying. A successful build cannot
 verify physical monitor modes, GPU rendering or application launches in a live
 session.

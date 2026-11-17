@@ -1,31 +1,22 @@
 {
-  config,
-  lib,
   pkgs,
   ...
 }:
-let
-  cfg = config.myHome.programs.yubikey;
-in
 {
-  options.myHome.programs.yubikey.enable = lib.mkEnableOption "yubikey";
+  home.packages = [ pkgs.yubikey-manager ];
 
-  config = lib.mkIf cfg.enable {
-    home.packages = [ pkgs.yubikey-manager ];
-
-    # An age-plugin-yubikey stub identity, not a key: it names a serial and a
-    # slot, and the private half never leaves the card. That is why it can sit
-    # unencrypted in the repo and world-readable in the store.
-    # `age.identityPaths` in modules/nixos/profiles/workstation.nix names this
-    # path, so it is the route agenix takes to the card at activation.
-    xdg.configFile."age/yubikey-identity.txt".text = ''
-      #       Serial: 33852487, Slot: 1
-      #         Name: age
-      #      Created: Tue, 28 Apr 2026 13:24:27 +0000
-      #   PIN policy: Once   (A PIN is required once per session, if set)
-      # Touch policy: Cached (A physical touch is required for decryption, and is cached for 15 seconds)
-      #    Recipient: age1yubikey1q0kr3jdz8lu2pzv6hery4rfpq7jf94kccmltlm27093sjac9yqcx7lak4cu
-      AGE-PLUGIN-YUBIKEY-1G7XQGQ5ZZ7VW98CMVZEPX
-    '';
-  };
+  # An age-plugin-yubikey stub identity, not a key: it names a serial and a
+  # slot, and the private half never leaves the card. That is why it can sit
+  # unencrypted in the repo and world-readable in the store.
+  # `age.identityPaths` in modules/nixos/profiles/workstation.nix names this
+  # path, so it is the route agenix takes to the card at activation.
+  xdg.configFile."age/yubikey-identity.txt".text = ''
+    #       Serial: 33852487, Slot: 1
+    #         Name: age
+    #      Created: Tue, 28 Apr 2026 13:24:27 +0000
+    #   PIN policy: Once   (A PIN is required once per session, if set)
+    # Touch policy: Cached (A physical touch is required for decryption, and is cached for 15 seconds)
+    #    Recipient: age1yubikey1q0kr3jdz8lu2pzv6hery4rfpq7jf94kccmltlm27093sjac9yqcx7lak4cu
+    AGE-PLUGIN-YUBIKEY-1G7XQGQ5ZZ7VW98CMVZEPX
+  '';
 }

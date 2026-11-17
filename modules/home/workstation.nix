@@ -7,7 +7,11 @@
 }:
 {
   imports = [
-    ./default.nix
+    ./niri
+    ./programs/ghostty.nix
+    ./programs/nix-search.nix
+    ./programs/yubikey.nix
+    ./programs/zed.nix
   ];
 
   config = {
@@ -71,7 +75,7 @@
       vesktop
       vlc
 
-      # Toolchains, kept off the servers. See homes/default.nix.
+      # Toolchains, kept off the servers. See modules/home/default.nix.
       cargo
       gcc
       gnumake
@@ -94,15 +98,19 @@
 
     services.gnome-keyring.enable = true;
 
-    myHome = {
-      desktop.niri.enable = true;
-      programs = {
-        ghostty.enable = true;
-        gpg.agent.enable = true;
-        nix-search.enable = true;
-        yubikey.enable = true;
-        zed.enable = true;
-      };
+    # https://github.com/drduh/YubiKey-Guide/blob/master/config/gpg-agent.conf
+    # https://www.gnupg.org/documentation/manuals/gnupg/Agent-Options.html
+    services.gpg-agent = {
+      enable = true;
+      enableSshSupport = true;
+
+      extraConfig = ''
+        ttyname $GPG_TTY
+      '';
+      defaultCacheTtl = 60;
+      maxCacheTtl = 120;
+
+      pinentry.package = pkgs.pinentry-gnome3;
     };
 
     xdg.userDirs = {

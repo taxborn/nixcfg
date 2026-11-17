@@ -7,12 +7,6 @@
       btrfs-luks-raid1 = ../disko/btrfs-luks-raid1.nix;
     };
 
-    homeModules = {
-      default = inputs.import-tree ../home;
-      profile-default = ../../homes/default.nix;
-      profile-workstation = ../../homes/workstation.nix;
-    };
-
     nixosModules = {
       hardware = inputs.import-tree ../hardware;
       nixos = inputs.import-tree ../nixos;
