@@ -9,8 +9,6 @@ let
 in
 {
   options.myNixOS.services.atuin = {
-    enable = lib.mkEnableOption "Atuin shell history sync server";
-
     openRegistration = lib.mkEnableOption ''
       new account registration. Off by default, because the server is reachable
       from the internet behind Cloudflare and anyone who can register can store
@@ -19,7 +17,7 @@ in
     '';
   };
 
-  config = lib.mkIf cfg.enable {
+  config = {
     # The server's data is in postgres, in an `atuin` database the nixpkgs
     # module creates. Atuin encrypts history on the client, so what lands in
     # the dump is ciphertext. It is still the only copy a new machine can sync

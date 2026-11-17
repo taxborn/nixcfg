@@ -54,9 +54,12 @@ let
   lokiUID = "loki";
 in
 {
-  options.myNixOS.services.monitoring.server = {
-    enable = lib.mkEnableOption "monitoring server (Prometheus, Loki, Grafana, Alertmanager)";
+  imports = [
+    ./alerts.nix
+    ./dashboards.nix
+  ];
 
+  options.myNixOS.services.monitoring.server = {
     ntfyTopic = lib.mkOption {
       type = lib.types.str;
       default = "alerts";
@@ -70,7 +73,7 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = {
     assertions = [
       {
         assertion = config.services.tailscale.enable;

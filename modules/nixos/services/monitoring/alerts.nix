@@ -1,10 +1,4 @@
-{
-  config,
-  lib,
-  ...
-}:
 let
-  cfg = config.myNixOS.services.monitoring.server;
 
   # An allowlist of filesystems that hold something, rather than a denylist of
   # the ones that do not. tmpfs, ramfs, and the various fuse shims come and go
@@ -285,17 +279,15 @@ let
   };
 in
 {
-  config = lib.mkIf cfg.enable {
-    # JSON, not hand-written YAML, and passed through `builtins.toJSON`, every
-    # YAML parser accepts JSON, and this way the quoting of a PromQL expression
-    # full of braces and regexes is the language's problem rather than mine.
-    #
-    # The nixpkgs module runs `promtool check rules` over this at build time, so
-    # a malformed expression fails `nixos-rebuild` instead of loading as a rule
-    # that never fires. What promtool cannot check is whether a metric name is
-    # real: every name used above was verified against live `node_exporter` and
-    # `smartctl_exporter` output rather than recalled, because a typo there is
-    # silent in exactly the same way.
-    services.prometheus.rules = [ (builtins.toJSON rules) ];
-  };
+  # JSON, not hand-written YAML, and passed through `builtins.toJSON`, every
+  # YAML parser accepts JSON, and this way the quoting of a PromQL expression
+  # full of braces and regexes is the language's problem rather than mine.
+  #
+  # The nixpkgs module runs `promtool check rules` over this at build time, so
+  # a malformed expression fails `nixos-rebuild` instead of loading as a rule
+  # that never fires. What promtool cannot check is whether a metric name is
+  # real: every name used above was verified against live `node_exporter` and
+  # `smartctl_exporter` output rather than recalled, because a typo there is
+  # silent in exactly the same way.
+  services.prometheus.rules = [ (builtins.toJSON rules) ];
 }

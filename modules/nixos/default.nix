@@ -1,21 +1,6 @@
 {
   imports = [
     ./common
-    ./services/atuin.nix
     ./services/backups/default.nix
-    ./services/braxton-is.nix
-    ./services/glance.nix
-    ./services/minecraft.nix
-    ./services/monitoring/alerts.nix
-    ./services/monitoring/dashboards.nix
-    ./services/monitoring/server.nix
-    ./services/ntfy.nix
-    ./services/paperless.nix
-    ./services/piper.nix
-    ./services/tangled/default.nix
-    ./services/tangled/knot.nix
-    ./services/tangled/spindle.nix
-    ./services/tranquil-pds.nix
-    ./services/vaultwarden.nix
   ];
 }
