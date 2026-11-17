@@ -1,11 +1,9 @@
 {
-  config,
   lib,
   pkgs,
   ...
 }:
 let
-  cfg = config.myNixOS.services.monitoring.server;
 
   # Must match the UIDs pinned on the provisioned datasources in server.nix.
   # Pinning them is what lets a dashboard name its datasource at build time
@@ -1145,14 +1143,12 @@ let
   };
 in
 {
-  config = lib.mkIf cfg.enable {
-    environment.etc = lib.mapAttrs' (
-      name: file:
-      lib.nameValuePair "grafana-dashboards/${name}.json" {
-        source = file;
-        # Grafana's provisioner reads these as its own user.
-        mode = "0444";
-      }
-    ) dashboards;
-  };
+  environment.etc = lib.mapAttrs' (
+    name: file:
+    lib.nameValuePair "grafana-dashboards/${name}.json" {
+      source = file;
+      # Grafana's provisioner reads these as its own user.
+      mode = "0444";
+    }
+  ) dashboards;
 }

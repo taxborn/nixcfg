@@ -2,6 +2,14 @@
 
 {
   imports = [
+    ../../modules/nixos/services/atuin.nix
+    ../../modules/nixos/services/glance.nix
+    ../../modules/nixos/services/minecraft.nix
+    ../../modules/nixos/services/ntfy.nix
+    ../../modules/nixos/services/piper.nix
+    ../../modules/nixos/services/tangled/knot.nix
+    ../../modules/nixos/services/tranquil-pds.nix
+    ../../modules/nixos/services/vaultwarden.nix
     ../../modules/nixos/ovh.nix
     ../../modules/nixos/server.nix
     ./disko.nix
@@ -19,13 +27,6 @@
         enable = true;
         notify.enable = true;
       };
-      atuin.enable = true;
-      glance.enable = true;
-      ntfy.enable = true;
-      piper.enable = true;
-      tangled.knot.enable = true;
-      tranquil-pds.enable = true;
-      vaultwarden.enable = true;
       # For friends, so it is reachable without the tailnet. The world lives in
       # the module's default, /var/lib/minecraft/mnb.
       minecraft.servers.mnb.openFirewall = true;

@@ -2,6 +2,8 @@
 
 {
   imports = [
+    ../../modules/nixos/services/monitoring/server.nix
+    ../../modules/nixos/services/paperless.nix
     ../../modules/nixos/server.nix
     ./disko.nix
     ./external-hdd.nix
@@ -14,8 +16,6 @@
 
   myNixOS = {
     services = {
-      monitoring.server.enable = true;
-      paperless.enable = true;
 
       backups = {
         client = {

@@ -115,23 +115,11 @@ lib.runTests {
     expr = lib.mapAttrs (_: host: failures host.config) self.nixosConfigurations;
     expected = lib.genAttrs (builtins.attrNames self.nixosConfigurations) (_: [ ]);
   };
-  testSpindlePlacement = {
-    expr = lib.mapAttrs (
-      _: host: host.config.myNixOS.services.tangled.spindle.enable
-    ) self.nixosConfigurations;
-    expected = {
-      argon = false;
-      carbon = true;
-      helium = false;
-      tungsten = false;
-      uranium = false;
-    };
-  };
   testSpindleRejectsBackupHost = {
     expr = builtins.elem "Keep CI jobs off the fleet's backup server." (
       failures
         (self.nixosConfigurations.helium.extendModules {
-          modules = [ { myNixOS.services.tangled.spindle.enable = true; } ];
+          modules = [ ../modules/nixos/services/tangled/spindle.nix ];
         }).config
     );
     expected = true;
