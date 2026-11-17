@@ -110,13 +110,13 @@ than filling Helium's root filesystem with archives nobody would notice.
 
 ## notifications
 
-Every host sends an [ntfy](../ntfy.nix) message to
+Every host sends an [ntfy](../modules/nixos/services/ntfy.nix) message to
 `ntfy.biscuits.at` after each successful run. It is success only. A failed or
 wedged run sends nothing, so a host that stops reporting is the signal, and the
 absence is something a person has to notice. borgmatic runs once per
 repository, so each host sends one message per copy, labelled `rsync` or
 `helium`. Every host uses one write-only token from `secrets/ntfy/token.age`,
-so this needs the [ntfy secrets](../../../../secrets/README.md) to exist
+so this needs the [ntfy secrets](./secrets.md) to exist
 before the host rebuilds. Argon's ntfy state under `/var/lib/private/ntfy-sh`
 is excluded, since users and tokens come from the secret and the cache is
 disposable.
@@ -147,7 +147,7 @@ agenix -e borg/<hostname>/ssh_key.age < /tmp/borg_ssh_key
 ```
 
 To *replace* a secret rather than edit it, delete the `.age` file first. See
-[working with them](../../../../secrets/README.md#working-with-them).
+[working with them](./secrets.md#working-with-them).
 
 The public key belongs in-repo, because Helium's `server.authorizedKeys` reads
 it:
@@ -416,7 +416,7 @@ highest-value check in the list, and it costs seconds. Run it from a
 workstation, not a server.
 
 The recipes pass the YubiKey identity to `agenix -d` explicitly, for the reason
-given in the [secrets guide](../../../../secrets/README.md#working-with-them).
+given in the [secrets guide](./secrets.md#working-with-them).
 The default identity is `~/.config/age/yubikey-identity.txt`; override it with
 `AGE_IDENTITY` if it lives elsewhere. Tier 0 checks decryption exit status, a
 nonempty passphrase, and an OpenSSH private-key header before reporting success.

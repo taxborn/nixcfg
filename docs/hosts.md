@@ -2,12 +2,12 @@
 
 The main configuration for each host in my homelab, one directory per machine.
 Hosts are named after chemical elements, as explained in
-[CONTEXT.md](../CONTEXT.md#hosts-are-chemical-elements).
+[CONTEXT.md](./architecture.md).
 
 Each host is one directory: `default.nix` for the machine itself, plus
 `proxy.nix` where it runs Caddy, and any other file the machine alone needs.
 Disk selection and serial numbers live in `disko.nix` beside each host.
-See [fleet agreement](../modules/README.md#fleet-agreement) for the checked
+See [fleet agreement](./architecture.md) for the checked
 rosters and [provisioning](../README.md#provisioning-a-new-host) for the order
 in which a new host joins them.
 
@@ -22,9 +22,9 @@ in which a new host joins them.
 | [Uranium](#uranium) | desktop | `profiles.workstation` | `100.64.0.0` | lanzaboote |
 
 Every host backs up to rsync.net and to Helium. Uranium adds a third repository
-on a local SSD. See the [backups README](../modules/nixos/services/backups/README.md).
+on a local SSD. See the [backups README](./backups.md).
 
-## [Uranium](./uranium)
+## [Uranium](../hosts/uranium)
 
 My desktop PC, built in August 2023 _(which, in hindsight, was probably a decent
 time to build considering pricing over the last few years)_.
@@ -41,7 +41,7 @@ them out of the root array's snapshot scope.
 Steam, gamemode, and the `scx_lavd` scheduler. `/games/steamapps/compatdata` is
 a snapper-snapshotted subvolume and is backed up separately from `/home`.
 
-## [Tungsten](./tungsten)
+## [Tungsten](../hosts/tungsten)
 
 A Dell [XPS 15 9520](https://www.dell.com/en-us/shop/laptops/xps-15-laptop/spd/xps-15-9520-laptop).
 i9-12900HK CPU, 3050 Ti GPU (Intel Xe integrated), 2x1TB NVME drives.
@@ -54,7 +54,7 @@ The BIOS attributes on this machine are what the "do not" list in the
 [root README](../README.md#do-not) is about. Read it before changing anything
 in Setup.
 
-## [Argon](./argon)
+## [Argon](../hosts/argon)
 
 An Intel OVH VPS, `vps-2020-elite-8-16-320` model.
 16 GB of RAM, 8 vCPUs, 320 GB of storage.
@@ -81,9 +81,9 @@ dumps for Piper and Vaultwarden when the backup client is enabled.
 The PDS is why the two `pds` records are the only DNS-only names in the zone.
 Cloudflare's universal certificate does not cover a second label,
 `subscribeRepos` is a long-lived WebSocket, and the free tier caps request
-bodies at 100 MB. See [`argon/proxy.nix`](./argon/proxy.nix).
+bodies at 100 MB. See [`argon/proxy.nix`](../hosts/argon/proxy.nix).
 
-## [Carbon](./carbon)
+## [Carbon](../hosts/carbon)
 
 An Intel OVH VPS, `vps-2 2026` model.
 12 GB of RAM, 6 vCPUs, 100 GB of storage.
@@ -100,7 +100,7 @@ The spindle's SQLite database is the only one on this host, and the backup
 client registers a dump of it. Nothing else here is in the backup set beyond
 the defaults.
 
-## [Helium](./helium)
+## [Helium](../hosts/helium)
 
 An [Intel NUC8i5BEK](https://www.intel.com/content/dam/support/us/en/documents/mini-pcs/NUC8i3BE_NUC8i5BE_NUC8i7BE_TechProdSpec.pdf)
 I use as a home server. 16 GB of RAM, i5-8259U CPU, 2 TB NVME, plus an external
@@ -115,8 +115,8 @@ server, reaching its own repository by local path rather than ssh'ing to itself.
 | service | vHost | port | notes |
 | --- | --- | --- | --- |
 | [Paperless-ngx](../modules/nixos/services/paperless.nix) | `docs.biscuits.at` | 3004 | PostgreSQL; public A record pointing at a tailnet address |
-| [Grafana](../modules/nixos/services/monitoring/README.md) | `grafana.biscuits.at` | 3009 | with Prometheus, Loki and Alertmanager on loopback; public A record pointing at a tailnet address |
-| [borg repositories](../modules/nixos/services/backups/README.md) | | ssh | `/mnt/hdd/borg/<host>` for every other host |
+| [Grafana](./monitoring.md) | `grafana.biscuits.at` | 3009 | with Prometheus, Loki and Alertmanager on loopback; public A record pointing at a tailnet address |
+| [borg repositories](./backups.md) | | ssh | `/mnt/hdd/borg/<host>` for every other host |
 
 The external drive is btrfs, mounted `nofail,noatime` with `X-fstrim.notrim`.
 It is deliberately not snapshotted, and has no compression: borg archives are
@@ -130,7 +130,7 @@ The filesystem layout is not declared anywhere in Nix, so a new or reformatted
 drive needs this by hand. Afterwards, do not run borg against the repositories
 as root, which leaves a repository's `config` unreadable to the forced
 `borg serve` (see
-[operating](../modules/nixos/services/backups/README.md#operating)):
+[operating](./backups.md#operating)):
 
 ```bash
 D=/dev/disk/by-id/usb-WD_My_Book_25ED_575835324443304A30443532-0:0

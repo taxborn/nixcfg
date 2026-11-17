@@ -22,7 +22,7 @@ beyond identity; role is a property of the config. Roughly:
 
 The [fleet checks](./modules/README.md#fleet-agreement) keep the build roster,
 tailnet map and secret rules in agreement. Host details live in
-[hosts/](./hosts/README.md).
+[hosts](./docs/hosts.md).
 
 ### domains
 
@@ -137,8 +137,8 @@ tailnet SSH takes 2222, its own default, free since Forgejo left.
 
 ### secrets and recovery
 
-The [secrets guide](./secrets/README.md) owns recipient rules, the YubiKey
-recovery identity and agenix commands. The [backup guide](./modules/nixos/services/backups/README.md)
+The [secrets guide](./docs/secrets.md) owns recipient rules, the YubiKey
+recovery identity and agenix commands. The [backup guide](./docs/backups.md)
 owns repository setup, logical database dumps and the three restore tiers.
 Read those procedures before working on either subsystem.
 

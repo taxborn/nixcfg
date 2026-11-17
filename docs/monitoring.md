@@ -102,7 +102,7 @@ topic. A missing grant is a 403 that appears only in the bridge's journal.
 
 Needs three things outside this repo, in this order:
 
-1. Create the secrets (`secrets/README.md#working-with-them`), each readable by
+1. Create the secrets (see [secrets](./secrets.md#working-with-them)), each readable by
    Helium and the YubiKey: `grafana/admin-password.age` and
    `grafana/secret-key.age`. The secret key is any long random string.
 2. Add the ntfy grant above, and subscribe to the `alerts` topic.

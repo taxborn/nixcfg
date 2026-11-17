@@ -75,7 +75,7 @@ when wiring a proxy or changing access controls.
 ### touching backups
 
 `modules/nixos/services/backups` is the highest-consequence module in the tree
-and has a [README of its own](./modules/nixos/services/backups/README.md). Read
+and has a [README of its own](./docs/backups.md). Read
 it in full before editing. The mistake that has already been made once: an
 exclude pattern covering borgmatic's dump staging path (`/run`, `/tmp`) drops
 the database from every archive while everything still reports success.
@@ -138,21 +138,17 @@ before changing these settings:
   forwarded client addresses and fail2ban tailnet exemptions.
 - [Fleet agreement](./modules/README.md#fleet-agreement) covers build, tailnet
   and secret-rule rosters, plus the limits of recipient checks.
-- [Secret operations](./secrets/README.md#working-with-them) covers the CLI's
+- [Secret operations](./docs/secrets.md#working-with-them) covers the CLI's
   working directory, explicit identity and rekeying requirements.
 - [Provisioning](./README.md#provisioning-a-new-host) orders installation,
   root-key collection, recipient registration and the first real rebuild.
-- [Database backups](./modules/nixos/services/backups/README.md#databases)
+- [Database backups](./docs/backups.md#databases)
   explains why live database files and dump staging exclusions lose data.
 
 ## known drift
 
-Read the [2026-09-05 maintenance review](./docs/reviews/2026-09-05-maintenance.md)
-before restoring removed settings or changing a retained one. It records the
-OVH GRUB targets, opt-in bees deduplication, and the retired runner decision.
-Its monitoring decision was reversed when the stack returned, see the
-follow-up at the end. Its Mako and Hypridle entries describe the desktop that
-Niri replaced.
+Read [docs/decisions.md](./docs/decisions.md) before restoring a removed
+setting or changing a retained one.
 
 ## file map
 

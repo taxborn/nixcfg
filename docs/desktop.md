@@ -22,7 +22,7 @@ for file selection and screen sharing.
 
 ## configuration
 
-Edit [`config.kdl`](./config.kdl) for Niri. Home Manager installs it at
+Edit [`config.kdl`](../modules/home/niri/config.kdl) for Niri. Home Manager installs it at
 `~/.config/niri/config.kdl`. It preserves the existing display setup:
 
 - DP-3 uses 2560×1440 at 165 Hz, scale 1, position 0,0.
@@ -31,7 +31,7 @@ Edit [`config.kdl`](./config.kdl) for Niri. Home Manager installs it at
 
 Noctalia's settings under `~/.config/noctalia/` are writable. Use its settings
 UI to experiment. Application-specific Catppuccin themes remain managed by Nix.
-Home Manager copies [`noctalia.toml`](./noctalia.toml) to `config.toml` only when
+Home Manager copies [`noctalia.toml`](../modules/home/niri/noctalia.toml) to `config.toml` only when
 that file does not exist. The initial settings enable authentication prompts
 and disable the lockscreen, including locking before suspend. Noctalia's
 default idle timers are disabled. Later rebuilds preserve your settings.
