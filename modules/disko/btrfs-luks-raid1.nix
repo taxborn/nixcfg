@@ -1,6 +1,6 @@
 # Workstation layout: ESP on the first disk, mdraid RAID1 across both disks,
 # LUKS (FIDO2-enrolled at provisioning) on the array, btrfs on top. Called with
-# per-host drive paths from modules/flake (diskoConfigurations).
+# per-host drive paths from hosts/<host>/disko.nix.
 #
 # Two optional companion drives sit outside the mirror, each on its own LUKS
 # volume: `games` for a Steam library and `backup` for a local borg repository.

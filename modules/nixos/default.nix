@@ -1,0 +1,41 @@
+{
+  imports = [
+    ./base.nix
+    ./fleet.nix
+    ./profiles/audio.nix
+    ./profiles/bluetooth.nix
+    ./profiles/btrfs.nix
+    ./profiles/containers.nix
+    ./profiles/graphical-boot.nix
+    ./profiles/server.nix
+    ./profiles/swap.nix
+    ./profiles/workstation.nix
+    ./programs/grub.nix
+    ./programs/lanzaboote.nix
+    ./programs/libvirt.nix
+    ./programs/nix.nix
+    ./programs/ssh.nix
+    ./programs/systemd-boot.nix
+    ./services/atuin.nix
+    ./services/backups/default.nix
+    ./services/braxton-is.nix
+    ./services/caddy.nix
+    ./services/fail2ban.nix
+    ./services/glance.nix
+    ./services/minecraft.nix
+    ./services/monitoring/alerts.nix
+    ./services/monitoring/dashboards.nix
+    ./services/monitoring/default.nix
+    ./services/monitoring/server.nix
+    ./services/ntfy.nix
+    ./services/paperless.nix
+    ./services/piper.nix
+    ./services/tailscale.nix
+    ./services/tangled/default.nix
+    ./services/tangled/knot.nix
+    ./services/tangled/spindle.nix
+    ./services/tranquil-pds.nix
+    ./services/vaultwarden.nix
+    ./services/yubikey.nix
+  ];
+}
