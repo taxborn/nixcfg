@@ -5,6 +5,8 @@
 }:
 {
   imports = [
+    ./amd-gpu.nix
+    ./libvirt.nix
     ../../modules/nixos/workstation
     ./disko.nix
   ];
@@ -72,7 +74,6 @@
   };
 
   myNixOS = {
-    programs.libvirt.enable = true;
 
     profiles.btrfs.snapshotSubvolumes.compatdata = "/games/steamapps/compatdata";
 
@@ -128,10 +129,6 @@
       RemainAfterExit = true;
       ExecStart = "${lib.getExe' pkgs.coreutils "mkdir"} -p /mnt/backup/borg";
     };
-  };
-
-  myHardware = {
-    amd.gpu.enable = true;
   };
 
   hardware.steam-hardware.enable = true;

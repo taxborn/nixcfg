@@ -13,7 +13,6 @@
   system.stateVersion = "25.11";
 
   myNixOS = {
-    programs.systemd-boot.enable = true;
     services = {
       monitoring.server.enable = true;
       paperless.enable = true;
@@ -43,6 +42,13 @@
       "rtsx_pci_sdmmc"
     ];
 
-    loader.timeout = 0;
+    loader = {
+      timeout = 0;
+      efi.canTouchEfiVariables = true;
+      systemd-boot = {
+        enable = true;
+        configurationLimit = 10;
+      };
+    };
   };
 }

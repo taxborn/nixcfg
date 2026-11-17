@@ -1,9 +1,6 @@
 {
   imports = [
     ./common
-    ./programs/grub.nix
-    ./programs/libvirt.nix
-    ./programs/systemd-boot.nix
     ./services/atuin.nix
     ./services/backups/default.nix
     ./services/braxton-is.nix

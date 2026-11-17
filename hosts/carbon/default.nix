@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ../../modules/nixos/ovh.nix
     ../../modules/nixos/server.nix
     ./disko.nix
     ./proxy.nix
@@ -26,14 +27,8 @@
     };
   };
 
-  myHardware = {
-    profiles.ovh = {
-      enable = true;
-      ipv6 = {
-        enable = true;
-        address = "2604:2dc0:202:300::236a";
-        gateway = "2604:2dc0:202:300::1";
-      };
-    };
+  myHardware.profiles.ovh.ipv6 = {
+    address = "2604:2dc0:202:300::236a";
+    gateway = "2604:2dc0:202:300::1";
   };
 }
