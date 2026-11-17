@@ -32,7 +32,6 @@
               backupFileExtension = "backup";
               sharedModules = [
                 inputs.catppuccin.homeModules.catppuccin
-                inputs.nix-index-database.homeModules.nix-index
               ];
             };
 

@@ -1,7 +1,13 @@
-{ pkgs, self, ... }:
+{ pkgs, ... }:
 {
   imports = [
-    self.homeModules.default
+    ./programs/fzf.nix
+    ./programs/git.nix
+    ./programs/gpg.nix
+    ./programs/neovim
+    ./programs/ssh.nix
+    ./programs/tmux.nix
+    ./programs/yazi.nix
   ];
 
   config = {
@@ -11,7 +17,7 @@
       stateVersion = "25.11";
       sessionPath = [ "$HOME/.local/bin" ];
       # This profile is the servers' profile too, so nothing here is a
-      # compiler or a language runtime. Those live in homes/workstation.nix. A
+      # compiler or a language runtime. Those live in modules/home/workstation.nix. A
       # server that takes connections from the internet has no use for a
       # toolchain, and whoever lands on one should not find it waiting.
       packages = with pkgs; [
@@ -55,16 +61,6 @@
         enable = true;
         enableFishIntegration = true;
       };
-    };
-
-    myHome.programs = {
-      fzf.enable = true;
-      git.enable = true;
-      gpg.enable = true;
-      neovim.enable = true;
-      ssh.enable = true;
-      tmux.enable = true;
-      yazi.enable = true;
     };
 
     # `autoEnable` themes every program the catppuccin module knows about,

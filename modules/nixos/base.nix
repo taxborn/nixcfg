@@ -12,7 +12,7 @@ in
   options.myNixOS.base.enable = lib.mkEnableOption "base NixOS system configuration";
 
   config = lib.mkIf cfg.enable {
-    home-manager.users.taxborn.imports = [ self.homeModules.profile-default ];
+    home-manager.users.taxborn.imports = [ ../home ];
 
     age.identityPaths = lib.mkDefault [ "/etc/ssh/ssh_host_ed25519_key" ];
 
