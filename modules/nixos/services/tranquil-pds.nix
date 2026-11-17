@@ -20,7 +20,7 @@ in
   # whole instance: every account's repo, its encrypted signing key, and
   # the firehose sequence live in postgres. Blobs do not. Those sit under
   # /var/lib/tranquil-pds/blobs and ride along in the archive.
-  myNixOS.services.backups.client.postgresqlDumpAll = true;
+  homelab.backups.postgresqlDumpAll = true;
 
   age.secrets.tranquilPds.file = "${self}/secrets/tranquil-pds.age";
 

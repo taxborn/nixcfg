@@ -15,11 +15,7 @@
 
   environment.systemPackages = [ pkgs.brightnessctl ];
 
-  myNixOS = {
-    services.backups.client = {
-      desktopExcludes = true;
-    };
-  };
+  homelab.backups.desktopExcludes = true;
 
   boot.initrd.availableKernelModules = [
     "thunderbolt"

@@ -1,10 +1,10 @@
 { config, lib, ... }:
 
 let
-  cfg = config.myHardware.profiles.ovh;
+  cfg = config.homelab.ovh;
 in
 {
-  options.myHardware.profiles.ovh = {
+  options.homelab.ovh = {
     ipv6 = {
       address = lib.mkOption {
         type = lib.types.nonEmptyStr;

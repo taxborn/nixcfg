@@ -12,7 +12,7 @@ in
   # Piper tracks the listening history it will submit to teal.fm in
   # SQLite. Dump the live database rather than archive its WAL files
   # out of step with it.
-  myNixOS.services.backups.client.sqliteDatabases.tealfm-piper =
+  homelab.backups.sqliteDatabases.tealfm-piper =
     if config.services.tealfm-piper.settings.DB_PATH != null then
       config.services.tealfm-piper.settings.DB_PATH
     else

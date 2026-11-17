@@ -6,10 +6,10 @@
   ...
 }:
 let
-  cfg = config.myNixOS.services.backups;
+  cfg = config.homelab.backups;
   hostname = config.networking.hostName;
   networkMap = config.homelab.services;
-  addr = config.myNixOS.services.tailscale.address;
+  addr = config.homelab.tailscale.address;
 
   backupServer = config.homelab.backupServer;
 
@@ -85,7 +85,7 @@ let
   # archive. Everything below that is about dumps rather than about one
   # particular engine keys off this, so adding a third hook later is one more
   # disjunct rather than a sweep through the file.
-  takesDumps = cfg.client.postgresqlDumpAll || cfg.client.sqliteDatabases != { };
+  takesDumps = cfg.postgresqlDumpAll || cfg.sqliteDatabases != { };
 
   # borgmatic stages database dumps on disk and hands borg the staging path as
   # an extra source, so an exclude covering that path silently drops the dump:
@@ -134,143 +134,140 @@ let
   };
 in
 {
-  options.myNixOS.services.backups = {
-    client = {
-      paths = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        default = [
-          "/home"
-          "/var/lib"
-          "/etc"
-        ];
-        description = "Directories to back up.";
-      };
+  options.homelab.backups = {
+    paths = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [
+        "/home"
+        "/var/lib"
+        "/etc"
+      ];
+      description = "Directories to back up.";
+    };
 
-      extraExcludes = lib.mkOption {
-        type = lib.types.listOf lib.types.str;
-        default = [ ];
-        description = "Additional exclude patterns, on top of the module's defaults.";
-      };
+    extraExcludes = lib.mkOption {
+      type = lib.types.listOf lib.types.str;
+      default = [ ];
+      description = "Additional exclude patterns, on top of the module's defaults.";
+    };
 
-      desktopExcludes = lib.mkOption {
-        type = lib.types.bool;
-        default = false;
+    desktopExcludes = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        Also exclude the caches, runtimes, and re-downloadable data that a
+        desktop `$HOME` accumulates. Enable on any host someone logs into
+        graphically.
+
+        The module's default excludes were written against servers, where
+        `/home` is nearly empty. A workstation backing up the same three
+        directories ships browser caches, Electron app caches (which live
+        under `.config`, not `.cache`), Steam runtimes, and every virtualenv
+        and direnv on the machine — tens of gigabytes that change every day,
+        dedup poorly between runs, and restore to nothing anyone wants.
+
+        Deliberately not on by default and not implied by
+        `modules/nixos/workstation`: what counts as disposable under `/home` is a
+        judgement about the host, and getting it wrong silently drops data.
+        `~/Downloads` is left *in* for the same reason.
+      '';
+    };
+
+    postgresqlDumpAll = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = ''
+        Capture every PostgreSQL database as a consistent logical dump
+        (`pg_dumpall`) inside each archive, and exclude the live
+        `/var/lib/postgresql` data directory.
+
+        Copying a running cluster's files is not a backup: borg walks them
+        over a period during which the cluster keeps writing, so the archive
+        holds a torn mix of pages whose recovery depends on catching a
+        checkpoint at the right moment. The dump is taken through the server
+        itself and is consistent by construction, and borgmatic replays it on
+        `borgmatic restore`. Enable this on any host running PostgreSQL.
+      '';
+    };
+
+    sqliteDatabases = lib.mkOption {
+      type = lib.types.attrsOf lib.types.str;
+      default = { };
+      example = lib.literalExpression ''
+        { tealfm-piper = "/var/lib/tealfm-piper/piper.db"; }
+      '';
+      description = ''
+        Database name -> path of a SQLite file to capture as a logical dump
+        (`sqlite3 .dump`) inside each archive. The live file, and its `-wal`
+        and `-shm` companions, are excluded in favour of that dump.
+
+        Same reasoning as `postgresqlDumpAll`, and if anything a sharper
+        version of it: most of a busy SQLite database's recent history lives
+        *outside* the file it is named after, in the write-ahead log, and borg
+        reaches the two at different moments. A `-wal` archived out of step
+        with its database is a torn pair, and the pair is what recovery reads.
+        The dump goes through SQLite itself and sees one consistent snapshot.
+
+        The name is a label for `borgmatic restore --database <name>`, not
+        something the file has to be called. Restoring writes the dump back
+        over the live path, replacing whatever is there.
+      '';
+    };
+
+    notify = {
+      topic = lib.mkOption {
+        type = lib.types.str;
+        default = "backups";
         description = ''
-          Also exclude the caches, runtimes, and re-downloadable data that a
-          desktop `$HOME` accumulates. Enable on any host someone logs into
-          graphically.
-
-          The module's default excludes were written against servers, where
-          `/home` is nearly empty. A workstation backing up the same three
-          directories ships browser caches, Electron app caches (which live
-          under `.config`, not `.cache`), Steam runtimes, and every virtualenv
-          and direnv on the machine — tens of gigabytes that change every day,
-          dedup poorly between runs, and restore to nothing anyone wants.
-
-          Deliberately not on by default and not implied by
-          `modules/nixos/workstation`: what counts as disposable under `/home` is a
-          judgement about the host, and getting it wrong silently drops data.
-          `~/Downloads` is left *in* for the same reason.
+          Topic the messages go to. The server's access rules in
+          `secrets/ntfy.age` name this topic, so changing it here without
+          changing them there gets every publish rejected with a 403.
         '';
-      };
-
-      postgresqlDumpAll = lib.mkOption {
-        type = lib.types.bool;
-        default = false;
-        description = ''
-          Capture every PostgreSQL database as a consistent logical dump
-          (`pg_dumpall`) inside each archive, and exclude the live
-          `/var/lib/postgresql` data directory.
-
-          Copying a running cluster's files is not a backup: borg walks them
-          over a period during which the cluster keeps writing, so the archive
-          holds a torn mix of pages whose recovery depends on catching a
-          checkpoint at the right moment. The dump is taken through the server
-          itself and is consistent by construction, and borgmatic replays it on
-          `borgmatic restore`. Enable this on any host running PostgreSQL.
-        '';
-      };
-
-      sqliteDatabases = lib.mkOption {
-        type = lib.types.attrsOf lib.types.str;
-        default = { };
-        example = lib.literalExpression ''
-          { tealfm-piper = "/var/lib/tealfm-piper/piper.db"; }
-        '';
-        description = ''
-          Database name -> path of a SQLite file to capture as a logical dump
-          (`sqlite3 .dump`) inside each archive. The live file, and its `-wal`
-          and `-shm` companions, are excluded in favour of that dump.
-
-          Same reasoning as `postgresqlDumpAll`, and if anything a sharper
-          version of it: most of a busy SQLite database's recent history lives
-          *outside* the file it is named after, in the write-ahead log, and borg
-          reaches the two at different moments. A `-wal` archived out of step
-          with its database is a torn pair, and the pair is what recovery reads.
-          The dump goes through SQLite itself and sees one consistent snapshot.
-
-          The name is a label for `borgmatic restore --database <name>`, not
-          something the file has to be called. Restoring writes the dump back
-          over the live path, replacing whatever is there.
-        '';
-      };
-
-      notify = {
-        topic = lib.mkOption {
-          type = lib.types.str;
-          default = "backups";
-          description = ''
-            Topic the messages go to. The server's access rules in
-            `secrets/ntfy.age` name this topic, so changing it here without
-            changing them there gets every publish rejected with a 403.
-          '';
-        };
-      };
-
-      repositories = lib.mkOption {
-        type = lib.types.attrsOf repoOpts;
-        default = { };
-        description = ''
-          Named borg repositories to back up to. Every enabled host gets the
-          rsync.net and Helium repositories by default; setting an attribute of
-          the same name replaces it.
-        '';
-      };
-
-      retention = {
-        keepDaily = lib.mkOption {
-          type = lib.types.int;
-          default = 7;
-          description = "Number of daily archives to keep.";
-        };
-
-        keepWeekly = lib.mkOption {
-          type = lib.types.int;
-          default = 4;
-          description = "Number of weekly archives to keep.";
-        };
-
-        keepMonthly = lib.mkOption {
-          type = lib.types.int;
-          default = 6;
-          description = "Number of monthly archives to keep.";
-        };
-
-        keepYearly = lib.mkOption {
-          type = lib.types.int;
-          default = 1;
-          description = "Number of yearly archives to keep.";
-        };
       };
     };
 
+    repositories = lib.mkOption {
+      type = lib.types.attrsOf repoOpts;
+      default = { };
+      description = ''
+        Named borg repositories to back up to. Every enabled host gets the
+        rsync.net and Helium repositories by default; setting an attribute of
+        the same name replaces it.
+      '';
+    };
+
+    retention = {
+      keepDaily = lib.mkOption {
+        type = lib.types.int;
+        default = 7;
+        description = "Number of daily archives to keep.";
+      };
+
+      keepWeekly = lib.mkOption {
+        type = lib.types.int;
+        default = 4;
+        description = "Number of weekly archives to keep.";
+      };
+
+      keepMonthly = lib.mkOption {
+        type = lib.types.int;
+        default = 6;
+        description = "Number of monthly archives to keep.";
+      };
+
+      keepYearly = lib.mkOption {
+        type = lib.types.int;
+        default = 1;
+        description = "Number of yearly archives to keep.";
+      };
+    };
   };
 
   config = lib.mkMerge [
     {
       # Two destinations for every host: rsync.net off-site, and Helium's
       # external drive over the tailnet.
-      myNixOS.services.backups.client.repositories = {
+      homelab.backups.repositories = {
         rsync = lib.mkDefault {
           path = "ssh://de4388@de4388.rsync.net/./borg/${hostname}";
           label = "rsync";
@@ -346,17 +343,17 @@ in
         configurations = lib.mapAttrs (
           _: repo:
           {
-            source_directories = cfg.client.paths;
+            source_directories = cfg.paths;
             repositories = [ { inherit (repo) path label; } ];
             exclude_patterns =
               (if takesDumps then lib.subtractLists dumpStagingPaths commonExcludes else commonExcludes)
-              ++ lib.optionals cfg.client.desktopExcludes desktopExcludes
+              ++ lib.optionals cfg.desktopExcludes desktopExcludes
               # superseded by the logical dumps configured below
-              ++ lib.optional cfg.client.postgresqlDumpAll "/var/lib/postgresql"
+              ++ lib.optional cfg.postgresqlDumpAll "/var/lib/postgresql"
               # the trailing glob takes the `-wal` and `-shm` sidecars with it,
               # which are half the database while the service is running
-              ++ lib.mapAttrsToList (_: path: "${path}*") cfg.client.sqliteDatabases
-              ++ cfg.client.extraExcludes;
+              ++ lib.mapAttrsToList (_: path: "${path}*") cfg.sqliteDatabases
+              ++ cfg.extraExcludes;
             exclude_if_present = [ ".nobackup" ];
 
             encryption_passcommand = "cat ${config.age.secrets.borgPassphrase.path}";
@@ -365,10 +362,10 @@ in
             compression = "auto,zstd";
             checkpoint_interval = 600;
 
-            keep_daily = cfg.client.retention.keepDaily;
-            keep_weekly = cfg.client.retention.keepWeekly;
-            keep_monthly = cfg.client.retention.keepMonthly;
-            keep_yearly = cfg.client.retention.keepYearly;
+            keep_daily = cfg.retention.keepDaily;
+            keep_weekly = cfg.retention.keepWeekly;
+            keep_monthly = cfg.retention.keepMonthly;
+            keep_yearly = cfg.retention.keepYearly;
 
             checks = [
               {
@@ -412,7 +409,7 @@ in
             # rsync.net one from Helium's.
             ntfy = {
               server = "https://${networkMap.ntfy.domain}";
-              inherit (cfg.client.notify) topic;
+              inherit (cfg.notify) topic;
               # An `access_token` rather than a username and password, so the
               # credential is scoped to the one write-only user.
               access_token = "{credential file ${config.age.secrets.ntfyToken.path}}";
@@ -425,7 +422,7 @@ in
               };
             };
           }
-          // lib.optionalAttrs cfg.client.postgresqlDumpAll {
+          // lib.optionalAttrs cfg.postgresqlDumpAll {
             # `username` with no `password` and no `pg_dump_command` is load
             # bearing in a way that is easy to undo by accident: that exact
             # combination is what makes the nixpkgs borgmatic module wrap the
@@ -443,16 +440,16 @@ in
               }
             ];
           }
-          // lib.optionalAttrs (cfg.client.sqliteDatabases != { }) {
+          // lib.optionalAttrs (cfg.sqliteDatabases != { }) {
             # No `username` here, and deliberately: borgmatic reads the file
             # directly and the unit already runs as root, so there is no user to
             # switch to and none of the postgres hook's unit relaxation applies.
             # The nixpkgs module fills in `sqlite_command` from pkgs.sqlite.
             sqlite_databases = lib.mapAttrsToList (name: path: {
               inherit name path;
-            }) cfg.client.sqliteDatabases;
+            }) cfg.sqliteDatabases;
           }
-        ) cfg.client.repositories;
+        ) cfg.repositories;
       };
 
       systemd.services.borgmatic = {
@@ -509,7 +506,7 @@ in
       # A repository must never end up inside its own backup. Inert today — the
       # default source directories don't reach the drive — but load-bearing the
       # moment a data service living there joins the backup set.
-      myNixOS.services.backups.client.extraExcludes = [ backupServer.basePath ];
+      homelab.backups.extraExcludes = [ backupServer.basePath ];
 
       # The drive is mounted `nofail`, so it can be absent at boot. Creating the
       # base directory as an unprivileged user, and only once the mount is up,
@@ -563,7 +560,7 @@ in
       # 22 answering and 2200 dead, and every client's backup refused with
       # notifications success-only. The nixpkgs unit sets its own restart
       # policy, so the shared values are forced.
-      systemd.services.sshd = lib.recursiveUpdate config.myNixOS.services.tailscale.bindOrdering {
+      systemd.services.sshd = lib.recursiveUpdate config.homelab.tailscale.bindOrdering {
         unitConfig.StartLimitIntervalSec = lib.mkForce 0;
         serviceConfig.RestartSec = lib.mkForce 5;
       };

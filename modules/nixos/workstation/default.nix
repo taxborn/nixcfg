@@ -150,10 +150,10 @@
 
   };
 
-  myNixOS = {
+  homelab = {
     # Port 22 stays shut on a workstation. The option says why.
-    programs.ssh.openFirewall = false;
-    profiles.btrfs.guiTools = true;
+    ssh.openFirewall = false;
+    btrfs.guiTools = true;
   };
 
   security.rtkit.enable = true;

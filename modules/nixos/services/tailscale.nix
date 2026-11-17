@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.myNixOS.services.tailscale;
+  cfg = config.homelab.tailscale;
 in
 {
-  options.myNixOS.services.tailscale = {
+  options.homelab.tailscale = {
     address = lib.mkOption {
       description = ''
         This host's address from `homelab.hosts`, or null if

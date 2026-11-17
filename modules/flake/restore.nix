@@ -36,7 +36,7 @@ in
         tier2 = remote;
         reason = if remote then null else localReasons.${host}.${name};
       }
-    ) system.config.myNixOS.services.backups.client.repositories
+    ) system.config.homelab.backups.repositories
   ) clients;
 
   perSystem = { pkgs, ... }: {

@@ -5,13 +5,13 @@
   ...
 }:
 let
-  cfg = config.myNixOS.services.minecraft;
+  cfg = config.homelab.minecraft;
   systemctl = lib.getExe' config.systemd.package "systemctl";
   unitOf = name: "minecraft-${name}.service";
 
   monitoring = config.homelab.monitoring;
-  hostIP = config.myNixOS.services.tailscale.address;
-  inherit (config.myNixOS.services.tailscale) bindOrdering;
+  hostIP = config.homelab.tailscale.address;
+  inherit (config.homelab.tailscale) bindOrdering;
   hostname = config.networking.hostName;
   metricsOn = hostIP != null;
 
@@ -69,7 +69,7 @@ let
     '';
 in
 {
-  options.myNixOS.services.minecraft = {
+  options.homelab.minecraft = {
     servers = lib.mkOption {
       default = { };
       description = ''
@@ -120,14 +120,11 @@ in
     ++ [
       {
         assertion = lib.all (
-          server:
-          lib.any (
-            path: lib.hasPrefix "${path}/" "${server.directory}/"
-          ) config.myNixOS.services.backups.client.paths
+          server: lib.any (path: lib.hasPrefix "${path}/" "${server.directory}/") config.homelab.backups.paths
         ) (lib.attrValues servers);
         message = ''
-          Every myNixOS.services.minecraft server directory on ${hostname} must
-          sit under one of myNixOS.services.backups.client.paths, or its world
+          Every homelab.minecraft server directory on ${hostname} must
+          sit under one of homelab.backups.paths, or its world
           is not archived.
         '';
       }

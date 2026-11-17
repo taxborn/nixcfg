@@ -33,7 +33,7 @@ let
     }) btrfsFSDevices
   );
 
-  cfg = config.myNixOS.profiles.btrfs;
+  cfg = config.homelab.btrfs;
 
   hasHomeSubvolume =
     lib.hasAttr "/home" config.fileSystems && config.fileSystems."/home".fsType == "btrfs";
@@ -46,7 +46,7 @@ let
   };
 in
 {
-  options.myNixOS.profiles.btrfs = {
+  options.homelab.btrfs = {
     deduplicate = lib.mkEnableOption ''
       block-level deduplication with bees.
 
@@ -97,7 +97,7 @@ in
     # already avoids, one subvolume over. Derived from `snapshotSubvolumes`
     # rather than written per host because the host that adds the next
     # subvolume is the host that forgets.
-    myNixOS.services.backups.client.extraExcludes = lib.mapAttrsToList (
+    homelab.backups.extraExcludes = lib.mapAttrsToList (
       _: subvolume: "${subvolume}/.snapshots"
     ) cfg.snapshotSubvolumes;
 

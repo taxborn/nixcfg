@@ -6,7 +6,7 @@
   ...
 }:
 let
-  cfg = config.myNixOS.services.caddy;
+  cfg = config.homelab.caddy;
 
   # Public half of the certificate Cloudflare presents on every origin pull.
   # The private half lives only in Cloudflare; nothing here needs it, and
@@ -74,7 +74,7 @@ let
   ];
 in
 {
-  options.myNixOS.services.caddy = {
+  options.homelab.caddy = {
     cloudflareOnly = lib.mkEnableOption ''
       dropping 80/443 from everywhere but Cloudflare's edge.
 

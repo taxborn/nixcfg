@@ -37,5 +37,5 @@
   };
 
   # The user module owns this rather than the service module naming a person.
-  myNixOS.services.tailscale.operator = "taxborn";
+  homelab.tailscale.operator = "taxborn";
 }

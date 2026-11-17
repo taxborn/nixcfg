@@ -5,14 +5,14 @@
   ...
 }:
 let
-  cfg = config.myNixOS.services.monitoring.server;
+  cfg = config.homelab.monitoring;
 
   monitoring = config.homelab.monitoring;
   inherit (monitoring) ports;
   grafana = config.homelab.services.grafana;
 
   hostname = config.networking.hostName;
-  serverIP = config.myNixOS.services.tailscale.address;
+  serverIP = config.homelab.tailscale.address;
 
   # Where the bridge's credential file is generated, see `alertmanager-ntfy-auth`.
   ntfyAuthFile = "/run/alertmanager-ntfy-auth/auth.yml";
@@ -59,7 +59,7 @@ in
     ./dashboards.nix
   ];
 
-  options.myNixOS.services.monitoring.server = {
+  options.homelab.monitoring = {
     ntfyTopic = lib.mkOption {
       type = lib.types.str;
       default = "alerts";
@@ -77,12 +77,12 @@ in
     assertions = [
       {
         assertion = config.services.tailscale.enable;
-        message = "myNixOS.services.monitoring.server binds Loki to a tailnet address, but services.tailscale.enable is false.";
+        message = "modules/nixos/services/monitoring/server.nix binds Loki to a tailnet address, but services.tailscale.enable is false.";
       }
       {
         assertion = hostname == monitoring.server && serverIP != null;
         message = ''
-          myNixOS.services.monitoring.server is enabled on ${hostname}, but
+          modules/nixos/services/monitoring/server.nix is enabled on ${hostname}, but
           homelab.monitoring.server names ${monitoring.server}. Every Alloy
           pushes to the host in the snippet, so the two have to be the same
           machine, and it needs a tailnet address to bind Loki to.
@@ -307,7 +307,7 @@ in
       # Loki binds a tailnet address, so it loses the same cold-boot race the
       # exporters do, and its unit orders on `network-online.target`, which is
       # reached well before tailscaled has an address to hand out.
-      loki = config.myNixOS.services.tailscale.bindOrdering;
+      loki = config.homelab.tailscale.bindOrdering;
     };
 
     # ---------------------------------------------------------------------- Loki
@@ -557,7 +557,7 @@ in
     # nothing that provisioning does not rebuild, but does hold a live SQLite
     # file that borg would copy torn. None of these paths overlaps borgmatic's
     # dump staging directory.
-    myNixOS.services.backups.client.extraExcludes = [
+    homelab.backups.extraExcludes = [
       "/var/lib/prometheus2"
       "/var/lib/loki"
       "/var/lib/grafana"

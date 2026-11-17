@@ -13,7 +13,7 @@ in
   # dump goes through SQLite and sees one snapshot. The path is the
   # nixpkgs module's data folder plus Vaultwarden's default database name,
   # and `backupDir` stays null because borgmatic does this job instead.
-  myNixOS.services.backups.client.sqliteDatabases.vaultwarden = "/var/lib/vaultwarden/db.sqlite3";
+  homelab.backups.sqliteDatabases.vaultwarden = "/var/lib/vaultwarden/db.sqlite3";
 
   age.secrets.vaultwarden.file = "${self}/secrets/vaultwarden.age";
 

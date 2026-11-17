@@ -22,7 +22,7 @@ import list, and adding one would break the pattern rather than tidy it.
 
 So the directory structure is organisational only. Nesting says nothing about
 the option path. `nixos/services/tangled/knot.nix` declares
-`myNixOS.services.tangled.knot` because it says so, not because of where it sits.
+`homelab.tangled.knot` because it says so, not because of where it sits.
 Keep the two aligned anyway; every file in here does.
 
 `disko/` and `flake/` are the exceptions. `flake/modules.nix` exports reusable

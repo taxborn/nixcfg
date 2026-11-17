@@ -6,7 +6,7 @@
 }:
 let
   networkMap = config.homelab.services;
-  tailscale = config.myNixOS.services.tailscale;
+  tailscale = config.homelab.tailscale;
   tailnetIP = tailscale.address;
 in
 {
@@ -16,7 +16,7 @@ in
     {
       assertion = config.services.tailscale.enable && tailnetIP != null;
       message = ''
-        myNixOS.services.tangled.knot binds its SSH server to this host's
+        homelab.tangled.knot binds its SSH server to this host's
         tailnet address and nowhere else, so the host has to run Tailscale
         and appear in homelab.hosts.
       '';
@@ -57,7 +57,7 @@ in
       server = {
         hostname = networkMap.knot.domain;
         # The knot advertises the first admin as its owner.
-        admins = [ config.myNixOS.services.tangled.owner ];
+        admins = [ config.homelab.tangled.owner ];
         listen_addr = "127.0.0.1:${toString networkMap.knot.port}";
         ssh_listen_addr = "${tailnetIP}:${toString networkMap.knot.sshPort}";
       };

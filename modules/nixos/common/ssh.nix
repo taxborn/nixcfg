@@ -5,10 +5,10 @@
   ...
 }:
 let
-  cfg = config.myNixOS.programs.ssh;
+  cfg = config.homelab.ssh;
 in
 {
-  options.myNixOS.programs.ssh = {
+  options.homelab.ssh = {
     openFirewall = lib.mkOption {
       type = lib.types.bool;
       default = true;

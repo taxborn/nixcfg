@@ -73,11 +73,10 @@
     ];
   };
 
-  myNixOS = {
+  homelab = {
+    btrfs.snapshotSubvolumes.compatdata = "/games/steamapps/compatdata";
 
-    profiles.btrfs.snapshotSubvolumes.compatdata = "/games/steamapps/compatdata";
-
-    services.backups.client = {
+    backups = {
       desktopExcludes = true;
       paths = [
         "/home"
