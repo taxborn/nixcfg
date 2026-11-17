@@ -1,4 +1,4 @@
-{ self, ... }:
+{ lib, self, ... }:
 
 {
   imports = [
@@ -25,12 +25,9 @@
         };
         server = {
           enable = true;
-          authorizedKeys = {
-            argon = builtins.readFile "${self}/secrets/borg/argon/ssh_key.pub";
-            carbon = builtins.readFile "${self}/secrets/borg/carbon/ssh_key.pub";
-            tungsten = builtins.readFile "${self}/secrets/borg/tungsten/ssh_key.pub";
-            uranium = builtins.readFile "${self}/secrets/borg/uranium/ssh_key.pub";
-          };
+          authorizedKeys = lib.genAttrs (lib.remove "helium" (
+            builtins.attrNames (import "${self}/homelab.nix").hosts
+          )) (host: builtins.readFile "${self}/secrets/borg/${host}/ssh_key.pub");
         };
       };
     };

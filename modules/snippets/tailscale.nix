@@ -40,13 +40,7 @@
         firewall's accept for trusted interfaces and a ban landing on a tailnet
         address takes out the path used to lift it.
       '';
-      default = {
-        argon = "100.64.2.1";
-        carbon = "100.64.2.0";
-        helium = "100.64.1.0";
-        uranium = "100.64.0.0";
-        tungsten = "100.64.0.1";
-      };
+      default = lib.mapAttrs (_: host: host.tailnet) (import ../../homelab.nix).hosts;
     };
 
   };
