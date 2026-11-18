@@ -23,7 +23,7 @@ client (see [backups](./backups.md#databases)).
 
 ## pinned services
 
-Tranquil, Piper, Tangled and Albedo are deployed by moving a flake input. Each is
+Tranquil, Piper, Tangled, Albedo and the `tg` CLI are deployed by moving a flake input. Each is
 pinned to a commit in `flake.nix`, so `nix flake update` leaves them alone. To
 upgrade one, edit its `rev` and run `nix flake lock`. They were unpinned until
 2026-11-10, and routine lock updates upgraded the PDS five times without
@@ -50,6 +50,10 @@ its user services up with no login.
 - `tailscale serve` needs the caller to be the Tailscale operator, so helium's
   operator is `agent`, not `taxborn`. `tailscale` commands as `taxborn` on
   helium now need sudo.
+- `gh` and `tg` are on its PATH, `tg` from the pinned `tg` input. Their logins
+  are manual as `agent` (`gh auth login`, `tg auth login braxton.is`). Scope
+  those credentials to what the agent should touch, since it can use them
+  unreviewed. They are not the signing key, which cannot authenticate.
 - The provider login is manual: `albedo login` once as `agent`. Settings
   declared under `services.albedo.settings` land in the Nix store.
 - Activation merges into files the daemon also writes. Stop it first with

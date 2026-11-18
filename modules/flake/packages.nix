@@ -13,6 +13,8 @@ in
       packages = {
         agenix = inputs.agenix.packages.${system}.default;
 
+        tg = inputs.tg.packages.${system}.tg;
+
         spindle-nixos-image = inputs.tangled.packages.${system}.spindle-nixos-image;
 
         catppuccin-lazygit = (import inputs.catppuccin { inherit pkgs; }).packages.lazygit;

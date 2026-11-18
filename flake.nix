@@ -57,6 +57,9 @@
     # Pinned like tranquil-src. Pre-alpha, and the daemon rewrites its own settings files.
     albedo.url = "git+https://tangled.org/did:plc:l7hhzcbqqvpcquau5waryzdu?ref=main&rev=d1ed2a2b7d7e8e444a716a1f7003ba9c55d47067";
 
+    # Pinned like tranquil-src. The Tangled CLI, built with its own nixpkgs.
+    tg.url = "git+https://tangled.org/aly.codes/tg?ref=master&rev=0d7ba3e1578f9c7d6e1496f18f565dee048b203e";
+
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:denful/import-tree";
   };

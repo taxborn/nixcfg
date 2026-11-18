@@ -37,8 +37,10 @@ in
         stateVersion = "25.11";
         packages = with pkgs; [
           fd
+          gh
           jq
           package
+          self.packages.${pkgs.stdenv.hostPlatform.system}.tg
           tmux
           ripgrep
         ];
