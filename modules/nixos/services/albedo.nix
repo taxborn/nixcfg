@@ -84,6 +84,7 @@ in
             [
               "${config.programs.albedo.package}/bin/albedo"
               "web"
+              "--foreground"
               "--no-open"
               "--port"
               (toString port)
