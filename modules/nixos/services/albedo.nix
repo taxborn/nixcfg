@@ -85,6 +85,8 @@ in
             Hostname = knot.sshDomain;
             User = "git";
             Port = knot.sshPort;
+            IdentityFile = signingKey;
+            IdentitiesOnly = "yes";
           };
         };
       };
