@@ -1,5 +1,6 @@
 {
   imports = [
+    ../../modules/nixos/services/albedo.nix
     ../../modules/nixos/services/monitoring/server.nix
     ../../modules/nixos/services/paperless.nix
     ../../modules/nixos/server.nix

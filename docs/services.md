@@ -23,7 +23,7 @@ client (see [backups](./backups.md#databases)).
 
 ## pinned services
 
-Tranquil, Piper and Tangled are deployed by moving a flake input. Each is
+Tranquil, Piper, Tangled and Albedo are deployed by moving a flake input. Each is
 pinned to a commit in `flake.nix`, so `nix flake update` leaves them alone. To
 upgrade one, edit its `rev` and run `nix flake lock`. They were unpinned until
 2026-11-10, and routine lock updates upgraded the PDS five times without
@@ -32,6 +32,26 @@ anyone asking.
 Rolling back the PDS does not undo its database migrations. Piper alters its
 SQLite schema on startup, and a rollback does not undo that either. Take a
 dump first (`sudo borgmatic create --verbosity 1 --list`).
+
+## albedo
+
+A coding agent daemon on Helium, run as the `agent` user with no sudo, so it
+cannot read the backup repositories or the Paperless archive. Lingering keeps
+its user services up with no login.
+
+- The web client binds the tailnet range only (`--allow`), with no Caddy vhost
+  and no `homelab.services` entry, since both would publish it. Reach it at
+  `http://helium.<tailnet>:4317`. The sign-in link is in
+  `journalctl --user -u albedo-web` as `agent`, so treat that journal as secret.
+- The provider login is manual: `albedo login` once as `agent`. Settings
+  declared under `services.albedo.settings` land in the Nix store.
+- Activation merges into files the daemon also writes. Stop it first with
+  `albedo daemon --stop`, or the merge can be overwritten.
+- Commits are signed with an ed25519 key generated on first activation at
+  `~/.ssh/id_ed25519_signing`, with the agent's own identity. Register
+  `~/.ssh/id_ed25519_signing.pub` as a signing key on the forge. A signature
+  means the agent wrote the commit, not that you reviewed it.
+- `~/.albedo` is excluded from backups because it holds live SQLite.
 
 ## atuin
 

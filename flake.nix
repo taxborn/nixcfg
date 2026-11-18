@@ -54,6 +54,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Pinned like tranquil-src. Pre-alpha, and the daemon rewrites its own settings files.
+    albedo.url = "git+https://tangled.org/did:plc:l7hhzcbqqvpcquau5waryzdu?ref=main&rev=d1ed2a2b7d7e8e444a716a1f7003ba9c55d47067";
+
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:denful/import-tree";
   };

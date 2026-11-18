@@ -100,6 +100,9 @@ in
     };
   };
 
+  # Loopback-free: bound to the tailnet by the agent user's own web service, with no vhost.
+  albedo.port = 4317;
+
   # Holds the second copy of every host's borg archives, on its external drive.
   backupServer = {
     host = "helium";
