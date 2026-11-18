@@ -7,6 +7,7 @@
 }:
 let
   inherit (config.homelab) owner;
+  inherit (config.homelab.services) knot;
   inherit (config.networking) hostName;
   port = config.homelab.albedo.port;
   inherit (config.services.tailscale) package;
@@ -72,6 +73,18 @@ in
             };
             gpg.ssh.allowedSignersFile = "${home}/.config/git/allowed_signers";
             init.defaultBranch = "main";
+            url."https://tangled.org/".insteadOf = "git@tangled.org:";
+            url."tangled:".pushInsteadOf = "git@tangled.org:";
+          };
+        };
+
+        ssh = {
+          enable = true;
+          enableDefaultConfig = false;
+          settings.tangled = {
+            Hostname = knot.sshDomain;
+            User = "git";
+            Port = knot.sshPort;
           };
         };
       };
