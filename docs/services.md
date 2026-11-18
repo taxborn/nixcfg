@@ -39,10 +39,17 @@ A coding agent daemon on Helium, run as the `agent` user with no sudo, so it
 cannot read the backup repositories or the Paperless archive. Lingering keeps
 its user services up with no login.
 
-- The web client binds the tailnet range only (`--allow`), with no Caddy vhost
-  and no `homelab.services` entry, since both would publish it. Reach it at
-  `http://helium.<tailnet>:4317`. The sign-in link is in
+- The web client is served over HTTPS on the tailnet name through
+  `tailscale serve` (`--tailnet-https`), with no Caddy vhost and no
+  `homelab.services` entry, since both would publish it. HTTPS is what gives the
+  page notifications and the clipboard. It needs HTTPS certificates turned on
+  for the tailnet, and puts the machine name in public certificate logs. The
+  listener itself binds 0.0.0.0 and refuses clients outside the tailnet range,
+  and port 4317 is not open on any other interface. The sign-in link is in
   `journalctl --user -u albedo-web` as `agent`, so treat that journal as secret.
+- `tailscale serve` needs the caller to be the Tailscale operator, so helium's
+  operator is `agent`, not `taxborn`. `tailscale` commands as `taxborn` on
+  helium now need sudo.
 - The provider login is manual: `albedo login` once as `agent`. Settings
   declared under `services.albedo.settings` land in the Nix store.
 - Activation merges into files the daemon also writes. Stop it first with

@@ -9,6 +9,7 @@ let
   inherit (config.homelab) owner;
   inherit (config.networking) hostName;
   port = config.homelab.albedo.port;
+  inherit (config.services.tailscale) package;
   email = "${user}@${config.homelab.domain}";
   user = "agent";
   home = config.users.users.${user}.home;
@@ -23,6 +24,8 @@ in
     openssh.authorizedKeys.keyFiles = [ "${self}/keys/yubikey.pub" ];
   };
 
+  services.tailscale.extraSetFlags = [ "--operator=${user}" ];
+
   homelab.backups.extraExcludes = [ "${home}/.albedo" ];
 
   home-manager.users.${user} =
@@ -35,6 +38,7 @@ in
         packages = with pkgs; [
           fd
           jq
+          package
           tmux
           ripgrep
         ];
@@ -86,6 +90,7 @@ in
               "web"
               "--foreground"
               "--no-open"
+              "--tailnet-https"
               "--port"
               (toString port)
             ]
