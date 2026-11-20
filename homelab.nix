@@ -52,6 +52,10 @@ in
 
   # Public name and loopback port of every proxied service.
   services = {
+    albedo = {
+      domain = "albedo.${domain}";
+      port = 4317;
+    };
     atuin = {
       domain = "atuin.${domain}";
       port = 3008;
@@ -99,9 +103,6 @@ in
       port = 3001;
     };
   };
-
-  # Loopback-free: bound to the tailnet by the agent user's own web service, with no vhost.
-  albedo.port = 4317;
 
   # Holds the second copy of every host's borg archives, on its external drive.
   backupServer = {

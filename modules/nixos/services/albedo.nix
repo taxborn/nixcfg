@@ -1,21 +1,17 @@
 {
   config,
-  lib,
   pkgs,
   self,
   ...
 }:
 let
   inherit (config.homelab) owner;
-  inherit (config.homelab.services) knot;
+  inherit (config.homelab.services) albedo knot;
   inherit (config.networking) hostName;
-  port = config.homelab.albedo.port;
-  inherit (config.services.tailscale) package;
   email = "${user}@${config.homelab.domain}";
   user = "agent";
   home = config.users.users.${user}.home;
   signingKey = "${home}/.ssh/id_ed25519_signing";
-  tailnetV4 = lib.filter (range: !lib.hasInfix ":" range) config.homelab.tailnet.ranges;
 in
 {
   users.users.${user} = {
@@ -24,8 +20,6 @@ in
     description = "${owner.name}'s coding agent";
     openssh.authorizedKeys.keyFiles = [ "${self}/keys/yubikey.pub" ];
   };
-
-  services.tailscale.extraSetFlags = [ "--operator=${user}" ];
 
   homelab.backups.extraExcludes = [ "${home}/.albedo" ];
 
@@ -40,7 +34,6 @@ in
           fd
           gh
           jq
-          package
           self.packages.${pkgs.stdenv.hostPlatform.system}.tg
           tmux
           ripgrep
@@ -95,27 +88,23 @@ in
 
       systemd.user.services.albedo-web = {
         Unit = {
-          Description = "Albedo web client, tailnet only";
+          Description = "Albedo web client, behind Caddy";
           After = [ "albedo.service" ];
           Wants = [ "albedo.service" ];
           StartLimitIntervalSec = 0;
         };
         Service = {
-          ExecStart = lib.escapeShellArgs (
-            [
-              "${config.programs.albedo.package}/bin/albedo"
-              "web"
-              "--foreground"
-              "--no-open"
-              "--tailnet-https"
-              "--port"
-              (toString port)
-            ]
-            ++ lib.concatMap (range: [
-              "--allow"
-              range
-            ]) tailnetV4
-          );
+          ExecStart = lib.escapeShellArgs [
+            "${config.programs.albedo.package}/bin/albedo"
+            "web"
+            "--foreground"
+            "--no-open"
+            "--local"
+            "--public-url"
+            "https://${albedo.domain}"
+            "--port"
+            (toString albedo.port)
+          ];
           Restart = "always";
           RestartSec = 5;
         };

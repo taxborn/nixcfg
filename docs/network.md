@@ -51,10 +51,10 @@ tailnet interface is the whole front door. That costs HTTP-01, which needs port
 Cloudflare token. A vhost that does not fails issuance in a retry loop instead
 of failing loudly.
 
-Paperless (`docs.biscuits.at`) and Grafana (`grafana.biscuits.at`) are public
-A records holding Helium's tailnet address. Anyone can resolve them and only
-the tailnet can connect, and the browser still gets a real certificate. An
-explicit record beats the zone's proxied `*.biscuits.at`, so those names never
+Paperless (`docs.biscuits.at`), Grafana (`grafana.biscuits.at`) and Albedo
+(`albedo.biscuits.at`) are public A records holding Helium's tailnet address.
+Anyone can resolve them and only the tailnet can connect, and the browser still
+gets a real certificate. An explicit record beats the zone's proxied `*.biscuits.at`, so those names never
 reach Cloudflare's edge and need no `cloudflare-mtls`.
 
 ### directVHosts

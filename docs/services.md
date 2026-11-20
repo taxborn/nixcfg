@@ -39,17 +39,17 @@ A coding agent daemon on Helium, run as the `agent` user with no sudo, so it
 cannot read the backup repositories or the Paperless archive. Lingering keeps
 its user services up with no login.
 
-- The web client is served over HTTPS on the tailnet name through
-  `tailscale serve` (`--tailnet-https`), with no Caddy vhost and no
-  `homelab.services` entry, since both would publish it. HTTPS is what gives the
-  page notifications and the clipboard. It needs HTTPS certificates turned on
-  for the tailnet, and puts the machine name in public certificate logs. The
-  listener itself binds 0.0.0.0 and refuses clients outside the tailnet range,
-  and port 4317 is not open on any other interface. The sign-in link is in
-  `journalctl --user -u albedo-web` as `agent`, so treat that journal as secret.
-- `tailscale serve` needs the caller to be the Tailscale operator, so helium's
-  operator is `agent`, not `taxborn`. `tailscale` commands as `taxborn` on
-  helium now need sudo.
+- The web client is served at `albedo.biscuits.at` through Helium's tailnet-only
+  Caddy, which is what gives the page HTTPS, notifications and the clipboard. It
+  runs `--local`, so it listens on loopback and Caddy is the only way in, and
+  `--public-url` names the origin it answers to. The name is a public A record
+  holding Helium's tailnet address, like Paperless and Grafana. The sign-in link
+  is in `journalctl --user -u albedo-web` as `agent`, so treat that journal as
+  secret.
+- Do not use `--tailnet-https`. `tailscale serve` takes port 443 on Helium's
+  tailnet address inside `tailscaled`, ahead of Caddy, and every other tailnet
+  node then gets a TLS internal error from Grafana and Paperless. The flag has
+  no port option.
 - `gh` and `tg` are on its PATH, `tg` from the pinned `tg` input. Their logins
   are manual as `agent` (`gh auth login`, `tg auth login braxton.is`). Scope
   those credentials to what the agent should touch, since it can use them

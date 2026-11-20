@@ -67,8 +67,6 @@ in
       );
     };
 
-    albedo.port = mkOption { type = port; };
-
     backupServer = {
       host = mkOption { type = types.str; };
       user = mkOption { type = types.str; };
