@@ -1,10 +1,10 @@
-output "DP-3" {
+output "Shenzhen KTC Technology Group H27T22 0x00000001" {
     mode "2560x1440@164.998"
     position x=0 y=0
     scale 1
 }
 
-output "HDMI-A-1" {
+output "Acer Technologies H233H LHB0D0228550" {
     mode "1920x1080@60"
     position x=2560 y=368
     scale 1
