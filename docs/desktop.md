@@ -38,15 +38,19 @@ Home Manager copies [`noctalia.toml`](../modules/home/niri/noctalia.toml) to
 `~/.config/noctalia/config.toml` only when that file does not exist. The seed
 enables authentication prompts and the lockscreen, including locking before
 suspend, and turns off fingerprint unlock, since neither workstation runs
-fprintd. Later rebuilds preserve the file.
+fprintd. It also seeds the idle timers: lock after 10 minutes, screen off
+after 11, lock and suspend after 15. Later rebuilds preserve the file.
 
 Noctalia's settings UI and `noctalia msg config-set` write to
 `~/.local/state/noctalia/settings.toml`, which overrides `config.toml`. Idle
-behaviour lives there and is set per machine. Tungsten locks after 10 minutes,
-turns the screen off after 11 and suspends after 15. Setting only an idle
+behaviour set there overrides the seeded timers on that machine. Setting only an idle
 behaviour's `enabled` key through `config-set` writes a timeout of 0, so set
 its `timeout` in the same pass. Application-specific Catppuccin themes remain
 managed by Nix.
+
+`Mod+Alt+L` locks the session and `Mod+Shift+Delete` locks and suspends.
+`Shift+F13` captures the focused window, alongside the region and fullscreen
+screenshot binds.
 
 Validate the compositor file with `niri validate -c modules/home/niri/config.kdl`.
 Build both workstation toplevels before deploying. A successful build cannot

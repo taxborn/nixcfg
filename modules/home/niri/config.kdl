@@ -75,6 +75,7 @@ binds {
     // Noctalia captures natively, so this needs no grim or slurp.
     XF86Tools repeat=false { spawn "noctalia" "msg" "screenshot-region"; }
     Ctrl+XF86Tools repeat=false { spawn "noctalia" "msg" "screenshot-fullscreen"; }
+    Shift+XF86Tools repeat=false { spawn "noctalia" "msg" "screenshot-window"; }
 
     Mod+Return hotkey-overlay-title="Open Ghostty" { spawn "ghostty"; }
     Mod+B hotkey-overlay-title="Open Firefox" { spawn "firefox"; }
@@ -176,4 +177,6 @@ binds {
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
     Mod+Shift+E { quit; }
     Mod+Shift+P { power-off-monitors; }
+    Mod+Alt+L repeat=false { spawn "noctalia" "msg" "session" "lock"; }
+    Mod+Shift+Delete repeat=false { spawn "noctalia" "msg" "session" "lock-and-suspend"; }
 }
