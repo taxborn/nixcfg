@@ -2,5 +2,6 @@
 polkit_agent = true
 
 [lockscreen]
-enabled = false
-lock_before_suspend = false
+enabled = true
+lock_before_suspend = true
+fingerprint = false

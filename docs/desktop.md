@@ -25,16 +25,28 @@ for file selection and screen sharing.
 Edit [`config.kdl`](../modules/home/niri/config.kdl) for Niri. Home Manager installs it at
 `~/.config/niri/config.kdl`. It preserves the existing display setup:
 
-- DP-3 uses 2560×1440 at 165 Hz, scale 1, position 0,0.
-- HDMI-A-1 uses 1920×1080 at 60 Hz, scale 1, position 2560,368.
+- Uranium's KTC H27T22 (DP-3) uses 2560×1440 at 165 Hz, scale 1, position 0,0.
+- Uranium's Acer H233H (HDMI-A-1) uses 1920×1080 at 60 Hz, scale 1, position
+  2560,368.
 - eDP-1 uses its preferred mode and scale 2.
 
-Noctalia's settings under `~/.config/noctalia/` are writable. Use its settings
-UI to experiment. Application-specific Catppuccin themes remain managed by Nix.
-Home Manager copies [`noctalia.toml`](../modules/home/niri/noctalia.toml) to `config.toml` only when
-that file does not exist. The initial settings enable authentication prompts
-and disable the lockscreen, including locking before suspend. Noctalia's
-default idle timers are disabled. Later rebuilds preserve your settings.
+The external monitors are matched by make, model and serial, not by connector.
+Tungsten's Intel GPU also has DP-3 and HDMI-A-1 connectors. A connector match
+would apply Uranium's mode and position to any monitor plugged into the laptop.
+
+Home Manager copies [`noctalia.toml`](../modules/home/niri/noctalia.toml) to
+`~/.config/noctalia/config.toml` only when that file does not exist. The seed
+enables authentication prompts and the lockscreen, including locking before
+suspend, and turns off fingerprint unlock, since neither workstation runs
+fprintd. Later rebuilds preserve the file.
+
+Noctalia's settings UI and `noctalia msg config-set` write to
+`~/.local/state/noctalia/settings.toml`, which overrides `config.toml`. Idle
+behaviour lives there and is set per machine. Tungsten locks after 10 minutes,
+turns the screen off after 11 and suspends after 15. Setting only an idle
+behaviour's `enabled` key through `config-set` writes a timeout of 0, so set
+its `timeout` in the same pass. Application-specific Catppuccin themes remain
+managed by Nix.
 
 Validate the compositor file with `niri validate -c modules/home/niri/config.kdl`.
 Build both workstation toplevels before deploying. A successful build cannot
@@ -139,4 +151,4 @@ Catppuccin's `autoEnable` makes theming opt-out.
   fzf pipeline over nix-search-tv, which indexes for about twenty seconds on
   first run.
 - **Niri** starts xwayland-satellite on demand. Noctalia's config is seeded once
-  as a regular file, so its settings UI can write to it.
+  as a regular file. Its settings UI writes to a separate state file.
