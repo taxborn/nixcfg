@@ -25,6 +25,11 @@ something that looks unused. Git history has the full reviews these came from,
 - **The backup client on every host.** There is no switch to turn it off. A host
   without backups should be a deliberate edit to `modules/nixos/common`, not a
   flag.
+- **Caddy's admin API is off.** `enableReload = false`, so nothing calls it, and
+  it listens on `127.0.0.1:2019` with no authentication. Any local user, such as
+  the `agent` user on Helium, could rewrite the config through it. If reload is
+  ever turned on, move the API to a mode 0600 unix socket instead of removing
+  `admin off`.
 
 ## removed
 

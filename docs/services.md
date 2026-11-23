@@ -53,7 +53,8 @@ its user services up with no login.
 - `gh` and `tg` are on its PATH, `tg` from the pinned `tg` input. Their logins
   are manual as `agent` (`gh auth login`, `tg auth login braxton.is`). Scope
   those credentials to what the agent should touch, since it can use them
-  unreviewed. They are not the signing key, which cannot authenticate.
+  unreviewed. The signing key is not one of them in name only: it is also the
+  `tangled` ssh identity, so it authenticates pushes to the knot too.
 - The provider login is manual: `albedo login` once as `agent`. Settings
   declared under `services.albedo.settings` land in the Nix store.
 - Activation merges into files the daemon also writes. Stop it first with

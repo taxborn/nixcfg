@@ -120,8 +120,12 @@ in
         enableReload = false;
         environmentFile = lib.mkIf usesDnsChallenge config.age.secrets.cloudflareDnsToken.path;
 
+        # Reload is off, so nothing needs the admin API, and any local user could rewrite the config through it.
+        globalConfig = ''
+          admin off
+        ''
         # Strict mode reads X-Forwarded-For right to left, so a visitor cannot spoof its address.
-        globalConfig = lib.optionalString cfg.cloudflareOnly ''
+        + lib.optionalString cfg.cloudflareOnly ''
           servers {
             trusted_proxies static ${lib.concatStringsSep " " (cloudflareIPv4Ranges ++ cloudflareIPv6Ranges)}
             trusted_proxies_strict
