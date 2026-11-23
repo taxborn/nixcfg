@@ -41,14 +41,15 @@ in
           '';
         };
 
-        tranquil-pds = pkgs.tranquil-pds.overrideAttrs (_: {
+        tranquil-pds = pkgs.tranquil-pds.overrideAttrs (old: {
           version = tranquilVersion;
+          buildInputs = (old.buildInputs or [ ]) ++ [ pkgs.sqlite ];
           src = inputs.tranquil-src;
 
           # Overriding cargoHash does nothing after the fact. Replacing cargoDeps re-vendors.
           cargoDeps = pkgs.rustPlatform.fetchCargoVendor {
             src = inputs.tranquil-src;
-            hash = "sha256-r6j925a6PfVKNLg60vxKRVw4rddLsGtQ0G2/KvyGw3Q=";
+            hash = "sha256-MHnKgrT30Wi4B+nlm8i0EVm++zK3Q1lZtExYNP2vsFU=";
           };
         });
 
