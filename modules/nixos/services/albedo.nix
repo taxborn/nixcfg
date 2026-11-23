@@ -65,7 +65,10 @@ in
         ];
   };
 
-  homelab.backups.extraExcludes = [ "${home}/.albedo" ];
+  homelab.backups = {
+    sqliteDatabases.albedo = "${home}/.albedo/albedo.sqlite";
+    extraExcludes = [ "${home}/.albedo/backups" ];
+  };
 
   home-manager.users.${user} =
     { config, lib, ... }:
@@ -159,7 +162,33 @@ in
         };
       };
 
-      services.albedo.enable = true;
+      services.albedo = {
+        enable = true;
+        settings.extensions.subagents = {
+          maxDepth = 2;
+          maxOpenChildren = 4;
+        };
+      };
+
+      home.file.".agents/instructions.md".text = ''
+        # Working on this host
+
+        You run as the `agent` user on Helium, a homelab server. Paperless and every
+        host's second backup copy live here too, so keep builds and test runs modest.
+        Do not probe other services on this host or the tailnet.
+
+        - Commit each substantive change, in Conventional Commits, lowercase, with a
+          scope naming the service or module. Commits are signed with your own key.
+        - Push a branch and never `main`, unless you are asked to.
+        - Never write a secret into a file that enters the Nix store, and never read
+          `~/.ssh` or `~/.albedo/creds.json`.
+        - If `direnv` reports a blocked `.envrc`, tell the user. Do not run
+          `direnv allow`.
+        - You have no sudo. Do not try to rebuild or switch a system, and do not run
+          deploy or restore recipes. Propose them.
+        - Give each parallel agent its own worktree, and prefer `jj` for them.
+        - Run the repo's own checks before you report work as done.
+      '';
 
       systemd.user.services.albedo-web = {
         Unit = {

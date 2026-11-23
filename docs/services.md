@@ -85,7 +85,18 @@ its user services up with no login.
 - The Albedo vhost answers 403 unless the client is a workstation or a device in
   `homelab.devices`. A new device must be added there before it can open the
   page.
-- `~/.albedo` is excluded from backups because it holds live SQLite.
+- `~/.albedo` is backed up, with its SQLite database taken as a dump
+  (`homelab.backups.sqliteDatabases.albedo`, see
+  [databases](./backups.md#databases)). That keeps provider credentials,
+  memory, session history and unpushed worktrees. Only `~/.albedo/backups` is
+  excluded, since the daemon fills it with full copies of its database before a
+  breaking upgrade. The dump needs `albedo.sqlite` to exist, so a host that has
+  never started the daemon fails the backup rather than skipping it.
+- Declared settings are only the subagent limits (depth 2, four open children).
+  The provider, enabled extensions and credentials stay manual, because
+  declared values enter the Nix store. Global instructions are
+  `~/.agents/instructions.md`, which Albedo reads beside each repo's `CLAUDE.md`.
+  No skills are declared yet.
 
 ## atuin
 

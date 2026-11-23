@@ -315,7 +315,7 @@ archive as borg writes it.
 | `postgresqlDumpAll = true` | PostgreSQL | `pg_dumpall` of every database | `/var/lib/postgresql` |
 | `sqliteDatabases.<name> = <path>` | SQLite | `sqlite3 <path> .dump` | `<path>*` |
 
-Piper, Vaultwarden, Atuin, Tranquil, Paperless and the Tangled spindle register their
+Piper, Vaultwarden, Atuin, Tranquil, Paperless, the Tangled spindle and Albedo register their
 dumps in their service modules. Moving one of these services
 therefore carries its dump requirement with it. Repository and retention
 choices remain with the host. Piper reads its database path from its service
@@ -323,7 +323,7 @@ configuration.
 
 Argon takes `pg_dumpall` for Tranquil and Atuin, and SQLite dumps for Piper and
 Vaultwarden.
-Helium takes the PostgreSQL dump for Paperless. Carbon takes a SQLite dump of
+Helium takes the PostgreSQL dump for Paperless and a SQLite dump of Albedo's database. Carbon takes a SQLite dump of
 the Tangled spindle's database.
 
 The SQLite exclude carries a trailing glob for a reason: `-wal` and `-shm` sit
