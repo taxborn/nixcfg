@@ -42,6 +42,12 @@ in
     uranium = "100.64.0.0";
   };
 
+  # Tailnet devices that are not NixOS hosts.
+  devices = {
+    ipad = "100.64.3.1";
+    phone = "100.64.3.0";
+  };
+
   tailnet = {
     name = tailnet;
     ranges = [

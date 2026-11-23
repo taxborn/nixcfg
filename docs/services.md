@@ -72,6 +72,19 @@ its user services up with no login.
   someone runs `direnv allow` as `agent`, which is the review step. `jj` is
   installed and signs with the same key as git, and Albedo prefers `jj` for
   worktrees.
+- The agent's user manager is capped through an `app.slice` drop-in (12G soft,
+  16G hard, half CPU and IO weight), so a runaway build cannot starve Paperless
+  or the backups. Check it took effect with
+  `systemctl --user show app.slice -p MemoryMax` as `agent`. Interactive ssh
+  sessions are outside that slice.
+- An `iptables` chain, `agent-egress`, rejects the agent's connections over
+  loopback to every other service's port on Helium, built from
+  `homelab.services`, the monitoring ports and the borg port. Add a new
+  service's port to `homelab.nix` and it is covered. Unix sockets are not
+  covered, and Albedo's own daemon port is ephemeral, so this is a denylist.
+- The Albedo vhost answers 403 unless the client is a workstation or a device in
+  `homelab.devices`. A new device must be added there before it can open the
+  page.
 - `~/.albedo` is excluded from backups because it holds live SQLite.
 
 ## atuin

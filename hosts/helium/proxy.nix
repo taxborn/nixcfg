@@ -1,12 +1,21 @@
-{ config, ... }:
+{ config, lib, ... }:
 let
   networkMap = config.homelab.services;
+  inherit (config.homelab) hosts devices;
+  albedoClients = [
+    hosts.tungsten
+    hosts.uranium
+  ]
+  ++ lib.attrValues devices;
 in
 {
   homelab.caddy.tailnetOnly = true;
 
   services.caddy.virtualHosts = {
     ${networkMap.albedo.domain}.extraConfig = ''
+      @denied not remote_ip ${lib.concatStringsSep " " albedoClients}
+      respond @denied "Forbidden" 403
+
       encode zstd gzip
 
       import cloudflare-dns

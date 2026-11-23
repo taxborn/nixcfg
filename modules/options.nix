@@ -51,6 +51,11 @@ in
       description = "Every host in the fleet, mapped to its tailnet address.";
     };
 
+    devices = mkOption {
+      type = types.attrsOf types.str;
+      description = "Tailnet devices that are not NixOS hosts, mapped to their tailnet address.";
+    };
+
     tailnet = {
       name = mkOption { type = types.str; };
       ranges = mkOption { type = types.listOf types.str; };

@@ -1,5 +1,6 @@
 {
   config,
+  lib,
   pkgs,
   self,
   ...
@@ -8,6 +9,16 @@ let
   inherit (config.homelab) owner;
   inherit (config.homelab.services) albedo knot;
   inherit (config.networking) hostName;
+  inherit (config.homelab) monitoring backupServer;
+
+  # Loopback ports of everything else on this host. Albedo's own daemon port is ephemeral.
+  blockedPorts = lib.unique (
+    lib.attrValues monitoring.ports
+    ++ [ backupServer.port ]
+    ++ lib.mapAttrsToList (_: svc: svc.port) (lib.removeAttrs config.homelab.services [ "albedo" ])
+  );
+  chain = "agent-egress";
+  rule = ip: "${ip} -w -C OUTPUT -m owner --uid-owner ${user} -j ${chain}";
   email = "${user}@${config.homelab.domain}";
   user = "agent";
   home = config.users.users.${user}.home;
@@ -24,6 +35,34 @@ in
   programs.ssh.knownHosts.knot = {
     hostNames = [ "[${knot.sshDomain}]:${toString knot.sshPort}" ];
     publicKeyFile = "${self}/keys/knot_argon.pub";
+  };
+
+  networking.firewall = {
+    extraCommands =
+      lib.concatMapStrings
+        (ip: ''
+          ${ip} -w -N ${chain} 2>/dev/null || ${ip} -w -F ${chain}
+          ${lib.concatMapStrings (port: ''
+            ${ip} -w -A ${chain} -o lo -p tcp --dport ${toString port} -j REJECT --reject-with tcp-reset
+          '') blockedPorts}
+          ${rule ip} 2>/dev/null || ${ip} -w -I OUTPUT -m owner --uid-owner ${user} -j ${chain}
+        '')
+        [
+          "iptables"
+          "ip6tables"
+        ];
+
+    extraStopCommands =
+      lib.concatMapStrings
+        (ip: ''
+          ${ip} -w -D OUTPUT -m owner --uid-owner ${user} -j ${chain} 2>/dev/null || true
+          ${ip} -w -F ${chain} 2>/dev/null || true
+          ${ip} -w -X ${chain} 2>/dev/null || true
+        '')
+        [
+          "iptables"
+          "ip6tables"
+        ];
   };
 
   homelab.backups.extraExcludes = [ "${home}/.albedo" ];
@@ -54,6 +93,15 @@ in
           [ -v DRY_RUN ] || printf '%s %s\n' "${email}" "$(cut -d' ' -f1,2 ${signingKey}.pub)" > ${home}/.config/git/allowed_signers
         '';
       };
+
+      xdg.configFile."systemd/user/app.slice.d/limits.conf".text = ''
+        [Slice]
+        MemoryHigh=12G
+        MemoryMax=16G
+        TasksMax=8192
+        CPUWeight=50
+        IOWeight=50
+      '';
 
       programs = {
         albedo.enable = true;
