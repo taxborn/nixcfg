@@ -41,24 +41,24 @@
 
     # Pinned so `nix flake update` cannot upgrade it. See docs/services.md#pinned-services.
     tranquil-src = {
-      url = "git+https://tangled.org/did:plc:jj6ajj6duxnlthwtnob4qyuv?ref=main&rev=ce17e8a4948aa216c6c1056122966a11b8a693c8";
+      url = "git+https://tangled.org/did:plc:jj6ajj6duxnlthwtnob4qyuv?ref=main&rev=41b458b5a31127b8ec9481c15156006d39b32d04";
       flake = false;
     };
 
     # Pinned like tranquil-src. No nixpkgs.follows: its crates are built against its own toolchains.
-    tangled.url = "git+https://tangled.org/did:plc:j5hmlfdrwkvtxm7cjmu7j2is?ref=master&rev=21c431c0c48215365980331fea16547f79bdea0b";
+    tangled.url = "git+https://tangled.org/did:plc:j5hmlfdrwkvtxm7cjmu7j2is?ref=master&rev=af4f4d69adfc252b6a06cf3394e37ddf6eb4a4e2";
 
     # Pinned like tranquil-src. Piper migrates its schema on startup.
     tealfm-piper = {
-      url = "github:teal-fm/piper/8177627d1424712202b2c34719cc89b5f7bad099";
+      url = "github:teal-fm/piper/edf0963e5db13115d836c21144f02c0dc051ff5b";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # Pinned like tranquil-src. Pre-alpha, and the daemon rewrites its own settings files.
-    albedo.url = "git+https://tangled.org/did:plc:l7hhzcbqqvpcquau5waryzdu?ref=main&rev=d1ed2a2b7d7e8e444a716a1f7003ba9c55d47067";
+    albedo.url = "git+https://tangled.org/did:plc:l7hhzcbqqvpcquau5waryzdu?ref=main&rev=303840f71658a259458e590dde49c05261473556";
 
     # Pinned like tranquil-src. The Tangled CLI, built with its own nixpkgs.
-    tg.url = "git+https://tangled.org/aly.codes/tg?ref=master&rev=0d7ba3e1578f9c7d6e1496f18f565dee048b203e";
+    tg.url = "git+https://tangled.org/aly.codes/tg?ref=master&rev=9e37dcfee7baf146cfbdc99ca19c29a3aa1e9936";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
     import-tree.url = "github:denful/import-tree";
