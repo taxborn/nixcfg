@@ -21,6 +21,11 @@ in
     openssh.authorizedKeys.keyFiles = [ "${self}/keys/yubikey.pub" ];
   };
 
+  programs.ssh.knownHosts.knot = {
+    hostNames = [ "[${knot.sshDomain}]:${toString knot.sshPort}" ];
+    publicKeyFile = "${self}/keys/knot_argon.pub";
+  };
+
   homelab.backups.extraExcludes = [ "${home}/.albedo" ];
 
   home-manager.users.${user} =
@@ -34,6 +39,7 @@ in
           fd
           gh
           jq
+          just
           self.packages.${pkgs.stdenv.hostPlatform.system}.tg
           tmux
           ripgrep
@@ -51,6 +57,27 @@ in
 
       programs = {
         albedo.enable = true;
+
+        direnv = {
+          enable = true;
+          nix-direnv.enable = true;
+        };
+
+        jujutsu = {
+          enable = true;
+          settings = {
+            user = {
+              name = "${owner.name} (agent)";
+              inherit email;
+            };
+            signing = {
+              behavior = "own";
+              backend = "ssh";
+              key = "${signingKey}.pub";
+              backends.ssh.allowed-signers = "${home}/.config/git/allowed_signers";
+            };
+          };
+        };
 
         git = {
           enable = true;

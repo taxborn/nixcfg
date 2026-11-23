@@ -63,6 +63,15 @@ its user services up with no login.
   `~/.ssh/id_ed25519_signing`, with the agent's own identity. Register
   `~/.ssh/id_ed25519_signing.pub` as a signing key on the forge. A signature
   means the agent wrote the commit, not that you reviewed it.
+- The knot's host key is pinned in `keys/knot_argon.pub` and written to the
+  system known hosts, since Albedo never answers a host key prompt. It was read
+  with `ssh-keyscan` over the tailnet on 2026-11-23. If the knot's state is
+  rebuilt it gets a new key, and pushes fail until that file is replaced.
+- `direnv` with `nix-direnv` is on, because Albedo's kernel runs
+  `direnv export json` before commands. A repo's `.envrc` stays blocked until
+  someone runs `direnv allow` as `agent`, which is the review step. `jj` is
+  installed and signs with the same key as git, and Albedo prefers `jj` for
+  worktrees.
 - `~/.albedo` is excluded from backups because it holds live SQLite.
 
 ## atuin
